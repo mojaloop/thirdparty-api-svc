@@ -44,9 +44,9 @@ function logResponse (request: RequestLogged): void {
       response = inspect(request.response.source)
     }
     if (!response) {
-      logger.info(`AS-Trace - Response: ${request.response}`)
+      logger.info(`thirdparty-api-adapter-Trace - Response: ${request.response}`)
     } else {
-      logger.info(`AS-Trace - Response: ${response} Status: ${request.response.statusCode}`)
+      logger.info(`thirdparty-api-adapter-Trace - Response: ${response} Status: ${request.response.statusCode}`)
     }
   }
 }

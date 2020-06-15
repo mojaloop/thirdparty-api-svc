@@ -42,7 +42,7 @@ export interface ServiceConfig {
   };
 }
 
-const RC = parse(rc('AS', Config)) as ServiceConfig
+const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig
 
 export default {
   ...RC,

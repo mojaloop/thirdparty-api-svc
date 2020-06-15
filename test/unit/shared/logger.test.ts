@@ -42,7 +42,7 @@ describe('shared/logger', (): void => {
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalledWith('abc')
-    expect(logger.info).toBeCalledWith(`AS-Trace - Response: ${JSON.stringify(request.response.source)} Status: ${request.response.statusCode}`)
+    expect(logger.info).toBeCalledWith(`thirdparty-api-adapter-Trace - Response: ${JSON.stringify(request.response.source)} Status: ${request.response.statusCode}`)
   })
 
   it('should log response via inspect', (): void => {
@@ -53,7 +53,7 @@ describe('shared/logger', (): void => {
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalled()
-    expect(logger.info).toBeCalledWith(`AS-Trace - Response: ${inspect(request.response.source)} Status: ${request.response.statusCode}`)
+    expect(logger.info).toBeCalledWith(`thirdparty-api-adapter-Trace - Response: ${inspect(request.response.source)} Status: ${request.response.statusCode}`)
   })
 
   it('should log if there is no request.response', (): void => {
@@ -62,6 +62,6 @@ describe('shared/logger', (): void => {
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalled()
-    expect(logger.info).toBeCalledWith(`AS-Trace - Response: ${request.response.toString()}`)
+    expect(logger.info).toBeCalledWith(`thirdparty-api-adapter-Trace - Response: ${request.response.toString()}`)
   })
 })
