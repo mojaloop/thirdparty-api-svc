@@ -394,41 +394,97 @@ workflows:
     jobs:
       - setup:
           context: org-global
-
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+                
       - test-bdd:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - test-unit:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - test-coverage:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - vulnerability-check:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - audit-licenses:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - test-integration:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - linting-check:
           context: org-global
           requires:
             - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
 
       - build:
           context: org-global
