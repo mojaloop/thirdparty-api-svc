@@ -272,6 +272,7 @@ jobs:
           prefix: licenses
 
   image-scan:
+    resource_class: large
     executor: anchore/anchore_engine
     steps:
       - setup_remote_docker
@@ -305,7 +306,7 @@ jobs:
           anchore_version: v0.6.1
           image_name: "docker.io/node:12.16.1-alpine $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
           policy_failure: false
-          timeout: '500'
+          timeout: '1000'
           # Note: if the generated policy is invalid, this will fallback to the default policy, which we don't want!
           policy_bundle_file_path: /tmp/mojaloop-policy.json
       - run:
@@ -319,7 +320,7 @@ jobs:
           command: /tmp/ci-config/container-scanning/anchore-result-diff.js anchore-reports/node_12.16.1-alpine-policy.json anchore-reports/${CIRCLE_PROJECT_REPONAME}*-policy.json
       - slack/status:
           fail_only: true
-          webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
+          webhook: "$SLACK_WEBHOOK_ANNOUNCMENT_CI_CD"
           failure_message: 'Anchore Image Scan failed  for: \`"${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"\`'
       - store_artifacts:
           path: anchore-reports
