@@ -26,6 +26,6 @@ COPY . .
 # cleanup
 RUN apk del build-dependencies
 
-# RUN npm prune --production
+RUN npm prune --production
 EXPOSE 3008
 CMD ["npm", "run", "start"]
