@@ -21,6 +21,7 @@ defaults_Dependencies: &defaults_Dependencies |
   apk --no-cache add ca-certificates
   apk --no-cache add curl
   apk --no-cache add openssh-client
+  apk --no-cache add bash
   apk add --no-cache -t build-dependencies make gcc g++ python libtool autoconf automake
   npm config set unsafe-perm true
   npm install -g node-gyp
@@ -280,9 +281,6 @@ jobs:
           command: |
             apk add --update python3 py3-pip docker python3-dev libffi-dev openssl-dev gcc libc-dev make jq npm
       - run:
-          name: Install general dependencies
-          command: *defaults_Dependencies
-      - run:
           name: Install AWS CLI dependencies
           command: *defaults_awsCliDependencies
       - attach_workspace:
@@ -401,7 +399,7 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
-                
+
       - test-bdd:
           context: org-global
           requires:
