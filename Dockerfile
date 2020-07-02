@@ -1,4 +1,5 @@
 FROM node:14.3.0-alpine as builder
+USER root
 
 WORKDIR /opt/thirdparty-api-adapter
 
@@ -10,22 +11,25 @@ RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool aut
 COPY package.json package-lock.json* /opt/thirdparty-api-adapter/
 RUN npm ci
 
-# Create empty log file &
-RUN mkdir ./logs && touch ./logs/combined.log
-
-# link stdout to the application log file
-RUN ln -sf /dev/stdout ./logs/combined.log
-
-# check in .dockerignore what is skipped during copy
-COPY . .
-
-# USER node
-# copy bundle
-# COPY --chown=node --from=builder /opt/thirdparty-api-adapter/ .
+COPY src /opt/thirdparty-api-adapter/src
+COPY config /opt/thirdparty-api-adapter/config
 
 # cleanup
 RUN apk del build-dependencies
 
+FROM node:14.3.0-alpine
+WORKDIR /opt/thirdparty-api-adapter
+
+# Create empty log file & link stdout to the application log file
+RUN mkdir ./logs && touch ./logs/combined.log
+RUN ln -sf /dev/stdout ./logs/combined.log
+
+# Create a non-root user: ml-user
+RUN adduser -D ml-user
+USER ml-user
+
+COPY --chown=ml-user --from=builder /opt/thirdparty-api-adapter .
 RUN npm prune --production
+
 EXPOSE 3008
 CMD ["npm", "run", "start"]
