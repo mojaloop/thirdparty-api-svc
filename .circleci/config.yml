@@ -272,7 +272,6 @@ jobs:
           prefix: licenses
 
   image-scan:
-    resource_class: large
     executor: anchore/anchore_engine
     steps:
       - setup_remote_docker
