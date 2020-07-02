@@ -57,15 +57,6 @@
   },
   "homepage": "https://github.com/mojaloop/thirdparty-api-adapter#readme",
   "devDependencies": {
-    "@types/hapi": "^18.0.3",
-    "@types/hapi__hapi": "^19.0.3",
-    "@types/hapi__inert": "^5.2.0",
-    "@types/hapi__vision": "^5.5.1",
-    "@types/jest": "25.2.2",
-    "@types/node": "^14.0.5",
-    "@types/rc": "^1.1.0",
-    "@typescript-eslint/eslint-plugin": "1.13.0",
-    "@typescript-eslint/parser": "1.13.0",
     "add": "^2.0.6",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
@@ -85,9 +76,7 @@
     "npm-check-updates": "6.0.0",
     "source-map-support": "0.5.12",
     "standard-version": "^8.0.0",
-    "ts-jest": "^26.0.0",
-    "ts-node": "8.3.0",
-    "typescript": "3.9.2"
+    "ts-jest": "^26.0.0"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -100,11 +89,22 @@
     "@mojaloop/central-services-logger": "^9.5.1",
     "@mojaloop/central-services-metrics": "^9.5.0",
     "@mojaloop/central-services-shared": "^10.2.1",
+    "@types/hapi": "^18.0.3",
+    "@types/hapi__hapi": "^19.0.3",
+    "@types/hapi__inert": "^5.2.0",
+    "@types/hapi__vision": "^5.5.1",
+    "@types/jest": "25.2.2",
+    "@types/node": "^14.0.5",
+    "@types/rc": "^1.1.0",
+    "@typescript-eslint/eslint-plugin": "1.13.0",
+    "@typescript-eslint/parser": "1.13.0",
     "blipp": "^4.0.1",
     "commander": "^5.1.0",
     "hapi-openapi": "^2.0.2",
     "hapi-swagger": "^13.0.1",
     "parse-strings-in-object": "^2.0.0",
-    "rc": "^1.2.8"
+    "rc": "^1.2.8",
+    "ts-node": "8.3.0",
+    "typescript": "3.9.2"
   }
 }

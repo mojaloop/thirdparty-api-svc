@@ -11,8 +11,8 @@ RUN apk add --no-cache -t build-dependencies git make gcc g++ python libtool aut
 COPY package.json package-lock.json* /opt/thirdparty-api-adapter/
 RUN npm ci
 
-COPY src /opt/thirdparty-api-adapter/src
-COPY config /opt/thirdparty-api-adapter/config
+# check in .dockerignore what is skipped during copy
+COPY . .
 
 # cleanup
 RUN apk del build-dependencies
