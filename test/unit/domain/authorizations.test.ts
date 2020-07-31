@@ -25,13 +25,11 @@
 
 import { ResponseObject, ResponseToolkit} from "@hapi/hapi"
 
-//TODO: fix imports
 import { Authorizations } from '../../../src/domain'
 import Logger from '@mojaloop/central-services-logger'
 import {
   Util, Enum,
 } from '@mojaloop/central-services-shared'
-import { TPostAuthorizationPayload } from 'domain/authorizations'
 
 const mock_getEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mock_sendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -65,15 +63,13 @@ describe('domain/authorizations', () => {
     it('forwards the POST `thirdpartyRequests/transactions/{id}/authorizations request', async () => {
       // Arrange
       mock_getEndpoint.mockResolvedValue('http://auth-service.local')
-      // TODO: return a proper response from this thing
-      mock_sendRequest.mockResolvedValue({ headers: null, payload: { thingo: true } })
+      mock_sendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'pispA',
         'fspiop-destination': 'dfspA'
       }
       const id = "123456"
-      const payload: TPostAuthorizationPayload = {
-        // TODO: find real values for these
+      const payload: Authorizations.TPostAuthorizationPayload = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -82,7 +78,6 @@ describe('domain/authorizations', () => {
       }
 
       const getEndpointExpected: Array<any> = [
-        // TODO: should we mock out the config?
         'localhost:3001',
         'dfspA',
         Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
@@ -113,8 +108,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = "123456"
-      const payload: TPostAuthorizationPayload = {
-        // TODO: find real values for these
+      const payload: Authorizations.TPostAuthorizationPayload = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -123,7 +117,6 @@ describe('domain/authorizations', () => {
       }
 
       const getEndpointExpected: Array<any> = [
-        // TODO: should we mock out the config?
         'localhost:3001',
         'dfspA',
         Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST

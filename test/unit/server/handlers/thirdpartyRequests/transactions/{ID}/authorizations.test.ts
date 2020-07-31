@@ -25,9 +25,8 @@
 
  import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 
-//TODO: fix imports
 import { post } from '../../../../../../../src/server/handlers/tpr/transactions/{ID}/authorizations'
-import { Authorizations } from '../../../../../../../src/domain'
+import { Authorizations } from '../../../../../../../src/domain/index'
 import Logger from '@mojaloop/central-services-logger'
 
 const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
@@ -68,10 +67,9 @@ describe('authorizations handler', () => {
           'fspiop-destination': 'dfspA'
         },
         params: {
-          id: '1234'
+          ID: '1234'
         },
         payload: {
-          // TODO: find real values for these
           challenge: '12345',
           value: '12345',
           consentId: '12345',
@@ -81,7 +79,7 @@ describe('authorizations handler', () => {
       }
       const expected: Array<any> = [
         request.headers,
-        request.params.id,
+        request.params.ID,
         request.payload
       ]
 
@@ -105,10 +103,9 @@ describe('authorizations handler', () => {
           'fspiop-destination': 'dfspA'
         },
         params: {
-          id: '1234'
+          ID: '1234'
         },
         payload: {
-          // TODO: find real values for these
           challenge: '12345',
           value: '12345',
           consentId: '12345',
@@ -118,7 +115,7 @@ describe('authorizations handler', () => {
       }
       const expected: Array<any> = [
         request.headers,
-        request.params.id,
+        request.params.ID,
         request.payload
       ]
 

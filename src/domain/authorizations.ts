@@ -30,8 +30,6 @@ import {
 import Config from '../shared/config'
 import { Util as HapiUtil } from '@hapi/hapi'
 
-// const Endpoints = require('@mojaloop/central-services-shared').Util.Endpoints
-
 export type TPostAuthorizationPayload = {
   challenge: string;
   value: string;

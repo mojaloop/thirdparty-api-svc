@@ -26,11 +26,8 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
-//TODO: fix imports!
+// import { Authorizations } from '@local/domain/index'
 import { Authorizations } from '../../../../../domain'
-import { TPostAuthorizationPayload } from 'domain/authorizations'
-
-// import { findHello } from '../../model/hello'
 
 /**
   * summary: VerifyThirdPartyAuthorization
@@ -43,7 +40,7 @@ import { TPostAuthorizationPayload } from 'domain/authorizations'
 export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // Trust that hapi parsed the ID and Payload for us
   const thirdpartyRequestId: string = request.params.ID
-  const payload = request.payload as TPostAuthorizationPayload
+  const payload = request.payload as Authorizations.TPostAuthorizationPayload
 
   setImmediate(async (): Promise<void> => {
     try {

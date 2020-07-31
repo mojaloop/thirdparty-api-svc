@@ -55,7 +55,6 @@ describe('index', (): void => {
 
     describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
       beforeAll((): void => {
-        // Disable all async actions for the handlers
         jest.useFakeTimers()
         mock_loggerPush.mockReturnValue(null)
         mock_loggerError.mockReturnValue(null)

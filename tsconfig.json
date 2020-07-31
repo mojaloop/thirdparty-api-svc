@@ -2,7 +2,9 @@
   "include": [
     "src",
     "ambient.d.ts",
-    "test"
+    // Hmm - I needed this to get autosense working
+    // in the test files...
+    // "test"
   ],
   "exclude": [
     "node_modules",
@@ -38,7 +40,10 @@
       "*": [
         "src/*",
         "node_modules/*"
-      ]
+      ],
+      // "local/domain/*": [ "src/domain/*"],
+      // "local/handlers/*": ["src/server/handlers/*"]
+      "@local/domain/*": ["src/domain/*"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true
