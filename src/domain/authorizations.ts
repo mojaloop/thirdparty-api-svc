@@ -25,12 +25,12 @@
 
 import {
   Enum,
-  Util,
+  Util
 } from '@mojaloop/central-services-shared'
 import Config from '../shared/config'
 import { Util as HapiUtil } from '@hapi/hapi'
 
-export type TPostAuthorizationPayload = {
+export interface TPostAuthorizationPayload {
   challenge: string;
   value: string;
   consentId: string;
@@ -43,7 +43,10 @@ export type TPostAuthorizationPayload = {
  * @description Forwards a POST /thirdpartyRequests/transactions/{ID}/authorizations request
  *
  */
-export async function forwardPostAuthorization(headers: HapiUtil.Dictionary<string>, thirdpartyRequestId: string, payload: TPostAuthorizationPayload) {
+export async function forwardPostAuthorization (
+  headers: HapiUtil.Dictionary<string>,
+  thirdpartyRequestId: string,
+  payload: TPostAuthorizationPayload): Promise<void> {
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
@@ -62,7 +65,7 @@ export async function forwardPostAuthorization(headers: HapiUtil.Dictionary<stri
     destinationDfspId,
     Enum.Http.RestMethods.POST,
     payload,
-    Enum.Http.ResponseTypes.JSON,
+    Enum.Http.ResponseTypes.JSON
   )
 }
 
@@ -71,8 +74,6 @@ export async function forwardPostAuthorization(headers: HapiUtil.Dictionary<stri
  * @description Generic function to handle sending `PUT .../authorizations/error` back to
  *   the FSPIOP-Source
  */
-export async function sendErrorCallback() {
-  //TODO: no error handling as of yet!
+export async function sendErrorCallback (): Promise<void> {
+  // TODO: no error handling as of yet!
 }
-
-
