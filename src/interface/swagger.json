@@ -141,6 +141,99 @@
                 "summary": "example get",
                 "description": "The HTTP request GET /hello is used to return some example json."
             }
+        },
+        "/tpr/transactions/{ID}/authorizations": {
+            "post": {
+                "description": "The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is called by\nthe DFSP to check that a ThirdPartyRequest is valid\n",
+                "summary": "ThirdpartyAuthorizationRequest",
+                "tags": [
+                    "authorizations"
+                ],
+                "operationId": "VerifyThirdPartyAuthorization",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/ID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/ThirdPartyAuthorizationRequest"
+                        }
+                    },
+                    {
+                        "$ref": "#/parameters/Accept"
+                    },
+                    {
+                        "$ref": "#/parameters/Content-Length"
+                    },
+                    {
+                        "$ref": "#/parameters/Content-Type"
+                    },
+                    {
+                        "$ref": "#/parameters/Date"
+                    },
+                    {
+                        "$ref": "#/parameters/X-Forwarded-For"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-Source"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-Destination"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-Encryption"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-Signature"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-URI"
+                    },
+                    {
+                        "$ref": "#/parameters/FSPIOP-HTTP-Method"
+                    }
+                ],
+                "x-examples": {
+                    "application/json": {
+                        "challenge": "<QuoteResponse object>",
+                        "value": "<base64 encoded binary - the signed quote response object>",
+                        "consentId": "111",
+                        "sourceAccountId": "dfspa.1111-2222",
+                        "status": "PENDING"
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "$ref": "#/responses/Response202"
+                    },
+                    "400": {
+                        "$ref": "#/responses/ErrorResponse400"
+                    },
+                    "401": {
+                        "$ref": "#/responses/ErrorResponse401"
+                    },
+                    "403": {
+                        "$ref": "#/responses/ErrorResponse403"
+                    },
+                    "404": {
+                        "$ref": "#/responses/ErrorResponse404"
+                    },
+                    "405": {
+                        "$ref": "#/responses/ErrorResponse405"
+                    },
+                    "406": {
+                        "$ref": "#/responses/ErrorResponse406"
+                    },
+                    "501": {
+                        "$ref": "#/responses/ErrorResponse501"
+                    },
+                    "503": {
+                        "$ref": "#/responses/ErrorResponse503"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1791,6 +1884,36 @@
                     "description": "Optional extension, specific to deployment."
                 }
             }
+        },
+        "ThirdPartyAuthorizationRequest": {
+            "title": "ThirdPartyAuthorizationRequest",
+            "type": "object",
+            "description": "The Request object for verifying an authorization",
+            "properties": {
+                "challenge": {
+                    "type": "string",
+                    "description": "The original Challenge Object as a JSON string"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "Base64 encoded binary string - the signed challenge"
+                },
+                "consentId": {
+                    "type": "string",
+                    "description": "Id of the consent object containing the public key credential to verify the challenge"
+                },
+                "sourceAccountId": {
+                    "type": "string",
+                    "description": "The Payer Party's source account"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "TODO: change me later!"
+                }
+            },
+            "required": [
+                "challenge"
+            ]
         }
     },
     "parameters": {
@@ -1913,8 +2036,8 @@
                         "type": "string"
                     }
                 }
-                    
-            } 
+
+            }
          },
         "Response200": {
             "description": "OK"
