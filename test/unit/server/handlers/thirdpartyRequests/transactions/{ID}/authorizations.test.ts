@@ -25,7 +25,7 @@
 
  import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 
-import { post } from '../../../../../../../src/server/handlers/tpr/transactions/{ID}/authorizations'
+import { post } from '../../../../../../../src/server/handlers/thirdpartyRequest/transactions/{ID}/authorizations'
 import { Authorizations } from '../../../../../../../src/domain/index'
 import Logger from '@mojaloop/central-services-logger'
 

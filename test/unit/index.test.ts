@@ -73,7 +73,7 @@ describe('index', (): void => {
         mock_forwardPostAuthorization.mockResolvedValueOnce()
         const request = {
           method: 'POST',
-          url: '/tpr/transactions/12345/authorizations',
+          url: '/thirdpartyRequests/transactions/12345/authorizations',
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
@@ -108,7 +108,7 @@ describe('index', (): void => {
       it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
         const request = {
           method: 'POST',
-          url: '/tpr/transactions/12345/authorizations',
+          url: '/thirdpartyRequests/transactions/12345/authorizations',
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
@@ -144,7 +144,7 @@ describe('index', (): void => {
       it('requires all fields to be set', async (): Promise<void> => {
         const request = {
           method: 'POST',
-          url: '/tpr/transactions/trId_12345/authorizations',
+          url: '/thirdpartyRequests/transactions/trId_12345/authorizations',
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),

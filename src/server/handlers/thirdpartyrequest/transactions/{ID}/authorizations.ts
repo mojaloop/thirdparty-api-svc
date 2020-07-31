@@ -26,7 +26,6 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import Logger from '@mojaloop/central-services-logger'
-// import { Authorizations } from '@local/domain/index'
 import { Authorizations } from '../../../../../domain'
 
 /**
