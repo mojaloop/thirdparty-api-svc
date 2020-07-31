@@ -41,14 +41,12 @@ import { TPostAuthorizationPayload } from 'domain/authorizations'
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
 export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  //TODO: any other custom validation that needs doing?
-  const thirdpartyRequestId = request.params.id
-  //TODO: do we want to verify that the payload is actually what we want? Or do we trust hapi here?
+  // Trust that hapi parsed the ID and Payload for us
+  const thirdpartyRequestId: string = request.params.ID
   const payload = request.payload as TPostAuthorizationPayload
 
   setImmediate(async (): Promise<void> => {
     try {
-      console.log('forwardPostAuthorization is ', Authorizations.forwardPostAuthorization)
       await Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
     } catch (error) {
       Logger.push(error)

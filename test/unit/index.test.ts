@@ -27,10 +27,10 @@ import index from '../../src/index'
 import Config from '../../src/shared/config'
 import { Server } from '@hapi/hapi'
 
-// import { Authorizations } from '../../src/domain'
+import { Authorizations } from '../../src/domain'
 import Logger from '@mojaloop/central-services-logger'
 
-// const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
+const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
 const mock_loggerPush = jest.spyOn(Logger, 'push')
 const mock_loggerError = jest.spyOn(Logger, 'error')
 
@@ -61,18 +61,24 @@ describe('index', (): void => {
         mock_loggerError.mockReturnValue(null)
       })
 
+      beforeEach((): void => {
+        jest.clearAllTimers()
+        jest.clearAllMocks()
+      })
+
       afterAll((): void => {
         jest.useRealTimers()
       })
 
       it('POST', async (): Promise<void> => {
+        mock_forwardPostAuthorization.mockResolvedValueOnce()
         const request = {
           method: 'POST',
           url: '/tpr/transactions/12345/authorizations',
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
+            'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA',
           },
           payload: {
@@ -83,6 +89,11 @@ describe('index', (): void => {
             status: 'PENDING',
           }
         }
+        const expected: Array<any> = [
+          expect.objectContaining(request.headers),
+          '12345',
+          request.payload
+        ]
 
         // Act
         const response = await server.inject(request)
@@ -90,6 +101,9 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mock_forwardPostAuthorization).toHaveBeenCalledWith(...expected)
       })
 
       it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
@@ -123,12 +137,15 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mock_forwardPostAuthorization).not.toHaveBeenCalled()
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
         const request = {
           method: 'POST',
-          url: '/tpr/transactions/12345/authorizations',
+          url: '/tpr/transactions/trId_12345/authorizations',
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
@@ -155,6 +172,9 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mock_forwardPostAuthorization).not.toHaveBeenCalled()
       })
     })
 
