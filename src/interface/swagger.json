@@ -142,7 +142,7 @@
                 "description": "The HTTP request GET /hello is used to return some example json."
             }
         },
-        "/thirdpartyrequest/transactions/{ID}/authorizations": {
+        "/tpr/transactions/{ID}/authorizations": {
             "post": {
                 "description": "Called by the DFSP to ask a Auth-Service to verify the authorization result is valid",
                 "summary": "VerifyThirdPartyAuthorization",
