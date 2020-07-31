@@ -1,13 +1,12 @@
 {
   "include": [
     "src",
-    "ambient.d.ts"
+    "ambient.d.ts",
+    "test"
   ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "**/*.test.ts",
-    "test",
     "lib",
     "coverage"
   ],

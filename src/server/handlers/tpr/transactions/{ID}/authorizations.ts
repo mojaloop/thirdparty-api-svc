@@ -24,9 +24,38 @@
  ******/
 
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Enum } from '@mojaloop/central-services-shared'
+import Logger from '@mojaloop/central-services-logger'
+//TODO: fix imports!
+import { Authorizations } from '../../../../../domain'
+import { TPostAuthorizationPayload } from 'domain/authorizations'
+
 // import { findHello } from '../../model/hello'
 
-export async function post (_: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  // const hello = await findHello()
-  return h.response({hello: true}).code(202)
+/**
+  * summary: VerifyThirdPartyAuthorization
+  * description: The method POST /thirdpartyrequests/transactions/{ID}/authorization is used
+  *   by the DFSP to verify an authorization result with the Auth-Service.
+  * parameters: body, content-length
+  * produces: application/json
+  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+  */
+export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  //TODO: any other custom validation that needs doing?
+  const thirdpartyRequestId = request.params.id
+  //TODO: do we want to verify that the payload is actually what we want? Or do we trust hapi here?
+  const payload = request.payload as TPostAuthorizationPayload
+
+  setImmediate(async (): Promise<void> => {
+    try {
+      console.log('forwardPostAuthorization is ', Authorizations.forwardPostAuthorization)
+      await Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
+    } catch (error) {
+      Logger.push(error)
+      Logger.error('Error: Failed to forward VerifyThirdPartyAuthorization request')
+      await Authorizations.sendErrorCallback()
+    }
+  })
+
+  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }

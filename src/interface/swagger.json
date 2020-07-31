@@ -144,8 +144,8 @@
         },
         "/tpr/transactions/{ID}/authorizations": {
             "post": {
-                "description": "The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is called by\nthe DFSP to check that a ThirdPartyRequest is valid\n",
-                "summary": "ThirdpartyAuthorizationRequest",
+                "description": "Called by the DFSP to ask a Auth-Service to verify the authorization result is valid",
+                "summary": "VerifyThirdPartyAuthorization",
                 "tags": [
                     "authorizations"
                 ],
@@ -155,8 +155,9 @@
                         "$ref": "#/parameters/ID"
                     },
                     {
-                        "name": "body",
+                        "name": "payload",
                         "in": "body",
+                        "required": true,
                         "schema": {
                             "$ref": "#/definitions/ThirdPartyAuthorizationRequest"
                         }
@@ -1891,11 +1892,11 @@
             "description": "The Request object for verifying an authorization",
             "properties": {
                 "challenge": {
-                    "type": "string",
+                    "$ref": "#/definitions/BinaryString",
                     "description": "The original Challenge Object as a JSON string"
                 },
                 "value": {
-                    "type": "string",
+                    "$ref": "#/definitions/BinaryString",
                     "description": "Base64 encoded binary string - the signed challenge"
                 },
                 "consentId": {
@@ -1908,11 +1909,18 @@
                 },
                 "status": {
                     "type": "string",
-                    "description": "TODO: change me later!"
+                    "description": "The status MUST be PENDING for a POST request",
+                    "enum": [
+                        "PENDING"
+                    ]
                 }
             },
             "required": [
-                "challenge"
+                "challenge",
+                "value",
+                "consentId",
+                "sourceAccountId",
+                "status"
             ]
         }
     },

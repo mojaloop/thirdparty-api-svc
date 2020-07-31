@@ -33,6 +33,7 @@ export interface ServiceConfig {
   // ../server.ts
   PORT: number;
   HOST: string;
+  ENDPOINT_SERVICE_URL: string;
 
   // inspect.ts
   INSPECT?: {

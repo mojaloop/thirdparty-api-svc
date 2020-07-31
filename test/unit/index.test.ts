@@ -27,6 +27,13 @@ import index from '../../src/index'
 import Config from '../../src/shared/config'
 import { Server } from '@hapi/hapi'
 
+// import { Authorizations } from '../../src/domain'
+import Logger from '@mojaloop/central-services-logger'
+
+// const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
+const mock_loggerPush = jest.spyOn(Logger, 'push')
+const mock_loggerError = jest.spyOn(Logger, 'error')
+
 describe('index', (): void => {
   it('should have proper layout', (): void => {
     expect(typeof index.server).toBeDefined()
@@ -46,54 +53,165 @@ describe('index', (): void => {
       server.stop()
     })
 
-    it('/health', async (): Promise<void> => {
-      interface HealthResponse {
-        status: string;
-        uptime: number;
-        startTime: string;
-        versionNumber: string;
-      }
+    describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
+      beforeAll((): void => {
+        // Disable all async actions for the handlers
+        jest.useFakeTimers()
+        mock_loggerPush.mockReturnValue(null)
+        mock_loggerError.mockReturnValue(null)
+      })
 
-      const request = {
-        method: 'GET',
-        url: '/health'
-      }
+      afterAll((): void => {
+        jest.useRealTimers()
+      })
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+      it('POST', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/tpr/transactions/12345/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '12345',
+            sourceAccountId: '12345',
+            status: 'PENDING',
+          }
+        }
 
-      const result = response.result as HealthResponse
-      expect(result.status).toEqual('OK')
-      expect(result.uptime).toBeGreaterThan(1.0)
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+      })
+
+      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/tpr/transactions/12345/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '12345',
+            sourceAccountId: '12345',
+            status: 'VERIFIED',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3100',
+            errorDescription: 'Generic validation error - \"status\" must be [PENDING]'
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/tpr/transactions/12345/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '12345',
+            status: 'PENDING',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - \"sourceAccountId\" is required'
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+      })
     })
 
-    it('/hello', async (): Promise<void> => {
-      interface HelloResponse {
-        hello: string;
-      }
+    describe('/health', () => {
+      it('GET', async (): Promise<void> => {
+        interface HealthResponse {
+          status: string;
+          uptime: number;
+          startTime: string;
+          versionNumber: string;
+        }
 
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
+        const request = {
+          method: 'GET',
+          url: '/health'
+        }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeDefined()
 
-      const result = response.result as HelloResponse
-      expect(result.hello).toEqual('world')
+        const result = response.result as HealthResponse
+        expect(result.status).toEqual('OK')
+        expect(result.uptime).toBeGreaterThan(1.0)
+      })
     })
 
-    it('/metrics', async (): Promise<void> => {
-      const request = {
-        method: 'GET',
-        url: '/metrics'
-      }
+    describe('/hello', () => {
+      it('GET', async (): Promise<void> => {
+        interface HelloResponse {
+          hello: string;
+        }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
+        const request = {
+          method: 'GET',
+          url: '/hello'
+        }
+
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeDefined()
+
+        const result = response.result as HelloResponse
+        expect(result.hello).toEqual('world')
+      })
+    })
+
+    describe('/metrics', () => {
+      it('GET', async (): Promise<void> => {
+        const request = {
+          method: 'GET',
+          url: '/metrics'
+        }
+
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+      })
     })
   })
 })
