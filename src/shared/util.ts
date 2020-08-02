@@ -33,7 +33,7 @@ import * as types from '../interface/types'
  * @description Gets the error stack, or uses util.inspect to inspect the error
  * @param {*} err - An error object
  */
-function getStackOrInspect(err: Error): string {
+function getStackOrInspect (err: Error): string {
   return err.stack || util.inspect(err)
 }
 
@@ -45,7 +45,7 @@ function getStackOrInspect(err: Error): string {
  * @param {string} transactionAction
  * @returns {Object}
  */
-function getSpanTags(request: Hapi.Request, transactionType: string, transactionAction: string): object {
+function getSpanTags (request: Hapi.Request, transactionType: string, transactionAction: string): object {
   const headers: Hapi.Util.Dictionary<string> = request.headers
   const payload = request.payload as types.TThirdPartyTransactionRequest
   const params: Hapi.Util.Dictionary<string> = request.params
