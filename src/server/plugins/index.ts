@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -25,32 +25,52 @@
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Blip from 'blipp'
-import { Server } from '@hapi/hapi'
+import { Server, ServerRoute } from '@hapi/hapi'
 
 import ErrorHandling from '@mojaloop/central-services-error-handling'
-import Shared from '@mojaloop/central-services-shared'
+import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
-import Swagger from './swagger'
 import OpenAPI from './openAPI'
 
-const plugins = [
-  Swagger,
-  Good,
-  OpenAPI,
-  Inert,
-  Vision,
-  Blip,
-  ErrorHandling,
-  Shared.Util.Hapi.HapiEventPlugin,
-  Shared.Util.Hapi.FSPIOPHeaderValidation
-]
-
 async function register (server: Server): Promise<Server> {
+  const openapiBackend = await OpenAPI.initialize()
+  const plugins = [
+    Util.Hapi.OpenapiBackendValidator,
+    Good,
+    openapiBackend,
+    Inert,
+    Vision,
+    Blip,
+    ErrorHandling,
+    Util.Hapi.HapiEventPlugin,
+    Util.Hapi.FSPIOPHeaderValidation
+  ]
+
   await server.register(plugins)
+
+  // use as a catch-all handler
+  server.route({
+    method: ['GET', 'POST', 'PUT', 'DELETE'],
+    path: '/{path*}',
+    handler: (req, h): ServerRoute =>
+      openapiBackend.options.openapi.handleRequest(
+        {
+          method: req.method,
+          path: req.path,
+          body: req.payload,
+          query: req.query,
+          headers: req.headers
+        },
+        req,
+        h
+      )
+  // TODO: follow instructions
+  // https://github.com/anttiviljami/openapi-backend/blob/master/DOCS.md#postresponsehandler-handler
+  })
+
   return server
 }
 
 export default {
-  register,
-  plugins
+  register
 }

@@ -25,9 +25,18 @@
 
 import { Server } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
+import { Util } from '@mojaloop/central-services-shared'
+import Metrics from '@mojaloop/central-services-metrics'
+import Config from '../shared/config'
+
+function initializeInstrumentation (): boolean {
+  return (!Config.INSTRUMENTATION.METRICS.DISABLED) ? Metrics.setup(Config.INSTRUMENTATION.METRICS.config) : false
+}
 
 export default async function start (server: Server): Promise<Server> {
   await server.start()
   Logger.info(`thirdparty-api-adapter is running @ ${server.info.uri}`)
+  await Util.Endpoints.initializeCache(Config.ENDPOINT_CACHE_CONFIG)
+  initializeInstrumentation()
   return server
 }

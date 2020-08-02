@@ -27,6 +27,59 @@ import index from '../../src/index'
 import Config from '../../src/shared/config'
 import { Server } from '@hapi/hapi'
 
+import { Transactions } from '../../src/domain/thirdpartyRequests'
+import Logger from '@mojaloop/central-services-logger'
+
+const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mock_loggerPush = jest.spyOn(Logger, 'push')
+const mock_loggerError = jest.spyOn(Logger, 'error')
+
+const trxnRequest = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA',
+    accept: 'application/json',
+    date: (new Date()).toISOString(),
+  },
+  params: {},
+  payload: {
+    transactionRequestId: '7d34f91d-d078-4077-8263-2c047876fcf6',
+    sourceAccountId: 'dfspa.alice.1234',
+    consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+    payee: {
+      partyIdInfo: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '+44 1234 5678',
+        fspId: 'dfspb'
+      }
+    },
+    payer: {
+      personalInfo: {
+        complexName: {
+          firstName: 'Alice',
+          lastName: 'K'
+        }
+      },
+      partyIdInfo: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '+44 8765 4321',
+        fspId: 'dfspa'
+      }
+    },
+    amountType: 'SEND',
+    amount: {
+      amount: '100',
+      currency: 'USD'
+    },
+    transactionType: {
+      scenario: 'TRANSFER',
+      initiator: 'PAYER',
+      initiatorType: 'CONSUMER'
+    },
+    expiration: '2020-07-15T22:17:28.985-01:00'
+  },
+}
+
 describe('index', (): void => {
   it('should have proper layout', (): void => {
     expect(typeof index.server).toBeDefined()
@@ -46,54 +99,108 @@ describe('index', (): void => {
       server.stop()
     })
 
-    it('/health', async (): Promise<void> => {
-      interface HealthResponse {
-        status: string;
-        uptime: number;
-        startTime: string;
-        versionNumber: string;
-      }
+    describe('/thirdpartyRequests/transactions', () => {
 
-      const request = {
-        method: 'GET',
-        url: '/health'
-      }
+      beforeAll((): void => {
+        mock_loggerPush.mockReturnValue(null)
+        mock_loggerError.mockReturnValue(null)
+      })
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
 
-      const result = response.result as HealthResponse
-      expect(result.status).toEqual('OK')
-      expect(result.uptime).toBeGreaterThan(1.0)
+      it('POST', async (): Promise<void> => {
+        mock_forwardTransactionRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions',
+          headers: trxnRequest.headers,
+          payload: trxnRequest.payload
+        }
+
+        const expected: Array<any> = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mock_forwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequest.payload, { 'transactionRequestId': undefined })
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions',
+          headers: trxnRequest.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'transactionRequestId\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mock_forwardTransactionRequest).not.toHaveBeenCalled()
+      })
     })
 
-    it('/hello', async (): Promise<void> => {
-      interface HelloResponse {
-        hello: string;
-      }
+    describe('/health', () => {
+      it('GET', async (): Promise<void> => {
+        interface HealthResponse {
+          status: string;
+          uptime: number;
+          startTime: string;
+          versionNumber: string;
+        }
 
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
+        const request = {
+          method: 'GET',
+          url: '/health'
+        }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeDefined()
 
-      const result = response.result as HelloResponse
-      expect(result.hello).toEqual('world')
+        const result = response.result as HealthResponse
+        expect(result.status).toEqual('OK')
+        expect(result.uptime).toBeGreaterThan(1.0)
+      })
     })
+    describe('/hello', () => {
+      it('GET', async (): Promise<void> => {
+        interface HelloResponse {
+          hello: string;
+        }
 
-    it('/metrics', async (): Promise<void> => {
-      const request = {
-        method: 'GET',
-        url: '/metrics'
-      }
+        const request = {
+          method: 'GET',
+          url: '/hello'
+        }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeDefined()
+
+        const result = response.result as HelloResponse
+        expect(result.hello).toEqual('world')
+      })
+    })
+    describe('/metrics', () => {
+      it('GET', async (): Promise<void> => {
+        const request = {
+          method: 'GET',
+          url: '/metrics'
+        }
+
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+      })
     })
   })
 })

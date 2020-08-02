@@ -24,9 +24,14 @@
  ******/
 
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { findHello } from '../../model/hello'
+import { findHello } from '~/model/hello'
 
-export async function get (_: Request, h: ResponseToolkit): Promise<ResponseObject> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function get(_context: any, _request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const hello = await findHello()
   return h.response(hello).code(200)
+}
+
+export default {
+  get
 }
