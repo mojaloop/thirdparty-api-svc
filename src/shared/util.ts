@@ -28,6 +28,9 @@ import Hapi from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as types from '../interface/types'
+import Config from '../shared/config'
+import Metrics from '@mojaloop/central-services-metrics'
+
 /**
  * @function getStackOrInspect
  * @description Gets the error stack, or uses util.inspect to inspect the error
@@ -53,7 +56,7 @@ function getSpanTags (request: Hapi.Request, transactionType: string, transactio
   const tags: any = {
     transactionType,
     transactionAction,
-    transactionId: (payload && payload.transactionRequestId) || (params && params.ID) || (headers && headers.ID) || undefined
+    transactionId: (payload && payload.transactionRequestId) || (params && params.ID) || undefined
   }
   if (headers && headers[Enum.Http.Headers.FSPIOP.SOURCE]) {
     tags.source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -64,7 +67,20 @@ function getSpanTags (request: Hapi.Request, transactionType: string, transactio
   return tags
 }
 
+/**
+ * @function initializeInstrumentation
+ * @description initializes instrumentation based on configuration.
+ * @returns {void}
+ */
+
+function initializeInstrumentation (): void {
+  if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
+    Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
+  }
+}
+
 export {
   getStackOrInspect,
-  getSpanTags
+  getSpanTags,
+  initializeInstrumentation
 }

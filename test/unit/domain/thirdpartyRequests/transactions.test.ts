@@ -80,6 +80,33 @@ const request = {
   },
 
 }
+/**
+ * Mock Span
+ */
+class Span {
+  isFinished: boolean
+  constructor() {
+    this.isFinished = false
+  }
+
+  getChild() {
+    return new Span()
+  }
+
+  audit() {
+    return jest.fn()
+  }
+
+
+  error() {
+    return jest.fn()
+  }
+
+  finish() {
+    return jest.fn()
+  }
+}
+let MockSpan = new Span()
 
 // @ts-ignore
 const h: ResponseToolkit = {
@@ -105,7 +132,7 @@ const sendRequestExpected: Array<any> = [
   Enum.Http.RestMethods.POST,
   request.payload,
   Enum.Http.ResponseTypes.JSON,
-  undefined
+  { "isFinished": false }
 ]
 const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -119,7 +146,7 @@ const sendRequestErrExpected: Array<any> = [
   Enum.Http.RestMethods.PUT,
   expect.any(Object),
   Enum.Http.ResponseTypes.JSON,
-  undefined
+  { "isFinished": false }
 ]
 
 describe('domain /thirdpartyRequests/transactions', () => {
@@ -132,13 +159,14 @@ describe('domain /thirdpartyRequests/transactions', () => {
     beforeEach((): void => {
       jest.clearAllTimers()
       jest.clearAllMocks()
+      MockSpan = new Span()
     })
 
     it('forwards POST /thirdpartyRequests/transactions request', async (): Promise<void> => {
 
       mock_getEndpoint.mockResolvedValue('http://dfspa-sdk')
       mock_sendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
-      await Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, request.params, request.payload)
+      await Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, request.params, request.payload, MockSpan)
 
       expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mock_sendRequest).toHaveBeenCalledWith(...sendRequestExpected)
@@ -165,12 +193,14 @@ describe('domain /thirdpartyRequests/transactions', () => {
     })
 
     it('if destination endpoint is not found, send error response to the source', async (): Promise<void> => {
-      mock_getEndpoint.mockResolvedValueOnce("").mockResolvedValueOnce('http://pispa-sdk')
+      mock_getEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
+      mock_getEndpoint.mockImplementationOnce((): any => {
+        throw ErrorHandler.CreateFSPIOPError(ErrorHandler.Enums.FSPIOPErrorCodes.DESTINATION_COMMUNICATION_ERROR,
+          'Endpoint not found', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
+      }).mockResolvedValue('http://pispa-sdk')
       mock_sendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      const errorMsg = 'No THIRDPARTY_CALLBACK_URL_TRX_REQ_POST endpoint found for transactionRequest ' + request.payload.transactionRequestId + ' for ' + request.headers['fspiop-destination']
-
-      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)).rejects.toThrowError(new RegExp(errorMsg))
+      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found'))
 
       expect(mock_getEndpoint).toHaveBeenCalledTimes(2)
       expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
@@ -178,6 +208,17 @@ describe('domain /thirdpartyRequests/transactions', () => {
       expect(mock_sendRequest).toHaveBeenLastCalledWith(...sendRequestErrExpected)
     })
 
+    it('if destination endpoint is not found for both source and destiantion', async (): Promise<void> => {
+      mock_getEndpoint.mockRejectedValue(new Error('Endpoint not found for both source and destiantion'))
+      mock_sendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+
+      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found for both source and destiantion'))
+
+      expect(mock_getEndpoint).toHaveBeenCalledTimes(2)
+      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mock_sendRequest).not.toHaveBeenCalled()
+    })
+    
     it('if sendRequest fails, forward error response to the source', async (): Promise<void> => {
       mock_getEndpoint.mockResolvedValueOnce('http://dfspa-sdk').mockResolvedValue('http://pispa-sdk')
       mock_sendRequest.mockImplementationOnce((): any => {
@@ -185,7 +226,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
           'Failed to send HTTP request to host', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
       }).mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)).rejects.toThrowError(new RegExp('Failed to send HTTP request to host'))
+      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Failed to send HTTP request to host'))
 
       expect(mock_sendRequest).toHaveBeenCalledTimes(2)
       expect(mock_sendRequest).toHaveBeenLastCalledWith(...sendRequestErrExpected)
@@ -197,7 +238,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
         throw ErrorHandler.CreateFSPIOPError(ErrorHandler.Enums.FSPIOPErrorCodes.DESTINATION_COMMUNICATION_ERROR, 'Failed to send HTTP request to host', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
       })
 
-      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)).rejects.toThrowError(new RegExp('Failed to send HTTP request to host'))
+      await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Failed to send HTTP request to host'))
     })
   })
 })

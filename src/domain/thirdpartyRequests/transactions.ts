@@ -26,7 +26,7 @@
 
 import Hapi from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import { CreateFSPIOPError, Enums, Factory, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import { Factory, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum, Util } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
@@ -65,14 +65,6 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
       endpointType)
     Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest
      ${transactionRequestId} to: ${inspect(endpoint)}`)
-    if (!endpoint) {
-      // we didnt get an endpoint for the payee dfsp! make an error callback to the initiator
-      throw CreateFSPIOPError(
-        Enums.FSPIOPErrorCodes.DESTINATION_FSP_ERROR,
-        `No ${endpointType} endpoint found for transactionRequest ${transactionRequestId} for ${fspiopDest}`,
-        method.toUpperCase() !== Enum.Http.RestMethods.GET ? payload : undefined,
-        fspiopSource)
-    }
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
     Logger.info(`Forwarding transaction request to endpoint: ${fullUrl}`)
 
@@ -104,7 +96,7 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,
-      fspiopError?.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError!.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan)
     throw fspiopError
   } finally {
@@ -143,16 +135,9 @@ async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary
       Config.SWITCH_ENDPOINT,
       fspiopDestination,
       endpointType)
-    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
+      Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
       ${transactionRequestId} to: ${inspect(endpoint)}`)
-    if (!endpoint) {
-      // we didnt get an endpoint to make an error callback to the initiator
-      throw CreateFSPIOPError(
-        Enums.FSPIOPErrorCodes.DESTINATION_FSP_ERROR,
-        `No ${endpointType} endpoint found for transactionRequest ${transactionRequestId} for ${fspiopDestination}`,
-        payload,
-        fspiopSource)
-    }
+
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
     Logger.info(`Forwarding transaction request error to endpoint: ${fullUrl}`)
 

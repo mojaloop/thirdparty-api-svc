@@ -24,7 +24,8 @@
  ******/
 'use strict'
 
-import { getStackOrInspect, getSpanTags } from '../../../src/shared/util'
+import { getStackOrInspect, getSpanTags, initializeInstrumentation } from '../../../src/shared/util'
+import Metrics from '@mojaloop/central-services-metrics'
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -32,6 +33,12 @@ const headers = {
 }
 
 describe('util', () => {
+  describe('initializeInstrumentation', () => {
+    it('metrics', () => {
+      jest.spyOn(Metrics, 'setup').mockImplementation(() => true);
+      expect(initializeInstrumentation()).toBeNull
+    })
+  })
   describe('getStackOrInspect', () => {
     it('handles an error without a stack', () => {
       const input = new Error('This is a normal error')
@@ -43,6 +50,22 @@ describe('util', () => {
   })
   describe('getSpanTags', () => {
     it('create correct span tags', () => {
+      const request: any = {
+        headers: headers,
+        params: {},
+        payload: { transactionRequestId: '1234' }
+      }
+      const expected = {
+        source: 'pispA',
+        destination: 'dfspA',
+        transactionType: 'transaction-request',
+        transactionAction: 'POST',
+        transactionId: '1234'
+      }
+      const output = getSpanTags(request, 'transaction-request', 'POST')
+      expect(output).toStrictEqual(expected)
+    })
+    it('create correct span tags when params set', () => {
       const request: any = {
         headers: headers,
         params: { ID: '1234' },
