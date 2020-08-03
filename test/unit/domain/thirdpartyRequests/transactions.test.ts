@@ -28,6 +28,7 @@ import { Transactions } from '../../../../src/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'
+import * as types from '../../../../src/interface/types'
 
 const mock_getEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mock_sendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -65,7 +66,7 @@ const request = {
         fspId: 'dfspA'
       }
     },
-    amountType: 'SEND',
+    amountType: types.TAmountType.SEND,
     amount: {
       amount: '100',
       currency: 'USD'
@@ -167,7 +168,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
       mock_getEndpoint.mockResolvedValueOnce("").mockResolvedValueOnce('http://pispa-sdk')
       mock_sendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      const errorMsg = 'No THIRDPARTY_CALLBACK_URL_TRX_REQ_POST endpoint found for transactionRequest ' + request.payload.transactionRequestId + ' for ' + request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+      const errorMsg = 'No THIRDPARTY_CALLBACK_URL_TRX_REQ_POST endpoint found for transactionRequest ' + request.payload.transactionRequestId + ' for ' + request.headers['fspiop-destination']
 
       await expect(Transactions.forwardTransactionRequest(api_path, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)).rejects.toThrowError(new RegExp(errorMsg))
 
