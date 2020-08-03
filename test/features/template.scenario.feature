@@ -9,3 +9,8 @@ Scenario: Hello
   Given thirdparty-api-adapter server
   When I get 'Hello' response
   Then I see 'Hello world'
+
+Scenario: CreateThirdpartyTransactionRequests
+  Given thirdparty-api-adapter server
+  When I get 'CreateThirdpartyTransactionRequests' response
+  Then The status code should be '202'

@@ -27,55 +27,14 @@ import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 import Logger from '@mojaloop/central-services-logger'
 import Handler from '../../../../../src/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '../../../../../src/domain/thirdpartyRequests'
+import MockData from '../../../../unit/data/mockData.json'
 
 const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mock_loggerPush = jest.spyOn(Logger, 'push')
 const mock_loggerError = jest.spyOn(Logger, 'error')
+const mock_data = JSON.parse(JSON.stringify(MockData))
 // @ts-ignore
-const request: Request = {
-  headers: {
-    'fspiop-source': 'pispA',
-    'fspiop-destination': 'dfspA'
-  },
-  params: {},
-  payload: {
-    transactionRequestId: '7d34f91d-d078-4077-8263-2c047876fcf6',
-    sourceAccountId: 'dfspa.alice.1234',
-    consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-    payee: {
-      partyIdInfo: {
-        partyIdType: 'MSISDN',
-        partyIdentifier: '+44 1234 5678',
-        fspId: 'dfspb'
-      }
-    },
-    payer: {
-      personalInfo: {
-        complexName: {
-          firstName: 'Alice',
-          lastName: 'K'
-        }
-      },
-      partyIdInfo: {
-        partyIdType: 'MSISDN',
-        partyIdentifier: '+44 8765 4321',
-        fspId: 'dfspa'
-      }
-    },
-    amountType: 'SEND',
-    amount: {
-      amount: '100',
-      currency: 'USD'
-    },
-    transactionType: {
-      scenario: 'TRANSFER',
-      initiator: 'PAYER',
-      initiatorType: 'CONSUMER'
-    },
-    expiration: '2020-07-15T22:17:28.985-01:00'
-  },
-
-}
+const request: Request = mock_data.transactionRequest
 
 // @ts-ignore
 const h: ResponseToolkit = {

@@ -26,6 +26,7 @@
 
 import { getStackOrInspect, getSpanTags, initializeInstrumentation } from '../../../src/shared/util'
 import Metrics from '@mojaloop/central-services-metrics'
+import * as types from '../../../src/interface/types'
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -98,5 +99,13 @@ describe('util', () => {
       const output = getSpanTags(request, transactionType, transactionAction)
       expect(output).toStrictEqual(expected)
     })
+  })
+})
+
+describe('types', () => {
+  it('common types', () => {
+    types.TAmountType.RECEIVE
+    expect(types.TAmountType.RECEIVE).toEqual("RECEIVE")
+    expect(types.TAmountType.SEND).toEqual("SEND")
   })
 })

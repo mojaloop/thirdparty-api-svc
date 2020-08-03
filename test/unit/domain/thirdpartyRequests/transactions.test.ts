@@ -28,58 +28,17 @@ import { Transactions } from '../../../../src/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'
-import * as types from '../../../../src/interface/types'
+import MockData from '../../../unit/data/mockData.json'
 
 const mock_getEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mock_sendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mock_loggerPush = jest.spyOn(Logger, 'push')
 const mock_loggerError = jest.spyOn(Logger, 'error')
 const api_path = '/thirdpartyRequests/transactions'
+const mock_data = JSON.parse(JSON.stringify(MockData))
+// @ts-ignore
+let request = mock_data.transactionRequest
 
-const request = {
-  headers: {
-    'fspiop-source': 'pispA',
-    'fspiop-destination': 'dfspA'
-  },
-  params: {},
-  payload: {
-    transactionRequestId: '7d34f91d-d078-4077-8263-2c047876fcf6',
-    sourceAccountId: 'dfspa.alice.1234',
-    consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-    payee: {
-      partyIdInfo: {
-        partyIdType: 'MSISDN',
-        partyIdentifier: '+44 1234 5678',
-        fspId: 'dfspB'
-      }
-    },
-    payer: {
-      personalInfo: {
-        complexName: {
-          firstName: 'Alice',
-          lastName: 'K'
-        }
-      },
-      partyIdInfo: {
-        partyIdType: 'MSISDN',
-        partyIdentifier: '+44 8765 4321',
-        fspId: 'dfspA'
-      }
-    },
-    amountType: types.TAmountType.SEND,
-    amount: {
-      amount: '100',
-      currency: 'USD'
-    },
-    transactionType: {
-      scenario: 'TRANSFER',
-      initiator: 'PAYER',
-      initiatorType: 'CONSUMER'
-    },
-    expiration: '2020-07-15T22:17:28.985-01:00'
-  },
-
-}
 /**
  * Mock Span
  */
@@ -88,20 +47,15 @@ class Span {
   constructor() {
     this.isFinished = false
   }
-
   getChild() {
     return new Span()
   }
-
   audit() {
     return jest.fn()
   }
-
-
   error() {
     return jest.fn()
   }
-
   finish() {
     return jest.fn()
   }
@@ -157,7 +111,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
     })
 
     beforeEach((): void => {
-      jest.clearAllTimers()
+      mock_data.transactionRequest
       jest.clearAllMocks()
       MockSpan = new Span()
     })
@@ -218,7 +172,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
       expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mock_sendRequest).not.toHaveBeenCalled()
     })
-    
+
     it('if sendRequest fails, forward error response to the source', async (): Promise<void> => {
       mock_getEndpoint.mockResolvedValueOnce('http://dfspa-sdk').mockResolvedValue('http://pispa-sdk')
       mock_sendRequest.mockImplementationOnce((): any => {
