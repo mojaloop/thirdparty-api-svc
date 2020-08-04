@@ -23,11 +23,11 @@
  --------------
  ******/
 
-import index from '../../src/index'
-import Config from '../../src/shared/config'
+import index from '~/index'
+import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
-import { Transactions } from '../../src/domain/thirdpartyRequests'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import MockData from '../unit/data/mockData.json'
 

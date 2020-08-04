@@ -1,10 +1,10 @@
 import path from 'path'
 import { loadFeature, defineFeature } from 'jest-cucumber'
 import { Server, ServerInjectResponse } from '@hapi/hapi'
-import Config from '../../src/shared/config'
+import Config from '~/shared/config'
 
-import ThirdPartyAPIAdapterService from '../../src/server'
-import { Transactions } from '../../src/domain/thirdpartyRequests'
+import ThirdPartyAPIAdapterService from '~/server'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import MockData from '../unit/data/mockData.json';
 
 const featurePath = path.join(__dirname, '../features/template.scenario.feature')

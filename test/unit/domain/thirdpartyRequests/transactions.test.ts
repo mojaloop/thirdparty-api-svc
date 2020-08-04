@@ -24,7 +24,7 @@
  ******/
 
 import { ResponseObject, ResponseToolkit } from "@hapi/hapi"
-import { Transactions } from '../../../../src/domain/thirdpartyRequests'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'

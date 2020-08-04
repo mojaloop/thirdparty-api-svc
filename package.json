@@ -10,7 +10,7 @@
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit",
     "audit:check": "SHELL=sh check-audit",
-    "build": "tsc",
+    "build": "tsc -p ./tsconfig.build.json",
     "build:openapi": "swagger-cli bundle -o ./src/interface/api.yaml -t yaml ./src/interface/api-template.yaml && swagger-cli validate ./src/interface/api.yaml",
     "docker:build": "docker build -t thirdparty-api-adapter:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 3008:3008 thirdparty-api-adapter:local",

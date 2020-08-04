@@ -25,8 +25,8 @@
 'use strict'
 import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 import Logger from '@mojaloop/central-services-logger'
-import Handler from '../../../../../src/server/handlers/thirdpartyRequests/transactions'
-import { Transactions } from '../../../../../src/domain/thirdpartyRequests'
+import Handler from '~/server/handlers/thirdpartyRequests/transactions'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import MockData from '../../../../unit/data/mockData.json'
 
 const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
