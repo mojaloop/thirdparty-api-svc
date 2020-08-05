@@ -23,7 +23,6 @@
  --------------
  ******/
 
-import { ResponseObject, ResponseToolkit } from "@hapi/hapi"
 import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
@@ -60,17 +59,6 @@ class Span {
   }
 }
 let MockSpan = new Span()
-
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 const getEndpointExpected: Array<any> = [
   'http://central-ledger.local:3001',
