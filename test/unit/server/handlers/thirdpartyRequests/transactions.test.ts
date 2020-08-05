@@ -23,7 +23,7 @@
  --------------
  ******/
 'use strict'
-import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
+import { ResponseObject, ResponseToolkit, Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
@@ -46,8 +46,8 @@ const h: ResponseToolkit = {
   }
 }
 
-describe('transactions handler', () => {
-  describe('POST /thirdpartyRequests/transactions', () => {
+describe('transactions handler', (): void => {
+  describe('POST /thirdpartyRequests/transactions', (): void => {
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
@@ -60,7 +60,7 @@ describe('transactions handler', () => {
     it('handles a successful request', async (): Promise<void> => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
 
-      const expected: Array<any> = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload]
+      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload]
       const response = await Handler.post(null, request, h as ResponseToolkit)
       expect(response).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
@@ -69,7 +69,7 @@ describe('transactions handler', () => {
 
     it('handles errors', async (): Promise<void> => {
       const err = new Error('Transactions forward Error')
-      mockForwardTransactionRequest.mockImplementation((): any => { throw err })
+      mockForwardTransactionRequest.mockImplementation(() => { throw err })
       await expect(Handler.post(null, request, h as ResponseToolkit)).rejects.toThrowError(new RegExp('Transactions forward Error'))
     })
   })

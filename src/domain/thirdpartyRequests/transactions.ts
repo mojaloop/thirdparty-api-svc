@@ -47,7 +47,7 @@ import * as types from '~/interface/types'
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictionary<string>, method: string, params: Hapi.Util.Dictionary<string>, payload?: types.TThirdPartyTransactionRequest, span?: any): Promise<void> {
+async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictionary<string>, method: string, params: Hapi.Util.Dictionary<string>, payload?: types.ThirdPartyTransactionRequest, span?: any): Promise<void> {
 
   const childSpan = span ? span.getChild('forwardTransactionRequest') : undefined
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -123,7 +123,7 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
  * error or if there are network errors or if there is a bad response.
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary<string>, path: string, method: string, transactionRequestId: string, payload: types.TErrorInformation, span?: any): Promise<void> {
+async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary<string>, path: string, method: string, transactionRequestId: string, payload: types.ErrorInformation, span?: any): Promise<void> {
 
   const childSpan = span ? span.getChild('forwardTransactionRequestError') : undefined
   const fspiopSource: string = errorHeaders[Enum.Http.Headers.FSPIOP.SOURCE]

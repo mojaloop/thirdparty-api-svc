@@ -46,4 +46,3 @@ defineFeature(feature, (test): void => {
     })
   })
 })
-

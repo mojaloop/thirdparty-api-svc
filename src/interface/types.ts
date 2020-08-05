@@ -27,7 +27,7 @@
 /**
  * This is used for personal information
  */
-export interface TPersonalInfo {
+export interface PersonalInfo {
   complexName?: {
     firstName?: string;
     middleName?: string;
@@ -35,36 +35,36 @@ export interface TPersonalInfo {
   };
   dateOfBirth?: string;
 }
-export interface TPartyIdInfo {
+export interface PartyIdInfo {
   partyIdType: string;
   partyIdentifier: string;
   partySubIdOrType?: string;
   fspId?: string;
 }
-export enum TAmountType {
+export enum AmountType {
   SEND = 'SEND',
   RECEIVE = 'RECEIVE',
 }
 /**
 * common interface used for payee and payer
 */
-export interface TParty {
-  partyIdInfo: TPartyIdInfo;
+export interface Party {
+  partyIdInfo: PartyIdInfo;
   merchantClassificationCode?: string;
   name?: string;
-  personalInfo?: TPersonalInfo;
+  personalInfo?: PersonalInfo;
 }
 /**
 * This is used for amount feilds
 */
-export interface TMoney {
+export interface Money {
   currency: string;
   amount: string;
 }
 /**
 * This interface used for transaction information
 */
-export interface TTransactionType {
+export interface TransactionType {
   scenario: string;
   subScenario?: string;
   initiator: string;
@@ -78,21 +78,21 @@ export interface TTransactionType {
 /**
 * This interface used for transaction requests
 */
-export interface TThirdPartyTransactionRequest {
+export interface ThirdPartyTransactionRequest {
   transactionRequestId: string;
   sourceAccountId: string;
   consentId: string;
-  payee: TParty;
-  payer: TParty;
-  amountType: TAmountType;
-  amount: TMoney;
-  transactionType: TTransactionType;
+  payee: Party;
+  payer: Party;
+  amountType: AmountType;
+  amount: Money;
+  transactionType: TransactionType;
   expiration: string;
 }
 /**
 * This interface used for common errors
 */
-export interface TErrorInformation {
+export interface ErrorInformation {
   errorCode?: string;
   errorDescription?: string;
   extensionList?: {

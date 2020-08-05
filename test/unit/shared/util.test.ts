@@ -24,6 +24,7 @@
  ******/
 'use strict'
 
+import { Request } from '@hapi/hapi'
 import { getStackOrInspect, getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
 
@@ -32,9 +33,9 @@ const headers = {
   'fspiop-destination': 'dfspA'
 }
 
-describe('util', () => {
-  describe('getStackOrInspect', () => {
-    it('handles an error without a stack', () => {
+describe('util', (): void => {
+  describe('getStackOrInspect', (): void => {
+    it('handles an error without a stack', (): void => {
       const input = new Error('This is a normal error')
       delete input.stack
       const expected = '[Error: This is a normal error]'
@@ -42,9 +43,10 @@ describe('util', () => {
       expect(output).toBe(expected)
     })
   })
-  describe('getSpanTags', () => {
-    it('create correct span tags', () => {
-      const request: any = {
+  describe('getSpanTags', (): void => {
+    it('create correct span tags', (): void => {
+      // @ts-ignore
+      const request: Request = {
         headers: headers,
         params: {},
         payload: { transactionRequestId: '1234' }
@@ -57,21 +59,22 @@ describe('util', () => {
         transactionId: '1234',
         transactionId2: 'transactionId2'
       }
-      const output = getSpanTags(request, 'transaction-request', 'POST', { transactionId: request.payload.transactionRequestId, transactionId2: 'transactionId2' })
+      const output = getSpanTags(request, 'transaction-request', 'POST', { transactionId: '1234', transactionId2: 'transactionId2' })
       expect(output).toStrictEqual(expected)
     })
 
-    it('create correct span tags when headers and customTags are not set', () => {
-      const request: any = {
-        headers: null,
+    it('create correct span tags when headers and customTags are not set', (): void => {
+      // @ts-ignore
+      const request: Request = {
+        headers: {},
         params: {},
-        payload: null
+        payload: {}
       }
       const eventType = 'transaction-request'
       const eventAction = 'POST'
       const expected = {
-        source: null,
-        destination: null,
+        source: undefined,
+        destination: undefined,
         eventType,
         eventAction
       }
@@ -81,10 +84,9 @@ describe('util', () => {
   })
 })
 
-describe('types', () => {
-  it('common types', () => {
-    types.TAmountType.RECEIVE
-    expect(types.TAmountType.RECEIVE).toEqual("RECEIVE")
-    expect(types.TAmountType.SEND).toEqual("SEND")
+describe('types', (): void => {
+  it('common types', (): void => {
+    expect(types.AmountType.RECEIVE).toEqual('RECEIVE')
+    expect(types.AmountType.SEND).toEqual('SEND')
   })
 })

@@ -54,7 +54,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
 
   try {
-    const payload = request.payload as types.TThirdPartyTransactionRequest
+    const payload = request.payload as types.ThirdPartyTransactionRequest
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
@@ -73,7 +73,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       request.headers,
       Enum.Http.RestMethods.POST,
       request.params,
-      request.payload as types.TThirdPartyTransactionRequest)
+      request.payload as types.ThirdPartyTransactionRequest)
 
     histTimerEnd({ success: 'true' })
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)

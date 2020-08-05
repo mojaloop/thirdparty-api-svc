@@ -35,37 +35,41 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const apiPath = '/thirdpartyRequests/transactions'
 const MockData = JSON.parse(JSON.stringify(TestData))
-let request = MockData.transactionRequest
+const request = MockData.transactionRequest
 
 /**
  * Mock Span
  */
 class Span {
-  isFinished: boolean
-  constructor() {
+  public isFinished: boolean
+  public constructor () {
     this.isFinished = false
   }
-  getChild() {
+
+  public getChild () {
     return new Span()
   }
-  audit() {
+
+  public audit () {
     return jest.fn()
   }
-  error() {
+
+  public error () {
     return jest.fn()
   }
-  finish() {
+
+  public finish () {
     return jest.fn()
   }
 }
 let MockSpan = new Span()
 
-const getEndpointExpected: Array<any> = [
+const getEndpointExpected = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
 ]
-const sendRequestExpected: Array<any> = [
+const sendRequestExpected = [
   'http://dfspa-sdk/thirdpartyRequests/transactions',
   request.headers,
   request.headers['fspiop-source'],
@@ -73,13 +77,13 @@ const sendRequestExpected: Array<any> = [
   Enum.Http.RestMethods.POST,
   request.payload,
   Enum.Http.ResponseTypes.JSON,
-  { "isFinished": false }
+  { isFinished: false }
 ]
 const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
   'fspiop-destination': request.headers['fspiop-source']
 }
-const sendRequestErrExpected: Array<any> = [
+const sendRequestErrExpected = [
   'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
   expectedErrorHeaders,
   expectedErrorHeaders['fspiop-source'],
@@ -87,24 +91,22 @@ const sendRequestErrExpected: Array<any> = [
   Enum.Http.RestMethods.PUT,
   expect.any(Object),
   Enum.Http.ResponseTypes.JSON,
-  { "isFinished": false }
+  { isFinished: false }
 ]
 
-describe('domain /thirdpartyRequests/transactions', () => {
-  describe('forwardTransactionRequests', () => {
+describe('domain /thirdpartyRequests/transactions', (): void => {
+  describe('forwardTransactionRequests', (): void => {
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
     })
 
     beforeEach((): void => {
-      MockData.transactionRequest
       jest.clearAllMocks()
       MockSpan = new Span()
     })
 
     it('forwards POST /thirdpartyRequests/transactions request', async (): Promise<void> => {
-
       mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, request.params, request.payload, MockSpan)
@@ -114,18 +116,17 @@ describe('domain /thirdpartyRequests/transactions', () => {
     })
 
     it('handles POST /thirdpartyRequests/transactions when payload is undefined', async (): Promise<void> => {
-
       mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, { ID: '12345' }, undefined)
 
-      const sendReqParamsExpected: Array<any> = [
+      const sendReqParamsExpected = [
         'http://dfspa-sdk/thirdpartyRequests/transactions',
         request.headers,
         request.headers['fspiop-source'],
         request.headers['fspiop-destination'],
         Enum.Http.RestMethods.POST,
-        { "transactionRequestId": "12345" },
+        { transactionRequestId: '12345' },
         Enum.Http.ResponseTypes.JSON,
         undefined
       ]
@@ -135,7 +136,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
 
     it('if destination endpoint is not found, send error response to the source', async (): Promise<void> => {
       mockGetEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
-      mockGetEndpoint.mockImplementationOnce((): any => {
+      mockGetEndpoint.mockImplementationOnce(() => {
         throw ErrorHandler.CreateFSPIOPError(ErrorHandler.Enums.FSPIOPErrorCodes.DESTINATION_COMMUNICATION_ERROR,
           'Endpoint not found', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
       }).mockResolvedValue('http://pispa-sdk')
@@ -162,7 +163,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
 
     it('if sendRequest fails, forward error response to the source', async (): Promise<void> => {
       mockGetEndpoint.mockResolvedValueOnce('http://dfspa-sdk').mockResolvedValue('http://pispa-sdk')
-      mockSendRequest.mockImplementationOnce((): any => {
+      mockSendRequest.mockImplementationOnce(() => {
         throw ErrorHandler.CreateFSPIOPError(ErrorHandler.Enums.FSPIOPErrorCodes.DESTINATION_COMMUNICATION_ERROR,
           'Failed to send HTTP request to host', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
       }).mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
@@ -175,7 +176,7 @@ describe('domain /thirdpartyRequests/transactions', () => {
 
     it('handles error in forwardTransactionRequestError', async (): Promise<void> => {
       mockGetEndpoint.mockResolvedValueOnce('http://dfspa-sdk').mockResolvedValue('http://pispa-sdk')
-      mockSendRequest.mockImplementation((): any => {
+      mockSendRequest.mockImplementation(() => {
         throw ErrorHandler.CreateFSPIOPError(ErrorHandler.Enums.FSPIOPErrorCodes.DESTINATION_COMMUNICATION_ERROR, 'Failed to send HTTP request to host', new Error(), request.headers['fspiop-source'], [{ key: 'cause', value: {} }])
       })
 
