@@ -28,8 +28,6 @@ import Hapi from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
 import * as types from '../interface/types'
-import Config from '../shared/config'
-import Metrics from '@mojaloop/central-services-metrics'
 
 /**
  * @function getStackOrInspect
@@ -46,17 +44,17 @@ function getStackOrInspect (err: Error): string {
  * @param {Object} param
  * @param {string} transactionType
  * @param {string} transactionAction
- * @returns {Object}
+ * @returns {TSpanTags}
  */
-function getSpanTags (request: Hapi.Request, transactionType: string, transactionAction: string): object {
+function getSpanTags (request: Hapi.Request, transactionType: string, transactionAction: string): types.TSpanTags {
   const headers: Hapi.Util.Dictionary<string> = request.headers
   const payload = request.payload as types.TThirdPartyTransactionRequest
   const params: Hapi.Util.Dictionary<string> = request.params
 
-  const tags: any = {
+  const tags: types.TSpanTags = {
     transactionType,
     transactionAction,
-    transactionId: (payload && payload.transactionRequestId) || (params && params.ID) || undefined
+    transactionId: (payload && payload.transactionRequestId) || (params && params.ID)
   }
   if (headers && headers[Enum.Http.Headers.FSPIOP.SOURCE]) {
     tags.source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -67,20 +65,7 @@ function getSpanTags (request: Hapi.Request, transactionType: string, transactio
   return tags
 }
 
-/**
- * @function initializeInstrumentation
- * @description initializes instrumentation based on configuration.
- * @returns {void}
- */
-
-function initializeInstrumentation (): void {
-  if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
-    Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
-  }
-}
-
 export {
   getStackOrInspect,
-  getSpanTags,
-  initializeInstrumentation
+  getSpanTags
 }

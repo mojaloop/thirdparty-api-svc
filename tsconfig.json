@@ -43,6 +43,9 @@
     "paths": {
       "~/*": [
         "src/*"
+      ],
+      "test/*": [
+        "test/*"
       ]
     },
     "esModuleInterop": true,

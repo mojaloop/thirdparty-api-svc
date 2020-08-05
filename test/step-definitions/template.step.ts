@@ -5,13 +5,13 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import MockData from '../unit/data/mockData.json';
+import TestData from 'test/unit/data/mockData.json'
 
 const featurePath = path.join(__dirname, '../features/template.scenario.feature')
 const feature = loadFeature(featurePath)
 
-const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mock_data = JSON.parse(JSON.stringify(MockData))
+const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
   let server: Server
@@ -51,27 +51,6 @@ defineFeature(feature, (test): void => {
     })
   })
 
-  test('Hello', ({ given, when, then }): void => {
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
-      server = await ThirdPartyAPIAdapterService.run(Config)
-      return server
-    })
-
-    when('I get \'Hello\' response', async (): Promise<ServerInjectResponse> => {
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
-      response = await server.inject(request)
-      return response
-    })
-
-    then('I see \'Hello world\'', (): void => {
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toEqual({ hello: 'world' })
-    })
-  })
-
   test('CreateThirdpartyTransactionRequests', ({ given, when, then }): void => {
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -79,29 +58,29 @@ defineFeature(feature, (test): void => {
     })
 
     when('I get \'CreateThirdpartyTransactionRequests\' response', async (): Promise<ServerInjectResponse> => {
-
-      mock_forwardTransactionRequest.mockResolvedValueOnce()
-      const reqHeaders = Object.assign(mock_data.transactionRequest.headers, {
-        'date': 'Thu, 23 Jan 2020 10:22:12 GMT',
-        'accept': 'application/json'
-      })
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      const reqHeaders = {
+        ...mockData.transactionRequest.headers,
+        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+        accept: 'application/json'
+      }
       const request = {
         method: 'POST',
         url: '/thirdpartyRequests/transactions',
         headers: reqHeaders,
-        payload: mock_data.transactionRequest.payload
+        payload: mockData.transactionRequest.payload
       }
       response = await server.inject(request)
       return response
     })
 
     then('The status code should be \'202\'', (): void => {
-
-      const expected: Array<any> = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, mock_data.transactionRequest.payload]
+      const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {},
+        mockData.transactionRequest.payload]
 
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
-      expect(mock_forwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
   })
 })

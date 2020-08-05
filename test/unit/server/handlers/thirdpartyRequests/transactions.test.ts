@@ -27,13 +27,12 @@ import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 import Logger from '@mojaloop/central-services-logger'
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import MockData from '../../../../unit/data/mockData.json'
+import MockData from 'test/unit/data/mockData.json'
 
 const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mock_loggerPush = jest.spyOn(Logger, 'push')
 const mock_loggerError = jest.spyOn(Logger, 'error')
 const mock_data = JSON.parse(JSON.stringify(MockData))
-// @ts-ignore
 const request: Request = mock_data.transactionRequest
 
 // @ts-ignore

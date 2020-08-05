@@ -64,8 +64,6 @@ async function register (server: Server): Promise<Server> {
         req,
         h
       )
-  // TODO: follow instructions
-  // https://github.com/anttiviljami/openapi-backend/blob/master/DOCS.md#postresponsehandler-handler
   })
 
   return server

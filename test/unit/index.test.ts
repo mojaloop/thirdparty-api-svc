@@ -29,14 +29,13 @@ import { Server } from '@hapi/hapi'
 
 import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
-import MockData from '../unit/data/mockData.json'
+import TestData from 'test/unit/data/mockData.json'
 
-const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mock_loggerPush = jest.spyOn(Logger, 'push')
-const mock_loggerError = jest.spyOn(Logger, 'error')
-const mock_data = JSON.parse(JSON.stringify(MockData))
-// @ts-ignore
-const trxnRequest = mock_data.transactionRequest
+const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+const mockData = JSON.parse(JSON.stringify(TestData))
+const trxnRequest = mockData.transactionRequest
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -57,11 +56,10 @@ describe('index', (): void => {
       server.stop()
     })
 
-    describe('/thirdpartyRequests/transactions', () => {
-
+    describe('/thirdpartyRequests/transactions', (): void => {
       beforeAll((): void => {
-        mock_loggerPush.mockReturnValue(null)
-        mock_loggerError.mockReturnValue(null)
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
       })
 
       beforeEach((): void => {
@@ -69,10 +67,10 @@ describe('index', (): void => {
       })
 
       it('POST', async (): Promise<void> => {
-        mock_forwardTransactionRequest.mockResolvedValueOnce()
+        mockForwardTransactionRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(trxnRequest.headers, {
-          'date': 'Thu, 23 Jan 2020 10:22:12 GMT',
-          'accept': 'application/json'
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
         })
         const request = {
           method: 'POST',
@@ -81,16 +79,16 @@ describe('index', (): void => {
           payload: trxnRequest.payload
         }
 
-        const expected: Array<any> = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
+        const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
         const response = await server.inject(request)
 
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
-        expect(mock_forwardTransactionRequest).toHaveBeenCalledWith(...expected)
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, { 'transactionRequestId': undefined })
+        const errPayload = Object.assign(trxnRequest.payload, { transactionRequestId: undefined })
         const request = {
           method: 'POST',
           url: '/thirdpartyRequests/transactions',
@@ -107,11 +105,11 @@ describe('index', (): void => {
 
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
-        expect(mock_forwardTransactionRequest).not.toHaveBeenCalled()
+        expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
       })
     })
 
-    describe('/health', () => {
+    describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
           status: string;
@@ -134,25 +132,7 @@ describe('index', (): void => {
         expect(result.uptime).toBeGreaterThan(1.0)
       })
     })
-    describe('/hello', () => {
-      it('GET', async (): Promise<void> => {
-        interface HelloResponse {
-          hello: string;
-        }
-
-        const request = {
-          method: 'GET',
-          url: '/hello'
-        }
-        const response = await server.inject(request)
-        expect(response.statusCode).toBe(200)
-        expect(response.result).toBeDefined()
-
-        const result = response.result as HelloResponse
-        expect(result.hello).toEqual('world')
-      })
-    })
-    describe('/metrics', () => {
+    describe('/metrics', (): void => {
       it('GET', async (): Promise<void> => {
         const request = {
           method: 'GET',

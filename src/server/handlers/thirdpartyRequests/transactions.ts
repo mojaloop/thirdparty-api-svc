@@ -54,7 +54,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
 
   try {
-    const tags = getSpanTags(
+    const tags:types.TSpanTags = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST)
@@ -64,6 +64,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       payload: request.payload
     }, AuditEventAction.start)
 
+    // not waiting for a promise
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_POST,
       request.headers,

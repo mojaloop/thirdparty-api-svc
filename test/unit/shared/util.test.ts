@@ -24,9 +24,8 @@
  ******/
 'use strict'
 
-import { getStackOrInspect, getSpanTags, initializeInstrumentation } from '../../../src/shared/util'
-import Metrics from '@mojaloop/central-services-metrics'
-import * as types from '../../../src/interface/types'
+import { getStackOrInspect, getSpanTags } from '~/shared/util'
+import * as types from '~/interface/types'
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -34,12 +33,6 @@ const headers = {
 }
 
 describe('util', () => {
-  describe('initializeInstrumentation', () => {
-    it('metrics', () => {
-      jest.spyOn(Metrics, 'setup').mockImplementation(() => true);
-      expect(initializeInstrumentation()).toBeNull
-    })
-  })
   describe('getStackOrInspect', () => {
     it('handles an error without a stack', () => {
       const input = new Error('This is a normal error')

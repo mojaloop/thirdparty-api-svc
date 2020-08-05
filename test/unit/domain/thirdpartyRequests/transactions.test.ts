@@ -28,7 +28,7 @@ import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'
-import MockData from '../../../unit/data/mockData.json'
+import MockData from 'test/unit/data/mockData.json'
 
 const mock_getEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mock_sendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -36,7 +36,6 @@ const mock_loggerPush = jest.spyOn(Logger, 'push')
 const mock_loggerError = jest.spyOn(Logger, 'error')
 const api_path = '/thirdpartyRequests/transactions'
 const mock_data = JSON.parse(JSON.stringify(MockData))
-// @ts-ignore
 let request = mock_data.transactionRequest
 
 /**

@@ -21,13 +21,13 @@
  * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import Config from '../../src/shared/config'
-import server from '../../src/server'
-jest.mock('../../src/server')
+import Config from '~/shared/config'
+import server from '~/server'
+jest.mock('~/server')
 
 describe('cli', (): void => {
   it('should use default port & host', async (): Promise<void> => {
-    const cli = await import('../../src/cli')
+    const cli = await import('~/cli')
     expect(cli).toBeDefined()
     expect(server.run).toHaveBeenCalledWith({
       PACKAGE: Config.PACKAGE,
@@ -40,7 +40,7 @@ describe('cli', (): void => {
       },
       ENDPOINT_CACHE_CONFIG: {
         expiresIn: 180000,
-        generateTimeout: 30000,
+        generateTimeout: 30000
       },
       SWITCH_ENDPOINT: 'http://central-ledger.local:3001',
       ERROR_HANDLING: {
