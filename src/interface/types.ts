@@ -102,13 +102,3 @@ export interface TErrorInformation {
     }];
   };
 }
-/**
-* interface for span tags
-*/
-export interface TSpanTags {
-  transactionType: string;
-  transactionAction: string;
-  transactionId: string;
-  source?: string;
-  destination?: string;
-}

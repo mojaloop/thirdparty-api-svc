@@ -27,13 +27,13 @@ import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 import Logger from '@mojaloop/central-services-logger'
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import MockData from 'test/unit/data/mockData.json'
+import TestData from 'test/unit/data/mockData.json'
 
-const mock_forwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mock_loggerPush = jest.spyOn(Logger, 'push')
-const mock_loggerError = jest.spyOn(Logger, 'error')
-const mock_data = JSON.parse(JSON.stringify(MockData))
-const request: Request = mock_data.transactionRequest
+const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+const MockData = JSON.parse(JSON.stringify(TestData))
+const request: Request = MockData.transactionRequest
 
 // @ts-ignore
 const h: ResponseToolkit = {
@@ -49,8 +49,8 @@ const h: ResponseToolkit = {
 describe('transactions handler', () => {
   describe('POST /thirdpartyRequests/transactions', () => {
     beforeAll((): void => {
-      mock_loggerPush.mockReturnValue(null)
-      mock_loggerError.mockReturnValue(null)
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
     })
 
     beforeEach((): void => {
@@ -58,18 +58,18 @@ describe('transactions handler', () => {
     })
 
     it('handles a successful request', async (): Promise<void> => {
-      mock_forwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardTransactionRequest.mockResolvedValueOnce()
 
       const expected: Array<any> = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload]
       const response = await Handler.post(null, request, h as ResponseToolkit)
       expect(response).toBe(202)
-      expect(mock_forwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mock_forwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors', async (): Promise<void> => {
       const err = new Error('Transactions forward Error')
-      mock_forwardTransactionRequest.mockImplementation((): any => { throw err })
+      mockForwardTransactionRequest.mockImplementation((): any => { throw err })
       await expect(Handler.post(null, request, h as ResponseToolkit)).rejects.toThrowError(new RegExp('Transactions forward Error'))
     })
   })

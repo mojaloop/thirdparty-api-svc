@@ -52,44 +52,30 @@ describe('util', () => {
       const expected = {
         source: 'pispA',
         destination: 'dfspA',
-        transactionType: 'transaction-request',
-        transactionAction: 'POST',
-        transactionId: '1234'
+        eventType: 'transaction-request',
+        eventAction: 'POST',
+        transactionId: '1234',
+        transactionId2: 'transactionId2'
       }
-      const output = getSpanTags(request, 'transaction-request', 'POST')
+      const output = getSpanTags(request, 'transaction-request', 'POST', { transactionId: request.payload.transactionRequestId, transactionId2: 'transactionId2' })
       expect(output).toStrictEqual(expected)
     })
-    it('create correct span tags when params set', () => {
-      const request: any = {
-        headers: headers,
-        params: { ID: '1234' },
-        payload: {}
-      }
-      const expected = {
-        source: 'pispA',
-        destination: 'dfspA',
-        transactionType: 'transaction-request',
-        transactionAction: 'POST',
-        transactionId: '1234'
-      }
-      const output = getSpanTags(request, 'transaction-request', 'POST')
-      expect(output).toStrictEqual(expected)
-    })
-    it('create correct span tags when headers are not set', () => {
+
+    it('create correct span tags when headers and customTags are not set', () => {
       const request: any = {
         headers: null,
         params: {},
         payload: null
       }
-      const transactionType = 'transaction-request'
-      const transactionAction = 'POST'
-      const transactionId = undefined
+      const eventType = 'transaction-request'
+      const eventAction = 'POST'
       const expected = {
-        transactionType,
-        transactionAction,
-        transactionId
+        source: null,
+        destination: null,
+        eventType,
+        eventAction
       }
-      const output = getSpanTags(request, transactionType, transactionAction)
+      const output = getSpanTags(request, 'transaction-request', 'POST')
       expect(output).toStrictEqual(expected)
     })
   })

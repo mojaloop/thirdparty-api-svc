@@ -27,7 +27,6 @@
 import Hapi from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
-import * as types from '../interface/types'
 
 /**
  * @function getStackOrInspect
@@ -41,26 +40,18 @@ function getStackOrInspect (err: Error): string {
 /**
  * @function getSpanTags
  * @description Returns span tags based on headers, transactionType and action.
- * @param {Object} param
- * @param {string} transactionType
- * @param {string} transactionAction
- * @returns {TSpanTags}
+ * @param {Object} request
+ * @param {string} eventType
+ * @param {string} eventAction
+ * @returns {Object}
  */
-function getSpanTags (request: Hapi.Request, transactionType: string, transactionAction: string): types.TSpanTags {
-  const headers: Hapi.Util.Dictionary<string> = request.headers
-  const payload = request.payload as types.TThirdPartyTransactionRequest
-  const params: Hapi.Util.Dictionary<string> = request.params
-
-  const tags: types.TSpanTags = {
-    transactionType,
-    transactionAction,
-    transactionId: (payload && payload.transactionRequestId) || (params && params.ID)
-  }
-  if (headers && headers[Enum.Http.Headers.FSPIOP.SOURCE]) {
-    tags.source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  }
-  if (headers && headers[Enum.Http.Headers.FSPIOP.DESTINATION]) {
-    tags.destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+function getSpanTags (request: Hapi.Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
+  const tags: { [id: string]: string } = {
+    eventType,
+    eventAction,
+    source: request.headers && request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
+    destination: request.headers && request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    ...customTags
   }
   return tags
 }

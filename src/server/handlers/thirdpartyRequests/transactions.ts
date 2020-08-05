@@ -30,7 +30,7 @@ import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 import Metrics from '@mojaloop/central-services-metrics'
-import { Transactions }  from '~/domain/thirdpartyRequests'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
 
@@ -54,10 +54,13 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
 
   try {
-    const tags:types.TSpanTags = getSpanTags(
+    const payload = request.payload as types.TThirdPartyTransactionRequest
+    const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
-      Enum.Events.Event.Action.POST)
+      Enum.Events.Event.Action.POST,
+      { transactionId: payload.transactionRequestId })
+      
     span?.setTags(tags)
     await span?.audit({
       headers: request.headers,
