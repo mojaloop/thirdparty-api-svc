@@ -26,7 +26,7 @@
 
 import Hapi from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import { Factory, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum, Util } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
@@ -49,17 +49,14 @@ import * as types from '~/interface/types'
  */
 async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictionary<string>, method: string, params: Hapi.Util.Dictionary<string>, payload?: types.ThirdPartyTransactionRequest, span?: any): Promise<void> {
 
-  const childSpan = span ? span.getChild('forwardTransactionRequest') : undefined
+  const childSpan = span?.getChild('forwardTransactionRequest')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
   const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
-  let fspiopError: typeof Factory.FSPIOPError | undefined
-  let endpoint: string | undefined
-
   try {
-    endpoint = await Util.Endpoints.getEndpoint(
+    const endpoint = await Util.Endpoints.getEndpoint(
       Config.SWITCH_ENDPOINT,
       fspiopDest,
       endpointType)
@@ -67,14 +64,13 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
      ${transactionRequestId} to: ${inspect(endpoint)}`)
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
     Logger.info(`Forwarding transaction request to endpoint: ${fullUrl}`)
-
     await Util.Request.sendRequest(
       fullUrl,
       headers,
       fspiopSource,
       fspiopDest,
       method,
-      method.toUpperCase() !== Enum.Http.RestMethods.GET ? payloadLocal : undefined,
+      method.trim().toUpperCase() !== Enum.Http.RestMethods.GET ? payloadLocal : undefined,
       Enum.Http.ResponseTypes.JSON,
       childSpan)
 
@@ -84,31 +80,41 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
       childSpan.finish()
     }
   } catch (err) {
-    Logger.info(`Error forwarding transaction request to endpoint ${endpoint}: ${inspect(err)}`)
+    Logger.info(`Error forwarding transaction request to endpoint : ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
       'fspiop-destination': fspiopSource
     }
-    fspiopError = ReformatFSPIOPError(err)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardTransactionRequestError(
       errorHeaders,
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,
-      fspiopError!.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan)
-    throw fspiopError
-  } finally {
-    if (childSpan && !childSpan.isFinished && fspiopError) {
-      const state = new EventStateMetadata(
-        EventStatusType.failed,
-        fspiopError.apiErrorCode.code,
-        fspiopError.apiErrorCode.message)
-      await childSpan.error(fspiopError, state)
-      await childSpan.finish(fspiopError.message, state)
+
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
     }
+    throw fspiopError
   }
+}
+
+/**
+ * Finish childSpan
+ * @param {object} fspiopError error object
+ * @param {object} span request span
+ * @returns {Promise<void>}
+ */
+async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promise<void> {
+  const state = new EventStateMetadata(
+    EventStatusType.failed,
+    fspiopError.apiErrorCode.code,
+    fspiopError.apiErrorCode.message)
+  await childSpan.error(fspiopError, state)
+  await childSpan.finish(fspiopError.message, state)
 }
 
 /**
@@ -125,17 +131,16 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
  */
 async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary<string>, path: string, method: string, transactionRequestId: string, payload: types.ErrorInformation, span?: any): Promise<void> {
 
-  const childSpan = span ? span.getChild('forwardTransactionRequestError') : undefined
+  const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = errorHeaders[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = errorHeaders[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
-  let endpoint: string | undefined
   try {
-    endpoint = await Util.Endpoints.getEndpoint(
+    const endpoint = await Util.Endpoints.getEndpoint(
       Config.SWITCH_ENDPOINT,
       fspiopDestination,
       endpointType)
-      Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
+    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
       ${transactionRequestId} to: ${inspect(endpoint)}`)
 
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
@@ -147,7 +152,7 @@ async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary
       fspiopSource,
       fspiopDestination,
       method,
-      payload || undefined,
+      payload,
       Enum.Http.ResponseTypes.JSON,
       childSpan)
 
@@ -157,15 +162,10 @@ async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary
       childSpan.finish()
     }
   } catch (err) {
-    Logger.info(`Error forwarding transaction request error to endpoint ${endpoint}: ${getStackOrInspect(err)}`)
-    const fspiopError = ReformatFSPIOPError(err)
+    Logger.info(`Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
-      const state = new EventStateMetadata(
-        EventStatusType.failed,
-        fspiopError.apiErrorCode.code,
-        fspiopError.apiErrorCode.message)
-      await childSpan.error(fspiopError, state)
-      await childSpan.finish(fspiopError.message, state)
+      await finishChildSpan(fspiopError, childSpan)
     }
     throw fspiopError
   }

@@ -118,7 +118,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
     it('handles POST /thirdpartyRequests/transactions when payload is undefined', async (): Promise<void> => {
       mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
-      await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, { ID: '12345' }, undefined)
+      await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, { ID: '12345' })
 
       const sendReqParamsExpected = [
         'http://dfspa-sdk/thirdpartyRequests/transactions',
