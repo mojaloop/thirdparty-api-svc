@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -16,59 +17,46 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
+ * ModusBox
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
+'use strict'
 
-import rc from 'rc'
-import parse from 'parse-strings-in-object'
-import Config from '../../config/default.json'
-import Package from '../../package.json'
-export interface ServiceConfig {
-  // package.json
-  PACKAGE: object;
+import Hapi from '@hapi/hapi'
+import util from 'util'
+import { Enum } from '@mojaloop/central-services-shared'
 
-  // ../server.ts
-  PORT: number;
-  HOST: string;
-
-  // inspect.ts
-  INSPECT?: {
-    DEPTH?: number;
-    SHOW_HIDDEN?: boolean;
-    COLOR?: boolean;
-  };
-
-  // transactions.ts
-  ENDPOINT_CACHE_CONFIG: {
-    expiresIn: number;
-    generateTimeout: number;
-  };
-  SWITCH_ENDPOINT: string;
-  ERROR_HANDLING: {
-    includeCauseExtension: boolean;
-    truncateExtensions: boolean;
-  };
-  INSTRUMENTATION: {
-    METRICS: {
-      DISABLED: boolean;
-      labels: {
-        eventId: string;
-      };
-      config: {
-        timeout: number;
-        prefix: string;
-        defaultLabels?: Map<string, string>;
-      };
-    };
-  };
+/**
+ * @function getStackOrInspect
+ * @description Gets the error stack, or uses util.inspect to inspect the error
+ * @param {*} err - An error object
+ */
+function getStackOrInspect (err: Error): string {
+  return err.stack || util.inspect(err)
 }
 
-const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig
+/**
+ * @function getSpanTags
+ * @description Returns span tags based on headers, transactionType and action.
+ * @param {Object} request
+ * @param {string} eventType
+ * @param {string} eventAction
+ * @returns {Object}
+ */
+function getSpanTags (request: Hapi.Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
+  const tags: { [id: string]: string } = {
+    eventType,
+    eventAction,
+    source: request.headers && request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
+    destination: request.headers && request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    ...customTags
+  }
+  return tags
+}
 
-export default {
-  ...RC,
-  PACKAGE: Package
+export {
+  getStackOrInspect,
+  getSpanTags
 }

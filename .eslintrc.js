@@ -8,7 +8,7 @@ module.exports = {
     'eslint:recommended',
     'standard',
     'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',    
+    'plugin:@typescript-eslint/recommended',
     //'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
     //'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
     // Enforces ES6+ import/export syntax
@@ -19,6 +19,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
+    project: "./tsconfig.json",
+    tsConfigRootDir: "./"
   },
   rules: {
     indent: 'off',
@@ -32,13 +34,14 @@ module.exports = {
     'cucumber/async-then': 2,
     'cucumber/expression-type': 2,
     'cucumber/no-restricted-tags': [2, 'wip', 'broken', 'foo'],
-    'cucumber/no-arrow-functions': 2
+    'cucumber/no-arrow-functions': 2,
+    'max-len': ["warn", { "code": 120 }]
   },
   overrides: [
     {
       // Disable some rules that we abuse in unit tests.
       files: [
-        'test /**/*.ts'
+        'test /**/*.ts',
       ],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',

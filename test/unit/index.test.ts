@@ -23,9 +23,19 @@
  --------------
  ******/
 
-import index from '../../src/index'
-import Config from '../../src/shared/config'
+import index from '~/index'
+import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
+
+import { Transactions } from '~/domain/thirdpartyRequests'
+import Logger from '@mojaloop/central-services-logger'
+import TestData from 'test/unit/data/mockData.json'
+
+const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+const mockData = JSON.parse(JSON.stringify(TestData))
+const trxnRequest = mockData.transactionRequest
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -46,54 +56,92 @@ describe('index', (): void => {
       server.stop()
     })
 
-    it('/health', async (): Promise<void> => {
-      interface HealthResponse {
-        status: string;
-        uptime: number;
-        startTime: string;
-        versionNumber: string;
-      }
+    describe('/thirdpartyRequests/transactions', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
 
-      const request = {
-        method: 'GET',
-        url: '/health'
-      }
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+      it('POST', async (): Promise<void> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions',
+          headers: reqHeaders,
+          payload: trxnRequest.payload
+        }
 
-      const result = response.result as HealthResponse
-      expect(result.status).toEqual('OK')
-      expect(result.uptime).toBeGreaterThan(1.0)
+        const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequest.payload, { transactionRequestId: undefined })
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions',
+          headers: trxnRequest.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'transactionRequestId\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
+      })
     })
 
-    it('/hello', async (): Promise<void> => {
-      interface HelloResponse {
-        hello: string;
-      }
+    describe('/health', (): void => {
+      it('GET', async (): Promise<void> => {
+        interface HealthResponse {
+          status: string;
+          uptime: number;
+          startTime: string;
+          versionNumber: string;
+        }
 
-      const request = {
-        method: 'GET',
-        url: '/hello'
-      }
+        const request = {
+          method: 'GET',
+          url: '/health'
+        }
 
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeDefined()
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeDefined()
 
-      const result = response.result as HelloResponse
-      expect(result.hello).toEqual('world')
+        const result = response.result as HealthResponse
+        expect(result.status).toEqual('OK')
+        expect(result.uptime).toBeGreaterThan(1.0)
+      })
     })
+    describe('/metrics', (): void => {
+      it('GET', async (): Promise<void> => {
+        const request = {
+          method: 'GET',
+          url: '/metrics'
+        }
 
-    it('/metrics', async (): Promise<void> => {
-      const request = {
-        method: 'GET',
-        url: '/metrics'
-      }
-
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
+        const response = await server.inject(request)
+        expect(response.statusCode).toBe(200)
+      })
     })
   })
 })

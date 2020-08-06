@@ -1,6 +1,6 @@
 # thirdparty-api-adapter/src/server/handlers
 
-API Resource handlers are declared in [/src/interface/swagger.json](../../interface/swagger.json)
+API Resource handlers are declared in [/src/interface/api.yaml](../../interface/api.yaml)
 and implemented in separate files or modules in this folder.
 
 Here should be only the code related to `HTTP @hapi` server scope. 

@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -25,10 +25,9 @@
 
 import Shared from '@mojaloop/central-services-shared'
 import Config from '../../shared/config'
-import { defaultHealthHandler } from '@mojaloop/central-services-health'
+import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
 const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
-
 /**
  * Operations on /health
  */
@@ -40,4 +39,11 @@ const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-export const get = defaultHealthHandler(healthCheck)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const get = async (_context: any, _request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+  return h.response(await healthCheck.getHealth()).code(200)
+}
+
+export default {
+  get
+}
