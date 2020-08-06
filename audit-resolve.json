@@ -7,8 +7,8 @@
     },
     "1213|standard-version>conventional-changelog>conventional-changelog-angular>compare-func>dot-prop": {
       "decision": "ignore",
-      "madeAt": 1596427925245,
-      "expiresAt": 1599019902364
+      "madeAt": 1596720923443,
+      "expiresAt": 1599312918432
     },
     "1213|standard-version>conventional-changelog>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
       "decision": "ignore",
@@ -37,8 +37,18 @@
     },
     "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
       "decision": "ignore",
-      "madeAt": 1596427956149,
-      "expiresAt": 1599019902364
+      "madeAt": 1596720926399,
+      "expiresAt": 1599312918432
+    },
+    "1213|@commitlint/cli>@commitlint/lint>@commitlint/parse>conventional-changelog-angular>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720923443,
+      "expiresAt": 1599312918432
+    },
+    "1213|@commitlint/config-conventional>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720926399,
+      "expiresAt": 1599312918432
     }
   },
   "rules": {},
