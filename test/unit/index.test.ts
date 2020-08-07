@@ -162,7 +162,7 @@ describe('index', (): void => {
         expect(mockForwardAuthorizationPost).toHaveBeenCalledWith(...expected)
       })
 
-      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+      it.only('responds with a 400 when status !== PENDING', async (): Promise<void> => {
         const request = {
           method: 'POST',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',

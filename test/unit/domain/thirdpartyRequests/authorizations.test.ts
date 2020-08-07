@@ -47,6 +47,8 @@ const h: ResponseToolkit = {
   }
 }
 
+const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
+
 describe('domain/authorizations', () => {
   describe('forwardPostAuthorization', () => {
     beforeAll((): void => {
@@ -69,7 +71,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = "123456"
-      const payload: Authorizations.TPostAuthorizationPayload = {
+      const payload: Authorizations.PostAuthorizationPayload = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -93,7 +95,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      await Authorizations.forwardPostAuthorization(headers, id, payload)
+      await Authorizations.forwardPostAuthorization(path, headers, id, payload)
 
       // Assert
       expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
@@ -108,7 +110,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = "123456"
-      const payload: Authorizations.TPostAuthorizationPayload = {
+      const payload: Authorizations.PostAuthorizationPayload = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -123,7 +125,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardPostAuthorization(headers, id, payload)
+      const action = async () => await Authorizations.forwardPostAuthorization(path, headers, id, payload)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -131,15 +133,16 @@ describe('domain/authorizations', () => {
     })
   })
 
-  describe('sendErrorCallback', () => {
-    // TODO: this test will be updated once we implement error handling
-    it('stub implementation', async () => {
-      // Arrange
+  // TODO: implement these tests!
+  // describe('sendErrorCallback', () => {
+  //   // TODO: this test will be updated once we implement error handling
+  //   it('stub implementation', async () => {
+  //     // Arrange
 
-      // Act
-      await Authorizations.sendErrorCallback()
+  //     // Act
+  //     await Authorizations.sendErrorCallback()
 
-      // Assert
-    })
-  })
+  //     // Assert
+  //   })
+  // })
 })

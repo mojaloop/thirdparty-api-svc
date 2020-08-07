@@ -67,7 +67,7 @@ let MockSpan = new Span()
 const getEndpointExpected = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
-  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
 ]
 const sendRequestExpected = [
   'http://dfspa-sdk/thirdpartyRequests/transactions',

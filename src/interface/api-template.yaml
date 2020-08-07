@@ -2,13 +2,13 @@ openapi: 3.0.2
 info:
   title: Mojaloop Thirdparty API Adapter
   version: '1.0'
-  description: 
+  description:
     A Mojaloop API for thirdparty interactions between `PISPs` (Payment Initiation
     Service Providers) and `DFSPs` (Digital Financial Service Providers)
   license:
     name: TBD
     url: TBD
-servers: 
+servers:
   - url: /
 paths:
   /health:
@@ -16,7 +16,7 @@ paths:
       tags:
         - health
       responses:
-        '200':  
+        '200':
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/200'
         '400':
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/400'
@@ -74,7 +74,7 @@ paths:
       description: |
         The HTTP request `POST /thirdpartyRequests/transactions` is used to request the creation of a third party transaction.
 
-        - Called by a `PISP` to initiate a third party transaction flow              
+        - Called by a `PISP` to initiate a third party transaction flow
       parameters:
         #Headers
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Accept.yaml'
@@ -215,7 +215,7 @@ components:
           allOf:
             - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/CorrelationId.yaml'
           description: >
-            Common ID between the FSPs for the transaction request object. 
+            Common ID between the FSPs for the transaction request object.
             The ID should be reused for resends of the same transaction request.
             A new ID should be generated for each new transaction request.
         sourceAccountId:
@@ -251,7 +251,7 @@ components:
         expiration:
           type: string
           description: >
-            Date and time until when the transaction request is valid. 
+            Date and time until when the transaction request is valid.
             It can be set to get a quick failure in case the peer FSP takes too long to respond.
           example: '2016-05-24T08:38:08.699-04:00'
       required:
@@ -271,9 +271,7 @@ components:
       description: The object sent in the POST /thirdpartyRequests/transactions/{id}/authorizations request.
       properties:
         challenge:
-          allOf:
-            # TODO: I don't think this should be a binary string...
-            - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/BinaryString.yaml'
+          type: string
           description: The original Challenge Object as a JSON string
         value:
           allOf:
@@ -291,7 +289,7 @@ components:
           description: DFSP specific account identifiers, e.g. `dfspa.alice.1234`
         status:
           type: string
-          enum: 
+          enum:
             - PENDING
           description: The status of the authorization. This MUST be PENDING for a POST request
       required:

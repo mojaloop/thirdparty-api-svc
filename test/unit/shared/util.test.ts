@@ -25,8 +25,14 @@
 'use strict'
 
 import { Request } from '@hapi/hapi'
-import { getStackOrInspect, getSpanTags } from '~/shared/util'
+import {
+  finishChildSpan,
+  getStackOrInspect,
+  getSpanTags
+} from '~/shared/util'
 import * as types from '~/interface/types'
+import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -34,6 +40,30 @@ const headers = {
 }
 
 describe('util', (): void => {
+  describe('finishChildSpan', (): void => {
+    it('calls error and finish', async (): Promise<void> => {
+      // Arrange
+      const error: FSPIOPError = ReformatFSPIOPError(new Error('Test Error'))
+      const mockSpan = {
+        error: jest.fn(),
+        finish: jest.fn(),
+      }
+      const expectedState = new EventStateMetadata(
+        EventStatusType.failed,
+        error.apiErrorCode.code,
+        error.apiErrorCode.message
+      )
+
+      // Act
+      await finishChildSpan(error, mockSpan)
+
+      // Assert
+      expect(mockSpan.error).toHaveBeenCalledTimes(1)
+      expect(mockSpan.error).toHaveBeenCalledWith(error, expectedState)
+      expect(mockSpan.finish).toHaveBeenCalledWith(error.message, expectedState)
+    })
+  })
+
   describe('getStackOrInspect', (): void => {
     it('handles an error without a stack', (): void => {
       const input = new Error('This is a normal error')

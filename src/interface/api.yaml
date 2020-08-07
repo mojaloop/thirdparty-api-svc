@@ -218,7 +218,7 @@ paths:
       description: |
         The HTTP request `POST /thirdpartyRequests/transactions` is used to request the creation of a third party transaction.
 
-        - Called by a `PISP` to initiate a third party transaction flow              
+        - Called by a `PISP` to initiate a third party transaction flow
       parameters:
         - name: Accept
           in: header
@@ -450,7 +450,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
           description: |
-            Common ID between the FSPs for the transaction request object.  The ID should be reused for resends of the same transaction request. A new ID should be generated for each new transaction request.
+            Common ID between the FSPs for the transaction request object. The ID should be reused for resends of the same transaction request. A new ID should be generated for each new transaction request.
         sourceAccountId:
           allOf:
             - $ref: '#/components/schemas/AccountId'
@@ -932,7 +932,7 @@ components:
         expiration:
           type: string
           description: |
-            Date and time until when the transaction request is valid.  It can be set to get a quick failure in case the peer FSP takes too long to respond.
+            Date and time until when the transaction request is valid. It can be set to get a quick failure in case the peer FSP takes too long to respond.
           example: '2016-05-24T08:38:08.699-04:00'
       required:
         - transactionRequestId
@@ -950,8 +950,7 @@ components:
       description: 'The object sent in the POST /thirdpartyRequests/transactions/{id}/authorizations request.'
       properties:
         challenge:
-          allOf:
-            - $ref: '#/components/schemas/VerifyThirdPartyAuthorizationRequest/properties/value/allOf/0'
+          type: string
           description: The original Challenge Object as a JSON string
         value:
           allOf:

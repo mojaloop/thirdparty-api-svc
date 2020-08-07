@@ -45,7 +45,6 @@ async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promis
   await childSpan.finish(fspiopError.message, state)
 }
 
-
 /**
  * @function getStackOrInspect
  * @description Gets the error stack, or uses util.inspect to inspect the error

@@ -30,10 +30,10 @@ import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 
 // TODO remove _'s
-const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
-const mock_sendErrorCallback = jest.spyOn(Authorizations, 'sendErrorCallback')
-const mock_loggerPush = jest.spyOn(Logger, 'push')
-const mock_loggerError = jest.spyOn(Logger, 'error')
+const mockForwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
+const mockSendErrorCallback = jest.spyOn(Authorizations, 'forwardPostAuthorizationError')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 
 // @ts-ignore
 const h: ResponseToolkit = {
@@ -49,8 +49,8 @@ const h: ResponseToolkit = {
 describe('authorizations handler', () => {
   describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', () => {
     beforeAll((): void => {
-      mock_loggerPush.mockReturnValue(null)
-      mock_loggerError.mockReturnValue(null)
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
       jest.useFakeTimers()
     })
 
@@ -61,7 +61,7 @@ describe('authorizations handler', () => {
 
     it('handles a successful request', async () => {
       // Arrange
-      mock_forwardPostAuthorization.mockResolvedValueOnce()
+      mockForwardPostAuthorization.mockResolvedValueOnce()
       const request = {
         headers: {
           'fspiop-source': 'pispA',
@@ -91,13 +91,13 @@ describe('authorizations handler', () => {
       expect(response).toBe(202)
       jest.runAllTimers()
       expect(setImmediate).toHaveBeenCalled()
-      expect(mock_forwardPostAuthorization).toHaveBeenCalledWith(...expected)
+      expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      mock_forwardPostAuthorization.mockRejectedValueOnce(new Error('Test Error'))
-      mock_sendErrorCallback.mockResolvedValueOnce()
+      mockForwardPostAuthorization.mockRejectedValueOnce(new Error('Test Error'))
+      mockSendErrorCallback.mockResolvedValueOnce()
       const request = {
         headers: {
           'fspiop-source': 'pispA',
@@ -130,8 +130,8 @@ describe('authorizations handler', () => {
 
       // wait once more for the event loop - since we can't await `runAllImmediates`
       await new Promise(resolve => setImmediate(resolve))
-      expect(mock_forwardPostAuthorization).toHaveBeenCalledWith(...expected)
-      expect(mock_sendErrorCallback).toHaveBeenCalledTimes(1)
+      expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
+      expect(mockSendErrorCallback).toHaveBeenCalledTimes(1)
     })
   })
 })

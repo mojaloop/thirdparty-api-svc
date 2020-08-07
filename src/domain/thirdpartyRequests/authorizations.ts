@@ -36,7 +36,7 @@ import { inspect } from 'util'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { finishChildSpan } from '~/shared/util'
 
-export interface TPostAuthorizationPayload {
+export interface PostAuthorizationPayload {
   challenge: string;
   value: string;
   consentId: string;
@@ -60,7 +60,7 @@ export async function forwardPostAuthorization (
   path: string,
   headers: HapiUtil.Dictionary<string>,
   transactionRequestId: string,
-  payload: TPostAuthorizationPayload,
+  payload: PostAuthorizationPayload,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardPostAuthorization')
@@ -133,7 +133,7 @@ export async function forwardPostAuthorization (
 export async function forwardPostAuthorizationError(path: string,
   headers: HapiUtil.Dictionary<string>,
   transactionRequestId: string,
-  payload: TPostAuthorizationPayload,
+  payload: PostAuthorizationPayload,
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardPostAuthorizationError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
