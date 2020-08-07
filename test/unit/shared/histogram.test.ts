@@ -18,7 +18,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+ - Lewis Daly <lewisd@crosslaketech.com>
 
  --------------
  ******/
@@ -28,10 +28,13 @@ import Logger from '@mojaloop/central-services-logger'
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
+import Metrics from '@mojaloop/central-services-metrics'
+import { wrapWithHistogram } from '~/shared/histogram'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
+const mockMetrics = jest.spyOn(Metrics, 'getHistogram')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
@@ -47,32 +50,46 @@ const h: ResponseToolkit = {
   }
 }
 
-describe('transactions handler', (): void => {
-  describe('POST /thirdpartyRequests/transactions', (): void => {
+describe('histogram', (): void => {
+  describe('wrapWithHistogram', () => {
+    const mockHistTimerEnd = jest.fn()
+
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
     })
 
-    beforeEach((): void => {
+    beforeEach(() => {
       jest.clearAllMocks()
+
+      mockMetrics.mockReturnValue({
+        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
+      })
     })
 
-    it('handles a successful request', async (): Promise<void> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
+    it('does not call the histogram twice if an error occours', async (): Promise<void> => {
+      // Arrange
+      mockForwardTransactionRequest.mockRejectedValueOnce(() => { throw new Error('Test Error') })
+      const wrappedHandler = wrapWithHistogram(
+        Handler.post,
+        [
+          'thirdpartyRequests_transactions_authorizations_post',
+          'Post thirdpartyRequests transactions authorizations request',
+          ['success']
+        ]
+      )
 
-      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload]
-      const response = await Handler.post(null, request, h as ResponseToolkit)
+      // Act
+      const response = await wrappedHandler(null, request, h as ResponseToolkit)
+
+      // Assert
       expect(response).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
-    })
+      expect(mockHistTimerEnd).toHaveBeenCalledTimes(1)
+      expect(mockHistTimerEnd).toHaveBeenCalledWith({ success: 'true' })
 
-    it('handles errors', async (): Promise<void> => {
-      const err = new Error('Transactions forward Error')
-      // TODO: fix this test - it's invalid I think since it doesn't return a promise!
-      mockForwardTransactionRequest.mockImplementation(() => { throw err })
-      await expect(Handler.post(null, request, h as ResponseToolkit)).rejects.toThrowError(new RegExp('Transactions forward Error'))
+      // wait once more for the event loop - since we can't await `forwardTransactionRequest`
+      await new Promise(resolve => setImmediate(resolve))
     })
   })
 })

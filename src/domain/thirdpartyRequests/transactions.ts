@@ -38,9 +38,9 @@ import * as types from '~/interface/types'
 /**
  * Forwards POST transactions requests to destination FSP for processing
  * @param {string} path Callback endpoint path
- * @param {object} headers Headers object of the request 
+ * @param {object} headers Headers object of the request
  * @param {string} method The http method POST
- * @param {object} params Params object of the request 
+ * @param {object} params Params object of the request
  * @param {object} payload Body of the POST request
  * @param {object} span request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
@@ -125,7 +125,7 @@ async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promis
  * @param {string} transactionRequestId Transaction request id that the transaction is for
  * @param {object} payload Body of the request
  * @param {object} span request span
- * @throws {FSPIOPError} Will throw an error, if no endpoint is found to forward the transactions 
+ * @throws {FSPIOPError} Will throw an error, if no endpoint is found to forward the transactions
  * error or if there are network errors or if there is a bad response.
  * @returns {Promise<void>}
  */
@@ -140,7 +140,7 @@ async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary
       Config.SWITCH_ENDPOINT,
       fspiopDestination,
       endpointType)
-    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
+    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest
       ${transactionRequestId} to: ${inspect(endpoint)}`)
 
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })

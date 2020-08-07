@@ -52,7 +52,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST,
-      { transactionId: payload.transactionRequestId })
+      { transactionRequestId: payload.transactionRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -60,7 +60,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       payload: request.payload
     }, AuditEventAction.start)
 
-    // not waiting for a promise
+    // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_POST,
       request.headers,
@@ -72,12 +72,9 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
     })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
-    // We need a way to test that this catch doesn't get called if line 71 fails
   } catch (err) {
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
-    // Hmm this doesn't make sense to me, but I didn't catch it earlier
-    // This could lead to an unhandled promise rejection
     throw fspiopError
   }
 }

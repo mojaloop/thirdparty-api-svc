@@ -25,9 +25,13 @@
 
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
+import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
+import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { Authorizations } from '~/domain/thirdpartyRequests'
+import { getSpanTags } from '~/shared/util'
+
 
 /**
   * summary: VerifyThirdPartyAuthorization
@@ -37,23 +41,39 @@ import { Authorizations } from '~/domain/thirdpartyRequests'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function post(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const thirdpartyRequestId: string = request.params.ID
   const payload = request.payload as Authorizations.TPostAuthorizationPayload
 
-  // TODO: span and histogram stuff etc
-    try {
-      // Note: calling async function without `await`
-      Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
-    } catch (error) {
-      Logger.push(error)
-      Logger.error('Error: Failed to forward VerifyThirdPartyAuthorization request')
-      // TODO: move into forwardPostAuthorization
-      Authorizations.sendErrorCallback()
-    }
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      // TODO update this for thirdparty authorization
+      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Action.POST,
+      { transactionRequestId: thirdpartyRequestId  })
 
-  return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
+    .catch(_ => {
+      // Do nothing with the error - forwardPostAuthorization takes care of async errors
+    })
+
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
 }
 
 export default {
