@@ -25,10 +25,11 @@
 
  import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 
-import { post } from '../../../../../../../src/server/handlers/thirdpartyRequest/transactions/{ID}/authorizations'
-import { Authorizations } from '../../../../../../../src/domain/index'
+import { post } from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 
+// TODO remove _'s
 const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
 const mock_sendErrorCallback = jest.spyOn(Authorizations, 'sendErrorCallback')
 const mock_loggerPush = jest.spyOn(Logger, 'push')

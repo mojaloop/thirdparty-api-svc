@@ -1,3 +1,5 @@
+import { Authorizations } from '..'
+
 /*****
  License
  --------------
@@ -19,7 +21,9 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+ - Lewis Daly <lewisd@crosslaketech.com>
 
  --------------
  ******/
 export * as Transactions from './transactions'
+export * as Authorizations from './authorizations'

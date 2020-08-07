@@ -27,7 +27,7 @@ import {
   Enum,
   Util
 } from '@mojaloop/central-services-shared'
-import Config from '../shared/config'
+import Config from '../../shared/config'
 import { Util as HapiUtil } from '@hapi/hapi'
 
 export interface TPostAuthorizationPayload {

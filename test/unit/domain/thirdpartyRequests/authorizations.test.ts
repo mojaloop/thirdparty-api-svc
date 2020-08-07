@@ -25,7 +25,7 @@
 
 import { ResponseObject, ResponseToolkit} from "@hapi/hapi"
 
-import { Authorizations } from '../../../src/domain'
+import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import {
   Util, Enum,
