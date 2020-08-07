@@ -47,7 +47,14 @@ export interface TPostAuthorizationPayload {
 /**
  * @function forwardPostAuthorization
  * @description Forwards a POST /thirdpartyRequests/transactions/{ID}/authorizations request
- *
+ * @param {string} path Callback endpoint path
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
+ * @param {object} payload Body of the POST request
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
  */
 export async function forwardPostAuthorization (
   path: string,
@@ -114,7 +121,14 @@ export async function forwardPostAuthorization (
  * @function forwardPostAuthorizationError
  * @description Generic function to handle sending `PUT .../authorizations/error` back to
  *   the FSPIOP-Source
-//  * TODO: fill in jsdoc
+ * @param {string} path Callback endpoint path
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
+ * @param {object} payload Body of the POST request
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
  */
 export async function forwardPostAuthorizationError(path: string,
   headers: HapiUtil.Dictionary<string>,
@@ -128,11 +142,28 @@ export async function forwardPostAuthorizationError(path: string,
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
-      Config.SWITCH_ENDPOINT,
-      fspiopDestination,
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
       endpointType)
-    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest
-      ${transactionRequestId} to: ${inspect(endpoint)}`)
+    Logger.info(`authorications::forwardPostAuthorizationError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
+    const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+    Logger.info(`authorications::forwardPostAuthorizationError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      Enum.Http.RestMethods.POST,
+      payload,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`authorications::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
 
   } catch (err) {
     Logger.error(`authorications::forwardPostAuthorizationError - Error forwarding thirdpartyTransaction authorization error to endpoint: ${inspect(err)}`)
