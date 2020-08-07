@@ -109,6 +109,8 @@ describe('index', (): void => {
       })
     })
 
+    
+
     describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
@@ -132,6 +134,7 @@ describe('index', (): void => {
         expect(result.uptime).toBeGreaterThan(1.0)
       })
     })
+
     describe('/metrics', (): void => {
       it('GET', async (): Promise<void> => {
         const request = {

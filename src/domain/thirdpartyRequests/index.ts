@@ -1,5 +1,3 @@
-import { Authorizations } from '..'
-
 /*****
  License
  --------------
