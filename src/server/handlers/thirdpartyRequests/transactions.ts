@@ -29,28 +29,21 @@ import Logger from '@mojaloop/central-services-logger'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
-import Metrics from '@mojaloop/central-services-metrics'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
 
 /**
  * summary: CreateThirdpartyTransactionRequests
- * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request 
+ * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request
  * for the provided financial transaction in the server.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-urifspiop-http-method
- * produces: application/json 
+ * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const post = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-
-  const histTimerEnd = Metrics.getHistogram(
-    'thirdpartyRequests_transactions_post',
-    'Post thirdpartyRequests transactions request',
-    ['success']
-  ).startTimer()
   const span = (request as any).span
 
   try {
@@ -60,7 +53,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST,
       { transactionId: payload.transactionRequestId })
-      
+
     span?.setTags(tags)
     await span?.audit({
       headers: request.headers,
@@ -74,13 +67,15 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       Enum.Http.RestMethods.POST,
       request.params,
       request.payload as types.ThirdPartyTransactionRequest)
+    .catch(_ => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+    })
 
-    histTimerEnd({ success: 'true' })
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    // We need a way to test that this catch doesn't get called if line 71 fails
   } catch (err) {
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
-    histTimerEnd({ success: 'false' })
     // Hmm this doesn't make sense to me, but I didn't catch it earlier
     // This could lead to an unhandled promise rejection
     throw fspiopError

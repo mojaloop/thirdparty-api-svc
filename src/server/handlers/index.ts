@@ -27,13 +27,28 @@ import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
+import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
-  CreateThirdpartyTransactionRequests: ThirdpartyTransactions.post,
-  VerifyThirdPartyAuthorization: Authorizations.post,
+  CreateThirdpartyTransactionRequests: wrapWithHistogram(
+    ThirdpartyTransactions.post,
+    [
+      'thirdpartyRequests_transactions_post',
+      'Post thirdpartyRequests transactions request',
+      ['success']
+    ]
+  ),
+  VerifyThirdPartyAuthorization: wrapWithHistogram(
+    Authorizations.post,
+    [
+      'thirdpartyRequests_transactions_authorizations_post',
+      'Post thirdpartyRequests transactions authorizations request',
+      ['success']
+    ]
+  ),
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed
