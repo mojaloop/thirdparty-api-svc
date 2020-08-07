@@ -37,22 +37,26 @@ import { Authorizations } from '~/domain/thirdpartyRequests'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-export async function post (request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function post(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   // Trust that hapi parsed the ID and Payload for us
   const thirdpartyRequestId: string = request.params.ID
   const payload = request.payload as Authorizations.TPostAuthorizationPayload
 
   // TODO: span and histogram stuff etc
-
-  setImmediate(async (): Promise<void> => {
     try {
-      await Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
+      // Note: calling async function without `await`
+      Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
     } catch (error) {
       Logger.push(error)
       Logger.error('Error: Failed to forward VerifyThirdPartyAuthorization request')
-      await Authorizations.sendErrorCallback()
+      // TODO: move into forwardPostAuthorization
+      Authorizations.sendErrorCallback()
     }
-  })
 
   return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
 }
+
+export default {
+  post
+}
+

@@ -25,7 +25,7 @@
 
  import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
 
-import { post } from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import AuthorizationsHandler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 
@@ -85,7 +85,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await post(request as unknown as Request, h as ResponseToolkit)
+      const response = await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
 
       // Assert
       expect(response).toBe(202)
@@ -121,7 +121,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await post(request as unknown as Request, h as ResponseToolkit)
+      const response = await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
 
       // Assert
       expect(response).toBe(202)

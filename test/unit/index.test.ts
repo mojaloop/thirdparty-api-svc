@@ -27,11 +27,12 @@ import index from '~/index'
 import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
-import { Transactions } from '~/domain/thirdpartyRequests'
+import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardAuthorizationPost = jest.spyOn(Authorizations, 'forwardPostAuthorization')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -109,7 +110,129 @@ describe('index', (): void => {
       })
     })
 
-    
+    describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
+      beforeAll((): void => {
+        jest.useFakeTimers()
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllTimers()
+        jest.clearAllMocks()
+      })
+
+      afterAll((): void => {
+        jest.useRealTimers()
+      })
+
+      it('POST', async (): Promise<void> => {
+        mockForwardAuthorizationPost.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'dfspA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            sourceAccountId: 'dfspa.alice.1234',
+            status: 'PENDING',
+          }
+        }
+        const expected: Array<any> = [
+          expect.objectContaining(request.headers),
+          '7d34f91d-d078-4077-8263-2c047876fcf6',
+          request.payload
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mockForwardAuthorizationPost).toHaveBeenCalledWith(...expected)
+      })
+
+      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            sourceAccountId: 'dfspa.alice.1234',
+            status: 'VERIFIED',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3100',
+            errorDescription: 'Generic validation error - .requestBody.status should be equal to one of the allowed values'
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            status: 'PENDING',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'sourceAccountId\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        jest.runAllTimers()
+        expect(setImmediate).toHaveBeenCalled()
+        expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
+      })
+    })
 
     describe('/health', (): void => {
       it('GET', async (): Promise<void> => {

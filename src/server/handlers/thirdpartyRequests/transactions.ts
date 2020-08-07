@@ -81,6 +81,8 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
     histTimerEnd({ success: 'false' })
+    // Hmm this doesn't make sense to me, but I didn't catch it earlier
+    // This could lead to an unhandled promise rejection
     throw fspiopError
   }
 }
