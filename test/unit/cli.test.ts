@@ -33,7 +33,6 @@ describe('cli', (): void => {
       PACKAGE: Config.PACKAGE,
       PORT: Config.PORT,
       HOST: Config.HOST,
-      ENDPOINT_SERVICE_URL: Config.ENDPOINT_SERVICE_URL,
       INSPECT: {
         DEPTH: 4,
         SHOW_HIDDEN: false,
@@ -43,7 +42,7 @@ describe('cli', (): void => {
         expiresIn: 180000,
         generateTimeout: 30000
       },
-      SWITCH_ENDPOINT: 'http://central-ledger.local:3001',
+      ENDPOINT_SERVICE_URL: 'http://central-ledger.local:3001',
       ERROR_HANDLING: {
         includeCauseExtension: true,
         truncateExtensions: true

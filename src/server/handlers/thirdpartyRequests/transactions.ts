@@ -66,7 +66,9 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       request.headers,
       Enum.Http.RestMethods.POST,
       request.params,
-      request.payload as types.ThirdPartyTransactionRequest)
+      payload,
+      span
+    )
     .catch(_ => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
     })

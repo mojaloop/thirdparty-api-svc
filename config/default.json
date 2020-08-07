@@ -1,7 +1,6 @@
 {
   "PORT": 3008,
   "HOST": "0.0.0.0",
-  "ENDPOINT_SERVICE_URL": "localhost:3001",
   "INSPECT": {
     "DEPTH": 4,
     "SHOW_HIDDEN": false,
@@ -11,7 +10,7 @@
     "expiresIn": 180000,
     "generateTimeout": 30000
   },
-  "SWITCH_ENDPOINT": "http://central-ledger.local:3001",
+  "ENDPOINT_SERVICE_URL": "http://central-ledger.local:3001",
   "ERROR_HANDLING": {
     "includeCauseExtension": true,
     "truncateExtensions": true

@@ -213,6 +213,7 @@ declare module '@mojaloop/central-services-shared' {
           POST: string;
         };
         Type: {
+          AUTHORIZATION: string;
           TRANSACTION_REQUEST: string;
         };
       };

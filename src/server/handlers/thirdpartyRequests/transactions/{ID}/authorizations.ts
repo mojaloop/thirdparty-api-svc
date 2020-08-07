@@ -45,16 +45,15 @@ import { getSpanTags } from '~/shared/util'
 async function post(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
-  const thirdpartyRequestId: string = request.params.ID
+  const transactionRequestId: string = request.params.ID
   const payload = request.payload as Authorizations.TPostAuthorizationPayload
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // TODO update this for thirdparty authorization
-      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.POST,
-      { transactionRequestId: thirdpartyRequestId  })
+      { transactionRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -63,7 +62,13 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
-    Authorizations.forwardPostAuthorization(request.headers, thirdpartyRequestId, payload)
+    Authorizations.forwardPostAuthorization(
+      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
+      request.headers,
+      transactionRequestId,
+      payload,
+      span
+    )
     .catch(_ => {
       // Do nothing with the error - forwardPostAuthorization takes care of async errors
     })

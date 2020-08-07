@@ -33,7 +33,6 @@ export interface ServiceConfig {
   // ../server.ts
   PORT: number;
   HOST: string;
-  ENDPOINT_SERVICE_URL: string;
 
   // inspect.ts
   INSPECT?: {
@@ -47,7 +46,7 @@ export interface ServiceConfig {
     expiresIn: number;
     generateTimeout: number;
   };
-  SWITCH_ENDPOINT: string;
+  ENDPOINT_SERVICE_URL: string;
   ERROR_HANDLING: {
     includeCauseExtension: boolean;
     truncateExtensions: boolean;

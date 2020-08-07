@@ -32,7 +32,7 @@ import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
-import { getStackOrInspect } from '~/shared/util'
+import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 
 /**
@@ -54,10 +54,10 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
-      Config.SWITCH_ENDPOINT,
+      Config.ENDPOINT_SERVICE_URL,
       fspiopDest,
       endpointType)
     Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest
@@ -102,20 +102,6 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
   }
 }
 
-/**
- * Finish childSpan
- * @param {object} fspiopError error object
- * @param {object} span request span
- * @returns {Promise<void>}
- */
-async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promise<void> {
-  const state = new EventStateMetadata(
-    EventStatusType.failed,
-    fspiopError.apiErrorCode.code,
-    fspiopError.apiErrorCode.message)
-  await childSpan.error(fspiopError, state)
-  await childSpan.finish(fspiopError.message, state)
-}
 
 /**
  * Forwards transactions requests errors to destination FSP
@@ -130,14 +116,14 @@ async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promis
  * @returns {Promise<void>}
  */
 async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary<string>, path: string, method: string, transactionRequestId: string, payload: types.ErrorInformation, span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = errorHeaders[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = errorHeaders[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
+
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
-      Config.SWITCH_ENDPOINT,
+      Config.ENDPOINT_SERVICE_URL,
       fspiopDestination,
       endpointType)
     Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest

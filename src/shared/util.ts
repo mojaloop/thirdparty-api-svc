@@ -27,6 +27,24 @@
 import Hapi from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
+import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
+import { FSPIOPError } from '@mojaloop/central-services-error-handling'
+
+/**
+ * Finish childSpan
+ * @param {object} fspiopError error object
+ * @param {object} span request span
+ * @returns {Promise<void>}
+ */
+async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promise<void> {
+  const state = new EventStateMetadata(
+    EventStatusType.failed,
+    fspiopError.apiErrorCode.code,
+    fspiopError.apiErrorCode.message)
+  await childSpan.error(fspiopError, state)
+  await childSpan.finish(fspiopError.message, state)
+}
+
 
 /**
  * @function getStackOrInspect
@@ -57,6 +75,7 @@ function getSpanTags (request: Hapi.Request, eventType: string, eventAction: str
 }
 
 export {
+  finishChildSpan,
   getStackOrInspect,
   getSpanTags
 }
