@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -16,54 +17,46 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
- - Name Surname <name.surname@gatesfoundation.com>
+ * ModusBox
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
- * Paweł Marzec <pawel.marzec@modusbox.com>
  --------------
  ******/
-import Config from '~/shared/config'
-import server from '~/server'
-jest.mock('~/server')
+'use strict'
 
-describe('cli', (): void => {
-  it('should use default port & host', async (): Promise<void> => {
-    const cli = await import('~/cli')
-    expect(cli).toBeDefined()
-    expect(server.run).toHaveBeenCalledWith({
-      PACKAGE: Config.PACKAGE,
-      PORT: Config.PORT,
-      HOST: Config.HOST,
-      ENDPOINT_SERVICE_URL: Config.ENDPOINT_SERVICE_URL,
-      INSPECT: {
-        DEPTH: 4,
-        SHOW_HIDDEN: false,
-        COLOR: true
-      },
-      ENDPOINT_CACHE_CONFIG: {
-        expiresIn: 180000,
-        generateTimeout: 30000
-      },
-      SWITCH_ENDPOINT: 'http://central-ledger.local:3001',
-      ERROR_HANDLING: {
-        includeCauseExtension: true,
-        truncateExtensions: true
-      },
-      INSTRUMENTATION: {
-        METRICS: {
-          DISABLED: false,
-          labels: {
-            eventId: '*'
-          },
-          config: {
-            timeout: 5000,
-            prefix: 'moja_3p_api',
-            defaultLabels: {
-              serviceName: 'thirdparty-api-adapter'
-            }
-          }
-        }
-      },
-      _: []
-    })
-  })
-})
+import Hapi from '@hapi/hapi'
+import util from 'util'
+import { Enum } from '@mojaloop/central-services-shared'
+
+/**
+ * @function getStackOrInspect
+ * @description Gets the error stack, or uses util.inspect to inspect the error
+ * @param {*} err - An error object
+ */
+function getStackOrInspect (err: Error): string {
+  return err.stack || util.inspect(err)
+}
+
+/**
+ * @function getSpanTags
+ * @description Returns span tags based on headers, transactionType and action.
+ * @param {Object} request
+ * @param {string} eventType
+ * @param {string} eventAction
+ * @returns {Object}
+ */
+function getSpanTags (request: Hapi.Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
+  const tags: { [id: string]: string } = {
+    eventType,
+    eventAction,
+    source: request.headers && request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
+    destination: request.headers && request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    ...customTags
+  }
+  return tags
+}
+
+export {
+  getStackOrInspect,
+  getSpanTags
+}

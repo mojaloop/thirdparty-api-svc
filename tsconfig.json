@@ -1,20 +1,24 @@
 {
   "include": [
     "src",
+    "test",
     "ambient.d.ts",
-    // Hmm - I needed this to get autosense working
-    // in the test files...
-    // "test"
+    "commitlint.config.js",
+    "jest.bdd.config.js",
+    "jest.config.js"
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts",
-    "lib",
+    "dist",
     "coverage"
   ],
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "rootDirs": [
+      "src",
+      "test"
+    ],
     "lib": [
       "esnext"
     ],
@@ -37,6 +41,7 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
+<<<<<<< HEAD
       "*": [
         "src/*",
         "node_modules/*"
@@ -44,6 +49,14 @@
       // "local/domain/*": [ "src/domain/*"],
       // "local/handlers/*": ["src/server/handlers/*"]
       "@local/domain/*": ["src/domain/*"]
+=======
+      "~/*": [
+        "src/*"
+      ],
+      "test/*": [
+        "test/*"
+      ]
+>>>>>>> 4d9aa6a1cb158487ae5e4270b52515d4e3d378de
     },
     "esModuleInterop": true,
     "resolveJsonModule": true

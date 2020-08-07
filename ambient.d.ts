@@ -24,45 +24,40 @@
 
 // for mojaloop there is lack for @types files
 // to stop typescript complains, we have to declare some modules here
-declare module '@mojaloop/central-services-error-handling'{
-  export function validateRoutes(options?: object): object;
-}
 declare module '@mojaloop/central-services-logger'
 declare module '@mojaloop/central-services-shared' {
-  type TReturnCode = {
-    CODE: number,
-    DESCRIPTION: string
+  interface ReturnCode {
+    CODE: number;
+    DESCRIPTION: string;
   }
-
-  type THttpEnum = {
+  interface HttpEnum {
     Headers: {
       FSPIOP: {
         SWITCH: {
-          regex: RegExp,
-          value: string
-        },
-        SOURCE: string
-        DESTINATION: string
-        HTTP_METHOD: string
-        SIGNATURE: string
-        URI: string
-      }
-
-    },
+          regex: RegExp;
+          value: string;
+        };
+        SOURCE: string;
+        DESTINATION: string;
+        HTTP_METHOD: string;
+        SIGNATURE: string;
+        URI: string;
+      };
+    };
     ReturnCodes: {
-      OK: TReturnCode,
-      ACCEPTED: TReturnCode
-    },
+      OK: ReturnCode;
+      ACCEPTED: ReturnCode;
+    };
     RestMethods: {
-      GET: string,
-      POST: string,
-      PUT: string,
-      DELETE: string,
-      PATCH: string,
-    },
+      GET: string;
+      POST: string;
+      PUT: string;
+      DELETE: string;
+      PATCH: string;
+    };
     ResponseTypes: {
-      JSON: string,
-    }
+      JSON: string;
+    };
   }
 
   enum FspEndpointTypesEnum {
@@ -98,96 +93,134 @@ declare module '@mojaloop/central-services-shared' {
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST',
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT',
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT_ERROR',
+    THIRDPARTY_CALLBACK_URL_TRX_REQ_POST = 'THIRDPARTY_CALLBACK_URL_TRX_REQ_POST'
   }
-
-  type TEndPointsEnum = {
+  interface EndPointsEnum {
     EndpointType: {
-      ALARM_NOTIFICATION_URL: number,
-      ALARM_NOTIFICATION_TOPIC: number,
-      FSPIOP_CALLBACK_URL_TRANSFER_POST: number,
-      FSPIOP_CALLBACK_URL_TRANSFER_PUT: number,
-      FSPIOP_CALLBACK_URL_TRANSFER_ERROR: number,
-    },
+      ALARM_NOTIFICATION_URL: number;
+      ALARM_NOTIFICATION_TOPIC: number;
+      FSPIOP_CALLBACK_URL_TRANSFER_POST: number;
+      FSPIOP_CALLBACK_URL_TRANSFER_PUT: number;
+      FSPIOP_CALLBACK_URL_TRANSFER_ERROR: number;
+    };
     FspEndpointTypes: {
-      // TODO: find a better way to express this
-      // I want to be able to guarantee that getEndpoint() below can only be called with a
-      // valid FspEndpointTypesEnum, but also want to be able to autocomplete inside of this dict
-      FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE,
-      FSPIOP_CALLBACK_URL: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_PUT,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_DELETE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_DELETE,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT,
-      FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR,
-      FSPIOP_CALLBACK_URL_PARTIES_GET: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_GET,
-      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET,
-      FSPIOP_CALLBACK_URL_PARTIES_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_PUT,
-      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT,
-      FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR,
-      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR,
-      FSPIOP_CALLBACK_URL_TRANSFER_POST: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_POST,
-      FSPIOP_CALLBACK_URL_TRANSFER_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_PUT,
-      FSPIOP_CALLBACK_URL_TRANSFER_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_ERROR,
-      ALARM_NOTIFICATION_URL: FspEndpointTypesEnum.ALARM_NOTIFICATION_URL,
-      ALARM_NOTIFICATION_TOPIC: FspEndpointTypesEnum.ALARM_NOTIFICATION_TOPIC,
-      NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL: FspEndpointTypesEnum.NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL,
-      NET_DEBIT_CAP_ADJUSTMENT_EMAIL: FspEndpointTypesEnum.NET_DEBIT_CAP_ADJUSTMENT_EMAIL,
-      SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL: FspEndpointTypesEnum.SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL,
-      FSPIOP_CALLBACK_URL_QUOTES: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_QUOTES,
-      FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST,
-      FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT,
-      FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR,
-      FSPIOP_CALLBACK_URL_AUTHORIZATIONS: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_AUTHORIZATIONS,
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST,
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT,
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR,
-    },
-    FspEndpointTemplate: {
-      TRANSACTION_REQUEST_POST: string,
-      TRANSACTION_REQUEST_PUT: string,
-      TRANSACTION_REQUEST_GET: string,
-      TRANSACTION_REQUEST_PUT_ERROR: string,
-      PARTICIPANT_ENDPOINTS_GET: string,
-      PARTICIPANTS_GET: string,
-      PARTIES_GET: string,
-      PARTIES_PUT_ERROR: string,
-      PARTIES_SUB_ID_PUT_ERROR: string,
-      ORACLE_PARTICIPANTS_TYPE_ID: string,
-      ORACLE_PARTICIPANTS_TYPE_ID_CURRENCY: string,
-      ORACLE_PARTICIPANTS_TYPE_ID_SUB_ID: string,
-      ORACLE_PARTICIPANTS_TYPE_ID_CURRENCY_SUB_ID: string,
-      ORACLE_PARTICIPANTS_BATCH: string,
-      TRANSFERS_POST: string,
-      TRANSFERS_PUT: string,
-      TRANSFERS_PUT_ERROR: string,
-      BULK_TRANSFERS_POST: string,
-      BULK_TRANSFERS_PUT: string,
-      BULK_TRANSFERS_PUT_ERROR: string,
-    }
+      FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE;
+      FSPIOP_CALLBACK_URL: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_PUT;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_PUT_ERROR;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_DELETE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_DELETE;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_SUB_ID_DELETE;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT;
+      FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTICIPANT_BATCH_PUT_ERROR;
+      FSPIOP_CALLBACK_URL_PARTIES_GET: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_GET;
+      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_GET;
+      FSPIOP_CALLBACK_URL_PARTIES_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_PUT;
+      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT;
+      FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR;
+      FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_PARTIES_SUB_ID_PUT_ERROR;
+      FSPIOP_CALLBACK_URL_TRANSFER_POST: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_POST;
+      FSPIOP_CALLBACK_URL_TRANSFER_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_PUT;
+      FSPIOP_CALLBACK_URL_TRANSFER_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_TRANSFER_ERROR;
+      ALARM_NOTIFICATION_URL: FspEndpointTypesEnum.ALARM_NOTIFICATION_URL;
+      ALARM_NOTIFICATION_TOPIC: FspEndpointTypesEnum.ALARM_NOTIFICATION_TOPIC;
+      NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL: FspEndpointTypesEnum.NET_DEBIT_CAP_THRESHOLD_BREACH_EMAIL;
+      NET_DEBIT_CAP_ADJUSTMENT_EMAIL: FspEndpointTypesEnum.NET_DEBIT_CAP_ADJUSTMENT_EMAIL;
+      SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL: FspEndpointTypesEnum.SETTLEMENT_TRANSFER_POSITION_CHANGE_EMAIL;
+      FSPIOP_CALLBACK_URL_QUOTES: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_QUOTES;
+      FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_POST;
+      FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT;
+      FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR;
+      FSPIOP_CALLBACK_URL_AUTHORIZATIONS: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_AUTHORIZATIONS;
+      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST;
+      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT;
+      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR;
+      THIRDPARTY_CALLBACK_URL_TRX_REQ_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST;
+    };
+    FspEndpointTemplates: {
+      TRANSACTION_REQUEST_POST: string;
+      TRANSACTION_REQUEST_PUT: string;
+      TRANSACTION_REQUEST_GET: string;
+      TRANSACTION_REQUEST_PUT_ERROR: string;
+      PARTICIPANT_ENDPOINTS_GET: string;
+      PARTICIPANTS_GET: string;
+      PARTIES_GET: string;
+      PARTIES_PUT_ERROR: string;
+      PARTIES_SUB_ID_PUT_ERROR: string;
+      ORACLE_PARTICIPANTS_TYPE_ID: string;
+      ORACLE_PARTICIPANTS_TYPE_ID_CURRENCY: string;
+      ORACLE_PARTICIPANTS_TYPE_ID_SUB_ID: string;
+      ORACLE_PARTICIPANTS_TYPE_ID_CURRENCY_SUB_ID: string;
+      ORACLE_PARTICIPANTS_BATCH: string;
+      TRANSFERS_POST: string;
+      TRANSFERS_PUT: string;
+      TRANSFERS_PUT_ERROR: string;
+      BULK_TRANSFERS_POST: string;
+      BULK_TRANSFERS_PUT: string;
+      BULK_TRANSFERS_PUT_ERROR: string;
+      THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR: string;
+      THIRDPARTY_TRANSACTION_REQUEST_POST: string;
+    };
   }
-
-  type TEnum = {
-    Http: THttpEnum
-    EndPoints: TEndPointsEnum
+  interface Enum {
+    Http: HttpEnum;
+    EndPoints: EndPointsEnum;
+    Events: {
+      Event: {
+        Action: {
+          POST: string;
+        };
+        Type: {
+          TRANSACTION_REQUEST: string;
+        };
+      };
+    };
   }
-
   class Endpoints {
-    fetchEndpoints(fspId: string): Promise<any>;
+    fetchEndpoints(fspId: string): Promise<any>
     getEndpoint(switchUrl: string, fsp: string, endpointType: FspEndpointTypesEnum, options?: any): Promise<string>
+    initializeCache(policyOptions: object): Promise<boolean>
   }
 
-  type TUtil = {
-    Endpoints: Endpoints
-    Request: any
-    Hapi: any
+  class Request {
+    sendRequest(url: string, headers: any, source: string, destination: string, method?: string, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
   }
 
-  const Enum: TEnum;
-  const Util: TUtil;
-  const HealthCheck: any;
+  interface Util {
+    Endpoints: Endpoints;
+    Request: Request;
+    Hapi: any;
+    OpenapiBackend: any;
+  }
+
+  const Enum: Enum
+  const Util: Util
+  const HealthCheck: any
+}
+
+declare module '@mojaloop/central-services-error-handling' {
+  class FSPIOPError {
+    toApiErrorObject(includeCauseExtension?: boolean, truncateExtensions?: boolean): any
+    apiErrorCode: {
+      code: number;
+      message: string;
+    }
+
+    message: string
+  }
+  const Factory: {
+    FSPIOPError: FSPIOPError;
+  }
+  const Enums: {
+    FSPIOPErrorCodes: {
+      DESTINATION_FSP_ERROR: any;
+      DESTINATION_COMMUNICATION_ERROR: any;
+    };
+  }
+  export function validateRoutes(options?: object): object;
+  export function ReformatFSPIOPError(error: any, apiErrorCode?: any, replyTo?: any, extensions?: any): FSPIOPError
+  export function CreateFSPIOPError(apiErrorCode?: any, message?: any, cause?: any, replyTo?: any, extensions?: any, useDescriptionAsMessage?: boolean): FSPIOPError
 }
 
 declare module '@hapi/good'

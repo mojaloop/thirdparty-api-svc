@@ -41,6 +41,30 @@ export interface ServiceConfig {
     SHOW_HIDDEN?: boolean;
     COLOR?: boolean;
   };
+
+  // transactions.ts
+  ENDPOINT_CACHE_CONFIG: {
+    expiresIn: number;
+    generateTimeout: number;
+  };
+  SWITCH_ENDPOINT: string;
+  ERROR_HANDLING: {
+    includeCauseExtension: boolean;
+    truncateExtensions: boolean;
+  };
+  INSTRUMENTATION: {
+    METRICS: {
+      DISABLED: boolean;
+      labels: {
+        eventId: string;
+      };
+      config: {
+        timeout: number;
+        prefix: string;
+        defaultLabels?: Map<string, string>;
+      };
+    };
+  };
 }
 
 const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig

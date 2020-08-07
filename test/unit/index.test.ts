@@ -23,16 +23,19 @@
  --------------
  ******/
 
-import index from '../../src/index'
-import Config from '../../src/shared/config'
+import index from '~/index'
+import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
-import { Authorizations } from '../../src/domain'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
+import TestData from 'test/unit/data/mockData.json'
 
-const mock_forwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
-const mock_loggerPush = jest.spyOn(Logger, 'push')
-const mock_loggerError = jest.spyOn(Logger, 'error')
+const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+const mockData = JSON.parse(JSON.stringify(TestData))
+const trxnRequest = mockData.transactionRequest
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -53,131 +56,60 @@ describe('index', (): void => {
       server.stop()
     })
 
-    describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
+    describe('/thirdpartyRequests/transactions', (): void => {
       beforeAll((): void => {
-        jest.useFakeTimers()
-        mock_loggerPush.mockReturnValue(null)
-        mock_loggerError.mockReturnValue(null)
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
       })
 
       beforeEach((): void => {
-        jest.clearAllTimers()
         jest.clearAllMocks()
       })
 
-      afterAll((): void => {
-        jest.useRealTimers()
-      })
-
       it('POST', async (): Promise<void> => {
-        mock_forwardPostAuthorization.mockResolvedValueOnce()
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/12345/authorizations',
-          headers: {
-            accept: 'application/json',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'dfspA',
-            'fspiop-destination': 'dfspA',
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '12345',
-            sourceAccountId: '12345',
-            status: 'PENDING',
-          }
+          url: '/thirdpartyRequests/transactions',
+          headers: reqHeaders,
+          payload: trxnRequest.payload
         }
-        const expected: Array<any> = [
-          expect.objectContaining(request.headers),
-          '12345',
-          request.payload
-        ]
 
-        // Act
+        const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
         const response = await server.inject(request)
 
-        // Assert
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
-        expect(mock_forwardPostAuthorization).toHaveBeenCalledWith(...expected)
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequest.payload, { transactionRequestId: undefined })
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/12345/authorizations',
-          headers: {
-            accept: 'application/json',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
-            'fspiop-destination': 'dfspA',
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '12345',
-            sourceAccountId: '12345',
-            status: 'VERIFIED',
-          }
-        }
-        const expected = {
-          errorInformation: {
-            errorCode: '3100',
-            errorDescription: 'Generic validation error - \"status\" must be [PENDING]'
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
-        expect(mock_forwardPostAuthorization).not.toHaveBeenCalled()
-      })
-
-      it('requires all fields to be set', async (): Promise<void> => {
-        const request = {
-          method: 'POST',
-          url: '/thirdpartyRequests/transactions/trId_12345/authorizations',
-          headers: {
-            accept: 'application/json',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
-            'fspiop-destination': 'dfspA',
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '12345',
-            status: 'PENDING',
-          }
+          url: '/thirdpartyRequests/transactions',
+          headers: trxnRequest.headers,
+          payload: errPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - \"sourceAccountId\" is required'
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'transactionRequestId\''
           }
         }
-
-        // Act
         const response = await server.inject(request)
 
-        // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
-        expect(mock_forwardPostAuthorization).not.toHaveBeenCalled()
+        expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
       })
     })
 
-    describe('/health', () => {
+    describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
           status: string;
@@ -200,28 +132,7 @@ describe('index', (): void => {
         expect(result.uptime).toBeGreaterThan(1.0)
       })
     })
-
-    describe('/hello', () => {
-      it('GET', async (): Promise<void> => {
-        interface HelloResponse {
-          hello: string;
-        }
-
-        const request = {
-          method: 'GET',
-          url: '/hello'
-        }
-
-        const response = await server.inject(request)
-        expect(response.statusCode).toBe(200)
-        expect(response.result).toBeDefined()
-
-        const result = response.result as HelloResponse
-        expect(result.hello).toEqual('world')
-      })
-    })
-
-    describe('/metrics', () => {
+    describe('/metrics', (): void => {
       it('GET', async (): Promise<void> => {
         const request = {
           method: 'GET',

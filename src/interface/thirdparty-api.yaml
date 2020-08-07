@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   version: "1.0"
-  title: Mojaloop ThirdParty API Adapter
+  title: Mojaloop Thirdparty API Adapter
   description:
     A Mojaloop API for thirdparty interactions between `PISPs` (Payment Initiation
     Service Providers) and `DFSPs` (Digital Financial Service Providers)
@@ -790,17 +790,18 @@ paths:
         503:
           $ref: '#/components/responses/503'
 
-  #thirdPartyRequests
-  /thirdPartyRequests/transactions:
+  #thirdpartyRequests
+  /thirdpartyRequests/transactions:
     post:
       description: |
-        The HTTP request `POST /thirdPartyRequests/transactions` is used to request the creation of a third party transaction.
+        The HTTP request `POST /thirdpartyRequests/transactions` is used to request the creation of a third party transaction.
 
         - Called by a `PISP` to initiate a third party transaction flow
-      summary: CreateThirdPartyTransactionRequests
+      summary: CreateThirdpartyTransactionRequests
       tags:
-        - thirdPartyRequests
-      operationId: CreateThirdPartyTransactionRequests
+        - thirdpartyRequests
+        - sampled
+      operationId: CreateThirdpartyTransactionRequests
       parameters:
         #Headers
         - $ref: '#/components/parameters/Accept'
@@ -820,7 +821,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThirdPartyTransactionRequest'
+              $ref: '#/components/schemas/ThirdpartyTransactionRequest'
             example:
               transactionRequestId: '8d34f91d-d078-4077-8263-2c047876fcf6'
               sourceAccountId: 'dfspa.alice.1234'
@@ -867,7 +868,7 @@ paths:
           $ref: '#/components/responses/501'
         503:
           $ref: '#/components/responses/503'
-  /thirdPartyRequests/transactions/{ID}:
+  /thirdpartyRequests/transactions/{ID}:
     parameters:
       - $ref: '#/components/parameters/ID'
       #Headers
@@ -882,13 +883,13 @@ paths:
       - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     get:
       description: >
-        The HTTP request `GET /thirdPartyRequests/transactions/{ID}` is used to get information regarding a transaction request 
+        The HTTP request `GET /thirdpartyRequests/transactions/{ID}` is used to get information regarding a transaction request 
         created or requested earlier. The `{ID}` in the URI should contain the `transactionRequestId` that was used for the creation 
         of the transaction request.
-      summary: GetThirdPartyTransactionRequests
+      summary: GetThirdpartyTransactionRequests
       tags:
-        - thirdPartyRequests
-      operationId: GetThirdPartyTransactionRequests
+        - thirdpartyRequests
+      operationId: GetThirdpartyTransactionRequests
       parameters:
         #Headers
         - $ref: '#/components/parameters/Accept'
@@ -913,13 +914,13 @@ paths:
           $ref: '#/components/responses/503'
     put:
       description: >
-        The callback `PUT /thirdPartyRequests/transactions/{ID}` is used to inform the client of the result of a 
+        The callback `PUT /thirdpartyRequests/transactions/{ID}` is used to inform the client of the result of a 
         previously-requested transaction. The `{ID}` in the URI should contain the `transactionRequestId` that was used for 
         the creation of the transaction request.
       summary: Update third party transaction requests
       tags:
-        - thirdPartyRequests
-      operationId: UpdateThirdPartyTransactionRequests
+        - thirdpartyRequests
+      operationId: UpdateThirdpartyTransactionRequests
       parameters:
         #Path
         - $ref: '#/components/parameters/ID'
@@ -931,7 +932,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThirdPartyTransactionRequest'
+              $ref: '#/components/schemas/ThirdpartyTransactionRequest'
       responses:
         200:
           $ref: '#/components/responses/200'
@@ -951,16 +952,16 @@ paths:
           $ref: '#/components/responses/501'
         503:
           $ref: '#/components/responses/503'
-  /thirdPartyRequest/transactions/{ID}/error:
+  /thirdpartyRequests/transactions/{ID}/error:
     put:
       description: >
         If the server is unable to find the transaction request, or another processing error occurs, 
-        the error callback `PUT /thirdPartyRequest/transactions/{ID}/error` is used. 
+        the error callback `PUT /thirdpartyRequests/transactions/{ID}/error` is used. 
         The `{ID}` in the URI should contain the `transactionRequestId` that was used for the creation of the transaction request.
       summary: Return transaction error
       tags:
-        - thirdPartyRequests
-      operationId: UpdateThirdPartyTransactionRequestsError
+        - thirdpartyRequests
+      operationId: UpdateThirdpartyTransactionRequestsError
       parameters:
         #Path
         - $ref: '#/components/parameters/ID'
@@ -1204,8 +1205,9 @@ components:
         - "accounts.getBalance" - Get the balance of a given account
         - "accounts.transfer" - initiate a transfer from an account
     Counter:
+      allOf:
+        - $ref: '#/components/schemas/Integer'
       title: Counter
-      $ref: '#/components/schemas/Integer'
       description: Sequential counter used for cloning detection. Present only for U2F authentication.
     CorrelationId:
       title: CorrelationId
@@ -1507,17 +1509,20 @@ components:
         U2F challenge-response, where payer FSP verifies if the response provided by end-user device matches the previously registered key.
       properties:
         pinValue:
-          $ref: '#/components/schemas/U2FPIN'
+          allOf:
+          - $ref: '#/components/schemas/U2FPIN'
           description: U2F challenge-response.
         counter:
-          $ref: '#/components/schemas/Counter'
+          allOf:
+            - $ref: '#/components/schemas/Counter'
           description: Sequential counter used for cloning detection. Present only for U2F authentication.
       required:
         - pinValue
         - counter
     RetriesLeft:
-      title: RetriesLeft
-      $ref: '#/components/schemas/Integer'
+      allOf:
+        - $ref: '#/components/schemas/Integer'
+      title: RetriesLeft  
       description: >
         RetriesLeft is the number of retries left before the financial transaction is rejected. 
         It must be expressed in the form of the data type Integer. retriesLeft=1 means that this is the last retry before 
@@ -1530,15 +1535,18 @@ components:
       description: Data model for the complex type Account
       properties:
         address:
-          $ref: '#/components/schemas/AccountAddress'
+          allOf:
+            - $ref: '#/components/schemas/AccountAddress'
           type: string
           description: Unique routable address which is DFSP specific.
         currency:
-          $ref: '#/components/schemas/Currency'
+          allOf:
+            - $ref: '#/components/schemas/Currency'
           type: string
           description: Currency of the amount.
         description:
-          $ref: '#/components/schemas/Name'
+          allOf:
+            - $ref: '#/components/schemas/Name'
           type: string
           description: The name of the account.
       required:
@@ -1587,10 +1595,12 @@ components:
       description: Data model for the complex type AuthenticationInfo.
       properties:
         authentication:
-          $ref: '#/components/schemas/AuthenticationType'
+          allOf:
+            - $ref: '#/components/schemas/AuthenticationType'
           description: Type of authentication.
         authenticationValue:
-          $ref: '#/components/schemas/AuthenticationValue'
+          allOf:
+            - $ref: '#/components/schemas/AuthenticationValue'
           description: Authentication value.
       required:
         - authentication
@@ -1608,7 +1618,8 @@ components:
       description: The object sent in the PUT /authorizations/{ID} callback.
       properties:
         authenticationInfo:
-          $ref: '#/components/schemas/AuthenticationInfo'
+          allOf:
+            - $ref: '#/components/schemas/AuthenticationInfo'
           description: OTP or QR Code or U2F if entered, otherwise empty.
         responseType:
           type: string
@@ -1624,27 +1635,33 @@ components:
       description: POST /authorizations Request object
       properties:
         authenticationType:
-          $ref: '#/components/schemas/AuthenticationType'
+          allOf:
+            - $ref: '#/components/schemas/AuthenticationType'
           description: This value is a valid authentication type from the enumeration AuthenticationType(OTP or QR Code or U2F).
         retriesLeft:
-          $ref: '#/components/schemas/RetriesLeft'
+          allOf:
+            - $ref: '#/components/schemas/RetriesLeft'
           description: >
             RetriesLeft is the number of retries left before the financial transaction is rejected. 
             It must be expressed in the form of the data type Integer. retriesLeft=1 means that this is the last retry before 
             the financial transaction is rejected.
         amount:
-          $ref: '#/components/schemas/Money'
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: This is the transaction amount that will be withdrawn from the Payer’s account.
         transactionId:
-          $ref: '#/components/schemas/CorrelationId'
+          allOf:
+            - $ref: '#/components/schemas/CorrelationId'
           description: >
             Common ID (decided by the Payer FSP) between the FSPs for the future transaction object.
             The actual transaction will be created as part of a successful transfer process.
         transactionRequestId:
-          $ref: '#/components/schemas/CorrelationId'
+          allOf:
+            - $ref: '#/components/schemas/CorrelationId'
           description: The transactionRequestID, received from the POST /transactionRequests service earlier in the process.
         quote:
-          $ref: '#/components/schemas/QuotesIDPutResponse'
+          allOf:
+            - $ref: '#/components/schemas/QuotesIDPutResponse'
           description: Quotes object
       required:
         - authenticationType
@@ -1673,7 +1690,8 @@ components:
             The id of the ConsentRequest that was used to initiate the
             creation of this Consent
         participantId:
-          $ref: '#/components/schemas/FspId'
+          allOf:
+            - $ref: '#/components/schemas/FspId'
           description: FSP identifier who issued this Consent
         initiatorId:
           allOf:
@@ -1799,13 +1817,16 @@ components:
       description: Data model for the complex type ErrorInformation.
       properties:
         errorCode:
-          $ref: '#/components/schemas/ErrorCode'
+          allOf:
+            - $ref: '#/components/schemas/ErrorCode'
           description: Specific error number.
         errorDescription:
-          $ref: '#/components/schemas/ErrorDescription'
+          allOf:
+            - $ref: '#/components/schemas/ErrorDescription'
           description: Error description string.
         extensionList:
-          $ref: '#/components/schemas/ExtensionList'
+          allOf:
+            - $ref: '#/components/schemas/ExtensionList'
           description: Optional list of extensions, specific to deployment.
       required:
         - errorCode
@@ -1834,10 +1855,12 @@ components:
       description: Data model for the complex type Extension
       properties:
         key:
-          $ref: '#/components/schemas/ExtensionKey'
+          allOf:
+            - $ref: '#/components/schemas/ExtensionKey'
           description: Extension key.
         value:
-          $ref: '#/components/schemas/ExtensionValue'
+          allOf:
+            - $ref: '#/components/schemas/ExtensionValue'
           description: Extension value.
       required:
         - key
@@ -1891,10 +1914,12 @@ components:
       description: Data model for the complex type Party.
       properties:
         accounts:
-          $ref: '#/components/schemas/AccountList'
+          allOf:
+            - $ref: '#/components/schemas/AccountList'
           description: List of accounts associated with the party containing and DFSP routable address, currency identifier and description.
         partyIdInfo:
-          $ref: '#/components/schemas/PartyIdInfo'
+          allOf:
+            - $ref: '#/components/schemas/PartyIdInfo'
           description: Party Id type, id, sub ID or type, and FSP Id.
         merchantClassificationCode:
           type: string
@@ -1905,7 +1930,8 @@ components:
           description: Display name of the Party, could be a real name or a nick name.
           example: Henrik Karlsson
         personalInfo:
-          $ref: '#/components/schemas/PartyPersonalInfo'
+          allOf:
+            - $ref: '#/components/schemas/PartyPersonalInfo'
           description: Personal information used to verify identity of Party such as first, middle, last name and date of birth.
       required:
         - partyIdInfo
@@ -1956,7 +1982,8 @@ components:
       description: Data model for the complex type PartyPersonalInfo.
       properties:
         complexName:
-          $ref: '#/components/schemas/PartyComplexName'
+          allOf:
+            - $ref: '#/components/schemas/PartyComplexName'
           description: First, middle and last name for the Party.
         dateOfBirth:
           type: string
@@ -1968,7 +1995,8 @@ components:
       description: The object sent in the PUT /parties/{Type}/{ID} callback.
       properties:
         party:
-          $ref: '#/components/schemas/Party'
+          allOf:
+            - $ref: '#/components/schemas/Party'
           description: Information regarding the requested Party.
       required:
         - party
@@ -1978,29 +2006,34 @@ components:
       description: The object sent in the PUT /quotes/{ID} callback.
       properties:
         transferAmount:
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: The amount of money that the Payee FSP should receive.
           type: object
-          $ref: '#/components/schemas/Money'
         payeeReceiveAmount:
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: > 
             The amount of Money that the Payee should receive in the end-to-end transaction. 
             Optional as the Payee FSP might not want to disclose any optional Payee fees.
           type: object
-          $ref: '#/components/schemas/Money'
         payeeFspFee:
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: Payee FSP’s part of the transaction fee.
           type: object
-          $ref: '#/components/schemas/Money'
         payeeFspCommission:
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: Transaction commission from the Payee FSP.
           type: object
-          $ref: '#/components/schemas/Money'
         expiration:
           type: string
           description: Date and time until when the quotation is valid and can be honored when used in the subsequent transaction.
           example: '2016-05-24T08:38:08.699-04:00'
         geoCode:
-          $ref: '#/components/schemas/GeoCode'
+          allOf:
+            - $ref: '#/components/schemas/GeoCode'
           description: Longitude and Latitude of the Payee. Can be used to detect fraud.
         ilpPacket:
           type: string
@@ -2011,7 +2044,8 @@ components:
           description: The condition that must be attached to the transfer by the Payer.
           example: f5sqb7tBTWPd5Y8BDFdMm9BJR_MNI4isf8p8n4D5pHA
         extensionList:
-          $ref: '#/components/schemas/ExtensionList'
+          allOf:
+            - $ref: '#/components/schemas/ExtensionList'
           description: Optional extension, specific to deployment.
       required:
         - transferAmount
@@ -2045,19 +2079,21 @@ components:
       required:
         - scope
         - accountId
-    ThirdPartyTransactionRequest:
-      title: ThirdPartyTransactionRequest
+    ThirdpartyTransactionRequest:
+      title: ThirdpartyTransactionRequest
       type: object
-      description: The object sent in the POST /thirdPartyRequests/transactions request.
+      description: The object sent in the POST /thirdpartyRequests/transactions request.
       properties:
         transactionRequestId:
-          $ref: '#/components/schemas/CorrelationId'
+          allOf:
+            - $ref: '#/components/schemas/CorrelationId'
           description: >
             Common ID between the FSPs for the transaction request object. 
             The ID should be reused for resends of the same transaction request.
             A new ID should be generated for each new transaction request.
         sourceAccountId:
-          $ref: '#/components/schemas/AccountId'
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
           description: DFSP specific account identifiers, e.g. `dfspa.alice.1234`
         consentId:
           allOf:
@@ -2066,19 +2102,24 @@ components:
             Common ID between the PISP and FSP for the Consent object
             This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         payee:
-          $ref: '#/components/schemas/Party'
+          allOf:
+            - $ref: '#/components/schemas/Party'
           description: Information about the Payee in the proposed financial transaction.
         payer:
-          $ref: '#/components/schemas/Party'
+          allOf:
+            - $ref: '#/components/schemas/Party'
           description: Information about the Payer in the proposed financial transaction.
         amountType:
-          $ref: '#/components/schemas/AmountType'
+          allOf:
+            - $ref: '#/components/schemas/AmountType'
           description: SEND for sendAmount, RECEIVE for receiveAmount.
         amount:
-          $ref: '#/components/schemas/Money'
+          allOf:
+            - $ref: '#/components/schemas/Money'
           description: Requested amount to be transferred from the Payer to Payee.
         transactionType:
-          $ref: '#/components/schemas/TransactionType'
+          allOf:
+            - $ref: '#/components/schemas/TransactionType'
           description: Type of transaction.
         expiration:
           type: string
@@ -2118,7 +2159,8 @@ components:
           description: Consumer, agent, business, …
           example: CONSUMER
         refundInfo:
-          $ref: '#/components/schemas/Refund'
+          allOf:
+            - $ref: '#/components/schemas/Refund'
           description: Extra information specific to a refund scenario. Should only be populated if scenario is REFUND.
         balanceOfPayments:
           type: string
