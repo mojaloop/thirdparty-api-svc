@@ -68,11 +68,19 @@ describe('transactions handler', (): void => {
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
 
-    it('handles errors', async (): Promise<void> => {
-      const err = new Error('Transactions forward Error')
-      // TODO: fix this test - it's invalid I think since it doesn't return a promise!
-      mockForwardTransactionRequest.mockImplementation(() => { throw err })
-      await expect(Handler.post(null, request, h as ResponseToolkit)).rejects.toThrowError(new RegExp('Transactions forward Error'))
+    it('handles errors in async manner', async (): Promise<void> => {
+      // Arrange
+      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
+
+      // Act
+      const response = await Handler.post(null, request, h as ResponseToolkit)
+
+      // Assert
+      expect(response).toBe(202)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      //Note: no promise rejection here!
     })
   })
 })
