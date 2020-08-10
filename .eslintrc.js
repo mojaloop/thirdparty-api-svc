@@ -47,5 +47,13 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
       },
     },
+    {
+      files: [
+        '*.js'
+      ],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      }
+    },
   ],
 };
