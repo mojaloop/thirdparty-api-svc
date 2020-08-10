@@ -5,7 +5,7 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 
-const featurePath = path.join(__dirname, '../features/template.scenario.feature')
+const featurePath = path.join(__dirname, '../features/health.scenario.feature')
 const feature = loadFeature(featurePath)
 
 defineFeature(feature, (test): void => {
