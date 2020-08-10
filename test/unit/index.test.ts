@@ -80,7 +80,14 @@ describe('index', (): void => {
           payload: trxnRequest.payload
         }
 
-        const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
+        const expected = [
+          '/thirdpartyRequests/transactions',
+          expect.any(Object),
+          'POST',
+          {},
+          request.payload,
+          expect.any(Object)
+        ]
         const response = await server.inject(request)
 
         expect(response.statusCode).toBe(202)
@@ -146,9 +153,11 @@ describe('index', (): void => {
           }
         }
         const expected: Array<any> = [
+          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
           expect.objectContaining(request.headers),
           '7d34f91d-d078-4077-8263-2c047876fcf6',
-          request.payload
+          request.payload,
+          expect.any(Object)
         ]
 
         // Act

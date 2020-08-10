@@ -80,7 +80,7 @@ describe('domain/authorizations', () => {
       }
 
       const getEndpointExpected: Array<any> = [
-        'localhost:3001',
+        'http://central-ledger.local:3001',
         'dfspA',
         Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
       ]
@@ -91,7 +91,8 @@ describe('domain/authorizations', () => {
         'dfspA',
         Enum.Http.RestMethods.POST,
         payload,
-        Enum.Http.ResponseTypes.JSON
+        Enum.Http.ResponseTypes.JSON,
+        undefined
       ]
 
       // Act
@@ -118,10 +119,15 @@ describe('domain/authorizations', () => {
         status: 'PENDING',
       }
 
-      const getEndpointExpected: Array<any> = [
-        'localhost:3001',
+      const getEndpointExpectedFirst: Array<any> = [
+        'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST,
+      ]
+      const getEndpointExpectedSecond: Array<any> = [
+        'http://central-ledger.local:3001',
+        'pispA',
+        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
       ]
 
       // Act
@@ -129,7 +135,8 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
+      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
     })
   })
 

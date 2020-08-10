@@ -61,7 +61,7 @@ describe('transactions handler', (): void => {
     it('handles a successful request', async (): Promise<void> => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
 
-      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload]
+      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
       const response = await Handler.post(null, request, h as ResponseToolkit)
       expect(response).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)

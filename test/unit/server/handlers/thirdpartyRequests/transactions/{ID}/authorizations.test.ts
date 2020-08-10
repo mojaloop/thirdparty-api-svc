@@ -29,9 +29,7 @@ import AuthorizationsHandler from '~/server/handlers/thirdpartyRequests/transact
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 
-// TODO remove _'s
 const mockForwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
-const mockSendErrorCallback = jest.spyOn(Authorizations, 'forwardPostAuthorizationError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
@@ -48,15 +46,10 @@ const h: ResponseToolkit = {
 
 describe('authorizations handler', () => {
   describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', () => {
-    beforeAll((): void => {
+    beforeEach((): void => {
+      jest.clearAllMocks()
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
-      jest.useFakeTimers()
-    })
-
-    beforeEach((): void => {
-      jest.clearAllTimers()
-      jest.clearAllMocks()
     })
 
     it('handles a successful request', async () => {
@@ -79,9 +72,11 @@ describe('authorizations handler', () => {
         }
       }
       const expected: Array<any> = [
+        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
         request.headers,
         request.params.ID,
-        request.payload
+        request.payload,
+        undefined
       ]
 
       // Act
@@ -89,15 +84,12 @@ describe('authorizations handler', () => {
 
       // Assert
       expect(response).toBe(202)
-      jest.runAllTimers()
-      expect(setImmediate).toHaveBeenCalled()
       expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
       mockForwardPostAuthorization.mockRejectedValueOnce(new Error('Test Error'))
-      mockSendErrorCallback.mockResolvedValueOnce()
       const request = {
         headers: {
           'fspiop-source': 'pispA',
@@ -115,9 +107,11 @@ describe('authorizations handler', () => {
         }
       }
       const expected: Array<any> = [
+        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
         request.headers,
         request.params.ID,
-        request.payload
+        request.payload,
+        undefined
       ]
 
       // Act
@@ -125,13 +119,11 @@ describe('authorizations handler', () => {
 
       // Assert
       expect(response).toBe(202)
-      jest.runAllTimers()
-      expect(setImmediate).toHaveBeenCalled()
-
       // wait once more for the event loop - since we can't await `runAllImmediates`
+      // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))
+      // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
-      expect(mockSendErrorCallback).toHaveBeenCalledTimes(1)
     })
   })
 })

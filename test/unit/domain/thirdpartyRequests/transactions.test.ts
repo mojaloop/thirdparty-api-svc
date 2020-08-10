@@ -150,11 +150,11 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockSendRequest).toHaveBeenLastCalledWith(...sendRequestErrExpected)
     })
 
-    it('if destination endpoint is not found for both source and destiantion', async (): Promise<void> => {
-      mockGetEndpoint.mockRejectedValue(new Error('Endpoint not found for both source and destiantion'))
+    it('if destination endpoint is not found for both source and destination', async (): Promise<void> => {
+      mockGetEndpoint.mockRejectedValue(new Error('Endpoint not found for both source and destination'))
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      await expect(Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found for both source and destiantion'))
+      await expect(Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found for both source and destination'))
 
       expect(mockGetEndpoint).toHaveBeenCalledTimes(2)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
