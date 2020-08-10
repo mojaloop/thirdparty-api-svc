@@ -62,7 +62,6 @@ export async function forwardPostAuthorization (
   transactionRequestId: string,
   payload: PostAuthorizationPayload,
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardPostAuthorization')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
