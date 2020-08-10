@@ -217,12 +217,11 @@ describe('domain/authorizations', () => {
         Enum.Http.RestMethods.PUT,
         payload,
         Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
+        undefined
       ]
-      const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardPostAuthorizationError(path, headers, id, payload, mockSpan)
+      await Authorizations.forwardPostAuthorizationError(path, headers, id, payload)
 
       // Assert
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
