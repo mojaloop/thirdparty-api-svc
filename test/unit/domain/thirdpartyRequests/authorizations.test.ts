@@ -30,11 +30,13 @@ import Logger from '@mojaloop/central-services-logger'
 import {
   Util, Enum,
 } from '@mojaloop/central-services-shared'
+import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Span from 'test/unit/__mocks__/span'
 
-const mock_getEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
-const mock_sendRequest = jest.spyOn(Util.Request, 'sendRequest')
-const mock_loggerPush = jest.spyOn(Logger, 'push')
-const mock_loggerError = jest.spyOn(Logger, 'error')
+const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
+const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
 
 // @ts-ignore
 const h: ResponseToolkit = {
@@ -47,25 +49,20 @@ const h: ResponseToolkit = {
   }
 }
 
-const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
-
 describe('domain/authorizations', () => {
   describe('forwardPostAuthorization', () => {
-    beforeAll((): void => {
-      mock_loggerPush.mockReturnValue(null)
-      mock_loggerError.mockReturnValue(null)
-      jest.useFakeTimers()
-    })
+    const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
 
     beforeEach((): void => {
-      jest.clearAllTimers()
       jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
     })
 
     it('forwards the POST `thirdpartyRequests/transactions/{id}/authorizations request', async () => {
       // Arrange
-      mock_getEndpoint.mockResolvedValue('http://auth-service.local')
-      mock_sendRequest.mockResolvedValue({ status: 202, payload: null })
+      mockGetEndpoint.mockResolvedValue('http://auth-service.local')
+      mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'pispA',
         'fspiop-destination': 'dfspA'
@@ -99,13 +96,13 @@ describe('domain/authorizations', () => {
       await Authorizations.forwardPostAuthorization(path, headers, id, payload)
 
       // Assert
-      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
-      expect(mock_sendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
     })
 
-    it('throws the original error when the endpoint cannot be found', async () => {
+    it('handles `getEndpoint` failure twice', async () => {
       // Arrange
-      mock_getEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
+      mockGetEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
       const headers = {
         'fspiop-source': 'pispA',
         'fspiop-destination': 'dfspA'
@@ -135,21 +132,54 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
-      expect(mock_getEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
     })
   })
 
-  // TODO: implement these tests!
-  // describe('sendErrorCallback', () => {
-  //   // TODO: this test will be updated once we implement error handling
-  //   it('stub implementation', async () => {
-  //     // Arrange
+  describe('forwardPostAuthorizationError', () => {
+    const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
 
-  //     // Act
-  //     await Authorizations.sendErrorCallback()
+    beforeEach((): void => {
+      jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
 
-  //     // Assert
-  //   })
-  // })
+    it('forwards the POST /../authorization error', async () => {
+      // Arrange
+      mockGetEndpoint.mockResolvedValue('http://pisp.local')
+      mockSendRequest.mockResolvedValue({ status: 202, payload: null })
+      const headers = {
+        'fspiop-source': 'switch',
+        'fspiop-destination': 'pispA'
+      }
+      const id = "123456"
+      const fspiopError = ReformatFSPIOPError(new Error('Test Error'))
+      const payload = fspiopError.toApiErrorObject(true, true)
+      const getEndpointExpected: Array<any> = [
+        'http://central-ledger.local:3001',
+        'pispA',
+        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+      ]
+      const sendRequestExpected: Array<any> = [
+        'http://pisp.local/thirdpartyRequests/transactions/123456/authorizations/error',
+        headers,
+        'switch',
+        'pispA',
+        Enum.Http.RestMethods.PUT,
+        payload,
+        Enum.Http.ResponseTypes.JSON,
+        {isFinished: false}
+      ]
+      const mockSpan = new Span()
+
+      // Act
+      await Authorizations.forwardPostAuthorizationError(path, headers, id, payload, mockSpan)
+
+      // Assert
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+    })
+  })
 })

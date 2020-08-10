@@ -154,7 +154,7 @@ export async function forwardPostAuthorizationError(path: string,
       headers,
       sourceDfspId,
       destinationDfspId,
-      Enum.Http.RestMethods.POST,
+      Enum.Http.RestMethods.PUT,
       payload,
       Enum.Http.ResponseTypes.JSON,
       childSpan

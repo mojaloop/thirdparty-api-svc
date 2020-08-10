@@ -28,6 +28,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'
 import TestData from 'test/unit/data/mockData.json'
+import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -37,31 +38,6 @@ const apiPath = '/thirdpartyRequests/transactions'
 const MockData = JSON.parse(JSON.stringify(TestData))
 const request = MockData.transactionRequest
 
-/**
- * Mock Span
- */
-class Span {
-  public isFinished: boolean
-  public constructor () {
-    this.isFinished = false
-  }
-
-  public getChild () {
-    return new Span()
-  }
-
-  public audit () {
-    return jest.fn()
-  }
-
-  public error () {
-    return jest.fn()
-  }
-
-  public finish () {
-    return jest.fn()
-  }
-}
 let MockSpan = new Span()
 
 const getEndpointExpected = [

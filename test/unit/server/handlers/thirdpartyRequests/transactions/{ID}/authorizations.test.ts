@@ -125,5 +125,34 @@ describe('authorizations handler', () => {
       // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
     })
+
+    it('handles validation errors synchnously', async () => {
+      // Arrange
+      const request = {
+        headers: {
+          'fspiop-source': 'pispA',
+          'fspiop-destination': 'dfspA'
+        },
+        params: {
+          ID: '1234'
+        },
+        payload: {
+          challenge: '12345',
+          value: '12345',
+          consentId: '12345',
+          sourceAccountId: 'dfspa.12345.67890',
+          status: 'PENDING',
+        },
+        // Will setting the span to null do stuff?
+        span: {
+        }
+      }
+
+      // Act
+      const action = async () => await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
   })
 })
