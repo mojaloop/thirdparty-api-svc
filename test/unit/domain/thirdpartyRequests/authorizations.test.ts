@@ -89,15 +89,61 @@ describe('domain/authorizations', () => {
         Enum.Http.RestMethods.POST,
         payload,
         Enum.Http.ResponseTypes.JSON,
-        undefined
+        expect.objectContaining({ isFinished: false })
       ]
+      const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardPostAuthorization(path, headers, id, payload)
+      await Authorizations.forwardPostAuthorization(path, headers, id, payload, mockSpan)
 
       // Assert
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+    })
+
+    it('handles `getEndpoint` failure', async () => {
+      // Arrange
+      mockGetEndpoint
+        .mockRejectedValueOnce(new Error('Cannot find endpoint'))
+        .mockResolvedValueOnce('http://pispA.local')
+      const headers = {
+        'fspiop-source': 'pispA',
+        'fspiop-destination': 'dfspA'
+      }
+      const id = "123456"
+      const payload: Authorizations.PostAuthorizationPayload = {
+        challenge: '12345',
+        value: '12345',
+        consentId: '12345',
+        sourceAccountId: 'dfspa.12345.67890',
+        status: 'PENDING',
+      }
+      const mockSpan = new Span()
+
+      const getEndpointExpectedFirst: Array<any> = [
+        'http://central-ledger.local:3001',
+        'dfspA',
+        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST,
+      ]
+      const getEndpointExpectedSecond: Array<any> = [
+        'http://central-ledger.local:3001',
+        'pispA',
+        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
+      ]
+
+      // Act
+      const action = async () => await Authorizations.forwardPostAuthorization(path, headers, id, payload, mockSpan)
+
+      // Assert
+      await expect(action).rejects.toThrow('Cannot find endpoint')
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      // Children's children in `forwardPostAuthorizationError()`
+      expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
+      expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
+      // Children in `forwardPostAuthorization()`
+      expect(mockSpan.child?.finish).toHaveBeenCalledTimes(1)
+      expect(mockSpan.child?.error).toHaveBeenCalledTimes(1)
     })
 
     it('handles `getEndpoint` failure twice', async () => {
@@ -115,6 +161,7 @@ describe('domain/authorizations', () => {
         sourceAccountId: 'dfspa.12345.67890',
         status: 'PENDING',
       }
+      const mockSpan = new Span()
 
       const getEndpointExpectedFirst: Array<any> = [
         'http://central-ledger.local:3001',
@@ -128,7 +175,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardPostAuthorization(path, headers, id, payload)
+      const action = async () => await Authorizations.forwardPostAuthorization(path, headers, id, payload, mockSpan)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -170,7 +217,7 @@ describe('domain/authorizations', () => {
         Enum.Http.RestMethods.PUT,
         payload,
         Enum.Http.ResponseTypes.JSON,
-        {isFinished: false}
+        expect.objectContaining({ isFinished: false })
       ]
       const mockSpan = new Span()
 

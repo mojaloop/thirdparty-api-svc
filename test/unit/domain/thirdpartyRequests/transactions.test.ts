@@ -53,7 +53,7 @@ const sendRequestExpected = [
   Enum.Http.RestMethods.POST,
   request.payload,
   Enum.Http.ResponseTypes.JSON,
-  { isFinished: false }
+  expect.objectContaining({ isFinished: false })
 ]
 const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -67,7 +67,7 @@ const sendRequestErrExpected = [
   Enum.Http.RestMethods.PUT,
   expect.any(Object),
   Enum.Http.ResponseTypes.JSON,
-  { isFinished: false }
+  expect.objectContaining({ isFinished: false })
 ]
 
 describe('domain /thirdpartyRequests/transactions', (): void => {
