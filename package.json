@@ -8,8 +8,8 @@
     "dist"
   ],
   "scripts": {
-    "audit:resolve": "SHELL=sh resolve-audit",
-    "audit:check": "SHELL=sh check-audit",
+    "audit:resolve": "SHELL=sh resolve-audit --production",
+    "audit:check": "SHELL=sh check-audit --production",
     "build": "tsc -p ./tsconfig.build.json",
     "build:openapi": "swagger-cli bundle -o ./src/interface/api.yaml -t yaml ./src/interface/api-template.yaml && swagger-cli validate ./src/interface/api.yaml",
     "dev": "ts-node-dev --no-notify -r tsconfig-paths/register -P ./tsconfig.json ./src/cli.ts",
@@ -105,7 +105,7 @@
     "@mojaloop/central-services-logger": "10.6.0",
     "@mojaloop/central-services-metrics": "9.5.0",
     "@mojaloop/central-services-shared": "11.1.2",
-    "@mojaloop/event-sdk": "10.4.0",
+    "@mojaloop/event-sdk": "^10.6.0",
     "@types/hapi": "^18.0.3",
     "@types/hapi__hapi": "^19.0.3",
     "@types/hapi__inert": "^5.2.0",
