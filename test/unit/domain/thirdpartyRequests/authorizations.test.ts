@@ -23,8 +23,6 @@
  --------------
  ******/
 
-import { ResponseObject, ResponseToolkit } from "@hapi/hapi"
-
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import {
@@ -37,17 +35,6 @@ const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 describe('domain/authorizations', () => {
   describe('forwardPostAuthorization', () => {

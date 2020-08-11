@@ -31,9 +31,10 @@ import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
 
 /**
- * Finish childSpan
- * @param {object} fspiopError error object
- * @param {object} span request span
+ * @function finishChildSpan
+ * @description Helper function for reporting errors to a childSpan, and then finishing it
+ * @param {FSPIOPError} fspiopError error object
+ * @param {any} span request span
  * @returns {Promise<void>}
  */
 async function finishChildSpan (fspiopError: FSPIOPError, childSpan: any): Promise<void> {

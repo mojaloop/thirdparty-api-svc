@@ -69,8 +69,10 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
       payload,
       span
     )
-    .catch(_ => {
+    .catch(err => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
+      Logger.error(ReformatFSPIOPError(err))
     })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)

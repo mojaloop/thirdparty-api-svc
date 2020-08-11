@@ -13,13 +13,17 @@ export type THandlerFunc = (_context: any, request: Request, h: ResponseToolkit)
 function wrapWithHistogram (handler: THandlerFunc, histogramParams: [string, string, string[]]): THandlerFunc {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (_context: any, request: Request, h: ResponseToolkit) => {
-    const histTimerEnd = Metrics.getHistogram(...histogramParams).startTimer()
+    let histTimerEnd
     try {
+      histTimerEnd = Metrics.getHistogram(...histogramParams).startTimer()
       const response = await handler(_context, request, h)
       histTimerEnd({ success: 'true' })
+
       return response
     } catch (err) {
-      histTimerEnd({ success: 'false' })
+      if (typeof histTimerEnd === 'function') {
+        histTimerEnd({ success: 'false' })
+      }
       throw err
     }
   }

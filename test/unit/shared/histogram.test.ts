@@ -24,12 +24,15 @@
  ******/
 'use strict'
 import { ResponseObject, ResponseToolkit, Request } from '@hapi/hapi'
+// import { Histogram } from 'prom-client'
 import Logger from '@mojaloop/central-services-logger'
+import Metrics from '@mojaloop/central-services-metrics'
+
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
-import Metrics from '@mojaloop/central-services-metrics'
 import { wrapWithHistogram } from '~/shared/histogram'
+import { mockResponseToolkit } from '../__mocks__/responseToolkit'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -39,11 +42,13 @@ const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
 
+// TODO: fix ResponseToolkit
 // @ts-ignore
 const h: ResponseToolkit = {
   response: (): ResponseObject => {
     return {
       code: (num: number): ResponseObject => {
+
         return num as unknown as ResponseObject
       }
     } as unknown as ResponseObject
@@ -52,8 +57,6 @@ const h: ResponseToolkit = {
 
 describe('histogram', (): void => {
   describe('wrapWithHistogram', () => {
-    const mockHistTimerEnd = jest.fn()
-
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
@@ -61,14 +64,15 @@ describe('histogram', (): void => {
 
     beforeEach(() => {
       jest.clearAllMocks()
-
-      mockMetrics.mockReturnValue({
-        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
-      })
     })
 
     it('does not call the histogram twice if an error occours', async (): Promise<void> => {
       // Arrange
+      const mockHistTimerEnd = jest.fn()
+      //@ts-ignore
+      mockMetrics.mockReturnValue({
+        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
+      })
       mockForwardTransactionRequest.mockRejectedValueOnce(() => { throw new Error('Test Error') })
       const wrappedHandler = wrapWithHistogram(
         Handler.post,
@@ -80,16 +84,37 @@ describe('histogram', (): void => {
       )
 
       // Act
-      const response = await wrappedHandler(null, request, h as ResponseToolkit)
+      const response = await wrappedHandler(null, request, mockResponseToolkit)
 
       // Assert
-      expect(response).toBe(202)
+      expect(response.statusCode).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockHistTimerEnd).toHaveBeenCalledTimes(1)
       expect(mockHistTimerEnd).toHaveBeenCalledWith({ success: 'true' })
 
       // wait once more for the event loop - since we can't await `forwardTransactionRequest`
       await new Promise(resolve => setImmediate(resolve))
+    })
+
+    it('throws original `Metrics.getHistogram()` error', async (): Promise<void> => {
+      // Arrange
+      mockMetrics.mockImplementationOnce(() => { throw new Error('Test Error') })
+      const mockHandler = jest.fn()
+      const wrappedHandler = wrapWithHistogram(
+        mockHandler,
+        [
+          'thirdpartyRequests_transactions_authorizations_post',
+          'Post thirdpartyRequests transactions authorizations request',
+          ['success']
+        ]
+      )
+
+
+      // Act
+      const action = async () => await wrappedHandler(null, request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrow('Test Error')
     })
   })
 })

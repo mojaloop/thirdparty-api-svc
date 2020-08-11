@@ -119,18 +119,12 @@ describe('index', (): void => {
 
     describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
       beforeAll((): void => {
-        jest.useFakeTimers()
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
       })
 
       beforeEach((): void => {
-        jest.clearAllTimers()
         jest.clearAllMocks()
-      })
-
-      afterAll((): void => {
-        jest.useRealTimers()
       })
 
       it('POST', async (): Promise<void> => {
@@ -166,8 +160,6 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
         expect(mockForwardAuthorizationPost).toHaveBeenCalledWith(...expected)
       })
 
@@ -202,8 +194,6 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
         expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
       })
 
@@ -237,8 +227,6 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
-        jest.runAllTimers()
-        expect(setImmediate).toHaveBeenCalled()
         expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
       })
     })

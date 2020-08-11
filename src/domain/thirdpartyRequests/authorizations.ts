@@ -73,9 +73,9 @@ export async function forwardPostAuthorization (
       destinationDfspId,
       endpointType
     )
-    Logger.info(`authorications::forwardPostAuthorization - Resolved destination party ${endpointType} endpoint for thirdpartyTransaction: ${transactionRequestId} to: ${inspect(endpoint)}`)
+    Logger.info(`authorizations::forwardPostAuthorization - Resolved destination party ${endpointType} endpoint for thirdpartyTransaction: ${transactionRequestId} to: ${inspect(endpoint)}`)
     const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`authorications::forwardPostAuthorization - Forwarding authorization to endpoint: ${url}`)
+    Logger.info(`authorizations::forwardPostAuthorization - Forwarding authorization to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -88,12 +88,12 @@ export async function forwardPostAuthorization (
       childSpan
     )
 
-    Logger.info(`authorications::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`authorications::forwardPostAuthorization - Error forwarding thirdpartyTransaction authorization to endpoint: ${inspect(err)}`)
+    Logger.error(`authorizations::forwardPostAuthorization - Error forwarding thirdpartyTransaction authorization to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -144,9 +144,9 @@ export async function forwardPostAuthorizationError(path: string,
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
       endpointType)
-    Logger.info(`authorications::forwardPostAuthorizationError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
+    Logger.info(`authorizations::forwardPostAuthorizationError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
     const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`authorications::forwardPostAuthorizationError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
+    Logger.info(`authorizations::forwardPostAuthorizationError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -159,13 +159,13 @@ export async function forwardPostAuthorizationError(path: string,
       childSpan
     )
 
-    Logger.info(`authorications::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
 
   } catch (err) {
-    Logger.error(`authorications::forwardPostAuthorizationError - Error forwarding thirdpartyTransaction authorization error to endpoint: ${inspect(err)}`)
+    Logger.error(`authorizations::forwardPostAuthorizationError - Error forwarding thirdpartyTransaction authorization error to endpoint: ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)

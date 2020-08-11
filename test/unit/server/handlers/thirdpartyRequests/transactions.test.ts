@@ -23,11 +23,12 @@
  --------------
  ******/
 'use strict'
-import { ResponseObject, ResponseToolkit, Request } from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
+import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -36,16 +37,6 @@ const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
 
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 describe('transactions handler', (): void => {
   describe('POST /thirdpartyRequests/transactions', (): void => {
@@ -62,8 +53,8 @@ describe('transactions handler', (): void => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
 
       const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
-      const response = await Handler.post(null, request, h as ResponseToolkit)
-      expect(response).toBe(202)
+      const response = await Handler.post(null, request, mockResponseToolkit)
+      expect(response.statusCode).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
@@ -74,13 +65,13 @@ describe('transactions handler', (): void => {
       const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
 
       // Act
-      const response = await Handler.post(null, request, h as ResponseToolkit)
+      const response = await Handler.post(null, request, mockResponseToolkit)
 
       // Assert
-      expect(response).toBe(202)
+      expect(response.statusCode).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
-      //Note: no promise rejection here!
+      // Note: no promise rejection here!
     })
   })
 })

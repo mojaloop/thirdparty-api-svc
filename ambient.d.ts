@@ -22,10 +22,51 @@
  --------------
  ******/
 
+
 // for mojaloop there is lack for @types files
 // to stop typescript complains, we have to declare some modules here
 declare module '@mojaloop/central-services-logger'
-declare module '@mojaloop/central-services-metrics'
+declare module '@mojaloop/central-services-metrics' {
+  import { Histogram } from 'prom-client'
+
+  interface metricOptionsType {
+    prefix: string
+    timeout: number
+  }
+  interface Metrics {
+
+    /**
+     * @function getHistogram
+     * @description Get the histogram values for given name
+     * @param {string} name - The name of the histogram to get. If the name doesn't exist, it creates a new histogram
+     * @param {string | undefined} help - Help description of the histogram (only used with creating a new histogram)
+     * @param {Array<string> | undefined} labelNames - Keys of the label to attach to the histogram
+     * @param {Array<number> | undefined} buckets - Buckets used in the histogram
+     * @returns {Histogram} - The Prometheus Histogram object
+     * @throws {Error} -
+     */
+    getHistogram: (name: string, help?: string, labelNames?: string[], buckets?: number[]) => Histogram
+
+    /**
+     * @function getMetricsForPrometheus
+     * @description Gets the metrics
+     */
+    getMetricsForPrometheus: () => string
+
+    /**
+     * @function setup
+     * @description Setup the prom client for collecting metrics using the options passed
+     * @param {metricOptionsType} - Config option for Metrics setup
+     * @returns boolean
+     */
+    setup: (options: metricOptionsType) => boolean
+  }
+
+  // `@mojaloop/central-services/metrics` exports a new class
+  // i.e. `new metrics.Metrics()`
+  const defaultMetrics: Metrics;
+  export default defaultMetrics
+}
 declare module '@mojaloop/central-services-shared' {
   interface ReturnCode {
     CODE: number;

@@ -23,26 +23,16 @@
  --------------
  ******/
 
- import { ResponseObject, ResponseToolkit, Request } from "@hapi/hapi"
+import {Request } from "@hapi/hapi"
+import Logger from '@mojaloop/central-services-logger'
 
 import AuthorizationsHandler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 import { Authorizations } from '~/domain/thirdpartyRequests'
-import Logger from '@mojaloop/central-services-logger'
+import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 describe('authorizations handler', () => {
   describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', () => {
@@ -80,10 +70,10 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
+      const response = await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
-      expect(response).toBe(202)
+      expect(response.statusCode).toBe(202)
       expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
     })
 
@@ -115,10 +105,10 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
+      const response = await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
-      expect(response).toBe(202)
+      expect(response.statusCode).toBe(202)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))
@@ -149,7 +139,7 @@ describe('authorizations handler', () => {
       }
 
       // Act
-      const action = async () => await AuthorizationsHandler.post(null, request as unknown as Request, h as ResponseToolkit)
+      const action = async () => await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
