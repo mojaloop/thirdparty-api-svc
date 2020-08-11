@@ -1,8 +1,6 @@
 # thirdparty-api-adapter (Work in Progress)
 [![Git Commit](https://img.shields.io/github/last-commit/mojaloop/thirdparty-api-adapter.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-adapter/commits/master)
 [![Git Releases](https://img.shields.io/github/release/mojaloop/thirdparty-api-adapter.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-adapter/releases)
-[![Npm Version](https://img.shields.io/npm/v/@mojaloop/thirdparty-api-adapter.svg?style=flat)](https://www.npmjs.com/package/@mojaloop/thirdparty-api-adapter)
-[![NPM Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@mojaloop/thirdparty-api-adapter.svg?style=flat)](https://www.npmjs.com/package/@mojaloop/thirdparty-api-adapter)
 [![CircleCI](https://circleci.com/gh/mojaloop/thirdparty-api-adapter.svg?style=svg)](https://circleci.com/gh/mojaloop/thirdparty-api-adapter)
 
 The thirdparty-api-adapter service is used to handle HTTP requests from third parties.
@@ -10,6 +8,25 @@ The thirdparty-api-adapter service is used to handle HTTP requests from third pa
 ## Overview
 
 - [Documentation](./docs/README.md)
+
+## Runtime Configuration
+
+Runtime configuration is handled by `rc`, and can be specified using either Environment Variables, or a `.json` file.
+
+See [`./config/default.json`](./config/default.json) for an example config file. 
+
+When setting configuration using environment variables, the `THIRD_PARTY` environment variable prefix is required. See [`src/shared/config.ts`](src/shared/config.ts) to understand how these variables are configured.
+
+### Key Config Options
+
+> ***Note:** See [`./config/default.json`](./config/default.json) for all available config options, and their default values.*
+
+| Name | Env Var | jsonPath | Description |
+| ---- | ------- | -------- | ----------- |
+| `PORT` | `THIRD_PARTY_PORT` | `.PORT` | The TCP port the Hapi server should start on |
+| `HOST` | `THIRD_PARTY_HOST` | `.HOST` | The hostname the Hapi server should bind to  |
+| `ENDPOINT_SERVICE_URL` | `ENDPOINT_SERVICE_URL` | `.ENDPOINT_SERVICE_URL` | The internal service used to retrieve endpoints for Mojaloop Participants. Currently this is the `central-ledger`.  |
+
 
 ## Setup
 
