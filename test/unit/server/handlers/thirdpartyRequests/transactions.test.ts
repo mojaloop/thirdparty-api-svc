@@ -37,7 +37,6 @@ const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
 
-
 describe('transactions handler', (): void => {
   describe('POST /thirdpartyRequests/transactions', (): void => {
     beforeAll((): void => {
@@ -52,8 +51,19 @@ describe('transactions handler', (): void => {
     it('handles a successful request', async (): Promise<void> => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
 
-      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
+      const expected = [
+        '/thirdpartyRequests/transactions',
+        request.headers,
+        'POST',
+        {},
+        request.payload,
+        undefined
+      ]
+
+      // Act
       const response = await Handler.post(null, request, mockResponseToolkit)
+
+      // Assert
       expect(response.statusCode).toBe(202)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
@@ -61,6 +71,9 @@ describe('transactions handler', (): void => {
 
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
+      const MockData = JSON.parse(JSON.stringify(TestData))
+      const request: Request = MockData.transactionRequest
+      mockForwardTransactionRequest.mockResolvedValueOnce()
       mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
       const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
 
@@ -72,6 +85,22 @@ describe('transactions handler', (): void => {
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       // Note: no promise rejection here!
+    })
+
+    it('handles validation errors synchonously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: { }
+      }
+
+      // Act
+      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+
     })
   })
 })

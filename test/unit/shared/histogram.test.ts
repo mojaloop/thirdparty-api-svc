@@ -23,8 +23,7 @@
  --------------
  ******/
 'use strict'
-import { ResponseObject, ResponseToolkit, Request } from '@hapi/hapi'
-// import { Histogram } from 'prom-client'
+import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 
@@ -42,18 +41,6 @@ const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
 
-// TODO: fix ResponseToolkit
-// @ts-ignore
-const h: ResponseToolkit = {
-  response: (): ResponseObject => {
-    return {
-      code: (num: number): ResponseObject => {
-
-        return num as unknown as ResponseObject
-      }
-    } as unknown as ResponseObject
-  }
-}
 
 describe('histogram', (): void => {
   describe('wrapWithHistogram', () => {
@@ -96,6 +83,34 @@ describe('histogram', (): void => {
       await new Promise(resolve => setImmediate(resolve))
     })
 
+    it('handles a handler error', async (): Promise<void> => {
+      // Arrange
+      const mockHistTimerEnd = jest.fn()
+      //@ts-ignore
+      mockMetrics.mockReturnValue({
+        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
+      })
+      const mockHandler = jest.fn().mockRejectedValueOnce(new Error('Test Error'))
+
+      const wrappedHandler = wrapWithHistogram(
+        mockHandler,
+        [
+          'thirdpartyRequests_transactions_authorizations_post',
+          'Post thirdpartyRequests transactions authorizations request',
+          ['success']
+        ]
+      )
+
+      // Act
+      const action = async () => await wrappedHandler(null, request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrow('Test Error')
+      expect(mockHandler).toHaveBeenCalledTimes(1)
+      expect(mockHistTimerEnd).toHaveBeenCalledTimes(1)
+      expect(mockHistTimerEnd).toHaveBeenCalledWith({ success: 'false' })
+    })
+
     it('throws original `Metrics.getHistogram()` error', async (): Promise<void> => {
       // Arrange
       mockMetrics.mockImplementationOnce(() => { throw new Error('Test Error') })
@@ -108,7 +123,6 @@ describe('histogram', (): void => {
           ['success']
         ]
       )
-
 
       // Act
       const action = async () => await wrappedHandler(null, request, mockResponseToolkit)
