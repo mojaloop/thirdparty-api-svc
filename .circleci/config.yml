@@ -246,8 +246,8 @@ jobs:
       - run:
           name: Setup Docker env variables
           command: |
-            echo 'export DOCKER_ORG=`cat package.json | jq -r .name | sed s/@// | sed s/\\/.*//`' >> $BASH_ENV
-            echo 'export CIRCLE_PROJECT_REPONAME=`cat package.json | jq -r .name | sed s/@// | sed s/\.*\\///`' >> $BASH_ENV
+            echo 'export DOCKER_ORG=`cat package.json | jq -r .name | sed s/@// | sed s/\\\\/.*//`' >> $BASH_ENV
+            echo 'export CIRCLE_PROJECT_REPONAME=`cat package.json | jq -r .name | sed s/@// | sed s/\.*\\\\///`' >> $BASH_ENV
       - run:
           name: Build Docker local image
           command: |
