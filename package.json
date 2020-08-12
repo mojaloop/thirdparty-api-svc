@@ -1,5 +1,5 @@
 {
-  "name": "@lwilld/thirdparty-api-adapter",
+  "name": "@mojaloop/thirdparty-api-adapter",
   "version": "11.0.0",
   "description": "The thirdparty-api-adapter service is used to handle HTTP requests from third parties.",
   "main": "dist/index.js",
