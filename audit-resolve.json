@@ -1,0 +1,56 @@
+{
+  "decisions": {
+    "1523|@mojaloop/event-sdk>lodash": {
+      "decision": "ignore",
+      "madeAt": 1596427915222,
+      "expiresAt": 1599019902364
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-angular>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720923443,
+      "expiresAt": 1599312918432
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596427931907,
+      "expiresAt": 1599019902364
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-core>conventional-changelog-writer>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596427937577,
+      "expiresAt": 1599019902364
+    },
+    "1213|standard-version>conventional-changelog>conventional-changelog-jshint>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596427943210,
+      "expiresAt": 1599019902364
+    },
+    "1523|@mojaloop/event-sdk>@mojaloop/central-services-logger>winston>async>lodash": {
+      "decision": "ignore",
+      "madeAt": 1596427951432,
+      "expiresAt": 1599019902364
+    },
+    "1523|@mojaloop/event-sdk>winston>async>lodash": {
+      "decision": "ignore",
+      "madeAt": 1596427951432,
+      "expiresAt": 1599019902364
+    },
+    "1213|standard-version>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720926399,
+      "expiresAt": 1599312918432
+    },
+    "1213|@commitlint/cli>@commitlint/lint>@commitlint/parse>conventional-changelog-angular>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720923443,
+      "expiresAt": 1599312918432
+    },
+    "1213|@commitlint/config-conventional>conventional-changelog-conventionalcommits>compare-func>dot-prop": {
+      "decision": "ignore",
+      "madeAt": 1596720926399,
+      "expiresAt": 1599312918432
+    }
+  },
+  "rules": {},
+  "version": 1
+}
