@@ -39,9 +39,9 @@ declare module '@mojaloop/central-services-metrics' {
      * @function getHistogram
      * @description Get the histogram values for given name
      * @param {string} name - The name of the histogram to get. If the name doesn't exist, it creates a new histogram
-     * @param {string | undefined} help - Help description of the histogram (only used with creating a new histogram)
-     * @param {Array<string> | undefined} labelNames - Keys of the label to attach to the histogram
-     * @param {Array<number> | undefined} buckets - Buckets used in the histogram
+     * @param {string} [help] - (Optional) Help description of the histogram (only used with creating a new histogram)
+     * @param {Array<string>} [labelNames] - (Optional) Keys of the label to attach to the histogram
+     * @param {Array<number>} [buckets] - (Optional) Buckets used in the histogram
      * @returns {Histogram} - The Prometheus Histogram object
      * @throws {Error} -
      */
