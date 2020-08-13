@@ -286,6 +286,23 @@ jobs:
       - run:
           name: Push the release
           command: git push --follow-tags origin ${CIRCLE_BRANCH}
+
+  github-release:
+    executor: default-machine
+    steps:
+      - checkout
+      - run:
+          name: Install git
+          command: |
+            sudo apt-get update && sudo apt-get install -y git
+      - checkout
+      - run:
+          name: Fetch updated release branch
+          command: |
+            git config user.email ${GIT_CI_EMAIL}
+            git config user.name ${GIT_CI_USER}
+            git fetch origin
+            git checkout origin/${CIRCLE_BRANCH}
       - run:
           # Note: this is rather imperfect, but will do for now
           name: Format the changelog into the github release body and get release tag
@@ -299,13 +316,13 @@ jobs:
             echo "Changes are: ${RELEASE_CHANGES}"
       - github-release/create:
           github-token-variable: ${GITHUB_TOKEN}
-          tag: ${RELEASE_TAG}
-          title: ${RELEASE_TAG} Release
+          tag: v${RELEASE_TAG}
+          title: v${RELEASE_TAG} Release
           description: ${RELEASE_CHANGES}
           file-path: CHANGELOG.md
       - slack/status:
           webhook: "$SLACK_WEBHOOK_ANNOUNCEMENT"
-          success_message: '*"${CIRCLE_PROJECT_REPONAME}"* - Release \`"${RELEASE_TAG}"\` \nhttps://github.com/mojaloop/"${CIRCLE_PROJECT_REPONAME}"/releases/tag/"${RELEASE_TAG}"'
+          success_message: '*"${CIRCLE_PROJECT_REPONAME}"* - Release \`"v${RELEASE_TAG}"\` \nhttps://github.com/mojaloop/"${CIRCLE_PROJECT_REPONAME}"/releases/tag/"v${RELEASE_TAG}"'
 
   publish:
     executor: default-machine
@@ -352,7 +369,7 @@ jobs:
           <<: *defaults_license_scanner
       - run:
           name: Run the license-scanner
-          command: cd /tmp/license-scanner && mode=docker dockerImages=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG make run
+          command: cd /tmp/license-scanner && mode=docker dockerImages=$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:local make run
       - store_artifacts:
           path: /tmp/license-scanner/results
           prefix: licenses
@@ -389,7 +406,7 @@ jobs:
       - anchore/analyze_local_image:
           # Force the older version, version 0.7.0 was just published, and is broken
           anchore_version: v0.6.1
-          image_name: "docker.io/node:12.16.1-alpine $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
+          image_name: "docker.io/node:12.16.1-alpine $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:local"
           policy_failure: false
           timeout: '1000'
           # Note: if the generated policy is invalid, this will fallback to the default policy, which we don't want!
@@ -516,10 +533,23 @@ workflows:
       - release:
           context: org-global
           requires:
-            - license-scan
-            - image-scan
             - test-unit
             - test-coverage
+            - test-integration
+            - test-bdd
+            - audit-licenses
+            - linting-check
+            - vulnerability-check
+          filters:
+            branches:
+              only:
+                - master
+
+
+      - github-release:
+          context: org-global
+          requires:
+            - release
           filters:
             branches:
               only:
