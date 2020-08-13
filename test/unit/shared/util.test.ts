@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -25,8 +25,14 @@
 'use strict'
 
 import { Request } from '@hapi/hapi'
-import { getStackOrInspect, getSpanTags } from '~/shared/util'
+import {
+  finishChildSpan,
+  getStackOrInspect,
+  getSpanTags
+} from '~/shared/util'
 import * as types from '~/interface/types'
+import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -34,6 +40,30 @@ const headers = {
 }
 
 describe('util', (): void => {
+  describe('finishChildSpan', (): void => {
+    it('calls error and finish', async (): Promise<void> => {
+      // Arrange
+      const error: FSPIOPError = ReformatFSPIOPError(new Error('Test Error'))
+      const mockSpan = {
+        error: jest.fn(),
+        finish: jest.fn(),
+      }
+      const expectedState = new EventStateMetadata(
+        EventStatusType.failed,
+        error.apiErrorCode.code,
+        error.apiErrorCode.message
+      )
+
+      // Act
+      await finishChildSpan(error, mockSpan)
+
+      // Assert
+      expect(mockSpan.error).toHaveBeenCalledTimes(1)
+      expect(mockSpan.error).toHaveBeenCalledWith(error, expectedState)
+      expect(mockSpan.finish).toHaveBeenCalledWith(error.message, expectedState)
+    })
+  })
+
   describe('getStackOrInspect', (): void => {
     it('handles an error without a stack', (): void => {
       const input = new Error('This is a normal error')

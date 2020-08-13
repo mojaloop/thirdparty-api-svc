@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -22,9 +22,51 @@
  --------------
  ******/
 
+
 // for mojaloop there is lack for @types files
 // to stop typescript complains, we have to declare some modules here
 declare module '@mojaloop/central-services-logger'
+declare module '@mojaloop/central-services-metrics' {
+  import { Histogram } from 'prom-client'
+
+  interface metricOptionsType {
+    prefix: string
+    timeout: number
+  }
+  interface Metrics {
+
+    /**
+     * @function getHistogram
+     * @description Get the histogram values for given name
+     * @param {string} name - The name of the histogram to get. If the name doesn't exist, it creates a new histogram
+     * @param {string} [help] - (Optional) Help description of the histogram (only used with creating a new histogram)
+     * @param {Array<string>} [labelNames] - (Optional) Keys of the label to attach to the histogram
+     * @param {Array<number>} [buckets] - (Optional) Buckets used in the histogram
+     * @returns {Histogram} - The Prometheus Histogram object
+     * @throws {Error} -
+     */
+    getHistogram: (name: string, help?: string, labelNames?: string[], buckets?: number[]) => Histogram
+
+    /**
+     * @function getMetricsForPrometheus
+     * @description Gets the metrics
+     */
+    getMetricsForPrometheus: () => string
+
+    /**
+     * @function setup
+     * @description Setup the prom client for collecting metrics using the options passed
+     * @param {metricOptionsType} - Config option for Metrics setup
+     * @returns boolean
+     */
+    setup: (options: metricOptionsType) => boolean
+  }
+
+  // `@mojaloop/central-services/metrics` exports a new class
+  // i.e. `new metrics.Metrics()`
+  const defaultMetrics: Metrics;
+  export default defaultMetrics
+}
 declare module '@mojaloop/central-services-shared' {
   interface ReturnCode {
     CODE: number;
@@ -93,7 +135,20 @@ declare module '@mojaloop/central-services-shared' {
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST',
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT',
     THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT_ERROR',
-    THIRDPARTY_CALLBACK_URL_TRX_REQ_POST = 'THIRDPARTY_CALLBACK_URL_TRX_REQ_POST'
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST',
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT',
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR',
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST',
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
+    THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR',
+    THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_POST = 'THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_POST',
+    THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT = 'THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT',
+    THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT_ERROR = 'THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT_ERROR',
+    THIRDPARTY_CALLBACK_URL_CREATE_CREDENTIAL_POST = 'THIRDPARTY_CALLBACK_URL_CREATE_CREDENTIAL_POST',
+    THIRDPARTY_CALLBACK_URL_CONSENT_POST = 'THIRDPARTY_CALLBACK_URL_CONSENT_POST',
+    THIRDPARTY_CALLBACK_URL_CONSENT_GET = 'THIRDPARTY_CALLBACK_URL_CONSENT_GET',
+    THIRDPARTY_CALLBACK_URL_CONSENT_PUT = 'THIRDPARTY_CALLBACK_URL_CONSENT_PUT',
+    THIRDPARTY_CALLBACK_URL_CONSENT_PUT_ERROR = 'THIRDPARTY_CALLBACK_URL_CONSENT_PUT_ERROR',
   }
   interface EndPointsEnum {
     EndpointType: {
@@ -136,7 +191,20 @@ declare module '@mojaloop/central-services-shared' {
       THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST;
       THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT;
       THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR;
-      THIRDPARTY_CALLBACK_URL_TRX_REQ_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT;
+      THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR;
+      THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_POST;
+      THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT;
+      THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT_ERROR: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_REQUEST_PUT_ERROR;
+      THIRDPARTY_CALLBACK_URL_CREATE_CREDENTIAL_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CREATE_CREDENTIAL_POST;
+      THIRDPARTY_CALLBACK_URL_CONSENT_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_POST;
+      THIRDPARTY_CALLBACK_URL_CONSENT_GET: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_GET;
+      THIRDPARTY_CALLBACK_URL_CONSENT_PUT: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_PUT;
+      THIRDPARTY_CALLBACK_URL_CONSENT_PUT_ERROR: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_CONSENT_PUT_ERROR;
     };
     FspEndpointTemplates: {
       TRANSACTION_REQUEST_POST: string;
@@ -159,8 +227,22 @@ declare module '@mojaloop/central-services-shared' {
       BULK_TRANSFERS_POST: string;
       BULK_TRANSFERS_PUT: string;
       BULK_TRANSFERS_PUT_ERROR: string;
-      THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR: string;
       THIRDPARTY_TRANSACTION_REQUEST_POST: string;
+      THIRDPARTY_TRANSACTION_REQUEST_PUT: string;
+      THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR: string;
+      THIRDPARTY_AUTHORIZATIONS_POST: string;
+      THIRDPARTY_AUTHORIZATIONS_PUT: string;
+      THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST: string;
+      THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT: string;
+      THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR: string;
+      THIRDPARTY_CONSENT_REQUEST_POST: string;
+      THIRDPARTY_CONSENT_REQUEST_PUT: string;
+      THIRDPARTY_CONSENT_REQUEST_PUT_ERROR: string;
+      THIRDPARTY_CONSENT_CREATE_CREDENTIAL_POST: string;
+      THIRDPARTY_CONSENT_POST: string;
+      THIRDPARTY_CONSENT_GET: string;
+      THIRDPARTY_CONSENT_PUT: string;
+      THIRDPARTY_CONSENT_PUT_ERROR: string;
     };
   }
   interface Enum {
@@ -172,6 +254,7 @@ declare module '@mojaloop/central-services-shared' {
           POST: string;
         };
         Type: {
+          AUTHORIZATION: string;
           TRANSACTION_REQUEST: string;
         };
       };

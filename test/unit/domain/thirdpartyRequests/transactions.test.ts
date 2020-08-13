@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -28,6 +28,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import * as ErrorHandler from '@mojaloop/central-services-error-handling'
 import TestData from 'test/unit/data/mockData.json'
+import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -37,37 +38,12 @@ const apiPath = '/thirdpartyRequests/transactions'
 const MockData = JSON.parse(JSON.stringify(TestData))
 const request = MockData.transactionRequest
 
-/**
- * Mock Span
- */
-class Span {
-  public isFinished: boolean
-  public constructor () {
-    this.isFinished = false
-  }
-
-  public getChild () {
-    return new Span()
-  }
-
-  public audit () {
-    return jest.fn()
-  }
-
-  public error () {
-    return jest.fn()
-  }
-
-  public finish () {
-    return jest.fn()
-  }
-}
 let MockSpan = new Span()
 
 const getEndpointExpected = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
-  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
 ]
 const sendRequestExpected = [
   'http://dfspa-sdk/thirdpartyRequests/transactions',
@@ -77,7 +53,7 @@ const sendRequestExpected = [
   Enum.Http.RestMethods.POST,
   request.payload,
   Enum.Http.ResponseTypes.JSON,
-  { isFinished: false }
+  expect.objectContaining({ isFinished: false })
 ]
 const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -91,7 +67,7 @@ const sendRequestErrExpected = [
   Enum.Http.RestMethods.PUT,
   expect.any(Object),
   Enum.Http.ResponseTypes.JSON,
-  { isFinished: false }
+  expect.objectContaining({ isFinished: false })
 ]
 
 describe('domain /thirdpartyRequests/transactions', (): void => {
@@ -150,11 +126,11 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockSendRequest).toHaveBeenLastCalledWith(...sendRequestErrExpected)
     })
 
-    it('if destination endpoint is not found for both source and destiantion', async (): Promise<void> => {
-      mockGetEndpoint.mockRejectedValue(new Error('Endpoint not found for both source and destiantion'))
+    it('if destination endpoint is not found for both source and destination', async (): Promise<void> => {
+      mockGetEndpoint.mockRejectedValue(new Error('Endpoint not found for both source and destination'))
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      await expect(Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found for both source and destiantion'))
+      await expect(Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, MockSpan)).rejects.toThrowError(new RegExp('Endpoint not found for both source and destination'))
 
       expect(mockGetEndpoint).toHaveBeenCalledTimes(2)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)

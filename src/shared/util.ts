@@ -2,8 +2,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -27,6 +27,24 @@
 import Hapi from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
+import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
+import { FSPIOPError } from '@mojaloop/central-services-error-handling'
+
+/**
+ * @function finishChildSpan
+ * @description Helper function for reporting errors to a childSpan, and then finishing it
+ * @param {FSPIOPError} fspiopError error object
+ * @param {any} span request span
+ * @returns {Promise<void>}
+ */
+async function finishChildSpan (fspiopError: FSPIOPError, childSpan: any): Promise<void> {
+  const state = new EventStateMetadata(
+    EventStatusType.failed,
+    fspiopError.apiErrorCode.code,
+    fspiopError.apiErrorCode.message)
+  await childSpan.error(fspiopError, state)
+  await childSpan.finish(fspiopError.message, state)
+}
 
 /**
  * @function getStackOrInspect
@@ -57,6 +75,7 @@ function getSpanTags (request: Hapi.Request, eventType: string, eventAction: str
 }
 
 export {
+  finishChildSpan,
   getStackOrInspect,
   getSpanTags
 }

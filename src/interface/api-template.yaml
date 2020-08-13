@@ -2,13 +2,13 @@ openapi: 3.0.2
 info:
   title: Mojaloop Thirdparty API Adapter
   version: '1.0'
-  description: 
+  description:
     A Mojaloop API for thirdparty interactions between `PISPs` (Payment Initiation
     Service Providers) and `DFSPs` (Digital Financial Service Providers)
   license:
     name: TBD
     url: TBD
-servers: 
+servers:
   - url: /
 paths:
   /health:
@@ -16,7 +16,7 @@ paths:
       tags:
         - health
       responses:
-        '200':  
+        '200':
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/200'
         '400':
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/400'
@@ -74,7 +74,7 @@ paths:
       description: |
         The HTTP request `POST /thirdpartyRequests/transactions` is used to request the creation of a third party transaction.
 
-        - Called by a `PISP` to initiate a third party transaction flow              
+        - Called by a `PISP` to initiate a third party transaction flow
       parameters:
         #Headers
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Accept.yaml'
@@ -141,6 +141,63 @@ paths:
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/501'
         503:
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/503'
+  /thirdpartyRequests/transactions/{ID}/authorizations:
+    post:
+      tags:
+        - thirdpartyRequests
+        - sampled
+      operationId: VerifyThirdPartyAuthorization
+      summary: VerifyThirdPartyAuthorization
+      description: |
+        The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is used by the DFSP to verify a third party authorization.
+      parameters:
+        #Path
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/ID.yaml'
+        #Headers
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Accept.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Content-Length.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Content-Type.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/Date.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/X-Forwarded-For.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-Source.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-Destination.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-Encryption.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-Signature.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-URI.yaml'
+        - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-HTTP-Method.yaml'
+      requestBody:
+        description: The thirdparty authorization details to verify
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyThirdPartyAuthorizationRequest'
+            example:
+              challenge: "<QuoteResponse object>"
+              value: "<base64 encoded binary - the signed quote response object>"
+              consentId: "8d34f91d-d078-4077-8263-2c0498dhbjr"
+              sourceAccountId: "dfspa.alice.1234"
+              status: "PENDING"
+      responses:
+        202:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/202'
+        400:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/400'
+        401:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/401'
+        403:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/403'
+        404:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/404'
+        405:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/405'
+        406:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/406'
+        501:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/501'
+        503:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/503'
+
 components:
   schemas:
     AccountId:
@@ -158,7 +215,7 @@ components:
           allOf:
             - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/CorrelationId.yaml'
           description: >
-            Common ID between the FSPs for the transaction request object. 
+            Common ID between the FSPs for the transaction request object.
             The ID should be reused for resends of the same transaction request.
             A new ID should be generated for each new transaction request.
         sourceAccountId:
@@ -194,7 +251,7 @@ components:
         expiration:
           type: string
           description: >
-            Date and time until when the transaction request is valid. 
+            Date and time until when the transaction request is valid.
             It can be set to get a quick failure in case the peer FSP takes too long to respond.
           example: '2016-05-24T08:38:08.699-04:00'
       required:
@@ -207,3 +264,37 @@ components:
         - amount
         - transactionType
         - expiration
+
+    VerifyThirdPartyAuthorizationRequest:
+      title: VerifyThirdPartyAuthorizationRequest
+      type: object
+      description: The object sent in the POST /thirdpartyRequests/transactions/{id}/authorizations request.
+      properties:
+        challenge:
+          type: string
+          description: The original Challenge Object as a JSON string
+        value:
+          allOf:
+            - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/BinaryString.yaml'
+          description: "Base64 encoded binary string - the signed challenge"
+        consentId:
+          allOf:
+            - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/CorrelationId.yaml'
+          description: >
+            Common ID between the PISP and FSP for the Consent object
+            This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
+        sourceAccountId:
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
+          description: DFSP specific account identifiers, e.g. `dfspa.alice.1234`
+        status:
+          type: string
+          enum:
+            - PENDING
+          description: The status of the authorization. This MUST be PENDING for a POST request
+      required:
+        - challenge
+        - value
+        - consentId
+        - sourceAccountId
+        - status

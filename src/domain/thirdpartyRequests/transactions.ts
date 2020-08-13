@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation The Mojaloop files are made available by the Bill
- & Melinda Gates Foundation under the Apache License, Version 2.0 (the 'License') and you may not
+ Copyright © 2020 Mojaloop Foundation The Mojaloop files are made available by the Mojaloop Foundation
+ under the Apache License, Version 2.0 (the 'License') and you may not
  use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
  writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -28,19 +28,18 @@ import Hapi from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum, Util } from '@mojaloop/central-services-shared'
-import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
-import { getStackOrInspect } from '~/shared/util'
+import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 
 /**
  * Forwards POST transactions requests to destination FSP for processing
  * @param {string} path Callback endpoint path
- * @param {object} headers Headers object of the request 
+ * @param {object} headers Headers object of the request
  * @param {string} method The http method POST
- * @param {object} params Params object of the request 
+ * @param {object} params Params object of the request
  * @param {object} payload Body of the POST request
  * @param {object} span request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
@@ -54,16 +53,16 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
-      Config.SWITCH_ENDPOINT,
+      Config.ENDPOINT_SERVICE_URL,
       fspiopDest,
       endpointType)
-    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest
+    Logger.info(`transactions::forwardTransactionRequest - Resolved PAYER party ${endpointType} endpoint for transactionRequest
      ${transactionRequestId} to: ${inspect(endpoint)}`)
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`Forwarding transaction request to endpoint: ${fullUrl}`)
+    Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
     await Util.Request.sendRequest(
       fullUrl,
       headers,
@@ -74,13 +73,13 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
       Enum.Http.ResponseTypes.JSON,
       childSpan)
 
-    Logger.info(`Forwarded transaction request ${transactionRequestId} from ${fspiopSource} to ${fspiopDest}`)
+    Logger.info(`transactions::forwardTransactionRequest - Forwarded transaction request ${transactionRequestId} from ${fspiopSource} to ${fspiopDest}`)
 
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.info(`Error forwarding transaction request to endpoint : ${inspect(err)}`)
+    Logger.error(`transactions::forwardTransactionRequest - Error forwarding transaction request to endpoint : ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -102,20 +101,6 @@ async function forwardTransactionRequest(path: string, headers: Hapi.Util.Dictio
   }
 }
 
-/**
- * Finish childSpan
- * @param {object} fspiopError error object
- * @param {object} span request span
- * @returns {Promise<void>}
- */
-async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promise<void> {
-  const state = new EventStateMetadata(
-    EventStatusType.failed,
-    fspiopError.apiErrorCode.code,
-    fspiopError.apiErrorCode.message)
-  await childSpan.error(fspiopError, state)
-  await childSpan.finish(fspiopError.message, state)
-}
 
 /**
  * Forwards transactions requests errors to destination FSP
@@ -125,26 +110,26 @@ async function finishChildSpan(fspiopError: FSPIOPError, childSpan: any): Promis
  * @param {string} transactionRequestId Transaction request id that the transaction is for
  * @param {object} payload Body of the request
  * @param {object} span request span
- * @throws {FSPIOPError} Will throw an error, if no endpoint is found to forward the transactions 
+ * @throws {FSPIOPError} Will throw an error, if no endpoint is found to forward the transactions
  * error or if there are network errors or if there is a bad response.
  * @returns {Promise<void>}
  */
 async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary<string>, path: string, method: string, transactionRequestId: string, payload: types.ErrorInformation, span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = errorHeaders[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = errorHeaders[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRX_REQ_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
+
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
-      Config.SWITCH_ENDPOINT,
+      Config.ENDPOINT_SERVICE_URL,
       fspiopDestination,
       endpointType)
-    Logger.info(`Resolved PAYER party ${endpointType} endpoint for transactionRequest 
+    Logger.info(`transactions::forwardTransactionRequestError - Resolved PAYER party ${endpointType} endpoint for transactionRequest
       ${transactionRequestId} to: ${inspect(endpoint)}`)
 
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`Forwarding transaction request error to endpoint: ${fullUrl}`)
+    Logger.info(`transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${fullUrl}`)
 
     await Util.Request.sendRequest(
       fullUrl,
@@ -156,13 +141,13 @@ async function forwardTransactionRequestError(errorHeaders: Hapi.Util.Dictionary
       Enum.Http.ResponseTypes.JSON,
       childSpan)
 
-    Logger.info(`Forwarding transaction request error for ${transactionRequestId} from ${fspiopSource} to ${fspiopDestination}`)
+    Logger.info(`transactions::forwardTransactionRequestError - Forwarding transaction request error for ${transactionRequestId} from ${fspiopSource} to ${fspiopDestination}`)
 
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.info(`Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
+    Logger.error(`transactions::forwardTransactionRequestError - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)

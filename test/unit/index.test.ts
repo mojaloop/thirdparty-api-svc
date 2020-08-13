@@ -1,8 +1,8 @@
 /*****
  License
  --------------
- Copyright © 2017 Bill & Melinda Gates Foundation
- The Mojaloop files are made available by the Bill & Melinda Gates Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
  Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  Contributors
@@ -27,11 +27,12 @@ import index from '~/index'
 import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
-import { Transactions } from '~/domain/thirdpartyRequests'
+import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardAuthorizationPost = jest.spyOn(Authorizations, 'forwardPostAuthorization')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -79,7 +80,14 @@ describe('index', (): void => {
           payload: trxnRequest.payload
         }
 
-        const expected = ['/thirdpartyRequests/transactions', expect.any(Object), 'POST', {}, request.payload]
+        const expected = [
+          '/thirdpartyRequests/transactions',
+          expect.any(Object),
+          'POST',
+          {},
+          request.payload,
+          expect.any(Object)
+        ]
         const response = await server.inject(request)
 
         expect(response.statusCode).toBe(202)
@@ -109,6 +117,120 @@ describe('index', (): void => {
       })
     })
 
+    describe('/thirdpartyRequests/transactions/{ID}/authorizations', () => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('POST', async (): Promise<void> => {
+        mockForwardAuthorizationPost.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'dfspA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            sourceAccountId: 'dfspa.alice.1234',
+            status: 'PENDING',
+          }
+        }
+        const expected: Array<any> = [
+          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+          expect.objectContaining(request.headers),
+          '7d34f91d-d078-4077-8263-2c047876fcf6',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardAuthorizationPost).toHaveBeenCalledWith(...expected)
+      })
+
+      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            sourceAccountId: 'dfspa.alice.1234',
+            status: 'VERIFIED',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3100',
+            errorDescription: 'Generic validation error - .requestBody.status should be equal to one of the allowed values'
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA',
+          },
+          payload: {
+            challenge: '12345',
+            value: '12345',
+            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+            status: 'PENDING',
+          }
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'sourceAccountId\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAuthorizationPost).not.toHaveBeenCalled()
+      })
+    })
+
     describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
@@ -132,6 +254,7 @@ describe('index', (): void => {
         expect(result.uptime).toBeGreaterThan(1.0)
       })
     })
+
     describe('/metrics', (): void => {
       it('GET', async (): Promise<void> => {
         const request = {

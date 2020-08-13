@@ -29,9 +29,32 @@ npm run test:junit
 
 There is `mojaloop` convention to use `test/unit` path to keep tests. The placement of test folder should be similar to placement of tested code in `src` folder
 
+### Jest Tips
+
+The [Jest CLI](https://jestjs.io/docs/en/cli) has some powerful commands for filtering, watching and running tests
+
+```bash
+# run tests on just 1 file:
+npm run test:unit -- -- test/unit/index.test.ts
+
+# run tests on file change:
+npm run test:unit -- --watch
+
+# After the tests are run, you can configure the watch settings like so:
+Ran all test suites related to changed files.
+
+Watch Usage
+ › Press a to run all tests.
+ › Press f to run only failed tests.
+ › Press p to filter by a filename regex pattern.
+ › Press t to filter by a test name regex pattern.
+ › Press q to quit watch mode.
+ › Press Enter to trigger a test run.
+```
+
 ## linting
 
-[eslint]() setup compatible with javascript [standard](https://standardjs.com/) and dedicated for TypeScript [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint).
+[eslint](https://eslint.org/) setup compatible with javascript [standard](https://standardjs.com/) and dedicated for TypeScript [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint).
   - it is much more flexible
   - has good support for editors to visualize linting problem during typing.
 
@@ -95,7 +118,7 @@ Generate the named "alpha" pre-release
 npm run release -- --prerelase alpha
 ```
 
-### Docker setup
+## Docker setup
 Minimal working Docker image you can find in [Dockerfile](../Dockerfile).
 
 To build the image
@@ -113,9 +136,24 @@ When the image is run you should be able to reach the dockerized _thirdparty-api
 If you already added the `127.0.0.1 thirdparty-api-adapter.local` entry in your `/etc/hosts` then the _thirdparty-api-adapter_ is reachable on `http://thirdparty-api-adapter.local:3008`.
 
 
-### external links
+## External Links
 
 - [about conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [standard-version](https://github.com/conventional-changelog/standard-version)
 - [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/tree/master/versions/2.1.0)
+
+
+
+## Tips + Tricks:
+
+### 1. How do I disable the event-sdk logging in my unit tests?
+
+You can use the `EVENT_SDK_LOG_FILTER` environment variable. This setting is for configuring the internal config of the event-sdk, which isn't currently exposed to us in the `@mojaloop/central-services-shared` library.
+
+e.g.
+```bash
+export EVENT_SDK_LOG_FILTER=""
+npm run test:unit -- --watch
+
+```
 
