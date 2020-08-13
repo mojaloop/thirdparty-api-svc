@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.1.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.1.0...v11.1.1) (2020-08-13)
+
+
+### Maintenance
+
+* **circleci:** change scans to be release prerequisite ([#18](https://github.com/mojaloop/thirdparty-api-adapter/issues/18)) ([65f210f](https://github.com/mojaloop/thirdparty-api-adapter/commit/65f210f355af14e28bf5b303eae6e37c443c2be9))
+
 ## [11.1.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.0.0...v11.1.0) (2020-08-13)
 
 
