@@ -19,7 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Lewis Daly <lewisd@crosslaketech.com>
-
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
  --------------
  ******/
 
@@ -31,7 +31,7 @@ import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
-
+import * as types from '~/interface/types'
 
 /**
   * summary: VerifyThirdPartyAuthorization
@@ -46,7 +46,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const transactionRequestId: string = request.params.ID
-  const payload = request.payload as Authorizations.PostAuthorizationPayload
+  const payload = request.payload as types.AuthorizationPayload
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -62,18 +62,69 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
-    Authorizations.forwardPostAuthorization(
+    Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
       request.headers,
+      Enum.Http.RestMethods.POST,
       transactionRequestId,
       payload,
       span
     )
-    .catch(err => {
-      // Do nothing with the error - forwardPostAuthorization takes care of async errors
-      Logger.error('Authorizations::post - forwardPostAuthorization async handler threw an unhandled error')
-      Logger.error(ReformatFSPIOPError(err))
-    })
+      .catch(err => {
+        // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
+        Logger.error('Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
+}
+
+/**
+  * summary: UpdateThirdpartyAuthorization
+  * description: The method PUT /thirdpartyRequests/transactions/{ID}/authorizations is called by the Auth-Service on  * successful validation of authorization.
+  * parameters: body, content-length
+  * produces: application/json
+  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function put(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = (request as any).span
+  // Trust that hapi parsed the ID and Payload for us
+  const transactionRequestId: string = request.params.ID
+  const payload = request.payload as types.AuthorizationPayload
+
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      Enum.Events.Event.Type.AUTHORIZATION,
+      Enum.Events.Event.Action.PUT,
+      { transactionRequestId })
+
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    Authorizations.forwardAuthorizationRequest(
+      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
+      request.headers,
+      Enum.Http.RestMethods.PUT,
+      transactionRequestId,
+      payload,
+      span
+    )
+      .catch(err => {
+        // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
+        Logger.error('Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -84,6 +135,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
 }
 
 export default {
-  post
+  post,
+  put
 }
 

@@ -252,6 +252,7 @@ declare module '@mojaloop/central-services-shared' {
       Event: {
         Action: {
           POST: string;
+          PUT: string;
         };
         Type: {
           AUTHORIZATION: string;

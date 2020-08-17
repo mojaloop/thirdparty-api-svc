@@ -19,6 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Lewis Daly <lewisd@crosslaketech.com>
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
  --------------
  ******/
@@ -35,37 +36,35 @@ import Config from '~/shared/config'
 import { inspect } from 'util'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { finishChildSpan } from '~/shared/util'
-
-export interface PostAuthorizationPayload {
-  challenge: string;
-  value: string;
-  consentId: string;
-  sourceAccountId: string;
-  status: 'PENDING';
-}
+import * as types from '~/interface/types'
 
 /**
- * @function forwardPostAuthorization
- * @description Forwards a POST /thirdpartyRequests/transactions/{ID}/authorizations request
+ * @function forwardAuthorizationRequest
+ * @description Forwards a POST/PUT /thirdpartyRequests/transactions/{ID}/authorizations request
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {string} method the http method POST or PUT
  * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
- * @param {object} payload Body of the POST request
+ * @param {object} payload Body of the POST/PUT request
  * @param {object} span optional request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardPostAuthorization (
+export async function forwardAuthorizationRequest (
   path: string,
   headers: HapiUtil.Dictionary<string>,
+  method: string,
   transactionRequestId: string,
-  payload: PostAuthorizationPayload,
+  payload: types.AuthorizationPayload,
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardPostAuthorization')
+
+  const childSpan = span?.getChild('forwardAuthorizationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+  const endpointType = (method === Enum.Http.RestMethods.POST) ?
+    Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST :
+    Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
@@ -73,34 +72,34 @@ export async function forwardPostAuthorization (
       destinationDfspId,
       endpointType
     )
-    Logger.info(`authorizations::forwardPostAuthorization - Resolved destination party ${endpointType} endpoint for thirdpartyTransaction: ${transactionRequestId} to: ${inspect(endpoint)}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Resolved destination party ${endpointType} endpoint for thirdpartyTransaction: ${transactionRequestId} to: ${inspect(endpoint)}`)
     const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`authorizations::forwardPostAuthorization - Forwarding authorization to endpoint: ${url}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
       headers,
       sourceDfspId,
       destinationDfspId,
-      Enum.Http.RestMethods.POST,
+      method,
       payload,
       Enum.Http.ResponseTypes.JSON,
       childSpan
     )
 
-    Logger.info(`authorizations::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`authorizations::forwardPostAuthorization - Error forwarding thirdpartyTransaction authorization to endpoint: ${inspect(err)}`)
+    Logger.error(`authorizations::forwardAuthorizationRequest - Error forwarding thirdpartyTransaction authorization to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
       'fspiop-destination': sourceDfspId
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
-    await forwardPostAuthorizationError(
+    await forwardAuthorizationRequestError(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
       errorHeaders,
       transactionRequestId,
@@ -117,9 +116,8 @@ export async function forwardPostAuthorization (
 }
 
 /**
- * @function forwardPostAuthorizationError
- * @description Generic function to handle sending `PUT .../authorizations/error` back to
- *   the FSPIOP-Source
+ * @function forwardAuthorizationRequestError
+ * @description Generic function to handle sending `PUT .../authorizations/error` back to the FSPIOP-Source
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
@@ -129,12 +127,13 @@ export async function forwardPostAuthorization (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardPostAuthorizationError(path: string,
+export async function forwardAuthorizationRequestError(path: string,
   headers: HapiUtil.Dictionary<string>,
   transactionRequestId: string,
-  payload: PostAuthorizationPayload,
+  payload: types.AuthorizationPayload,
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardPostAuthorizationError')
+
+  const childSpan = span?.getChild('forwardAuthorizationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
@@ -144,9 +143,9 @@ export async function forwardPostAuthorizationError(path: string,
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
       endpointType)
-    Logger.info(`authorizations::forwardPostAuthorizationError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
+    Logger.info(`authorizations::forwardAuthorizationRequestError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
     const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
-    Logger.info(`authorizations::forwardPostAuthorizationError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
+    Logger.info(`authorizations::forwardAuthorizationRequestError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -159,13 +158,13 @@ export async function forwardPostAuthorizationError(path: string,
       childSpan
     )
 
-    Logger.info(`authorizations::forwardPostAuthorization - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
 
   } catch (err) {
-    Logger.error(`authorizations::forwardPostAuthorizationError - Error forwarding thirdpartyTransaction authorization error to endpoint: ${inspect(err)}`)
+    Logger.error(`authorizations::forwardAuthorizationRequestError - Error forwarding thirdpartyTransaction authorization error to endpoint: ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)

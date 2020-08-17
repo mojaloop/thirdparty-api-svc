@@ -27,7 +27,7 @@
 /**
  * This is used for personal information
  */
-export interface PersonalInfo {
+interface PersonalInfo {
   complexName?: {
     firstName?: string;
     middleName?: string;
@@ -35,7 +35,7 @@ export interface PersonalInfo {
   };
   dateOfBirth?: string;
 }
-export interface PartyIdInfo {
+interface PartyIdInfo {
   partyIdType: string;
   partyIdentifier: string;
   partySubIdOrType?: string;
@@ -48,7 +48,7 @@ export enum AmountType {
 /**
 * common interface used for payee and payer
 */
-export interface Party {
+interface Party {
   partyIdInfo: PartyIdInfo;
   merchantClassificationCode?: string;
   name?: string;
@@ -57,14 +57,14 @@ export interface Party {
 /**
 * This is used for amount feilds
 */
-export interface Money {
+interface Money {
   currency: string;
   amount: string;
 }
 /**
 * This interface used for transaction information
 */
-export interface TransactionType {
+interface TransactionType {
   scenario: string;
   subScenario?: string;
   initiator: string;
@@ -101,4 +101,21 @@ export interface ErrorInformation {
       value: string;
     }];
   };
+}
+/**
+* authorization status
+*/
+export enum AuthorizationStatus {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+}
+/**
+* used for authorization requests
+*/
+export interface AuthorizationPayload {
+  challenge: string;
+  value: string;
+  consentId: string;
+  sourceAccountId: string;
+  status: AuthorizationStatus;
 }

@@ -19,7 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
-
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
  --------------
  ******/
 import { Util } from '@mojaloop/central-services-shared'
@@ -46,6 +46,14 @@ export default {
     [
       'thirdpartyRequests_transactions_authorizations_post',
       'Post thirdpartyRequests transactions authorizations request',
+      ['success']
+    ]
+  ),
+  UpdateThirdpartyAuthorization: wrapWithHistogram(
+    Authorizations.put,
+    [
+      'thirdpartyRequests_transactions_authorizations_put',
+      'Put thirdpartyRequests transactions authorizations request',
       ['success']
     ]
   ),

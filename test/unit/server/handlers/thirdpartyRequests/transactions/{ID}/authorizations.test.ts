@@ -19,20 +19,53 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Lewis Daly <lewisd@crosslaketech.com>
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
  --------------
  ******/
 
-import {Request } from "@hapi/hapi"
+import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
 import AuthorizationsHandler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-const mockForwardPostAuthorization = jest.spyOn(Authorizations, 'forwardPostAuthorization')
+const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
+const postAuthRequest = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA'
+  },
+  params: {
+    ID: '1234'
+  },
+  payload: {
+    challenge: '12345',
+    value: '12345',
+    consentId: '12345',
+    sourceAccountId: 'dfspa.12345.67890',
+    status: 'PENDING'
+  }
+}
+const putAuthRequest = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA'
+  },
+  params: {
+    ID: '1234'
+  },
+  payload: {
+    challenge: '12345',
+    value: '12345',
+    consentId: '12345',
+    sourceAccountId: 'dfspa.12345.67890',
+    status: 'VERIFIED'
+  }
+}
 
 describe('authorizations handler', () => {
   describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', () => {
@@ -44,26 +77,12 @@ describe('authorizations handler', () => {
 
     it('handles a successful request', async () => {
       // Arrange
-      mockForwardPostAuthorization.mockResolvedValueOnce()
-      const request = {
-        headers: {
-          'fspiop-source': 'pispA',
-          'fspiop-destination': 'dfspA'
-        },
-        params: {
-          ID: '1234'
-        },
-        payload: {
-          challenge: '12345',
-          value: '12345',
-          consentId: '12345',
-          sourceAccountId: 'dfspa.12345.67890',
-          status: 'PENDING',
-        }
-      }
-      const expected: Array<any> = [
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
+      const request = postAuthRequest
+      const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
         request.headers,
+        'POST',
         request.params.ID,
         request.payload,
         undefined
@@ -74,31 +93,17 @@ describe('authorizations handler', () => {
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      mockForwardPostAuthorization.mockRejectedValueOnce(new Error('Test Error'))
-      const request = {
-        headers: {
-          'fspiop-source': 'pispA',
-          'fspiop-destination': 'dfspA'
-        },
-        params: {
-          ID: '1234'
-        },
-        payload: {
-          challenge: '12345',
-          value: '12345',
-          consentId: '12345',
-          sourceAccountId: 'dfspa.12345.67890',
-          status: 'PENDING',
-        }
-      }
-      const expected: Array<any> = [
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('Test Error'))
+      const request = postAuthRequest
+      const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
         request.headers,
+        'POST',
         request.params.ID,
         request.payload,
         undefined
@@ -113,26 +118,13 @@ describe('authorizations handler', () => {
       // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(mockForwardPostAuthorization).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles validation errors synchnously', async () => {
       // Arrange
       const request = {
-        headers: {
-          'fspiop-source': 'pispA',
-          'fspiop-destination': 'dfspA'
-        },
-        params: {
-          ID: '1234'
-        },
-        payload: {
-          challenge: '12345',
-          value: '12345',
-          consentId: '12345',
-          sourceAccountId: 'dfspa.12345.67890',
-          status: 'PENDING',
-        },
+        ...postAuthRequest,
         // Will setting the span to null do stuff?
         span: {
         }
@@ -140,6 +132,76 @@ describe('authorizations handler', () => {
 
       // Act
       const action = async () => await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
+  describe('PUT /thirdpartyRequests/transactions/{ID}/authorizations', () => {
+    beforeEach((): void => {
+      jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    it('handles a successful request', async () => {
+      // Arrange
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
+      const request = putAuthRequest
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        request.headers,
+        'PUT',
+        request.params.ID,
+        request.payload,
+        undefined
+      ]
+
+      // Act
+      const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles errors asynchronously', async () => {
+      // Arrange
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('Test Error'))
+      const request = putAuthRequest
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        request.headers,
+        'PUT',
+        request.params.ID,
+        request.payload,
+        undefined
+      ]
+
+      // Act
+      const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      // wait once more for the event loop - since we can't await `runAllImmediates`
+      // this helps make sure the tests don't become flaky
+      await new Promise(resolve => setImmediate(resolve))
+      // The main test here is that there is no unhandledPromiseRejection!
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles validation errors synchnously', async () => {
+      // Arrange
+      const request = {
+        ...putAuthRequest,
+        // Will setting the span to null do stuff?
+        span: {
+        }
+      }
+
+      // Act
+      const action = async () => await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
