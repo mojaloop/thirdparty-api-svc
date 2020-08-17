@@ -30,7 +30,8 @@ import Logger from '@mojaloop/central-services-logger'
 
 import {
   Enum,
-  Util
+  Util,
+  FspEndpointTypesEnum
 } from '@mojaloop/central-services-shared'
 import Config from '~/shared/config'
 import { inspect } from 'util'
@@ -53,6 +54,7 @@ import * as types from '~/interface/types'
  */
 export async function forwardAuthorizationRequest (
   path: string,
+  endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: string,
   transactionRequestId: string,
@@ -62,10 +64,6 @@ export async function forwardAuthorizationRequest (
   const childSpan = span?.getChild('forwardAuthorizationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = (method === Enum.Http.RestMethods.POST) ?
-    Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST :
-    Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT
-
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
       Config.ENDPOINT_SERVICE_URL,

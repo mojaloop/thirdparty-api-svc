@@ -81,6 +81,7 @@ describe('authorizations handler', () => {
       const request = postAuthRequest
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST',
         request.headers,
         'POST',
         request.params.ID,
@@ -102,6 +103,7 @@ describe('authorizations handler', () => {
       const request = postAuthRequest
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST',
         request.headers,
         'POST',
         request.params.ID,
@@ -151,6 +153,7 @@ describe('authorizations handler', () => {
       const request = putAuthRequest
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
         request.headers,
         'PUT',
         request.params.ID,
@@ -172,6 +175,7 @@ describe('authorizations handler', () => {
       const request = putAuthRequest
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
         request.headers,
         'PUT',
         request.params.ID,

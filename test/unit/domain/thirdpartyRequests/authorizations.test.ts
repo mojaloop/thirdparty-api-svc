@@ -41,6 +41,9 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 describe('domain/authorizations', () => {
   describe('forwardAuthorizationRequest', () => {
     const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
+    const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
+    const errorEndpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+    const method = Enum.Http.RestMethods.POST
 
     beforeEach((): void => {
       jest.clearAllMocks()
@@ -68,7 +71,7 @@ describe('domain/authorizations', () => {
       const getEndpointExpected = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        endpointType
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -83,7 +86,7 @@ describe('domain/authorizations', () => {
       const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.POST, id, payload, mockSpan)
+      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
@@ -112,16 +115,16 @@ describe('domain/authorizations', () => {
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        endpointType
       ]
       const getEndpointExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+        errorEndpointType
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.POST, id, payload, mockSpan)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -154,16 +157,16 @@ describe('domain/authorizations', () => {
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        endpointType
       ]
       const getEndpointExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+        errorEndpointType
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.POST, id, payload)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -196,12 +199,12 @@ describe('domain/authorizations', () => {
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        endpointType
       ]
       const getEndpointExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+        errorEndpointType
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -225,7 +228,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.POST, id, payload, mockSpan)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request')
@@ -263,12 +266,12 @@ describe('domain/authorizations', () => {
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST
+        endpointType
       ]
       const getEndpointExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+        errorEndpointType
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -292,7 +295,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.POST, id, payload)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request')
@@ -350,6 +353,8 @@ describe('domain/authorizations', () => {
 
   describe('PUT : forwardAuthorizationRequest', () => {
     const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
+    const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
+    const method = Enum.Http.RestMethods.PUT
 
     beforeEach((): void => {
       jest.clearAllMocks()
@@ -377,7 +382,7 @@ describe('domain/authorizations', () => {
       const getEndpointExpected = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT
+        endpointType
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -392,7 +397,7 @@ describe('domain/authorizations', () => {
       const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardAuthorizationRequest(path, headers, Enum.Http.RestMethods.PUT, id, payload, mockSpan)
+      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)

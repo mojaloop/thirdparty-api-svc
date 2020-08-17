@@ -64,13 +64,14 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
+      Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
       request.headers,
       Enum.Http.RestMethods.POST,
       transactionRequestId,
       payload,
       span
     )
-      .catch(err => {
+    .catch(err => {
         // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
         Logger.error('Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -114,13 +115,14 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
+      Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
       request.headers,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,
       payload,
       span
     )
-      .catch(err => {
+    .catch(err => {
         // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
         Logger.error('Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
