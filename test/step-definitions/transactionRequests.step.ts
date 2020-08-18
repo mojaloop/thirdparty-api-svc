@@ -41,7 +41,8 @@ defineFeature(feature, (test): void => {
     })
 
     when('I send a \'CreateThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()      
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
       response = await server.inject(request)
       return response
     })
@@ -53,7 +54,7 @@ defineFeature(feature, (test): void => {
         'POST',
         {},
         mockData.transactionRequest.payload,
-        expect.objectContaining({ isFinished: false })
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -103,7 +104,7 @@ defineFeature(feature, (test): void => {
         'POST',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
         request.payload,
-        expect.objectContaining({ isFinished: false })
+        expect.any(Object)
       ]
 
       expect(response.result).toBeNull()
@@ -144,7 +145,7 @@ defineFeature(feature, (test): void => {
       return response
     })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then('I get a response with a status code of \'200\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
         'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
@@ -152,11 +153,11 @@ defineFeature(feature, (test): void => {
         'PUT',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
         request.payload,
-        expect.objectContaining({ isFinished: false })
+        expect.any(Object)
       ]
 
       expect(response.result).toBeNull()
-      expect(response.statusCode).toBe(202)
+      expect(response.statusCode).toBe(200)
       expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
   })
