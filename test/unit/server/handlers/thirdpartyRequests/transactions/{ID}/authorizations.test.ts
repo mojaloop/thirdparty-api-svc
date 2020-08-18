@@ -165,7 +165,7 @@ describe('authorizations handler', () => {
       const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
-      expect(response.statusCode).toBe(202)
+      expect(response.statusCode).toBe(200)
       expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
 
@@ -187,7 +187,7 @@ describe('authorizations handler', () => {
       const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
-      expect(response.statusCode).toBe(202)
+      expect(response.statusCode).toBe(200)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))

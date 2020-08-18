@@ -26,6 +26,7 @@
 import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
+import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import TestData from 'test/unit/data/mockData.json'
 import Span from 'test/unit/__mocks__/span'
 
@@ -61,16 +62,6 @@ const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
   'fspiop-destination': request.headers['fspiop-source']
 }
-const sendRequestErrExpected = [
-  'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
-  expectedErrorHeaders,
-  expectedErrorHeaders['fspiop-source'],
-  expectedErrorHeaders['fspiop-destination'],
-  Enum.Http.RestMethods.PUT,
-  expect.any(Object),
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
 
 describe('domain /thirdpartyRequests/transactions', (): void => {
   describe('forwardTransactionRequest', (): void => {
@@ -129,11 +120,13 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
     })
 
     it('handles `getEndpoint` failure twice', async (): Promise<void> => {
-      mockGetEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
+      mockGetEndpoint
+        .mockRejectedValue(new Error('Cannot find endpoint first time'))
+        .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
       const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)
 
-      await expect(action).rejects.toThrow('Cannot find endpoint')
+      await expect(action).rejects.toThrow('Cannot find endpoint second time')
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).not.toHaveBeenCalled()
@@ -141,6 +134,18 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
 
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
+      const errorPayload =
+        ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
+      const sendRequestErrExpected = [
+        'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
+        expectedErrorHeaders,
+        expectedErrorHeaders['fspiop-source'],
+        expectedErrorHeaders['fspiop-destination'],
+        Enum.Http.RestMethods.PUT,
+        errorPayload,
+        Enum.Http.ResponseTypes.JSON,
+        expect.objectContaining({ isFinished: false })
+      ]
       mockGetEndpoint
         .mockResolvedValueOnce('http://dfspa-sdk')
         .mockResolvedValue('http://pispa-sdk')
@@ -165,14 +170,28 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
 
     it('handles `sendRequest` failure twice', async (): Promise<void> => {
       const mockSpan = new Span()
+      const errorPayload =
+        ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
+      const sendRequestErrExpected = [
+        'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
+        expectedErrorHeaders,
+        expectedErrorHeaders['fspiop-source'],
+        expectedErrorHeaders['fspiop-destination'],
+        Enum.Http.RestMethods.PUT,
+        errorPayload,
+        Enum.Http.ResponseTypes.JSON,
+        expect.objectContaining({ isFinished: false })
+      ]
       mockGetEndpoint
         .mockResolvedValueOnce('http://dfspa-sdk')
         .mockResolvedValue('http://pispa-sdk')
-      mockSendRequest.mockRejectedValue(new Error('Failed to send HTTP request'))
+      mockSendRequest
+        .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
+        .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
 
       const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
 
-      await expect(action).rejects.toThrow('Failed to send HTTP request')
+      await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)

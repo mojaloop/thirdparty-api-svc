@@ -90,7 +90,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   * description: The method PUT /thirdpartyRequests/transactions/{ID}/authorizations is called by the Auth-Service on  * successful validation of authorization.
   * parameters: body, content-length
   * produces: application/json
-  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function put(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
@@ -128,7 +128,7 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
         Logger.error(ReformatFSPIOPError(err))
       })
 
-    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)

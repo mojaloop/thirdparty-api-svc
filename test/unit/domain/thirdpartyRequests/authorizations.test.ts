@@ -140,7 +140,9 @@ describe('domain/authorizations', () => {
 
     it('handles `getEndpoint` failure twice', async () => {
       // Arrange
-      mockGetEndpoint.mockRejectedValue(new Error('Cannot find endpoint'))
+      mockGetEndpoint
+        .mockRejectedValue(new Error('Cannot find endpoint first time'))
+        .mockRejectedValue(new Error('Cannot find endpoint second time'))
       const headers = {
         'fspiop-source': 'pispA',
         'fspiop-destination': 'dfspA'
@@ -169,7 +171,7 @@ describe('domain/authorizations', () => {
       const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
 
       // Assert
-      await expect(action).rejects.toThrow('Cannot find endpoint')
+      await expect(action).rejects.toThrow('Cannot find endpoint second time')
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
     })
@@ -195,6 +197,7 @@ describe('domain/authorizations', () => {
         status: types.AuthorizationStatus.PENDING
       }
       const mockSpan = new Span()
+      const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
 
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
@@ -222,7 +225,7 @@ describe('domain/authorizations', () => {
         'switch',
         'pispA',
         Enum.Http.RestMethods.PUT,
-        expect.any(Object),
+        errorPayload,
         Enum.Http.ResponseTypes.JSON,
         expect.objectContaining({ isFinished: false })
       ]
@@ -249,7 +252,9 @@ describe('domain/authorizations', () => {
       mockGetEndpoint
         .mockResolvedValueOnce('http://auth-service.local')
         .mockResolvedValueOnce('http://pispA.local')
-      mockSendRequest.mockRejectedValueOnce(new Error('Failed to send HTTP request'))
+      mockSendRequest
+        .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
+        .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
       const headers = {
         'fspiop-source': 'pispA',
         'fspiop-destination': 'dfspA'
@@ -262,7 +267,8 @@ describe('domain/authorizations', () => {
         sourceAccountId: 'dfspa.12345.67890',
         status: types.AuthorizationStatus.PENDING
       }
-
+      const errorPayload =
+        ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
       const getEndpointExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
@@ -289,7 +295,7 @@ describe('domain/authorizations', () => {
         'switch',
         'pispA',
         Enum.Http.RestMethods.PUT,
-        expect.any(Object),
+        errorPayload,
         Enum.Http.ResponseTypes.JSON,
         undefined
       ]
@@ -298,7 +304,7 @@ describe('domain/authorizations', () => {
       const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
 
       // Assert
-      await expect(action).rejects.toThrow('Failed to send HTTP request')
+      await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedFirst)

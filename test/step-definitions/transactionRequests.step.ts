@@ -24,24 +24,24 @@ defineFeature(feature, (test): void => {
   })
 
   test('CreateThirdpartyTransactionRequests', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.transactionRequest.headers,
+      date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'POST',
+      url: '/thirdpartyRequests/transactions',
+      headers: reqHeaders,
+      payload: mockData.transactionRequest.payload
+    }
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
 
     when('I send a \'CreateThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
-      const reqHeaders = {
-        ...mockData.transactionRequest.headers,
-        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-        accept: 'application/json'
-      }
-      const request = {
-        method: 'POST',
-        url: '/thirdpartyRequests/transactions',
-        headers: reqHeaders,
-        payload: mockData.transactionRequest.payload
-      }
+      mockForwardTransactionRequest.mockResolvedValueOnce()      
       response = await server.inject(request)
       return response
     })
@@ -49,11 +49,11 @@ defineFeature(feature, (test): void => {
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions',
-        expect.any(Object),
+        expect.objectContaining(request.headers),
         'POST',
         {},
         mockData.transactionRequest.payload,
-        expect.any(Object)
+        expect.objectContaining({ isFinished: false })
       ]
 
       expect(response.statusCode).toBe(202)
@@ -103,7 +103,7 @@ defineFeature(feature, (test): void => {
         'POST',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
         request.payload,
-        expect.any(Object)
+        expect.objectContaining({ isFinished: false })
       ]
 
       expect(response.result).toBeNull()
@@ -152,7 +152,7 @@ defineFeature(feature, (test): void => {
         'PUT',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
         request.payload,
-        expect.any(Object)
+        expect.objectContaining({ isFinished: false })
       ]
 
       expect(response.result).toBeNull()

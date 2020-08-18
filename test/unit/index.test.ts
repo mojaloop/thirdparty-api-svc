@@ -83,7 +83,7 @@ describe('index', (): void => {
 
         const expected = [
           '/thirdpartyRequests/transactions',
-          expect.any(Object),
+          expect.objectContaining(request.headers),
           'POST',
           {},
           request.payload,
@@ -277,7 +277,7 @@ describe('index', (): void => {
         const response = await server.inject(request)
 
         // Assert
-        expect(response.statusCode).toBe(202)
+        expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       })

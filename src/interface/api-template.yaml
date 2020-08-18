@@ -205,6 +205,7 @@ paths:
       summary: UpdateThirdpartyAuthorization
       description: |
         The HTTP request `PUT /thirdpartyRequests/transactions/{id}/authorizations` is used by the auth-service to update a thirdparty authorization after successful validation.
+        For an unsuccessful authorization result, the `PUT /thirdpartyRequests/transactions/{id}/authorizations/error` will be called by the auth-service, instead of this endpoint.
       parameters:
         #Path
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/ID.yaml'
@@ -233,8 +234,8 @@ paths:
               sourceAccountId: 'dfspa.alice.1234'
               status: 'VERIFIED'
       responses:
-        202:
-          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/202'
+        200:
+          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/200'
         400:
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/400'
         401:
@@ -378,7 +379,7 @@ components:
           type: string
           enum:
             - VERIFIED
-          description: The status of the authorization. This MUST be VERIFIED for a PUT request
+          description: The status of the authorization. This value must be `VERIFIED` for a PUT request
       required:
         - challenge
         - value

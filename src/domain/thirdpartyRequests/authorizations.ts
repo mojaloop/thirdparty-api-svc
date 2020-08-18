@@ -31,11 +31,16 @@ import Logger from '@mojaloop/central-services-logger'
 import {
   Enum,
   Util,
-  FspEndpointTypesEnum
+  FspEndpointTypesEnum,
+  RestMethodsEnum
 } from '@mojaloop/central-services-shared'
 import Config from '~/shared/config'
 import { inspect } from 'util'
-import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import {
+  APIErrorObject,
+  FSPIOPError,
+  ReformatFSPIOPError
+} from '@mojaloop/central-services-error-handling'
 import { finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 
@@ -44,7 +49,7 @@ import * as types from '~/interface/types'
  * @description Forwards a POST/PUT /thirdpartyRequests/transactions/{ID}/authorizations request
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
- * @param {string} method the http method POST or PUT
+ * @param {RestMethodsEnum} method The http method POST or PUT
  * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
  * @param {object} payload Body of the POST/PUT request
  * @param {object} span optional request span
@@ -52,11 +57,11 @@ import * as types from '~/interface/types'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequest (
+export async function forwardAuthorizationRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
-  method: string,
+  method: RestMethodsEnum,
   transactionRequestId: string,
   payload: types.AuthorizationPayload,
   span?: any): Promise<void> {
@@ -119,7 +124,7 @@ export async function forwardAuthorizationRequest (
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
- * @param {object} payload Body of the POST request
+ * @param {APIErrorObject} error Error details
  * @param {object} span optional request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
  *  found, if there are network errors or if there is a bad response
@@ -128,7 +133,7 @@ export async function forwardAuthorizationRequest (
 export async function forwardAuthorizationRequestError(path: string,
   headers: HapiUtil.Dictionary<string>,
   transactionRequestId: string,
-  payload: types.AuthorizationPayload,
+  error: APIErrorObject,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardAuthorizationRequestError')
@@ -151,7 +156,7 @@ export async function forwardAuthorizationRequestError(path: string,
       sourceDfspId,
       destinationDfspId,
       Enum.Http.RestMethods.PUT,
-      payload,
+      error,
       Enum.Http.ResponseTypes.JSON,
       childSpan
     )

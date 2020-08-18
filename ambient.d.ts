@@ -68,6 +68,7 @@ declare module '@mojaloop/central-services-metrics' {
   export default defaultMetrics
 }
 declare module '@mojaloop/central-services-shared' {
+  import { Util as HapiUtil } from '@hapi/hapi'
   interface ReturnCode {
     CODE: number;
     DESCRIPTION: string;
@@ -91,17 +92,23 @@ declare module '@mojaloop/central-services-shared' {
       ACCEPTED: ReturnCode;
     };
     RestMethods: {
-      GET: string;
-      POST: string;
-      PUT: string;
-      DELETE: string;
-      PATCH: string;
+      GET: RestMethodsEnum.GET;
+      POST: RestMethodsEnum.POST;
+      PUT: RestMethodsEnum.PUT;
+      DELETE: RestMethodsEnum.DELETE;
+      PATCH: RestMethodsEnum.PATCH;
     };
     ResponseTypes: {
       JSON: string;
     };
   }
-
+  enum RestMethodsEnum {
+    GET = 'GET',
+    POST = 'POST',
+    PUT = 'PUT',
+    DELETE = 'DELETE',
+    PATCH = 'PATCH'
+  }
   enum FspEndpointTypesEnum {
     FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE = 'FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE',
     FSPIOP_CALLBACK_URL = 'FSPIOP_CALLBACK_URL',
@@ -262,7 +269,7 @@ declare module '@mojaloop/central-services-shared' {
   }
 
   class Request {
-    sendRequest(url: string, headers: any, source: string, destination: string, method?: string, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
+    sendRequest(url: string, headers: HapiUtil.Dictionary<string>, source: string, destination: string, method?: RestMethodsEnum, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
   }
 
   interface Util {
@@ -278,8 +285,20 @@ declare module '@mojaloop/central-services-shared' {
 }
 
 declare module '@mojaloop/central-services-error-handling' {
+  interface APIErrorObject {
+    errorInformation: {
+      errorCode?: string;
+      errorDescription?: string;
+      extensionList?: {
+        extension: [{
+          key: string;
+          value: string;
+        }];
+      };
+    }
+  }
   class FSPIOPError {
-    toApiErrorObject(includeCauseExtension?: boolean, truncateExtensions?: boolean): any
+    toApiErrorObject(includeCauseExtension?: boolean, truncateExtensions?: boolean): APIErrorObject
     apiErrorCode: {
       code: number;
       message: string;
