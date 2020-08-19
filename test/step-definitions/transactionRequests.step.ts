@@ -42,7 +42,6 @@ defineFeature(feature, (test): void => {
 
     when('I send a \'CreateThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
-
       response = await server.inject(request)
       return response
     })

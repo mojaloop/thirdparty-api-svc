@@ -138,7 +138,7 @@ async function forwardTransactionRequestError(
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(

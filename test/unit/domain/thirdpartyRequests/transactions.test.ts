@@ -46,7 +46,7 @@ const getEndpointExpected = [
 const getEndpointExpectedSecond = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-source'],
-  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
+  Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR
 ]
 const sendRequestExpected = [
   'http://dfspa-sdk/thirdpartyRequests/transactions',
