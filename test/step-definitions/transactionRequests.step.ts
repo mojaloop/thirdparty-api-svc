@@ -11,7 +11,7 @@ const featurePath = path.join(__dirname, '../features/transactionRequests.featur
 const feature = loadFeature(featurePath)
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mockForwardAuthorizationPost = jest.spyOn(Authorizations, 'forwardPostAuthorization')
+const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -24,33 +24,32 @@ defineFeature(feature, (test): void => {
   })
 
   test('CreateThirdpartyTransactionRequests', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.transactionRequest.headers,
+      date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'POST',
+      url: '/thirdpartyRequests/transactions',
+      headers: reqHeaders,
+      payload: mockData.transactionRequest.payload
+    }
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
 
-    when('I get \'CreateThirdpartyTransactionRequests\' response', async (): Promise<ServerInjectResponse> => {
+    when('I send a \'CreateThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
-      const reqHeaders = {
-        ...mockData.transactionRequest.headers,
-        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-        accept: 'application/json'
-      }
-      const request = {
-        method: 'POST',
-        url: '/thirdpartyRequests/transactions',
-        headers: reqHeaders,
-        payload: mockData.transactionRequest.payload,
-
-      }
       response = await server.inject(request)
       return response
     })
 
-    then('The status code should be \'202\'', (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions',
-        expect.any(Object),
+        expect.objectContaining(request.headers),
         'POST',
         {},
         mockData.transactionRequest.payload,
@@ -80,7 +79,7 @@ defineFeature(feature, (test): void => {
         value: '12345',
         consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
         sourceAccountId: 'dfspa.alice.1234',
-        status: 'PENDING',
+        status: 'PENDING'
       }
     }
 
@@ -89,16 +88,19 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'CreateThirdpartyTransactionRequestAuthorization\' request', async (): Promise<ServerInjectResponse> => {
-      mockForwardAuthorizationPost.mockResolvedValueOnce()
-      response = await server.inject(request)
-      return response
-    })
+    when('I send a \'CreateThirdpartyTransactionRequestAuthorization\' request',
+      async (): Promise<ServerInjectResponse> => {
+        mockForwardAuthorizationRequest.mockResolvedValueOnce()
+        response = await server.inject(request)
+        return response
+      })
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST',
         expect.objectContaining(request.headers),
+        'POST',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
         request.payload,
         expect.any(Object)
@@ -106,7 +108,56 @@ defineFeature(feature, (test): void => {
 
       expect(response.result).toBeNull()
       expect(response.statusCode).toBe(202)
-      expect(mockForwardAuthorizationPost).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
+  test('UpdateThirdpartyAuthorization', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.transactionRequest.headers,
+      date: (new Date()).toISOString(),
+      'fspiop-source': 'dfspA',
+      'fspiop-destination': 'dfspA',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'PUT',
+      url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+      headers: reqHeaders,
+      payload: {
+        challenge: '12345',
+        value: '12345',
+        consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
+        sourceAccountId: 'dfspa.alice.1234',
+        status: 'VERIFIED'
+      }
+    }
+
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'UpdateThirdpartyAuthorization\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'200\'', (): void => {
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
+        expect.objectContaining(request.headers),
+        'PUT',
+        '7d34f91d-d078-4077-8263-2c047876fcf6',
+        request.payload,
+        expect.any(Object)
+      ]
+
+      expect(response.result).toBeNull()
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
   })
 })

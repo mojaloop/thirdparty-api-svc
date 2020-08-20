@@ -68,6 +68,7 @@ declare module '@mojaloop/central-services-metrics' {
   export default defaultMetrics
 }
 declare module '@mojaloop/central-services-shared' {
+  import { Util as HapiUtil } from '@hapi/hapi'
   interface ReturnCode {
     CODE: number;
     DESCRIPTION: string;
@@ -91,17 +92,23 @@ declare module '@mojaloop/central-services-shared' {
       ACCEPTED: ReturnCode;
     };
     RestMethods: {
-      GET: string;
-      POST: string;
-      PUT: string;
-      DELETE: string;
-      PATCH: string;
+      GET: RestMethodsEnum.GET;
+      POST: RestMethodsEnum.POST;
+      PUT: RestMethodsEnum.PUT;
+      DELETE: RestMethodsEnum.DELETE;
+      PATCH: RestMethodsEnum.PATCH;
     };
     ResponseTypes: {
       JSON: string;
     };
   }
-
+  enum RestMethodsEnum {
+    GET = 'GET',
+    POST = 'POST',
+    PUT = 'PUT',
+    DELETE = 'DELETE',
+    PATCH = 'PATCH'
+  }
   enum FspEndpointTypesEnum {
     FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE = 'FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE',
     FSPIOP_CALLBACK_URL = 'FSPIOP_CALLBACK_URL',
@@ -132,9 +139,6 @@ declare module '@mojaloop/central-services-shared' {
     FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT = 'FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT',
     FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR = 'FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR',
     FSPIOP_CALLBACK_URL_AUTHORIZATIONS = 'FSPIOP_CALLBACK_URL_AUTHORIZATIONS',
-    THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST',
-    THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT',
-    THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR = 'FSPIOP_THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT_ERROR',
     THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST',
     THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT',
     THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR = 'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR',
@@ -188,9 +192,6 @@ declare module '@mojaloop/central-services-shared' {
       FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_PUT;
       FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_BULK_TRANSFER_ERROR;
       FSPIOP_CALLBACK_URL_AUTHORIZATIONS: FspEndpointTypesEnum.FSPIOP_CALLBACK_URL_AUTHORIZATIONS;
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_POST;
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_PUT;
-      THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR: FspEndpointTypesEnum.THIRDPARTY_TRANSACTIONS_AUTHORIZATIONS_ERROR;
       THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST;
       THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT;
       THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR: FspEndpointTypesEnum.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR;
@@ -252,6 +253,7 @@ declare module '@mojaloop/central-services-shared' {
       Event: {
         Action: {
           POST: string;
+          PUT: string;
         };
         Type: {
           AUTHORIZATION: string;
@@ -267,7 +269,7 @@ declare module '@mojaloop/central-services-shared' {
   }
 
   class Request {
-    sendRequest(url: string, headers: any, source: string, destination: string, method?: string, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
+    sendRequest(url: string, headers: HapiUtil.Dictionary<string>, source: string, destination: string, method?: RestMethodsEnum, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
   }
 
   interface Util {
@@ -283,8 +285,20 @@ declare module '@mojaloop/central-services-shared' {
 }
 
 declare module '@mojaloop/central-services-error-handling' {
+  interface APIErrorObject {
+    errorInformation: {
+      errorCode?: string;
+      errorDescription?: string;
+      extensionList?: {
+        extension: [{
+          key: string;
+          value: string;
+        }];
+      };
+    }
+  }
   class FSPIOPError {
-    toApiErrorObject(includeCauseExtension?: boolean, truncateExtensions?: boolean): any
+    toApiErrorObject(includeCauseExtension?: boolean, truncateExtensions?: boolean): APIErrorObject
     apiErrorCode: {
       code: number;
       message: string;

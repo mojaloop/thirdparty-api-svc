@@ -1,7 +1,5 @@
 import { ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-
-
 /**
  * mockResponseToolkit
  * @description A mock Response toolkit for testing handler functions
@@ -12,7 +10,7 @@ const mockResponseToolkit = {
     return {
       code: (statusCode: number): ResponseObject => {
         const response: ResponseObject = {
-          statusCode,
+          statusCode
         } as unknown as ResponseObject
         return response
       }

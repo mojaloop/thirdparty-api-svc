@@ -92,7 +92,7 @@ describe('transactions handler', (): void => {
       const badSpanRequest = {
         ...request,
         // Setting to empty span dict will cause a validation error
-        span: { }
+        span: {}
       }
 
       // Act
@@ -100,7 +100,6 @@ describe('transactions handler', (): void => {
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
-
     })
   })
 })
