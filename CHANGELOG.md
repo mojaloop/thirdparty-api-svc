@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.2.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.1.1...v11.2.0) (2020-08-20)
+
+
+### Features
+
+* **endpoints:** Inbound PUT authorizations handler  ([#19](https://github.com/mojaloop/thirdparty-api-adapter/issues/19)) ([5ad72be](https://github.com/mojaloop/thirdparty-api-adapter/commit/5ad72be095b18f9fa385eae49d960e079d9d3dbd))
+
 ### [11.1.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.1.0...v11.1.1) (2020-08-13)
 
 
