@@ -68,7 +68,7 @@ async function forwardTransactionRequest(
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_POST
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
       Config.ENDPOINT_SERVICE_URL,
@@ -103,7 +103,7 @@ async function forwardTransactionRequest(
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardTransactionRequestError(
       errorHeaders,
-      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_PUT_ERROR,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
@@ -138,7 +138,7 @@ async function forwardTransactionRequestError(
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_PUT_ERROR
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(

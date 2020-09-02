@@ -62,7 +62,7 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
-      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
       request.headers,
       Enum.Http.RestMethods.POST,
       request.params,

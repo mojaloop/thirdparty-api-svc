@@ -63,8 +63,8 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
 
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
-      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
-      Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST,
       request.headers,
       Enum.Http.RestMethods.POST,
       transactionRequestId,
@@ -114,8 +114,8 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
 
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
-      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
-      Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT,
       request.headers,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,

@@ -40,9 +40,9 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 
 describe('domain/authorizations', () => {
   describe('forwardAuthorizationRequest', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
-    const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
-    const errorEndpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
+    const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST
+    const errorEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
     const method = Enum.Http.RestMethods.POST
 
     beforeEach((): void => {
@@ -313,7 +313,7 @@ describe('domain/authorizations', () => {
   })
 
   describe('forwardAuthorizationRequestError', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
 
     beforeEach((): void => {
       jest.clearAllMocks()
@@ -335,7 +335,7 @@ describe('domain/authorizations', () => {
       const getEndpointExpected = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
       ]
       const sendRequestExpected = [
         'http://pisp.local/thirdpartyRequests/transactions/123456/authorizations/error',
@@ -358,8 +358,8 @@ describe('domain/authorizations', () => {
   })
 
   describe('PUT : forwardAuthorizationRequest', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
-    const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
+    const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT
     const method = Enum.Http.RestMethods.PUT
 
     beforeEach((): void => {
