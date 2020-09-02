@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.2.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.2.0...v11.2.1) (2020-09-02)
+
+
+### Code Refactor
+
+* change endpoint names ([#20](https://github.com/mojaloop/thirdparty-api-adapter/issues/20)) ([e053fa9](https://github.com/mojaloop/thirdparty-api-adapter/commit/e053fa911eb0b7f5a2029a15c0a2ed13599b2372))
+
 ## [11.2.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.1.1...v11.2.0) (2020-08-20)
 
 
