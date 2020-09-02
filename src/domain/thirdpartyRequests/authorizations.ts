@@ -103,7 +103,7 @@ export async function forwardAuthorizationRequest(
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardAuthorizationRequestError(
-      Enum.EndPoints.FspEndpointTemplates.THIRDPARTY_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
       errorHeaders,
       transactionRequestId,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
@@ -139,7 +139,7 @@ export async function forwardAuthorizationRequestError(path: string,
   const childSpan = span?.getChild('forwardAuthorizationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(

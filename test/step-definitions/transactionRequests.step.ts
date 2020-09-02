@@ -98,7 +98,7 @@ defineFeature(feature, (test): void => {
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
-        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_POST',
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
         expect.objectContaining(request.headers),
         'POST',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
@@ -147,7 +147,7 @@ defineFeature(feature, (test): void => {
     then('I get a response with a status code of \'200\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}/authorizations',
-        'THIRDPARTY_CALLBACK_URL_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT',
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
         expect.objectContaining(request.headers),
         'PUT',
         '7d34f91d-d078-4077-8263-2c047876fcf6',
