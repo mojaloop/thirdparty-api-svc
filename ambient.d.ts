@@ -246,18 +246,38 @@ declare module '@mojaloop/central-services-shared' {
       TP_CONSENT_PUT_ERROR: string;
     };
   }
+
+  enum EventTypeEnum {
+    AUTHORIZATION = 'AUTHORIZATION',
+    NOTIFICATION = 'NOTIFICATION',
+    TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
+  }
+
+  enum EventActionEnum {
+    EVENT = 'EVENT',
+    POST = 'POST',
+    PUT = 'PUT',
+  }
+
   interface Enum {
     Http: HttpEnum;
     EndPoints: EndPointsEnum;
+    Kafka: {
+      Config: {
+        CONSUMER: string
+      }
+    }
     Events: {
       Event: {
         Action: {
-          POST: string;
-          PUT: string;
+          EVENT: EventActionEnum.EVENT;
+          POST: EventActionEnum.POST;
+          PUT: EventActionEnum.PUT;
         };
         Type: {
-          AUTHORIZATION: string;
-          TRANSACTION_REQUEST: string;
+          AUTHORIZATION: EventTypeEnum.AUTHORIZATION;
+          NOTIFICATION: EventTypeEnum.NOTIFICATION;
+          TRANSACTION_REQUEST: EventTypeEnum.TRANSACTION_REQUEST;
         };
       };
     };
@@ -272,11 +292,16 @@ declare module '@mojaloop/central-services-shared' {
     sendRequest(url: string, headers: HapiUtil.Dictionary<string>, source: string, destination: string, method?: RestMethodsEnum, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
   }
 
+  class Kafka {
+    createGeneralTopicConf(template: string, functionality: string, action: string, key?: string, partition?: number, opaqueKey?: any): {topicName: string, key: string | null, partition: number | null, opaqueKey: any }
+  }
+
   interface Util {
     Endpoints: Endpoints;
-    Request: Request;
     Hapi: any;
+    Kafka: Kafka;
     OpenapiBackend: any;
+    Request: Request;
   }
 
   const Enum: Enum
@@ -319,6 +344,56 @@ declare module '@mojaloop/central-services-error-handling' {
   export function ReformatFSPIOPError(error: any, apiErrorCode?: any, replyTo?: any, extensions?: any): FSPIOPError
   export function CreateFSPIOPError(apiErrorCode?: any, message?: any, cause?: any, replyTo?: any, extensions?: any, useDescriptionAsMessage?: boolean): FSPIOPError
 }
+declare module '@mojaloop/central-services-stream' {
+  import { EventEmitter } from 'events';
+  import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
+  export interface KafkaConsumerConfig {
+    eventType: EventTypeEnum,
+    eventAction: EventActionEnum,
+    options: {
+      mode: number,
+      batchSize: number,
+      pollFrequency: number,
+      recursiveTimeout: number,
+      messageCharset: string,
+      messageAsJSON: boolean,
+      sync: boolean
+      consumeTimeout: number
+    },
+    rdkafkaConf: {
+      'client.id': string,
+      'group.id': string
+      'metadata.broker.list': string,
+      'socket.keepalive.enable': boolean
+    },
+    topicConf: {
+      'auto.offset.reset': string
+    }
+  }
+
+  // TODO: figure out a better example of a message - we may need to just do some stringifying
+  type Message = any;
+  interface GetMetadataResult {
+    topics: Array<{
+      name: string
+    }>
+  }
+  class Consumer extends EventEmitter {
+    constructor(topics: Array<any>, config: KafkaConsumerConfig)
+    connect(): Promise<boolean>;
+    consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<any>): void
+    disconnect(cb: () => any): void;
+    getMetadata(options: any, cb: (err: any, result: GetMetadataResult) => any): void;
+  }
+
+  interface Kafka {
+    Consumer: Consumer
+  }
+
+
+  const Kafka: Kafka
+}
+
 
 declare module '@hapi/good'
 declare module 'hapi-openapi'
