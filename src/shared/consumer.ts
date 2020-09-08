@@ -7,7 +7,7 @@ export interface ConsumerConfig {
   eventType: EventTypeEnum;
   internalConfig: KafkaConsumerConfig;
 }
-// TODO:  print and verify
+// TODO:  print and verify - will do this after we have set up integration tests
 type Message = unknown
 
 /**
