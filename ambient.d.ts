@@ -378,7 +378,7 @@ declare module '@mojaloop/central-services-stream' {
       name: string
     }>
   }
-  class Consumer extends EventEmitter {
+  export class Consumer extends EventEmitter {
     constructor(topics: Array<any>, config: KafkaConsumerConfig)
     connect(): Promise<boolean>;
     consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<void>): void
@@ -389,7 +389,6 @@ declare module '@mojaloop/central-services-stream' {
   interface Kafka {
     Consumer: Consumer
   }
-
 
   const Kafka: Kafka
 }

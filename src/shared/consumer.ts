@@ -1,11 +1,11 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import StreamLib, { Message } from '@mojaloop/central-services-stream'
+import { KafkaConsumerConfig, Kafka,  Message } from '@mojaloop/central-services-stream'
 import { promisify } from 'util'
 
-export interface InternalConsumerConfig {
+export interface ConsumerConfig {
   eventAction: EventActionEnum;
   eventType: EventTypeEnum;
-  internalConfig: StreamLib.KafkaConsumerConfig;
+  internalConfig: KafkaConsumerConfig;
 }
 
 /**
@@ -14,16 +14,19 @@ export interface InternalConsumerConfig {
  */
 export default class Consumer {
   private topicName: string;
-  private rdKafkaConsumer: StreamLib.Consumer;
+  // private rdKafkaConsumer: Kafka.Consumer;
+  private rdKafkaConsumer: any;
   private handlerFunc: (error: Error, message: Message | Message[]) => Promise<void>
 
-  public constructor (config: InternalConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
+  public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
 
     // Create the internal consumer
-    this.rdKafkaConsumer = new StreamLib.Consumer([this.topicName], config.internalConfig)
+    // TODO: fix this - I can't figure out how to get typescipt to recognize this is actually a `Class` and not a property...
+    // @ts-ignore
+    this.rdKafkaConsumer = new Kafka.Consumer([this.topicName], config.internalConfig)
 
     this.handlerFunc = handlerFunc
   }
@@ -54,6 +57,7 @@ export default class Consumer {
 
     const metadata = await getMetadataPromise(getMetadataConfig)
 
+    // @ts-ignore
     const foundTopics = metadata.topics.map(topic => topic.name)
     if (foundTopics.indexOf(this.topicName) === -1) {
       throw new Error(`Connected to consumer, but ${this.topicName} not found.`)
