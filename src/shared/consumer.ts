@@ -16,8 +16,7 @@ type Message = unknown
  */
 export default class Consumer {
   private topicName: string;
-  // private rdKafkaConsumer: Kafka.Consumer;
-  private rdKafkaConsumer: any;
+  private rdKafkaConsumer: Kafka.Consumer;
   private handlerFunc: <Message>(error: Error, message: Message | Message[]) => Promise<void>
 
   public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
@@ -27,8 +26,6 @@ export default class Consumer {
 
     // Create the internal consumer
     this.rdKafkaConsumer = new Kafka.Consumer([this.topicName], config.internalConfig)
-
-    console.log('internal thingo', this.rdKafkaConsumer)
 
     this.handlerFunc = handlerFunc
   }
@@ -71,14 +68,10 @@ export default class Consumer {
   /**
    * @function disconnect
    * @description Disconnect from the consumer
-   * @returns Promise<*> - Passes on the Promise from Consumer.disconnect()
-   * @throws {Error} - if the consumer hasn't been initialized, or disconnect() throws an error
+   * @returns {Promise<void>} - Passes on the Promise from Consumer.disconnect()
+   * @throws {Error} - if there is a failure in rdkafka's disconnect
    */
   public async disconnect (): Promise<void> {
-    if (!this.rdKafkaConsumer || !this.rdKafkaConsumer.disconnect) {
-      throw new Error('Tried to disconnect from consumer, but consumer is not initialized')
-    }
-
     const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect)
     return disconnectPromise()
   }
