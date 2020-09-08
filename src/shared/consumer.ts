@@ -7,7 +7,7 @@ export interface ConsumerConfig {
   eventType: EventTypeEnum;
   internalConfig: KafkaConsumerConfig;
 }
-
+//TODO:  print and verify
 type Message = unknown
 
 /**
@@ -26,9 +26,9 @@ export default class Consumer {
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
 
     // Create the internal consumer
-    // TODO: fix this - I can't figure out how to get typescipt to recognize this is actually a `Class` and not a property...
-    // @ts-ignore
     this.rdKafkaConsumer = new Kafka.Consumer([this.topicName], config.internalConfig)
+
+    console.log('internal thingo', this.rdKafkaConsumer)
 
     this.handlerFunc = handlerFunc
   }

@@ -498,19 +498,19 @@ declare module '@mojaloop/central-services-stream' {
       name: string
     }>
   }
-  export class Consumer extends EventEmitter {
-    constructor(topics: Array<string>, config: KafkaConsumerConfig)
-    connect(): Promise<boolean>;
-    consume<T>(workDoneCb: (error: Error, payload: T | Array<T>) => Promise<void>): void
-    disconnect(cb: () => unknown): void;
-    getMetadata(options: unknown, cb: (err: unknown, result: GetMetadataResult) => unknown): void;
-  }
 
-  interface Kafka {
-    Consumer: Consumer
-  }
+  type ConsumeCallback = <T>(error: Error, payload: T) => Promise<void>;
+  type GetMetadataCallback = (err: unknown, result: GetMetadataResult) => void;
 
-  const Kafka: Kafka
+  namespace Kafka {
+    export class Consumer extends EventEmitter {
+      constructor(topics: Array<string>, config: KafkaConsumerConfig)
+      connect(): Promise<boolean>;
+      consume(consumeCallback: ConsumeCallback): void
+      disconnect(cb: () => unknown): void;
+      getMetadata(options: unknown, cb: GetMetadataCallback): void;
+    }
+  }
 }
 
 
