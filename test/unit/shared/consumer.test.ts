@@ -1,7 +1,6 @@
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { GetMetadataResult } from '@mojaloop/central-services-stream'
 
-//
 const mockRdKafkaConsumer = {
   connect: jest.fn(),
   consume: jest.fn(),

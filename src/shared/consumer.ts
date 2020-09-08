@@ -7,7 +7,7 @@ export interface ConsumerConfig {
   eventType: EventTypeEnum;
   internalConfig: KafkaConsumerConfig;
 }
-//TODO:  print and verify
+// TODO:  print and verify
 type Message = unknown
 
 /**
@@ -19,7 +19,7 @@ export default class Consumer {
   private rdKafkaConsumer: Kafka.Consumer;
   private handlerFunc: <Message>(error: Error, message: Message | Message[]) => Promise<void>
 
-  public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
+  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
@@ -55,8 +55,7 @@ export default class Consumer {
     }
 
     const metadata = await getMetadataPromise(getMetadataConfig)
-
-    // @ts-ignore
+    
     const foundTopics = metadata.topics.map(topic => topic.name)
     if (foundTopics.indexOf(this.topicName) === -1) {
       throw new Error(`Connected to consumer, but ${this.topicName} not found.`)
