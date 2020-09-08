@@ -381,7 +381,7 @@ declare module '@mojaloop/central-services-stream' {
   class Consumer extends EventEmitter {
     constructor(topics: Array<any>, config: KafkaConsumerConfig)
     connect(): Promise<boolean>;
-    consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<any>): void
+    consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<void>): void
     disconnect(cb: () => any): void;
     getMetadata(options: any, cb: (err: any, result: GetMetadataResult) => any): void;
   }
