@@ -404,17 +404,17 @@ declare module '@mojaloop/central-services-shared' {
       };
     };
   }
-  class Endpoints {
+  interface Endpoints {
     fetchEndpoints(fspId: string): Promise<any>
     getEndpoint(switchUrl: string, fsp: string, endpointType: FspEndpointTypesEnum, options?: any): Promise<string>
     initializeCache(policyOptions: object): Promise<boolean>
   }
 
-  class Request {
+  interface Request {
     sendRequest(url: string, headers: HapiUtil.Dictionary<string>, source: string, destination: string, method?: RestMethodsEnum, payload?: any, responseType?: string, span?: any, jwsSigner?: any): Promise<any>
   }
 
-  class Kafka {
+  interface Kafka {
     createGeneralTopicConf(template: string, functionality: string, action: string, key?: string, partition?: number, opaqueKey?: any): {topicName: string, key: string | null, partition: number | null, opaqueKey: any }
   }
 
@@ -493,19 +493,17 @@ declare module '@mojaloop/central-services-stream' {
     }
   }
 
-  // TODO: figure out a better example of a message - we may need to just do some stringifying
-  type Message = unknown;
   interface GetMetadataResult {
     topics: Array<{
       name: string
     }>
   }
   export class Consumer extends EventEmitter {
-    constructor(topics: Array<unknown>, config: KafkaConsumerConfig)
+    constructor(topics: Array<string>, config: KafkaConsumerConfig)
     connect(): Promise<boolean>;
-    consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<void>): void
-    disconnect(cb: () => any): void;
-    getMetadata(options: any, cb: (err: any, result: GetMetadataResult) => any): void;
+    consume<T>(workDoneCb: (error: Error, payload: T | Array<T>) => Promise<void>): void
+    disconnect(cb: () => unknown): void;
+    getMetadata(options: unknown, cb: (err: unknown, result: GetMetadataResult) => unknown): void;
   }
 
   interface Kafka {
