@@ -247,16 +247,79 @@ declare module '@mojaloop/central-services-shared' {
     };
   }
 
+  enum KakfaConfigEnum {
+    CONSUMER = 'CONSUMER',
+    PRODUCER = 'PRODUCER'
+  }
+
   enum EventTypeEnum {
-    AUTHORIZATION = 'AUTHORIZATION',
-    NOTIFICATION = 'NOTIFICATION',
-    TRANSACTION_REQUEST = 'TRANSACTION_REQUEST',
+    ADMIN = 'admin',
+    AUTHORIZATION = 'authorization',
+    BULK = 'bulk',
+    BULK_QUOTE = 'bulkquote',
+    BULK_PROCESSING = 'bulk-processing',
+    BULK_PREPARE = 'bulk-prepare',
+    BULK_FULFIL = 'bulk-fulfil',
+    ENDPOINTCACHE = 'endpointcache',
+    EVENT = 'event',
+    FULFIL = 'fulfil',
+    GET = 'get',
+    NOTIFICATION = 'notification',
+    ORACLE = 'oracle',
+    POSITION = 'position',
+    PREPARE = 'prepare',
+    QUOTE = 'quote',
+    SETTLEMENT = 'settlement',
+    SETTLEMENT_WINDOW = 'settlementwindow',
+    TRANSACTION_REQUEST = 'transaction-request',
+    TRANSFER = 'transfer',
+    PARTY = 'party',
+    PARTICIPANT = 'participant'
   }
 
   enum EventActionEnum {
-    EVENT = 'EVENT',
-    POST = 'POST',
-    PUT = 'PUT',
+    ABORT = 'abort',
+    ABORT_DUPLICATE = 'abort-duplicate',
+    ACCEPT = 'accept',
+    BULK_ABORT = 'bulk-abort',
+    BULK_COMMIT = 'bulk-commit',
+    BULK_PREPARE = 'bulk-prepare',
+    BULK_PROCESSING = 'bulk-processing',
+    BULK_TIMEOUT_RECEIVED = 'bulk-timeout-received',
+    BULK_TIMEOUT_RESERVED = 'bulk-timeout-reserved',
+    BULK_GET = 'bulk-get',
+    CLOSE = 'close',
+    COMMIT = 'commit',
+    CREATE = 'create',
+    DELETE = 'delete',
+    EVENT = 'event',
+    FAIL = 'fail',
+    FULFIL = 'fulfil',
+    FULFIL_DUPLICATE = 'fulfil-duplicate',
+    GET = 'get',
+    INITIATE = 'initiate',
+    LIMIT_ADJUSTMENT = 'limit-adjustment',
+    LOOKUP = 'lookup',
+    POSITION = 'position',
+    POSITION_PREPARE = 'position-prepare',
+    POSITION_FULFIL = 'position-fulfil',
+    PREPARE = 'prepare',
+    PREPARE_DUPLICATE = 'prepare-duplicate',
+    PROCESSING = 'processing',
+    RECORD_FUNDS_IN = 'recordFundsIn',
+    RECORD_FUNDS_OUT_ABORT = 'recordFundsOutAbort',
+    RECORD_FUNDS_OUT_COMMIT = 'recordFundsOutCommit',
+    RECORD_FUNDS_OUT_PREPARE_RESERVE = 'recordFundsOutPrepareReserve',
+    REJECT = 'reject',
+    RESOLVE = 'resolve',
+    REQUEST = 'request',
+    RESERVE = 'reserve',
+    SETTLEMENT_WINDOW = 'settlement-window',
+    TIMEOUT_RECEIVED = 'timeout-received',
+    TIMEOUT_RESERVED = 'timeout-reserved',
+    TRANSFER = 'transfer',
+    PUT = 'put',
+    POST = 'post'
   }
 
   interface Enum {
@@ -264,20 +327,79 @@ declare module '@mojaloop/central-services-shared' {
     EndPoints: EndPointsEnum;
     Kafka: {
       Config: {
-        CONSUMER: string
+        CONSUMER: string,
+        PRODUCER: string,
       }
     }
     Events: {
       Event: {
         Action: {
+          ABORT: EventActionEnum.ABORT;
+          ABORT_DUPLICATE: EventActionEnum.ABORT_DUPLICATE;
+          ACCEPT: EventActionEnum.ACCEPT;
+          BULK_ABORT: EventActionEnum.BULK_ABORT;
+          BULK_COMMIT: EventActionEnum.BULK_COMMIT;
+          BULK_PREPARE: EventActionEnum.BULK_PREPARE;
+          BULK_PROCESSING: EventActionEnum.BULK_PROCESSING;
+          BULK_TIMEOUT_RECEIVED: EventActionEnum.BULK_TIMEOUT_RECEIVED;
+          BULK_TIMEOUT_RESERVED: EventActionEnum.BULK_TIMEOUT_RESERVED;
+          BULK_GET: EventActionEnum.BULK_GET;
+          CLOSE: EventActionEnum.CLOSE;
+          COMMIT: EventActionEnum.COMMIT;
+          CREATE: EventActionEnum.CREATE;
+          DELETE: EventActionEnum.DELETE;
           EVENT: EventActionEnum.EVENT;
-          POST: EventActionEnum.POST;
+          FAIL: EventActionEnum.FAIL;
+          FULFIL: EventActionEnum.FULFIL;
+          FULFIL_DUPLICATE: EventActionEnum.FULFIL_DUPLICATE;
+          GET: EventActionEnum.GET;
+          INITIATE: EventActionEnum.INITIATE;
+          LIMIT_ADJUSTMENT: EventActionEnum.LIMIT_ADJUSTMENT;
+          LOOKUP: EventActionEnum.LOOKUP;
+          POSITION: EventActionEnum.POSITION;
+          POSITION_PREPARE: EventActionEnum.POSITION_PREPARE;
+          POSITION_FULFIL: EventActionEnum.POSITION_FULFIL;
+          PREPARE: EventActionEnum.PREPARE;
+          PREPARE_DUPLICATE: EventActionEnum.PREPARE_DUPLICATE;
+          PROCESSING: EventActionEnum.PROCESSING;
+          RECORD_FUNDS_IN: EventActionEnum.RECORD_FUNDS_IN;
+          RECORD_FUNDS_OUT_ABORT: EventActionEnum.RECORD_FUNDS_OUT_ABORT;
+          RECORD_FUNDS_OUT_COMMIT: EventActionEnum.RECORD_FUNDS_OUT_COMMIT;
+          RECORD_FUNDS_OUT_PREPARE_RESERVE: EventActionEnum.RECORD_FUNDS_OUT_PREPARE_RESERVE;
+          REJECT: EventActionEnum.REJECT;
+          RESOLVE: EventActionEnum.RESOLVE;
+          REQUEST: EventActionEnum.REQUEST;
+          RESERVE: EventActionEnum.RESERVE;
+          SETTLEMENT_WINDOW: EventActionEnum.SETTLEMENT_WINDOW;
+          TIMEOUT_RECEIVED: EventActionEnum.TIMEOUT_RECEIVED;
+          TIMEOUT_RESERVED: EventActionEnum.TIMEOUT_RESERVED;
+          TRANSFER: EventActionEnum.TRANSFER;
           PUT: EventActionEnum.PUT;
+          POST: EventActionEnum.POST;
         };
         Type: {
+          ADMIN: EventTypeEnum.ADMIN;
           AUTHORIZATION: EventTypeEnum.AUTHORIZATION;
+          BULK: EventTypeEnum.BULK;
+          BULK_QUOTE: EventTypeEnum.BULK_QUOTE;
+          BULK_PROCESSING: EventTypeEnum.BULK_PROCESSING;
+          BULK_PREPARE: EventTypeEnum.BULK_PREPARE;
+          BULK_FULFIL: EventTypeEnum.BULK_FULFIL;
+          ENDPOINTCACHE: EventTypeEnum.ENDPOINTCACHE;
+          EVENT: EventTypeEnum.EVENT;
+          FULFIL: EventTypeEnum.FULFIL;
+          GET: EventTypeEnum.GET;
           NOTIFICATION: EventTypeEnum.NOTIFICATION;
+          ORACLE: EventTypeEnum.ORACLE;
+          POSITION: EventTypeEnum.POSITION;
+          PREPARE: EventTypeEnum.PREPARE;
+          QUOTE: EventTypeEnum.QUOTE;
+          SETTLEMENT: EventTypeEnum.SETTLEMENT;
+          SETTLEMENT_WINDOW: EventTypeEnum.SETTLEMENT_WINDOW;
           TRANSACTION_REQUEST: EventTypeEnum.TRANSACTION_REQUEST;
+          TRANSFER: EventTypeEnum.TRANSFER;
+          PARTY: EventTypeEnum.PARTY;
+          PARTICIPANT: EventTypeEnum.PARTICIPANT;
         };
       };
     };
@@ -372,14 +494,14 @@ declare module '@mojaloop/central-services-stream' {
   }
 
   // TODO: figure out a better example of a message - we may need to just do some stringifying
-  type Message = any;
+  type Message = unknown;
   interface GetMetadataResult {
     topics: Array<{
       name: string
     }>
   }
   export class Consumer extends EventEmitter {
-    constructor(topics: Array<any>, config: KafkaConsumerConfig)
+    constructor(topics: Array<unknown>, config: KafkaConsumerConfig)
     connect(): Promise<boolean>;
     consume(workDoneCb: (error: Error, payload: Message | Array<Message>) => Promise<void>): void
     disconnect(cb: () => any): void;
