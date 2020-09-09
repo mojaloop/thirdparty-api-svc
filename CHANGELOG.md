@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.3.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.2.1...v11.3.0) (2020-09-09)
+
+
+### Features
+
+* **consumer:** kafka consumer wrapper class ([#22](https://github.com/mojaloop/thirdparty-api-adapter/issues/22)) ([408ca1c](https://github.com/mojaloop/thirdparty-api-adapter/commit/408ca1c5df89208a7be3d1b9a745d3cd391632ca))
+
 ### [11.2.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.2.0...v11.2.1) (2020-09-02)
 
 
