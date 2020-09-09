@@ -22,7 +22,6 @@
  --------------
  ******/
 
-
 import NotificationEvent from './notificationEvent'
 import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
 import { ConsumeCallback } from '@mojaloop/central-services-stream';
