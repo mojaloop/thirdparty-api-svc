@@ -1,5 +1,5 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import { KafkaConsumerConfig, Kafka } from '@mojaloop/central-services-stream'
+import { KafkaConsumerConfig, Kafka, GetMetadataResult } from '@mojaloop/central-services-stream'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
@@ -49,6 +49,7 @@ export default class Consumer {
    */
   public async isConnected (): Promise<true> {
     const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata)
+      .bind(this.rdKafkaConsumer)
     const getMetadataConfig = {
       topic: this.topicName,
       timeout: 3000
@@ -72,6 +73,7 @@ export default class Consumer {
    */
   public async disconnect (): Promise<void> {
     const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect)
+      .bind(this.rdKafkaConsumer)
     return disconnectPromise()
   }
 }

@@ -110,7 +110,7 @@ describe('consumer', () => {
 
       // Act
       const result = await consumer.isConnected()
-      
+
       // Assert
       expect(result).toBe(true)
     })
