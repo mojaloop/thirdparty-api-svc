@@ -1,24 +1,7 @@
-import { ServiceConfig, KafkaConsumerConfig } from '~/shared/config';
-import Consumer, {InternalConsumerConfig } from '~/shared/consumer';
+import { ServiceConfig } from '~/shared/config';
+import Consumer from '~/shared/consumer';
 import EventHandlers from './eventHandlers'
-
-// TODO: move this elsewhere
-/**
- * @function mapServiceConfigToRdKafkaConfig
- * @description Convert the kafka config we specify at runtime to one 
- *   that central-services-stream likes
- */
-const mapServiceConfigToRdKafkaConfig = (input: KafkaConsumerConfig): InternalConsumerConfig=> {
-  return {
-    eventAction: input.eventAction,
-    eventType: input.eventType,
-    rdKafkaConfig: {
-      ...input.options,
-      ...input.rdkafkaConf,
-      ...input.topicConf,
-    }
-  }
-}
+import { mapServiceConfigToConsumerConfig } from '~/shared/util';
 
 /**
  * @function create
@@ -37,7 +20,7 @@ export function create (config: ServiceConfig): Array<Consumer> {
       throw new Error(`No Handler found for action: ${config.eventAction} and type: ${config.eventType}`)
     }
 
-    return new Consumer(mapServiceConfigToRdKafkaConfig(config), topicTemplate, handler)
+    return new Consumer(mapServiceConfigToConsumerConfig(config), topicTemplate, handler)
   })
 }
 

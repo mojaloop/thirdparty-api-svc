@@ -29,6 +29,8 @@ import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
+import { KafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import { ConsumerConfig } from './consumer'
 
 /**
  * @function finishChildSpan
@@ -74,8 +76,22 @@ function getSpanTags (request: Hapi.Request, eventType: string, eventAction: str
   return tags
 }
 
+/**
+ * @function mapServiceConfigToRdKafkaConfig
+ * @description Convert the kafka config we specify at runtime to one
+ *   that central-services-stream likes
+ */
+function mapServiceConfigToConsumerConfig (input: KafkaConsumerConfig): ConsumerConfig {
+  return {
+    eventAction: input.eventAction,
+    eventType: input.eventType,
+    internalConfig: input
+  }
+}
+
 export {
   finishChildSpan,
   getStackOrInspect,
-  getSpanTags
+  getSpanTags,
+  mapServiceConfigToConsumerConfig
 }
