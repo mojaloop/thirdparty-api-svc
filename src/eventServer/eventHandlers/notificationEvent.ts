@@ -73,6 +73,15 @@ export interface GenericMessage<T, U> {
   timestamp: number,
 }
 
+/**
+ *
+ * Note:
+ *
+ * Due to some odd reuse of Event types, Notification events are emitted on the `topic-notification-event` topic
+ * but they may contain `value.metadata.event.action` types which are more not related
+ * in this way, it seems that the `EventActionEnum` is doing 'double duty' as (1) actions for a topic name, and
+ * (2) actions inside an event's metadata
+ */
 export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
 const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error, payload: NotificationMessage | Array<NotificationMessage>) => {
@@ -81,8 +90,9 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
   }
 
   /**
-   * Note: here we are listening for a `commit` message from the `central-ledger`, but this is a temporary workaround.
+   * Note:
    *
+   * Here we are listening for a `commit` message from the `central-ledger`, but this is a temporary workaround.
    * In the future, we will listen for a transactionRequest commit message from `central-event-processor`
    */
   payload.filter(m => m.value.metadata.event.action === 'commit')
