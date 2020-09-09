@@ -25,17 +25,10 @@
 import { ConsumeCallback } from '@mojaloop/central-services-stream'
 import { temporaryMockTransactionCallback } from '~/shared/util'
 import config from '~/shared/config'
+import { EventTypeEnum } from '@mojaloop/central-services-shared'
 
-export interface BaseMessage {
-  size: number,
-  key: unknown,
-  topic: string,
-  offset: number,
-  partition: number,
-  timestamp: number,
-}
-
-export interface NotificationMessage extends BaseMessage {
+// TODO: move to ambient.d.ts
+export interface GenericMessage<T, U> {
   value: {
     from: string,
     to: string,
@@ -57,8 +50,8 @@ export interface NotificationMessage extends BaseMessage {
     metadata: {
       correlationId: string,
       event: {
-        type: 'notification',
-        action: 'commit' | 'prepare' | 'reserved' | 'abort',
+        type: T,
+        action: U,
         createdAt: string,
         state: {
           status: string,
@@ -71,8 +64,16 @@ export interface NotificationMessage extends BaseMessage {
       trace: unknown
       "protocol.createdAt": number
     }
-  }
+  },
+  size: number,
+  key: unknown,
+  topic: string,
+  offset: number,
+  partition: number,
+  timestamp: number,
 }
+
+export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
 const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error, payload: NotificationMessage | Array<NotificationMessage>) => {
   if (!Array.isArray(payload)) {
@@ -87,12 +88,11 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
   payload.filter(m => m.value.metadata.event.action === 'commit')
   .forEach(message => {
     console.log("got a commit message we should do something about", message.value.metadata.event)
-    // TODO: pretend this is related to a pre-specified thirdpartyRequest/transaction
-
+    // Pretend this is related to a pre-specified thirdpartyRequest/transaction
     const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
     console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
 
-    // TODO - handle this in domain, and send request to the PISP! -
+    // TODO - handle this in domain, and send request to the PISP!
     // handled in https://app.zenhub.com/workspaces/mojaloop-project-59edee71d1407922110cf083/issues/mojaloop/mojaloop/270
   })
 }
