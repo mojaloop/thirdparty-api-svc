@@ -1,8 +1,5 @@
 # thirdparty-api-adapter/src/consumer
 
-The Kafka Consumer for thirdparty-api-adapter
+The Kafka Consumer eventServer for `thirdparty-api-adapter`.
 
-
-```ts
-//TODO
-```
+Where the hapi server responds to api calls, the eventServer responsds to Kafka Events

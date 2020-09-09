@@ -26,6 +26,13 @@ import { ServiceConfig } from '~/shared/config';
 import Consumer from '~/shared/consumer';
 import EventHandlers from './eventHandlers'
 import { mapServiceConfigToConsumerConfig } from '~/shared/util';
+import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
+
+export class HandlerNotFoundError extends Error {
+  constructor(eventAction: EventActionEnum, eventType: EventTypeEnum) {
+    super(`No Handler found for action: ${eventAction} and type: ${eventType}`)
+  }
+}
 
 /**
  * @function create
@@ -41,7 +48,7 @@ export function create (config: ServiceConfig): Array<Consumer> {
     const handler = EventHandlers.get({action: config.eventAction, type: config.eventType})
     if (!handler) {
       // TODO: custom error?
-      throw new Error(`No Handler found for action: ${config.eventAction} and type: ${config.eventType}`)
+      throw new HandlerNotFoundError(config.eventAction, config.eventType)
     }
 
     return new Consumer(mapServiceConfigToConsumerConfig(config), topicTemplate, handler)
