@@ -19,64 +19,77 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  * Paweł Marzec <pawel.marzec@modusbox.com>
+ * Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
-// import Config from '~/shared/config'
-// import server from '~/server'
+import Config from '~/shared/config'
+import server from '~/server'
+import eventServer from '~/eventServer'
 jest.mock('~/server')
 jest.mock('~/eventServer')
 
+const flushPromises = () => new Promise(setImmediate);
+
 describe('cli', (): void => {
+
+  it('exits when the eventServer fails to start', async (): Promise<void> => {
+    // Arrange
+    jest.spyOn(eventServer, 'run').mockRejectedValueOnce(new Error('Test Error'))
+    // @ts-ignore - we need to mock a function with a never, otherwise process.exit() still gets called
+    const mockExit = jest.spyOn(process, 'exit').mockImplementationOnce((code?: number) => {})
+    
+    // Act
+    await import('~/cli')
+    
+    // Assert
+    await flushPromises()
+    expect(mockExit).toHaveBeenCalledWith(1)
+  })
+
   it('should use default port & host', async (): Promise<void> => {
     const cli = await import('~/cli')
     expect(cli).toBeDefined()
-    // expect(server.run).toHaveBeenCalledWith(expect.objectContaining({
-    //   PACKAGE: Config.PACKAGE,
-    //   PORT: Config.PORT,
-    //   HOST: Config.HOST,
-    //   INSPECT: {
-    //     DEPTH: 4,
-    //     SHOW_HIDDEN: false,
-    //     COLOR: true
-    //   },
-    //   ENDPOINT_CACHE_CONFIG: {
-    //     expiresIn: 180000,
-    //     generateTimeout: 30000
-    //   },
-    //   ENDPOINT_SERVICE_URL: 'http://central-ledger.local:3001',
-    //   ERROR_HANDLING: {
-    //     includeCauseExtension: true,
-    //     truncateExtensions: true
-    //   },
-    //   INSTRUMENTATION: {
-    //     METRICS: {
-    //       DISABLED: false,
-    //       labels: {
-    //         eventId: '*'
-    //       },
-    //       config: {
-    //         timeout: 5000,
-    //         prefix: 'moja_3p_api',
-    //         defaultLabels: {
-    //           serviceName: 'thirdparty-api-adapter'
-    //         }
-    //       }
-    //     }
-    //   },
-    //   KAFKA: {
-    //     TOPIC_TEMPLATES: {
-    //       GENERAL_TOPIC_TEMPLATE: {
-    //         TEMPLATE: 'topic-{{functionality}}-{{action}}',
-    //         REGEX: 'topic-(.*)-(.*)'
-    //       }
-    //     },
-    //   },
-    //   MOCK_CALLBACK: {
-    //     transactionRequestId: '12345',
-    //     pispId: 'pisp'
-    //   },
-    //   _: []
-    // })
-    // )
+    const expectedConfig = {
+      PACKAGE: Config.PACKAGE,
+      PORT: Config.PORT,
+      HOST: Config.HOST,
+      INSPECT: {
+        DEPTH: 4,
+        SHOW_HIDDEN: false,
+        COLOR: true
+      },
+      ENDPOINT_CACHE_CONFIG: {
+        expiresIn: 180000,
+        generateTimeout: 30000
+      },
+      ENDPOINT_SERVICE_URL: 'http://central-ledger.local:3001',
+      ERROR_HANDLING: {
+        includeCauseExtension: true,
+        truncateExtensions: true
+      },
+      INSTRUMENTATION: {
+        METRICS: {
+          DISABLED: false,
+          labels: {
+            eventId: '*'
+          },
+          config: {
+            timeout: 5000,
+            prefix: 'moja_3p_api',
+            defaultLabels: {
+              serviceName: 'thirdparty-api-adapter'
+            }
+          }
+        }
+      },
+      KAFKA: Config.KAFKA,
+      MOCK_CALLBACK: {
+        transactionRequestId: 'abc-12345',
+        pispId: 'pisp'
+      },
+      _: []
+    }
+    expect(server.run).toHaveBeenCalledWith(expectedConfig)
+    expect(eventServer.run).toHaveBeenCalledWith(expectedConfig)
   })
 })

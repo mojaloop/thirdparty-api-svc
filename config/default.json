@@ -64,7 +64,7 @@
     ]
   },
   "MOCK_CALLBACK": {
-    "transactionRequestId": "12345",
+    "transactionRequestId": "abc-12345",
     "pispId": "pisp"
   }
 }
