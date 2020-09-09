@@ -22,9 +22,10 @@
  --------------
  ******/
 
-import NotificationEvent from './notificationEvent'
-import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
+import { EventActionEnum, EventTypeEnum, Enum } from '@mojaloop/central-services-shared';
 import { ConsumeCallback } from '@mojaloop/central-services-stream';
+import NotificationEvent from './notificationEvent'
+import CompositeKeyMap from '~/shared/eventMap';
 
 // Make a special interface that lets us strictly define a Action + Type pair as a Key
 interface EventActionTypePair {
@@ -32,10 +33,12 @@ interface EventActionTypePair {
   type: EventTypeEnum
 }
 
-
-const eventHandlers = new Map<EventActionTypePair, ConsumeCallback>();
+const eventHandlers = new CompositeKeyMap<EventActionTypePair, ConsumeCallback>();
 
 // Add your handlers here
-eventHandlers.set({action: EventActionEnum.PUT, type: EventTypeEnum.NOTIFICATION}, NotificationEvent.onEvent)
+eventHandlers.set({
+  action: Enum.Events.Event.Action.EVENT,
+  type: Enum.Events.Event.Type.NOTIFICATION
+}, NotificationEvent.onEvent)
 
 export default eventHandlers;

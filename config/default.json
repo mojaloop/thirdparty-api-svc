@@ -39,8 +39,8 @@
     },
     "CONSUMER": [
       {
-        "eventType": "NOTIFICATION",
-        "eventAction": "EVENT",
+        "eventType": "notification",
+        "eventAction": "event",
         "options": {
           "mode": 2,
           "batchSize": 1,

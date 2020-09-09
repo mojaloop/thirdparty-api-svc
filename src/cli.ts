@@ -26,6 +26,7 @@
 
 import Config from './shared/config'
 import ServiceServer from './server'
+import ServiceEventHandler from './eventServer'
 import { Command } from 'commander'
 
 // handle script parameters
@@ -41,5 +42,14 @@ program
 Config.PORT = program.port
 Config.HOST = program.host
 
-// setup & start @hapi server
-ServiceServer.run(Config)
+Promise.all([
+  // setup & start @hapi server
+  ServiceServer.run(Config),
+
+  // setup & start event handler server
+  ServiceEventHandler.run(Config)
+]).catch((error: Error) => {
+  // TODO: tidy
+  console.error(error)
+  process.exit(1)
+})
