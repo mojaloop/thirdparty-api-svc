@@ -26,6 +26,9 @@ import rc from 'rc'
 import parse from 'parse-strings-in-object'
 import Config from '../../config/default.json'
 import Package from '../../package.json'
+import { KafkaConsumerConfig } from '@mojaloop/central-services-stream'
+
+
 export interface ServiceConfig {
   // package.json
   PACKAGE: object;
@@ -64,6 +67,15 @@ export interface ServiceConfig {
       };
     };
   };
+  KAFKA: {
+    TOPIC_TEMPLATES: {
+      GENERAL_TOPIC_TEMPLATE: {
+        TEMPLATE: string;
+        REGEX: string;
+      };
+    };
+    CONSUMER: Array<KafkaConsumerConfig>;
+  }
 }
 
 const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig
