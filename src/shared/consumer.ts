@@ -1,5 +1,5 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import { KafkaConsumerConfig, Kafka, GetMetadataResult } from '@mojaloop/central-services-stream'
+import { KafkaConsumerConfig, Kafka } from '@mojaloop/central-services-stream'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
