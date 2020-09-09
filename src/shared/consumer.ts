@@ -49,6 +49,7 @@ export default class Consumer {
    */
   public async isConnected (): Promise<true> {
     const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata)
+      .bind(this.rdKafkaConsumer)
     const getMetadataConfig = {
       topic: this.topicName,
       timeout: 3000
@@ -72,6 +73,7 @@ export default class Consumer {
    */
   public async disconnect (): Promise<void> {
     const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect)
+      .bind(this.rdKafkaConsumer)
     return disconnectPromise()
   }
 }

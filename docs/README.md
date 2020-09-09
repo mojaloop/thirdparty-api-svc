@@ -135,6 +135,64 @@ When the image is run you should be able to reach the dockerized _thirdparty-api
 
 If you already added the `127.0.0.1 thirdparty-api-adapter.local` entry in your `/etc/hosts` then the _thirdparty-api-adapter_ is reachable on `http://thirdparty-api-adapter.local:3008`.
 
+## `kafkacat` notes
+
+[`kafkacat`](https://docs.confluent.io/current/app-development/kafkacat-usage.html#) is a simple kafka utility for inspecting and debugging what kafka is doing. To get started, run the `docker-local` `central-ledger` container:
+
+```bash
+cd /path/to/pisp/repo
+cd ./docker-local
+docker-compose up central-ledger
+```
+
+Give this some time to start, and then we can start playing around with kafkacat
+
+
+### List topics
+
+```bash
+kafkacat -C -b localhost:9092 -L
+
+# You should see a list like the following:
+#
+#  topic "topic-transfer-get" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+#  topic "topic-transfer-position" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+#  topic "topic-transfer-fulfil" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+#  topic "topic-admin-transfer" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+#  topic "topic-bulk-processing" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+#  topic "topic-transfer-prepare" with 1 partitions:
+#    partition 0, leader 0, replicas: 0, isrs: 0
+# ...
+```
+
+### cat the `topic-transfer-fulfil` topic:
+
+```bash
+kafkacat -C -b localhost:9092 -t topic-transfer-fulfil
+```
+
+## Running the scratch integration tests
+
+While we haven't fully set up integration tests for this repo, we have written some to test certain functions.
+
+As above, start the `central-ledger` from `pisp/docker-local` to get kafka up and running
+
+then:
+```
+npm run test:integration-tmp
+```
+
+## Using Kafkacat to mock a notification from the central-ledger:
+
+```bash
+kafkacat -v -b localhost:9092 -t topic-notification-event -P ./test_notification_commit.json
+```
+
 
 ## External Links
 
