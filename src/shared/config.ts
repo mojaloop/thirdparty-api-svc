@@ -26,8 +26,14 @@ import rc from 'rc'
 import parse from 'parse-strings-in-object'
 import Config from '../../config/default.json'
 import Package from '../../package.json'
-import { KafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import { RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import { EventTypeEnum, EventActionEnum } from '@mojaloop/central-services-shared'
 
+export interface ExternalServiceKafkaConfig extends RdKafkaConsumerConfig {
+  // We add some fields which make it easier to manager later on
+  eventType: EventTypeEnum,
+  eventAction: EventActionEnum,
+}
 
 export interface ServiceConfig {
   // package.json
@@ -74,7 +80,7 @@ export interface ServiceConfig {
         REGEX: string;
       };
     };
-    CONSUMER: Array<KafkaConsumerConfig>;
+    CONSUMER: Array<ExternalServiceKafkaConfig>;
   };
   MOCK_CALLBACK: {
     transactionRequestId: string,

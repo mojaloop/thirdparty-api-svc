@@ -468,10 +468,7 @@ declare module '@mojaloop/central-services-error-handling' {
 }
 declare module '@mojaloop/central-services-stream' {
   import { EventEmitter } from 'events';
-  import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
-  export interface KafkaConsumerConfig {
-    eventType: EventTypeEnum,
-    eventAction: EventActionEnum,
+  export interface RdKafkaConsumerConfig {
     options: {
       mode: number,
       batchSize: number,
@@ -504,7 +501,7 @@ declare module '@mojaloop/central-services-stream' {
 
   namespace Kafka {
     export class Consumer extends EventEmitter {
-      constructor(topics: Array<string>, config: KafkaConsumerConfig)
+      constructor(topics: Array<string>, config: RdKafkaConsumerConfig)
       connect(): Promise<boolean>;
       consume(consumeCallback: ConsumeCallback<any>): void
       disconnect(cb: () => unknown): void;

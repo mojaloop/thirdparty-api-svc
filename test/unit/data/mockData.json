@@ -62,5 +62,127 @@
     "topicConf": {
       "auto.offset.reset": "earliest"
     }
+  },
+  "notificationEventCommit": {
+    "value": {
+      "from": "dfspb",
+      "to": "dfspa",
+      "id": "bc1a9c36-4429-4205-8553-11f92de1919e",
+      "content": {
+        "uriParams": {
+          "id": "bc1a9c36-4429-4205-8553-11f92de1919e"
+        },
+        "headers": {
+          "content-type": "application/vnd.interoperability.transfers+json;version=1.0",
+          "date": "2020-09-09T03:58:36.000Z",
+          "fspiop-source": "dfspb",
+          "fspiop-destination": "dfspa",
+          "authorization": "Bearer 74b241a2-4200-3938-8dfc-0e26ba21dc22",
+          "content-length": "136",
+          "host": "ml-api-adapter:3000",
+          "connection": "close"
+        },
+        "payload": "data:application/vnd.interoperability.transfers+json;version=1.0;base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ"
+      },
+      "type": "application/json",
+      "metadata": {
+        "correlationId": "bc1a9c36-4429-4205-8553-11f92de1919e",
+        "event": {
+          "type": "notification",
+          "action": "commit",
+          "createdAt": "2020-09-09T03:58:36.859Z",
+          "state": {
+            "status": "success",
+            "code": 0,
+            "description": "action successful"
+          },
+          "id": "85756a1d-c159-4316-b8d0-d0a41ecbcfe1",
+          "responseTo": "0ecc24f8-a617-4b60-b954-3cfb4b909ae8"
+        },
+        "trace": {
+          "startTimestamp": "2020-09-09T03:58:36.932Z",
+          "service": "cl_transfer_position",
+          "traceId": "f67d1328e258e8fba2dacbbed098be48",
+          "spanId": "0b142ddb9e695312",
+          "parentSpanId": "e933005ac5ade0c6",
+          "tags": {
+            "tracestate": "acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==",
+            "transactionType": "transfer",
+            "transactionAction": "fulfil",
+            "transactionId": "bc1a9c36-4429-4205-8553-11f92de1919e",
+            "source": "dfspb",
+            "destination": "dfspa"
+          },
+          "tracestates": {
+            "acmevendor": {
+              "spanId": "0b142ddb9e695312",
+              "timeApiFulfil": "1599623916857"
+            }
+          }
+        },
+        "protocol.createdAt": 1599623916963
+      }
+    }
+  },
+  "notificationEventTransactionCommit": {
+    "value": {
+      "from": "Hub",
+      "to": "pispA",
+      "id": "abcd-1234",
+      "content": {
+        "uriParams": {
+          "id": "bc1a9c36-4429-4205-8553-11f92de1919e"
+        },
+        "headers": {
+          "content-type": "application/vnd.interoperability.transfers+json;version=1.0",
+          "date": "2020-09-09T03:58:36.000Z",
+          "fspiop-source": "Hub",
+          "fspiop-destination": "pispA",
+          "authorization": "Bearer 74b241a2-4200-3938-8dfc-0e26ba21dc22",
+          "content-length": "136",
+          "host": "ml-api-adapter:3000",
+          "connection": "close"
+        },
+        "payload": "data:application/vnd.interoperability.transfers+json;version=1.0;base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ"
+      },
+      "type": "application/json",
+      "metadata": {
+        "correlationId": "bc1a9c36-4429-4205-8553-11f92de1919e",
+        "event": {
+          "type": "notification",
+          "action": "commit",
+          "createdAt": "2020-09-09T03:58:36.859Z",
+          "state": {
+            "status": "success",
+            "code": 0,
+            "description": "action successful"
+          },
+          "id": "85756a1d-c159-4316-b8d0-d0a41ecbcfe1",
+          "responseTo": "0ecc24f8-a617-4b60-b954-3cfb4b909ae8"
+        },
+        "trace": {
+          "startTimestamp": "2020-09-09T03:58:36.932Z",
+          "service": "cl_transfer_position",
+          "traceId": "f67d1328e258e8fba2dacbbed098be48",
+          "spanId": "0b142ddb9e695312",
+          "parentSpanId": "e933005ac5ade0c6",
+          "tags": {
+            "tracestate": "acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==",
+            "transactionType": "transfer",
+            "transactionAction": "fulfil",
+            "transactionId": "bc1a9c36-4429-4205-8553-11f92de1919e",
+            "source": "dfspb",
+            "destination": "dfspa"
+          },
+          "tracestates": {
+            "acmevendor": {
+              "spanId": "0b142ddb9e695312",
+              "timeApiFulfil": "1599623916857"
+            }
+          }
+        },
+        "protocol.createdAt": 1599623916963
+      }
+    }
   }
 }

@@ -1,11 +1,11 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import { KafkaConsumerConfig, Kafka } from '@mojaloop/central-services-stream'
+import { Kafka, RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
   eventAction: EventActionEnum;
   eventType: EventTypeEnum;
-  internalConfig: KafkaConsumerConfig;
+  internalConfig: RdKafkaConsumerConfig;
 }
 // TODO:  print and verify - will do this after we have set up integration tests
 type Message = unknown
