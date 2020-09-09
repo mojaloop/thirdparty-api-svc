@@ -84,6 +84,10 @@ const defaultMockConfig: ServiceConfig = {
       //   }
       // }
     ]
+  },
+  MOCK_CALLBACK: {
+    transactionRequestId: '12345',
+    pispId: 'pisp'
   }
 }
 

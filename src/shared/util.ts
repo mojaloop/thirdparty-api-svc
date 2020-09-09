@@ -93,9 +93,18 @@ function mapServiceConfigToConsumerConfig (input: KafkaConsumerConfig): Consumer
   }
 }
 
+/**
+ * @function temporaryMockTransactionCallback
+ * @description convert a Transfer Committed kafka message to a transactionRequest commited message
+ */
+function temporaryMockTransactionCallback(config: any, message: any): any {
+
+}
+
 export {
   finishChildSpan,
   getStackOrInspect,
   getSpanTags,
-  mapServiceConfigToConsumerConfig
+  mapServiceConfigToConsumerConfig,
+  temporaryMockTransactionCallback
 }

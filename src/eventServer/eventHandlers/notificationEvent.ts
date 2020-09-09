@@ -23,6 +23,7 @@
  ******/
 
 import { ConsumeCallback } from '@mojaloop/central-services-stream'
+import { temporaryMockTransactionCallback } from '~/shared/util'
 
 export interface NotificationMessage {
   value: {
@@ -31,7 +32,23 @@ export interface NotificationMessage {
     id: string,
     content: unknown,
     type: string,
-    metadata: unknown
+    metadata: {
+      correlationId: string,
+      event: {
+        type: 'notification',
+        action: 'commit' | 'prepare' | 'reserved' | 'abort',
+        createdAt: string,
+        state: {
+          status: string,
+          code: number,
+          description: string
+        },
+        id: string,
+        responseTo: string,
+      },
+      trace: unknown
+      "protocol.createdAt": number
+    }
   },
   size: number,
   key: unknown,
@@ -46,8 +63,22 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
     payload = [payload]
   }
 
-  console.log('payload is', payload)
-  console.log('payload stringified', JSON.stringify(payload))
+  /**
+   * Note: here we are listening for a `commit` message from the `central-ledger`, but this is a temporary workaround.
+   *
+   * In the future, we will listen for a transactionRequest commit message from `central-event-processor`
+   */
+  payload.filter(m => m.value.metadata.event.action === 'commit')
+  .forEach(message => {
+    console.log("got a commit message we should do something about", message.value.metadata.event)
+    // TODO: pretend this is related to a pre-specified thirdpartyRequest/transaction
+
+    const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(Config.MOCK_CALLBACK, message)
+    console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
+
+    // TODO - handle this in domain, and send request to the PISP! -
+    // handled in https://app.zenhub.com/workspaces/mojaloop-project-59edee71d1407922110cf083/issues/mojaloop/mojaloop/270
+  })
 }
 
 export default {

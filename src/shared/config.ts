@@ -75,6 +75,10 @@ export interface ServiceConfig {
       };
     };
     CONSUMER: Array<KafkaConsumerConfig>;
+  };
+  MOCK_CALLBACK: {
+    transactionRequestId: string,
+    pispId: string
   }
 }
 
