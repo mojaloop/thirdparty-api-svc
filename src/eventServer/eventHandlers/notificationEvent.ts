@@ -24,13 +24,35 @@
 
 import { ConsumeCallback } from '@mojaloop/central-services-stream'
 import { temporaryMockTransactionCallback } from '~/shared/util'
+import config from '~/shared/config'
 
-export interface NotificationMessage {
+export interface BaseMessage {
+  size: number,
+  key: unknown,
+  topic: string,
+  offset: number,
+  partition: number,
+  timestamp: number,
+}
+
+export interface NotificationMessage extends BaseMessage {
   value: {
     from: string,
     to: string,
     id: string,
-    content: unknown,
+    content: {
+      uriParams: unknown,
+      headers: {
+        'content-type': string,
+        date: string,
+        'fspiop-source': string,
+        'fspiop-destination': string
+        authorization?: string,
+        'content-length': string,
+        host: string,
+      },
+      payload: string
+    },
     type: string,
     metadata: {
       correlationId: string,
@@ -49,13 +71,7 @@ export interface NotificationMessage {
       trace: unknown
       "protocol.createdAt": number
     }
-  },
-  size: number,
-  key: unknown,
-  topic: string,
-  offset: number,
-  partition: number,
-  timestamp: number,
+  }
 }
 
 const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error, payload: NotificationMessage | Array<NotificationMessage>) => {
@@ -73,7 +89,7 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
     console.log("got a commit message we should do something about", message.value.metadata.event)
     // TODO: pretend this is related to a pre-specified thirdpartyRequest/transaction
 
-    const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(Config.MOCK_CALLBACK, message)
+    const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
     console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
 
     // TODO - handle this in domain, and send request to the PISP! -
