@@ -21,6 +21,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
+ - Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
 
