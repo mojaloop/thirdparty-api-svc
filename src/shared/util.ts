@@ -17,8 +17,12 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
+
  * ModusBox
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+
+ * Crosslake
+ - Lewis Daly <lewisd@crosslaketech.com>
 
  --------------
  ******/
