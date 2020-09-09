@@ -104,6 +104,7 @@ function temporaryMockTransactionCallback(config: { transactionRequestId: string
   originalMessage.value.id = config.transactionRequestId
   originalMessage.value.content.headers['fspiop-source'] = 'Hub'
   originalMessage.value.content.headers['fspiop-destination'] = config.pispId
+
   // Note: we may wish to use a different event type or action as well, but
   // I'm going to leave that until we have a clearer picture on the final event
   // from the central-event-processor, and what it looks like.
