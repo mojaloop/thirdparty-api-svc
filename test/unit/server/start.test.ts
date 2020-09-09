@@ -22,74 +22,8 @@
  --------------
  ******/
 import { Server } from '@hapi/hapi'
-import { ServiceConfig } from '~/shared/config'
 
-const defaultMockConfig: ServiceConfig = {
-  PACKAGE: {
-    version: '11.0.0'
-  },
-  PORT: 1234,
-  HOST: 'auth-service.local',
-  ENDPOINT_CACHE_CONFIG: {
-    expiresIn: 5000,
-    generateTimeout: 5000
-  },
-  ENDPOINT_SERVICE_URL: 'central-ledger.local',
-  ERROR_HANDLING: {
-    includeCauseExtension: true,
-    truncateExtensions: true,
-  },
-  INSTRUMENTATION: {
-    METRICS: {
-      DISABLED: false,
-      labels: {
-        eventId: "*"
-      },
-      config: {
-        timeout: 5000,
-        prefix: "moja_3p_api"
-      }
-    }
-  },
-  KAFKA: {
-    TOPIC_TEMPLATES: {
-      GENERAL_TOPIC_TEMPLATE: {
-        TEMPLATE: 'topic-{{functionality}}-{{action}}',
-        REGEX: 'topic-(.*)-(.*)'
-      }
-    },
-    CONSUMER: [
-      // TODO: fix
-      // {
-      //   eventType: "notification",
-      //   eventAction: "event",
-      //   "options": {
-      //     "mode": 2,
-      //     "batchSize": 1,
-      //     "pollFrequency": 10,
-      //     "recursiveTimeout": 100,
-      //     "messageCharset": "utf8",
-      //     "messageAsJSON": true,
-      //     "sync": true,
-      //     "consumeTimeout": 1000
-      //   },
-      //   "rdkafkaConf": {
-      //     "client.id": "3p-con-notification-event",
-      //     "group.id": "3p-group-notification-event",
-      //     "metadata.broker.list": "localhost:9092",
-      //     "socket.keepalive.enable": true
-      //   },
-      //   "topicConf": {
-      //     "auto.offset.reset": "earliest"
-      //   }
-      // }
-    ]
-  },
-  MOCK_CALLBACK: {
-    transactionRequestId: '12345',
-    pispId: 'pisp'
-  }
-}
+import defaultMockConfig from '../data/defaultMockConfig'
 
 let mockInitializeCache: any;
 let mockSetupMetrics: any;

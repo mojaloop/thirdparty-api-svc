@@ -24,11 +24,43 @@
  ******/
 'use strict'
 
+// import start, { create, run } from '~/eventServer'
+
+import * as eventServer from '~/eventServer/eventServer'
+import notificationEventHandler from '~/eventServer/eventHandlers/notificationEvent'
+import defaultMockConfig from '../data/defaultMockConfig'
+import Consumer from '~/shared/consumer'
+import { mapServiceConfigToConsumerConfig } from '~/shared/util'
 
 describe('eventServer', () => {
+  beforeEach(() => jest.resetAllMocks())
+
 
   describe('create', () => {
-    it('creates the consumers based on config')
-    it('starts the consumers')
+    it.todo('creates the consumers based on config')
+    it.todo('starts the consumers')
+  })
+
+  describe('start', () => {
+    it.todo('starts all the consumers')
+  })
+
+  describe('run', () => {
+    it('calls create and start', async () => {
+      // Arrange
+      const consumerConfig = mapServiceConfigToConsumerConfig(defaultMockConfig.KAFKA.CONSUMER[0])
+      const consumers = [
+        new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler.onEvent)
+      ]
+      const createMock = jest.spyOn(eventServer, 'create').mockReturnValueOnce(consumers)
+      const startMock = jest.spyOn(eventServer, 'start').mockResolvedValueOnce()
+      
+      // Act
+      await eventServer.default(defaultMockConfig)
+      
+      // Assert
+      expect(createMock).toHaveBeenCalledWith(defaultMockConfig)
+      expect(startMock).toHaveBeenCalledWith(consumers)
+    })
   })
 })

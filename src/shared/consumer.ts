@@ -1,5 +1,5 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import { Kafka, RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import { ConsumeCallback, Kafka, RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
@@ -7,8 +7,6 @@ export interface ConsumerConfig {
   eventType: EventTypeEnum;
   internalConfig: RdKafkaConsumerConfig;
 }
-// TODO:  print and verify - will do this after we have set up integration tests
-type Message = unknown
 
 /**
  * @class Consumer
@@ -17,9 +15,9 @@ type Message = unknown
 export default class Consumer {
   private topicName: string;
   private rdKafkaConsumer: Kafka.Consumer;
-  private handlerFunc: <Message>(error: Error, message: Message | Message[]) => Promise<void>
+  private handlerFunc: ConsumeCallback<any>;
 
-  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
+  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<any>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
