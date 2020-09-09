@@ -55,7 +55,7 @@ export default class Consumer {
     }
 
     const metadata = await getMetadataPromise(getMetadataConfig)
-    
+
     const foundTopics = metadata.topics.map(topic => topic.name)
     if (foundTopics.indexOf(this.topicName) === -1) {
       throw new Error(`Connected to consumer, but ${this.topicName} not found.`)
