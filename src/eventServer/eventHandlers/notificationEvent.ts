@@ -23,9 +23,31 @@
  ******/
 
 import { ConsumeCallback } from '@mojaloop/central-services-stream'
-const onEvent: ConsumeCallback = async (_error: Error, payload: any) => {
+
+export interface NotificationMessage {
+  value: {
+    from: string,
+    to: string,
+    id: string,
+    content: unknown,
+    type: string,
+    metadata: unknown
+  },
+  size: number,
+  key: unknown,
+  topic: string,
+  offset: number,
+  partition: number,
+  timestamp: number,
+}
+
+const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error, payload: NotificationMessage | Array<NotificationMessage>) => {
+  if (!Array.isArray(payload)) {
+    payload = [payload]
+  }
 
   console.log('payload is', payload)
+  console.log('payload stringified', JSON.stringify(payload))
 }
 
 export default {

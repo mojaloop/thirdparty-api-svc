@@ -50,6 +50,40 @@ const defaultMockConfig: ServiceConfig = {
         prefix: "moja_3p_api"
       }
     }
+  },
+  KAFKA: {
+    TOPIC_TEMPLATES: {
+      GENERAL_TOPIC_TEMPLATE: {
+        TEMPLATE: 'topic-{{functionality}}-{{action}}',
+        REGEX: 'topic-(.*)-(.*)'
+      }
+    },
+    CONSUMER: [
+      // TODO: fix
+      // {
+      //   eventType: "notification",
+      //   eventAction: "event",
+      //   "options": {
+      //     "mode": 2,
+      //     "batchSize": 1,
+      //     "pollFrequency": 10,
+      //     "recursiveTimeout": 100,
+      //     "messageCharset": "utf8",
+      //     "messageAsJSON": true,
+      //     "sync": true,
+      //     "consumeTimeout": 1000
+      //   },
+      //   "rdkafkaConf": {
+      //     "client.id": "3p-con-notification-event",
+      //     "group.id": "3p-group-notification-event",
+      //     "metadata.broker.list": "localhost:9092",
+      //     "socket.keepalive.enable": true
+      //   },
+      //   "topicConf": {
+      //     "auto.offset.reset": "earliest"
+      //   }
+      // }
+    ]
   }
 }
 

@@ -501,14 +501,14 @@ declare module '@mojaloop/central-services-stream' {
     }>
   }
 
-  type ConsumeCallback = <T>(error: Error, payload: T) => Promise<void>;
+  type ConsumeCallback<T> = (error: Error, payload: T) => Promise<void>;
   type GetMetadataCallback = (err: unknown, result: GetMetadataResult) => void;
 
   namespace Kafka {
     export class Consumer extends EventEmitter {
       constructor(topics: Array<string>, config: KafkaConsumerConfig)
       connect(): Promise<boolean>;
-      consume(consumeCallback: ConsumeCallback): void
+      consume(consumeCallback: ConsumeCallback<any>): void
       disconnect(cb: () => unknown): void;
       getMetadata(options: unknown, cb: GetMetadataCallback): void;
     }
