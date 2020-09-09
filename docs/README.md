@@ -184,7 +184,13 @@ As above, start the `central-ledger` from `pisp/docker-local` to get kafka up an
 
 then:
 ```
-npm run test:integation
+npm run test:integration-tmp
+```
+
+## Using Kafkacat to mock a notification from the central-ledger:
+
+```bash
+kafkacat -v -b localhost:9092 -t topic-notification-event -P ./test_notification_commit.json
 ```
 
 

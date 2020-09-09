@@ -470,8 +470,6 @@ declare module '@mojaloop/central-services-stream' {
   import { EventEmitter } from 'events';
   import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
   export interface KafkaConsumerConfig {
-    // TODO: eventType and eventAction don't actually exist... techincally we should do a interface extension
-    // but let's leave this for now.
     eventType: EventTypeEnum,
     eventAction: EventActionEnum,
     options: {
