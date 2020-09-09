@@ -47,7 +47,6 @@ export function create (config: ServiceConfig): Array<Consumer> {
     // lookup the handler based on our Action + Event Pair
     const handler = EventHandlers.get({action: config.eventAction, type: config.eventType})
     if (!handler) {
-      // TODO: custom error?
       throw new HandlerNotFoundError(config.eventAction, config.eventType)
     }
 
