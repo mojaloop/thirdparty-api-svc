@@ -1,7 +1,6 @@
 
 
 import * as eventServer from '~/eventServer/eventServer'
-// jest.mock('~/eventServer/eventServer')
 import run from '~/eventServer/run'
 
 import notificationEventHandler from '~/eventServer/eventHandlers/notificationEvent'
