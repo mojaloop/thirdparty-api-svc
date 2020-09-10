@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.5.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.4.0...v11.5.0) (2020-09-10)
+
+
+### Features
+
+* **event_server:** add an event server to handle kafka events ([#25](https://github.com/mojaloop/thirdparty-api-adapter/issues/25)) ([f83dfc8](https://github.com/mojaloop/thirdparty-api-adapter/commit/f83dfc8c351af541faae432b0048e5f4cecd8309))
+
 ## [11.4.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.3.0...v11.4.0) (2020-09-09)
 
 
