@@ -24,7 +24,7 @@
 
 import { ServiceConfig } from '~/shared/config';
 import Consumer from '~/shared/consumer';
-import EventHandlers from './eventHandlers'
+import eventHandlers from './eventHandlers'
 import { mapServiceConfigToConsumerConfig } from '~/shared/util';
 import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
 
@@ -45,7 +45,7 @@ export function create (config: ServiceConfig): Array<Consumer> {
 
   return consumerConfigs.map(config => {
     // lookup the handler based on our Action + Event Pair
-    const handler = EventHandlers.get({action: config.eventAction, type: config.eventType})
+    const handler = eventHandlers.get({action: config.eventAction, type: config.eventType})
     if (!handler) {
       throw new HandlerNotFoundError(config.eventAction, config.eventType)
     }
@@ -58,8 +58,3 @@ export async function start (consumers: Array<Consumer>): Promise<void> {
   await Promise.all(consumers.map(c => c.start()))
 }
 
-export default async function run (config: ServiceConfig): Promise<void> {
-  const consumers = create(config)
-
-  return start(consumers)
-}

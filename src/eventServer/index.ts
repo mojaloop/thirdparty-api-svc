@@ -22,7 +22,7 @@
  --------------
  ******/
 
-import run from './eventServer'
+import run from './run'
 
 export default {
   run

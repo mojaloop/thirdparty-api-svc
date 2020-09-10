@@ -37,7 +37,7 @@ const eventHandlers = new CompositeKeyMap<EventActionTypePair, ConsumeCallback<a
 
 // Add your handlers here
 eventHandlers.set({
-  action: Enum.Events.Event.Action.EVENT,
+  action: Enum.Events.Event.Action.COMMIT,
   type: Enum.Events.Event.Type.NOTIFICATION
 }, NotificationEvent.onEvent)
 

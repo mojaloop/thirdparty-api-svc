@@ -24,43 +24,61 @@
  ******/
 'use strict'
 
-// import start, { create, run } from '~/eventServer'
-
-import * as eventServer from '~/eventServer/eventServer'
-import notificationEventHandler from '~/eventServer/eventHandlers/notificationEvent'
+import { mapServiceConfigToConsumerConfig } from "~/shared/util"
 import defaultMockConfig from '../data/defaultMockConfig'
 import Consumer from '~/shared/consumer'
-import { mapServiceConfigToConsumerConfig } from '~/shared/util'
+import notificationEventHandler from '~/eventServer/eventHandlers/notificationEvent'
+import { start, create, HandlerNotFoundError } from '~/eventServer/eventServer'
+import { Enum } from '@mojaloop/central-services-shared'
+
+
+const consumerStartMock = jest.spyOn(Consumer.prototype, 'start')
 
 describe('eventServer', () => {
   beforeEach(() => jest.resetAllMocks())
 
-
   describe('create', () => {
-    it.todo('creates the consumers based on config')
-    it.todo('starts the consumers')
+    it('creates the consumers based on config', async () => {
+      // Arrange
+      // Act
+      const consumers = create(defaultMockConfig)
+
+      // Assert
+      // Consumer is tested elsewhere, we just want to make sure `create()`
+      // does what we want
+      expect(consumers.length).toBe(1)
+    })
+
+    it('throws a HandlerNotFound error if a handler is specified in config but cannot be found', async () => {
+      // Arrange
+      const badConfig = JSON.parse(JSON.stringify(defaultMockConfig))
+      // Set the event type to one that we don't have a handler for
+      badConfig.KAFKA.CONSUMER[0].eventType = Enum.Events.Event.Type.PARTY
+      const expected = new HandlerNotFoundError(Enum.Events.Event.Action.COMMIT, Enum.Events.Event.Type.PARTY)
+
+      // Act
+      const action = async () => create(badConfig)
+
+      // Assert
+      await expect(action).rejects.toThrowError(expected)
+    })
   })
 
   describe('start', () => {
-    it.todo('starts all the consumers')
-  })
-
-  describe('run', () => {
-    it('calls create and start', async () => {
+    it('starts all the consumers', async () => {
       // Arrange
       const consumerConfig = mapServiceConfigToConsumerConfig(defaultMockConfig.KAFKA.CONSUMER[0])
       const consumers = [
         new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler.onEvent)
       ]
-      const createMock = jest.spyOn(eventServer, 'create').mockReturnValueOnce(consumers)
-      const startMock = jest.spyOn(eventServer, 'start').mockResolvedValueOnce()
-      
+      consumerStartMock.mockResolvedValueOnce()
+
       // Act
-      await eventServer.default(defaultMockConfig)
-      
+      await start(consumers)
+
       // Assert
-      expect(createMock).toHaveBeenCalledWith(defaultMockConfig)
-      expect(startMock).toHaveBeenCalledWith(consumers)
+      expect(consumerStartMock).toHaveBeenCalledTimes(1)
+      expect(consumerStartMock).toHaveBeenCalledWith()
     })
   })
 })
