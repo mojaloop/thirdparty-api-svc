@@ -69,7 +69,7 @@ describe('eventServer', () => {
       // Arrange
       const consumerConfig = mapServiceConfigToConsumerConfig(defaultMockConfig.KAFKA.CONSUMER[0])
       const consumers = [
-        new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler.onEvent)
+        new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler)
       ]
       consumerStartMock.mockResolvedValueOnce()
 

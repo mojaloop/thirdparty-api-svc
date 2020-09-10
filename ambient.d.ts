@@ -468,6 +468,51 @@ declare module '@mojaloop/central-services-error-handling' {
 }
 declare module '@mojaloop/central-services-stream' {
   import { EventEmitter } from 'events';
+  export interface GenericMessage<T, U> {
+    value: {
+      from: string,
+      to: string,
+      id: string,
+      content: {
+        uriParams: unknown,
+        headers: {
+          'content-type': string,
+          date: string,
+          'fspiop-source': string,
+          'fspiop-destination': string
+          authorization?: string,
+          'content-length': string,
+          host: string,
+        },
+        payload: string
+      },
+      type: string,
+      metadata: {
+        correlationId: string,
+        event: {
+          type: T,
+          action: U,
+          createdAt: string,
+          state: {
+            status: string,
+            code: number,
+            description: string
+          },
+          id: string,
+          responseTo: string,
+        },
+        trace: unknown
+        "protocol.createdAt": number
+      }
+    },
+    size: number,
+    key: unknown,
+    topic: string,
+    offset: number,
+    partition: number,
+    timestamp: number,
+  }
+
   export interface RdKafkaConsumerConfig {
     options: {
       mode: number,
@@ -496,7 +541,7 @@ declare module '@mojaloop/central-services-stream' {
     }>
   }
 
-  type ConsumeCallback<T> = (error: Error, payload: T) => Promise<void>;
+  type ConsumeCallback<T> = (error: Error | null, payload: T) => Promise<void>;
   type GetMetadataCallback = (err: unknown, result: GetMetadataResult) => void;
 
   namespace Kafka {

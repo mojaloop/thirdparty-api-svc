@@ -22,56 +22,10 @@
  --------------
  ******/
 
-import { ConsumeCallback } from '@mojaloop/central-services-stream'
+import { ConsumeCallback, GenericMessage } from '@mojaloop/central-services-stream'
 import { temporaryMockTransactionCallback } from '~/shared/util'
 import config from '~/shared/config'
 import { EventTypeEnum } from '@mojaloop/central-services-shared'
-
-// TODO: move to ambient.d.ts
-export interface GenericMessage<T, U> {
-  value: {
-    from: string,
-    to: string,
-    id: string,
-    content: {
-      uriParams: unknown,
-      headers: {
-        'content-type': string,
-        date: string,
-        'fspiop-source': string,
-        'fspiop-destination': string
-        authorization?: string,
-        'content-length': string,
-        host: string,
-      },
-      payload: string
-    },
-    type: string,
-    metadata: {
-      correlationId: string,
-      event: {
-        type: T,
-        action: U,
-        createdAt: string,
-        state: {
-          status: string,
-          code: number,
-          description: string
-        },
-        id: string,
-        responseTo: string,
-      },
-      trace: unknown
-      "protocol.createdAt": number
-    }
-  },
-  size: number,
-  key: unknown,
-  topic: string,
-  offset: number,
-  partition: number,
-  timestamp: number,
-}
 
 /**
  *
@@ -84,7 +38,7 @@ export interface GenericMessage<T, U> {
  */
 export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
-const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error, payload: NotificationMessage | Array<NotificationMessage>) => {
+const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error | null, payload: NotificationMessage | Array<NotificationMessage>) => {
   if (!Array.isArray(payload)) {
     payload = [payload]
   }
@@ -97,16 +51,13 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
    */
   payload.filter(m => m.value.metadata.event.action === 'commit')
   .forEach(message => {
-    console.log("got a commit message we should do something about", message.value.metadata.event)
     // Pretend this is related to a pre-specified thirdpartyRequest/transaction
-    const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
-    console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
+    temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
+    // console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
 
     // TODO - handle this in domain, and send request to the PISP!
     // handled in https://app.zenhub.com/workspaces/mojaloop-project-59edee71d1407922110cf083/issues/mojaloop/mojaloop/270
   })
 }
 
-export default {
-  onEvent
-}
+export default onEvent

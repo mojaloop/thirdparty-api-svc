@@ -14,7 +14,7 @@ describe('run', () => {
     // Arrange
     const consumerConfig = mapServiceConfigToConsumerConfig(defaultMockConfig.KAFKA.CONSUMER[0])
     const consumers = [
-      new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler.onEvent)
+      new Consumer(consumerConfig, defaultMockConfig.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE, notificationEventHandler)
     ]
     const createMock = jest.spyOn(eventServer, 'create').mockReturnValueOnce(consumers)
     const startMock = jest.spyOn(eventServer, 'start').mockResolvedValueOnce()
