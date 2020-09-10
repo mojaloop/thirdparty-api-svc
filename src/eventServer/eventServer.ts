@@ -22,14 +22,14 @@
  --------------
  ******/
 
-import { ServiceConfig } from '~/shared/config';
-import Consumer from '~/shared/consumer';
+import { ServiceConfig } from '~/shared/config'
+import Consumer from '~/shared/consumer'
 import eventHandlers from './eventHandlers'
-import { mapServiceConfigToConsumerConfig } from '~/shared/util';
-import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
+import { mapServiceConfigToConsumerConfig } from '~/shared/util'
+import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared'
 
 export class HandlerNotFoundError extends Error {
-  constructor(eventAction: EventActionEnum, eventType: EventTypeEnum) {
+  constructor (eventAction: EventActionEnum, eventType: EventTypeEnum) {
     super(`No Handler found for action: ${eventAction} and type: ${eventType}`)
   }
 }
@@ -39,13 +39,13 @@ export class HandlerNotFoundError extends Error {
  * @description Creates the Kafka Consumer server based on config
  * @param { ServiceConfig } config
  */
-export function create (config: ServiceConfig): Array<Consumer> {
+export function create (config: ServiceConfig): Consumer[] {
   const topicTemplate = config.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE
   const consumerConfigs = config.KAFKA.CONSUMER
 
   return consumerConfigs.map(config => {
     // lookup the handler based on our Action + Event Pair
-    const handler = eventHandlers.get({action: config.eventAction, type: config.eventType})
+    const handler = eventHandlers.get({ action: config.eventAction, type: config.eventType })
     if (!handler) {
       throw new HandlerNotFoundError(config.eventAction, config.eventType)
     }
@@ -54,7 +54,6 @@ export function create (config: ServiceConfig): Array<Consumer> {
   })
 }
 
-export async function start (consumers: Array<Consumer>): Promise<void> {
+export async function start (consumers: Consumer[]): Promise<void> {
   await Promise.all(consumers.map(c => c.start()))
 }
-

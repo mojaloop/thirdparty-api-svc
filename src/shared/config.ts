@@ -31,8 +31,8 @@ import { EventTypeEnum, EventActionEnum } from '@mojaloop/central-services-share
 
 export interface ExternalServiceKafkaConfig extends RdKafkaConsumerConfig {
   // We add some fields which make it easier to manager later on
-  eventType: EventTypeEnum,
-  eventAction: EventActionEnum,
+  eventType: EventTypeEnum;
+  eventAction: EventActionEnum;
 }
 
 export interface ServiceConfig {
@@ -80,12 +80,12 @@ export interface ServiceConfig {
         REGEX: string;
       };
     };
-    CONSUMER: Array<ExternalServiceKafkaConfig>;
+    CONSUMER: ExternalServiceKafkaConfig[];
   };
   MOCK_CALLBACK: {
-    transactionRequestId: string,
-    pispId: string
-  }
+    transactionRequestId: string;
+    pispId: string;
+  };
 }
 
 const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig

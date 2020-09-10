@@ -86,7 +86,7 @@ function getSpanTags (request: Hapi.Request, eventType: string, eventAction: str
  * @description Convert the kafka config we specify at runtime to one
  *   that central-services-stream likes
  */
-function mapServiceConfigToConsumerConfig(input: ExternalServiceKafkaConfig): ConsumerConfig {
+function mapServiceConfigToConsumerConfig (input: ExternalServiceKafkaConfig): ConsumerConfig {
   return {
     eventAction: input.eventAction,
     eventType: input.eventType,
@@ -102,7 +102,7 @@ function mapServiceConfigToConsumerConfig(input: ExternalServiceKafkaConfig): Co
  * @function temporaryMockTransactionCallback
  * @description Convert a Transfer Committed kafka message to a transactionRequest commited message
  */
-function temporaryMockTransactionCallback(config: { transactionRequestId: string, pispId: string }, originalMessage: NotificationMessage): NotificationMessage {
+function temporaryMockTransactionCallback (config: { transactionRequestId: string; pispId: string }, originalMessage: NotificationMessage): NotificationMessage {
   originalMessage.value.from = 'Hub'
   originalMessage.value.to = config.pispId
   originalMessage.value.id = config.transactionRequestId
@@ -113,7 +113,7 @@ function temporaryMockTransactionCallback(config: { transactionRequestId: string
   // I'm going to leave that until we have a clearer picture on the final event
   // from the central-event-processor, and what it looks like.
 
-  return originalMessage;
+  return originalMessage
 }
 
 export {
