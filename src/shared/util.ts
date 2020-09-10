@@ -17,8 +17,12 @@
  their names indented and be marked with a '-'. Email address can be added
  optionally within square brackets <email>.
  * Gates Foundation
+
  * ModusBox
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+
+ * Crosslake
+ - Lewis Daly <lewisd@crosslaketech.com>
 
  --------------
  ******/
@@ -29,6 +33,9 @@ import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
+import { ConsumerConfig } from './consumer'
+import { NotificationMessage } from '../eventServer/eventHandlers/notificationEvent'
+import { ExternalServiceKafkaConfig } from './config'
 
 /**
  * @function finishChildSpan
@@ -74,8 +81,45 @@ function getSpanTags (request: Hapi.Request, eventType: string, eventAction: str
   return tags
 }
 
+/**
+ * @function mapServiceConfigToRdKafkaConfig
+ * @description Convert the kafka config we specify at runtime to one
+ *   that central-services-stream likes
+ */
+function mapServiceConfigToConsumerConfig (input: ExternalServiceKafkaConfig): ConsumerConfig {
+  return {
+    eventAction: input.eventAction,
+    eventType: input.eventType,
+    internalConfig: {
+      options: input.options,
+      rdkafkaConf: input.rdkafkaConf,
+      topicConf: input.topicConf
+    }
+  }
+}
+
+/**
+ * @function temporaryMockTransactionCallback
+ * @description Convert a Transfer Committed kafka message to a transactionRequest commited message
+ */
+function temporaryMockTransactionCallback (config: { transactionRequestId: string; pispId: string }, originalMessage: NotificationMessage): NotificationMessage {
+  originalMessage.value.from = 'Hub'
+  originalMessage.value.to = config.pispId
+  originalMessage.value.id = config.transactionRequestId
+  originalMessage.value.content.headers['fspiop-source'] = 'Hub'
+  originalMessage.value.content.headers['fspiop-destination'] = config.pispId
+
+  // Note: we may wish to use a different event type or action as well, but
+  // I'm going to leave that until we have a clearer picture on the final event
+  // from the central-event-processor, and what it looks like.
+
+  return originalMessage
+}
+
 export {
   finishChildSpan,
   getStackOrInspect,
-  getSpanTags
+  getSpanTags,
+  mapServiceConfigToConsumerConfig,
+  temporaryMockTransactionCallback
 }

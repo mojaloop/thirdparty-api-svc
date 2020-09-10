@@ -19,17 +19,27 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  * Paweł Marzec <pawel.marzec@modusbox.com>
+ * Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
 import Config from '~/shared/config'
 import server from '~/server'
+import eventServer from '~/eventServer'
 jest.mock('~/server')
+jest.mock('~/eventServer')
+
 
 describe('cli', (): void => {
-  it('should use default port & host', async (): Promise<void> => {
+  it('start all services', async (): Promise<void> => {
+    jest.spyOn(eventServer, 'run').mockResolvedValueOnce()
+
+    process.argv = ['jest', 'cli.ts', 'all']
     const cli = await import('~/cli')
+
     expect(cli).toBeDefined()
-    expect(server.run).toHaveBeenCalledWith({
+    // We use objectContaining because sometimes the
+    // command line injects other args we can't control
+    const expectedConfig = expect.objectContaining({
       PACKAGE: Config.PACKAGE,
       PORT: Config.PORT,
       HOST: Config.HOST,
@@ -62,7 +72,66 @@ describe('cli', (): void => {
           }
         }
       },
-      _: []
+      KAFKA: Config.KAFKA,
+      MOCK_CALLBACK: {
+        transactionRequestId: 'abc-12345',
+        pispId: 'pisp'
+      },
     })
+
+    expect(server.run).toHaveBeenCalledWith(expectedConfig)
+    expect(eventServer.run).toHaveBeenCalledWith(expectedConfig)
+  })
+
+  it('start the api only', async (): Promise<void> => {
+    jest.spyOn(eventServer, 'run').mockResolvedValueOnce()
+
+    process.argv = ['jest', 'cli.ts', 'api']
+    const cli = await import('~/cli')
+
+    expect(cli).toBeDefined()
+    // We use objectContaining because sometimes the
+    // command line injects other args we can't control
+    const expectedConfig = expect.objectContaining({
+      PACKAGE: Config.PACKAGE,
+      PORT: Config.PORT,
+      HOST: Config.HOST,
+      INSPECT: {
+        DEPTH: 4,
+        SHOW_HIDDEN: false,
+        COLOR: true
+      },
+      ENDPOINT_CACHE_CONFIG: {
+        expiresIn: 180000,
+        generateTimeout: 30000
+      },
+      ENDPOINT_SERVICE_URL: 'http://central-ledger.local:3001',
+      ERROR_HANDLING: {
+        includeCauseExtension: true,
+        truncateExtensions: true
+      },
+      INSTRUMENTATION: {
+        METRICS: {
+          DISABLED: false,
+          labels: {
+            eventId: '*'
+          },
+          config: {
+            timeout: 5000,
+            prefix: 'moja_3p_api',
+            defaultLabels: {
+              serviceName: 'thirdparty-api-adapter'
+            }
+          }
+        }
+      },
+      KAFKA: Config.KAFKA,
+      MOCK_CALLBACK: {
+        transactionRequestId: 'abc-12345',
+        pispId: 'pisp'
+      },
+    })
+
+    expect(server.run).toHaveBeenCalledWith(expectedConfig)
   })
 })

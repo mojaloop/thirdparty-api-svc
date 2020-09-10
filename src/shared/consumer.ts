@@ -1,25 +1,24 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
-import { KafkaConsumerConfig, Kafka } from '@mojaloop/central-services-stream'
+import { ConsumeCallback, Kafka, RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import logger from '@mojaloop/central-services-logger'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
   eventAction: EventActionEnum;
   eventType: EventTypeEnum;
-  internalConfig: KafkaConsumerConfig;
+  internalConfig: RdKafkaConsumerConfig;
 }
-// TODO:  print and verify - will do this after we have set up integration tests
-type Message = unknown
 
 /**
  * @class Consumer
  * @description A utility class that wraps around the `@mojaloop/central-services-stream` Kafka Consumer
  */
-export default class Consumer {
+export default class Consumer<Payload> {
   private topicName: string;
   private rdKafkaConsumer: Kafka.Consumer;
-  private handlerFunc: <Message>(error: Error, message: Message | Message[]) => Promise<void>
+  private handlerFunc: ConsumeCallback<Payload>;
 
-  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: (error: Error, message: Message[] | Message) => Promise<void>) {
+  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<Payload>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
@@ -37,6 +36,7 @@ export default class Consumer {
   public async start (): Promise<void> {
     await this.rdKafkaConsumer.connect()
     this.rdKafkaConsumer.consume(this.handlerFunc)
+    logger.info(`consumer::start() - connected to topic '${this.topicName}'`)
   }
 
   /**

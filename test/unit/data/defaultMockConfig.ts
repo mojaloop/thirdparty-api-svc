@@ -18,79 +18,77 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Paweł Marzec <pawel.marzec@modusbox.com>
+ * Lewis Daly <lewisd@crosslaketech.com>
  --------------
  ******/
 
-import rc from 'rc'
-import parse from 'parse-strings-in-object'
-import Config from '../../config/default.json'
-import Package from '../../package.json'
-import { RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
-import { EventTypeEnum, EventActionEnum } from '@mojaloop/central-services-shared'
+import { ServiceConfig } from '~/shared/config'
+import { Enum } from '@mojaloop/central-services-shared'
 
-export interface ExternalServiceKafkaConfig extends RdKafkaConsumerConfig {
-  // We add some fields which make it easier to manager later on
-  eventType: EventTypeEnum;
-  eventAction: EventActionEnum;
-}
-
-export interface ServiceConfig {
-  // package.json
-  PACKAGE: object;
-
-  // ../server.ts
-  PORT: number;
-  HOST: string;
-
-  // inspect.ts
-  INSPECT?: {
-    DEPTH?: number;
-    SHOW_HIDDEN?: boolean;
-    COLOR?: boolean;
-  };
-
-  // transactions.ts
+const defaultMockConfig: ServiceConfig = {
+  PACKAGE: {
+    version: '11.0.0'
+  },
+  PORT: 1234,
+  HOST: 'auth-service.local',
   ENDPOINT_CACHE_CONFIG: {
-    expiresIn: number;
-    generateTimeout: number;
-  };
-  ENDPOINT_SERVICE_URL: string;
+    expiresIn: 5000,
+    generateTimeout: 5000
+  },
+  ENDPOINT_SERVICE_URL: 'central-ledger.local',
   ERROR_HANDLING: {
-    includeCauseExtension: boolean;
-    truncateExtensions: boolean;
-  };
+    includeCauseExtension: true,
+    truncateExtensions: true,
+  },
   INSTRUMENTATION: {
     METRICS: {
-      DISABLED: boolean;
+      DISABLED: false,
       labels: {
-        eventId: string;
-      };
+        eventId: "*"
+      },
       config: {
-        timeout: number;
-        prefix: string;
-        defaultLabels?: Map<string, string>;
-      };
-    };
-  };
+        timeout: 5000,
+        prefix: "moja_3p_api"
+      }
+    }
+  },
   KAFKA: {
     TOPIC_TEMPLATES: {
       GENERAL_TOPIC_TEMPLATE: {
-        TEMPLATE: string;
-        REGEX: string;
-      };
-    };
-    CONSUMER: ExternalServiceKafkaConfig[];
-  };
+        TEMPLATE: 'topic-{{functionality}}-{{action}}',
+        REGEX: 'topic-(.*)-(.*)'
+      }
+    },
+    CONSUMER: [
+      {
+        eventType: Enum.Events.Event.Type.NOTIFICATION,
+        eventAction: Enum.Events.Event.Action.COMMIT,
+        options: {
+          mode: 2,
+          batchSize: 1,
+          pollFrequency: 10,
+          recursiveTimeout: 100,
+          messageCharset: 'utf8',
+          messageAsJSON: true,
+          sync: true,
+          consumeTimeout: 1000
+        },
+        rdkafkaConf: {
+          'client.id': '3p-con-notification-event',
+          'group.id': '3p-group-notification-event',
+          'metadata.broker.list': 'localhost:9092',
+          'socket.keepalive.enable': true
+        },
+        topicConf: {
+          'auto.offset.reset': 'earliest'
+        }
+      }
+    ]
+  },
   MOCK_CALLBACK: {
-    transactionRequestId: string;
-    pispId: string;
-  };
+    transactionRequestId: '12345',
+    pispId: 'pisp'
+  }
 }
 
-const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig
-
-export default {
-  ...RC,
-  PACKAGE: Package
-}
+export default defaultMockConfig

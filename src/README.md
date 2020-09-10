@@ -5,7 +5,10 @@
 
 - `src/` _thirdparty-api-adapter_ dedicated Typescript source code.
   > there is one extra file kept outside! : `/ambient.d.ts`. More info about below.
-
+- `src/domain` the core business logic
+  > [/src/domain/README.md](domain/README.md)
+- `src/eventServer` the Kafka Event Server
+  > [/src/eventServer/README.md](eventServer/README.md)
 - `src/interface` is where the `Swagger` OpenAPI definitions reside
 - `src/model` is used to separate the domain code
 - `src/server` the HTTP @hapi server setup 
@@ -23,11 +26,18 @@ The purpose of creating `/src/cli.ts` is the separation of thirdparty-api-adapte
 ```text
 src/cli.ts -h
 
+
 Options:
   -V, --version        output the version number
   -p, --port <number>  listen on port (default: "3008")
   -H, --host <string>  listen on host (default: "0.0.0.0")
   -h, --help           display help for command
+
+Commands:
+  api                  start the api server only
+  event                start the event server only
+  all                  start all services
+  help [command]       display help for command
 ```
 
 

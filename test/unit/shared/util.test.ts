@@ -20,6 +20,9 @@
  * ModusBox
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
+ * Crosslake
+ - Lewis Daly <lewisd@crosslaketech.com>
+
  --------------
  ******/
 'use strict'
@@ -28,11 +31,18 @@ import { Request } from '@hapi/hapi'
 import {
   finishChildSpan,
   getStackOrInspect,
-  getSpanTags
+  getSpanTags,
+  mapServiceConfigToConsumerConfig,
+  temporaryMockTransactionCallback
 } from '~/shared/util'
 import * as types from '~/interface/types'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
+import { ExternalServiceKafkaConfig } from '~/shared/config'
+import { Enum } from '@mojaloop/central-services-shared'
+import { NotificationMessage } from '~/eventServer/eventHandlers/notificationEvent'
+
+const mockData = require('../data/mockData.json')
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -40,6 +50,23 @@ const headers = {
 }
 
 describe('util', (): void => {
+  describe('temporaryMockTransactionCallback', (): void => {
+    it('creates a mock transaction callback', async (): Promise<void> => {
+      // Arrange
+      const input: NotificationMessage = mockData.notificationEventCommit;
+      const expected: NotificationMessage = mockData.notificationEventTransactionCommit;
+
+      // Act
+      const result = temporaryMockTransactionCallback({
+        transactionRequestId: 'abcd-1234', 
+        pispId: 'pispA'
+      }, input)
+
+      // Assert
+      expect(result).toStrictEqual(expected)
+    })
+  })
+
   describe('finishChildSpan', (): void => {
     it('calls error and finish', async (): Promise<void> => {
       // Arrange
@@ -110,6 +137,66 @@ describe('util', (): void => {
       }
       const output = getSpanTags(request, 'transaction-request', 'POST')
       expect(output).toStrictEqual(expected)
+    })
+  })
+
+  describe('mapServiceConfigToConsumerConfig', (): void => {
+    it('maps from `KafkaConsumerConfig` to `ConsumerConfig`', async (): Promise<void> => {
+      // Arrange
+      const input: ExternalServiceKafkaConfig = {
+        eventAction: Enum.Events.Event.Action.COMMIT,
+        eventType: Enum.Events.Event.Type.EVENT,
+        options: {
+          mode: 2,
+          batchSize: 1,
+          pollFrequency: 10,
+          recursiveTimeout: 100,
+          messageCharset: "utf8",
+          messageAsJSON: true,
+          sync: true,
+          consumeTimeout: 1000
+        },
+        rdkafkaConf: {
+          'client.id': '3p-con-notification-event',
+          'group.id': '3p-group-notification-event',
+          'metadata.broker.list': 'localhost:9092',
+          'socket.keepalive.enable': true
+        },
+        topicConf: {
+          'auto.offset.reset': 'earliest'
+        }
+      }
+      const expected = {
+        eventAction: Enum.Events.Event.Action.COMMIT,
+        eventType: Enum.Events.Event.Type.EVENT,
+        internalConfig: {
+          options: {
+            mode: 2,
+            batchSize: 1,
+            pollFrequency: 10,
+            recursiveTimeout: 100,
+            messageCharset: "utf8",
+            messageAsJSON: true,
+            sync: true,
+            consumeTimeout: 1000
+          },
+          rdkafkaConf: {
+            'client.id': '3p-con-notification-event',
+            'group.id': '3p-group-notification-event',
+            'metadata.broker.list': 'localhost:9092',
+            'socket.keepalive.enable': true
+          },
+          topicConf: {
+            'auto.offset.reset': 'earliest'
+          }
+        }
+      }
+
+      // Act
+      const result = mapServiceConfigToConsumerConfig(input)
+
+      // Assert
+      expect(result).toStrictEqual(expected)
     })
   })
 })

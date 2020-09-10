@@ -22,36 +22,8 @@
  --------------
  ******/
 import { Server } from '@hapi/hapi'
-import { ServiceConfig } from '~/shared/config'
 
-const defaultMockConfig: ServiceConfig = {
-  PACKAGE: {
-    version: '11.0.0'
-  },
-  PORT: 1234,
-  HOST: 'auth-service.local',
-  ENDPOINT_CACHE_CONFIG: {
-    expiresIn: 5000,
-    generateTimeout: 5000
-  },
-  ENDPOINT_SERVICE_URL: 'central-ledger.local',
-  ERROR_HANDLING: {
-    includeCauseExtension: true,
-    truncateExtensions: true,
-  },
-  INSTRUMENTATION: {
-    METRICS: {
-      DISABLED: false,
-      labels: {
-        eventId: "*"
-      },
-      config: {
-        timeout: 5000,
-        prefix: "moja_3p_api"
-      }
-    }
-  }
-}
+import defaultMockConfig from '../data/defaultMockConfig'
 
 let mockInitializeCache: any;
 let mockSetupMetrics: any;

@@ -468,10 +468,55 @@ declare module '@mojaloop/central-services-error-handling' {
 }
 declare module '@mojaloop/central-services-stream' {
   import { EventEmitter } from 'events';
-  import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared';
-  export interface KafkaConsumerConfig {
-    eventType: EventTypeEnum,
-    eventAction: EventActionEnum,
+  export interface GenericMessage<EventType, EventAction> {
+    value: {
+      from: string,
+      to: string,
+      id: string,
+      content: {
+        // Note: we don't know exactly what this will look like at this stage - as we have only inspected
+        // a few of the kafka messages
+        uriParams: unknown,
+        headers: {
+          'content-type': string,
+          date: string,
+          'fspiop-source': string,
+          'fspiop-destination': string
+          authorization?: string,
+          'content-length': string,
+          host: string,
+        },
+        payload: string
+      },
+      type: string,
+      metadata: {
+        correlationId: string,
+        event: {
+          type: EventType,
+          action: EventAction,
+          createdAt: string,
+          state: {
+            status: string,
+            code: number,
+            description: string
+          },
+          id: string,
+          responseTo: string,
+        },
+        trace: unknown
+        "protocol.createdAt": number
+      }
+    },
+    size: number,
+    // note: in all of my local tests, this has been `null`, but user beware.
+    key: unknown,
+    topic: string,
+    offset: number,
+    partition: number,
+    timestamp: number,
+  }
+
+  export interface RdKafkaConsumerConfig {
     options: {
       mode: number,
       batchSize: number,
@@ -499,14 +544,14 @@ declare module '@mojaloop/central-services-stream' {
     }>
   }
 
-  type ConsumeCallback = <T>(error: Error, payload: T) => Promise<void>;
+  type ConsumeCallback<Payload> = (error: Error | null, payload: Payload) => Promise<void>;
   type GetMetadataCallback = (err: unknown, result: GetMetadataResult) => void;
 
   namespace Kafka {
     export class Consumer extends EventEmitter {
-      constructor(topics: Array<string>, config: KafkaConsumerConfig)
+      constructor(topics: Array<string>, config: RdKafkaConsumerConfig)
       connect(): Promise<boolean>;
-      consume(consumeCallback: ConsumeCallback): void
+      consume<Payload>(consumeCallback: ConsumeCallback<Payload>): void
       disconnect(cb: () => unknown): void;
       getMetadata(options: unknown, cb: GetMetadataCallback): void;
     }
@@ -517,3 +562,6 @@ declare module '@mojaloop/central-services-stream' {
 declare module '@hapi/good'
 declare module 'hapi-openapi'
 declare module 'blipp'
+declare module 'canonical-json' {
+  export default function stringify(value: any, replacer ?: ((this: any, key: string, value: any) => any) | undefined, space ?: string | number | undefined): string
+}
