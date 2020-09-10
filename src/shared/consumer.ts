@@ -15,8 +15,10 @@ export interface ConsumerConfig {
 export default class Consumer {
   private topicName: string;
   private rdKafkaConsumer: Kafka.Consumer;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handlerFunc: ConsumeCallback<any>;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<any>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
