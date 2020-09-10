@@ -24,7 +24,7 @@
 
 import { EventActionEnum, EventTypeEnum, Enum } from '@mojaloop/central-services-shared';
 import { ConsumeCallback } from '@mojaloop/central-services-stream';
-import NotificationEvent from './notificationEvent'
+import notificationEvent from './notificationEvent'
 import CompositeKeyMap from '~/shared/compositeKeyMap';
 
 // Make a special interface that lets us strictly define a Action + Type pair as a Key
@@ -39,6 +39,6 @@ const eventHandlers = new CompositeKeyMap<EventActionTypePair, ConsumeCallback<a
 eventHandlers.set({
   action: Enum.Events.Event.Action.COMMIT,
   type: Enum.Events.Event.Type.NOTIFICATION
-}, NotificationEvent.onEvent)
+}, notificationEvent)
 
 export default eventHandlers;
