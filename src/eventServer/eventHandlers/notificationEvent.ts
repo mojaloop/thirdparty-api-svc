@@ -22,10 +22,12 @@
  --------------
  ******/
 
+import Hapi from '@hapi/hapi'
 import { ConsumeCallback, GenericMessage } from '@mojaloop/central-services-stream'
 import { temporaryMockTransactionCallback } from '~/shared/util'
 import config from '~/shared/config'
-import { EventTypeEnum } from '@mojaloop/central-services-shared'
+import { EventTypeEnum, Enum } from '@mojaloop/central-services-shared'
+import { forwardTransactionRequestNotification } from '~/domain/thirdpartyRequests/transactions'
 
 /**
  *
@@ -38,7 +40,7 @@ import { EventTypeEnum } from '@mojaloop/central-services-shared'
  */
 export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
-const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error | null, payload: NotificationMessage | Array<NotificationMessage>) => {
+const onEvent: ConsumeCallback<NotificationMessage | NotificationMessage[]> = async (_error: Error | null, payload: NotificationMessage | NotificationMessage[]) => {
   console.log(JSON.stringify(payload))
   if (!Array.isArray(payload)) {
     payload = [payload]
@@ -51,14 +53,20 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
    * In the future, we will listen for a transactionRequest commit message from `central-event-processor`
    */
   payload.filter(m => m.value.metadata.event.action === 'commit')
-  .forEach(message => {
+    .forEach(message => {
     // Pretend this is related to a pre-specified thirdpartyRequest/transaction
-    temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
-    // console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
+      const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
+      // console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
 
-    // TODO - handle this in domain, and send request to the PISP!
-    // handled in https://app.zenhub.com/workspaces/mojaloop-project-59edee71d1407922110cf083/issues/mojaloop/mojaloop/270
-  })
+      // Enum.EndPoints.FspEndpointTemplates.TTP_TRANSACTION_REQUEST_POST is a temporary template.
+      // todo: switch to a patch template endpoint after it's checked in
+      forwardTransactionRequestNotification(
+        mockThirdpartyTransactionRequest.value.content.headers as Hapi.Util.Dictionary<string>,
+        mockThirdpartyTransactionRequest.value.id,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.Http.RestMethods.PATCH
+      )
+    })
 }
 
 export default onEvent

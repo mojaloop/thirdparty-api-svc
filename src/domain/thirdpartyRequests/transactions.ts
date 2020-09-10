@@ -176,7 +176,44 @@ async function forwardTransactionRequestError(
   }
 }
 
+async function forwardTransactionRequestNotification(
+  headers: Hapi.Util.Dictionary<string>,
+  transactionRequestId: string,
+  path: string,
+  method: RestMethodsEnum,
+  ): Promise<void> {
+
+  // todo: this is a temporary interim endpoint we are using until a PATCH TPR transaction endpoint is added.
+  //       i.e TP_CB_URL_TRANSACTION_REQUEST_PATCH
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
+  const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+
+  try {
+    const endpoint = await Util.Endpoints.getEndpoint(
+      Config.ENDPOINT_SERVICE_URL,
+      fspiopDestination,
+      endpointType)
+
+    const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+
+    await Util.Request.sendRequest(
+      fullUrl,
+      headers,
+      fspiopSource,
+      fspiopDestination,
+      method,
+      {},
+      Enum.Http.ResponseTypes.JSON,
+      null)
+
+  } catch (err) {
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    throw fspiopError
+  }
+}
 export {
   forwardTransactionRequest,
-  forwardTransactionRequestError
+  forwardTransactionRequestError,
+  forwardTransactionRequestNotification
 }
