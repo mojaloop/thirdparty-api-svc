@@ -28,8 +28,9 @@ import { NotificationMessage } from "~/eventServer/eventHandlers/notificationEve
 import onEvent from '~/eventServer/eventHandlers/notificationEvent'
 import config from '~/shared/config'
 import { Enum } from '@mojaloop/central-services-shared'
+import * as TPDomain from '~/domain/thirdpartyRequests/transactions'
 
-const mockTransactionCallback = jest.spyOn(Util, 'temporaryMockTransactionCallback')
+const mockforwardTransactionRequestNotificationCallback = jest.spyOn(TPDomain, 'forwardTransactionRequestNotification')
 
 const exampleMessage: NotificationMessage = {
   value: {
@@ -77,7 +78,14 @@ const exampleMessage: NotificationMessage = {
 }
 
 describe('notificationEvent', () => {
-  beforeEach(() => jest.resetAllMocks())
+  beforeEach(() => jest.clearAllMocks())
+
+  it('handles mocking an incoming message', async() => {
+    const mockTransactionCallback = jest.spyOn(Util, 'temporaryMockTransactionCallback')
+    await onEvent(null, exampleMessage)
+    expect(mockTransactionCallback).toHaveBeenCalledTimes(1)
+    expect(mockTransactionCallback).toHaveBeenCalledWith(config.MOCK_CALLBACK, exampleMessage)
+  })
 
   it('handles an array of messages', async () => {
     // Arrange
@@ -94,8 +102,14 @@ describe('notificationEvent', () => {
     await onEvent(null, messages)
 
     // Assert
-    expect(mockTransactionCallback).toHaveBeenCalledTimes(2)
-    expect(mockTransactionCallback).toHaveBeenCalledWith(config.MOCK_CALLBACK, exampleMessage)
+    expect(mockforwardTransactionRequestNotificationCallback).toHaveBeenCalledTimes(2)
+    expect(mockforwardTransactionRequestNotificationCallback).toHaveBeenCalledWith(
+      exampleMessage.value.content.headers,
+      exampleMessage.value.id,
+      exampleMessage.value.content.payload,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.Http.RestMethods.PATCH
+    )
   })
 
   it('handles a single message', async () => {
@@ -104,7 +118,13 @@ describe('notificationEvent', () => {
     await onEvent(null, exampleMessage)
 
     // Assert
-    expect(mockTransactionCallback).toHaveBeenCalledTimes(1)
-    expect(mockTransactionCallback).toHaveBeenCalledWith(config.MOCK_CALLBACK, exampleMessage)
+    expect(mockforwardTransactionRequestNotificationCallback).toHaveBeenCalledTimes(1)
+    expect(mockforwardTransactionRequestNotificationCallback).toHaveBeenCalledWith(
+      exampleMessage.value.content.headers,
+      exampleMessage.value.id,
+      exampleMessage.value.content.payload,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.Http.RestMethods.PATCH
+    )
   })
 })

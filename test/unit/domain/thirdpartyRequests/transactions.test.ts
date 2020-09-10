@@ -23,12 +23,14 @@
  --------------
  ******/
 
+import Hapi from '@hapi/hapi'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import TestData from 'test/unit/data/mockData.json'
 import Span from 'test/unit/__mocks__/span'
+import { NotificationMessage } from '~/eventServer/eventHandlers/notificationEvent'
 
 const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -37,6 +39,7 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const apiPath = '/thirdpartyRequests/transactions'
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
+const notificationEventCommit: NotificationMessage = mockData.notificationEventCommit
 
 const getEndpointExpected = [
   'http://central-ledger.local:3001',
@@ -62,6 +65,21 @@ const expectedErrorHeaders = {
   'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
   'fspiop-destination': request.headers['fspiop-source']
 }
+const getEndpointExpectedKafkaMessage = [
+  'http://central-ledger.local:3001',
+  notificationEventCommit.value.content.headers['fspiop-destination'],
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
+]
+const sendRequestExpectedKafkaMessage = [
+  'http://pispa-sdk/thirdpartyRequests/transactions',
+  notificationEventCommit.value.content.headers,
+  notificationEventCommit.value.content.headers['fspiop-source'],
+  notificationEventCommit.value.content.headers['fspiop-destination'],
+  Enum.Http.RestMethods.PATCH,
+  notificationEventCommit.value.content.payload,
+  Enum.Http.ResponseTypes.JSON,
+  null
+]
 
 describe('domain /thirdpartyRequests/transactions', (): void => {
   describe('forwardTransactionRequest', (): void => {
@@ -196,6 +214,29 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
+    })
+  })
+
+  describe('forwardTransactionRequestNotification', (): void => {
+    beforeEach((): void => {
+      jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    it('forwards PATCH /thirdpartyRequests/transactions for kafka commit message', async (): Promise<void> => {
+      mockGetEndpoint.mockResolvedValue('http://pispa-sdk')
+      mockSendRequest.mockResolvedValue({ ok: true, status: 200, statusText: 'OK', payload: null })
+      await Transactions.forwardTransactionRequestNotification(
+        notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
+        notificationEventCommit.value.id,
+        notificationEventCommit.value.content.payload,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.Http.RestMethods.PATCH
+      )
+
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedKafkaMessage)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedKafkaMessage)
     })
   })
 })

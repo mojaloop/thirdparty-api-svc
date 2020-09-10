@@ -179,6 +179,7 @@ async function forwardTransactionRequestError(
 async function forwardTransactionRequestNotification(
   headers: Hapi.Util.Dictionary<string>,
   transactionRequestId: string,
+  payload: string,
   path: string,
   method: RestMethodsEnum,
   ): Promise<void> {
@@ -194,8 +195,13 @@ async function forwardTransactionRequestNotification(
       Config.ENDPOINT_SERVICE_URL,
       fspiopDestination,
       endpointType)
+    Logger.info(`transactions::forwardTransactionRequestNotification -
+      Resolved PISP party ${endpointType} endpoint for transactionRequest
+      ${transactionRequestId} to: ${inspect(endpoint)}`)
 
     const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+    Logger.info(`transactions::forwardTransactionRequestNotification -
+      Forwarding transaction request to endpoint: ${fullUrl}`)
 
     await Util.Request.sendRequest(
       fullUrl,
@@ -203,7 +209,7 @@ async function forwardTransactionRequestNotification(
       fspiopSource,
       fspiopDestination,
       method,
-      {},
+      payload,
       Enum.Http.ResponseTypes.JSON,
       null)
 
