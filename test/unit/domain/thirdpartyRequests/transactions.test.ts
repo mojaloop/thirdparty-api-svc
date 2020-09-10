@@ -238,5 +238,37 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedKafkaMessage)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedKafkaMessage)
     })
+
+
+    it('handles `getEndpoint` failure', async (): Promise<void> => {
+      mockGetEndpoint
+        .mockRejectedValueOnce(new Error('Cannot find endpoint'))
+
+      const action = async () => await Transactions.forwardTransactionRequestNotification(
+        notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
+        notificationEventCommit.value.id,
+        notificationEventCommit.value.content.payload,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.Http.RestMethods.PATCH
+      )
+      await expect(action).rejects.toThrow('Cannot find endpoint')
+    })
+
+
+    it('handles `sendRequest` failure', async (): Promise<void> => {
+      mockGetEndpoint
+        .mockResolvedValue('http://pispa-sdk')
+      mockSendRequest
+        .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
+
+      const action = async () => await Transactions.forwardTransactionRequestNotification(
+        notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
+        notificationEventCommit.value.id,
+        notificationEventCommit.value.content.payload,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.Http.RestMethods.PATCH
+      )
+      await expect(action).rejects.toThrow('Failed to send HTTP request')
+    })
   })
 })

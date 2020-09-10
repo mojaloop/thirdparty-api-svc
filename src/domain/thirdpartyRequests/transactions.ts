@@ -176,6 +176,17 @@ async function forwardTransactionRequestError(
   }
 }
 
+/**
+ * @function forwardTransactionRequestNotification
+ * @description Forwards a PATCH transactions requests to destination PISP for processing
+ * @param {string} path Callback endpoint path
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {RestMethodsEnum} method The http method PATCH
+ * @param {string} payload Body of the received kafka commit message.
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ * found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
 async function forwardTransactionRequestNotification(
   headers: Hapi.Util.Dictionary<string>,
   transactionRequestId: string,
@@ -211,9 +222,11 @@ async function forwardTransactionRequestNotification(
       method,
       payload,
       Enum.Http.ResponseTypes.JSON,
+      // todo: is span something we need to handle?
       null)
 
   } catch (err) {
+    // todo: do we need forward any errors here and to who?
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     throw fspiopError
   }
