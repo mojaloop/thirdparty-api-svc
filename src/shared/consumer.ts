@@ -1,5 +1,6 @@
 import { EventTypeEnum, EventActionEnum, Util } from '@mojaloop/central-services-shared'
 import { ConsumeCallback, Kafka, RdKafkaConsumerConfig } from '@mojaloop/central-services-stream'
+import logger from '@mojaloop/central-services-logger'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
@@ -37,6 +38,7 @@ export default class Consumer {
   public async start (): Promise<void> {
     await this.rdKafkaConsumer.connect()
     this.rdKafkaConsumer.consume(this.handlerFunc)
+    logger.info(`consumer::start() - connected to topic '${this.topicName}'`)
   }
 
   /**

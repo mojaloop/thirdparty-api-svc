@@ -31,6 +31,20 @@ import ServiceEventHandler from './eventServer'
 import { Command } from 'commander'
 import logger from '@mojaloop/central-services-logger'
 
+// setup & start @hapi server
+const startApiServer = async () => ServiceServer.run(Config)
+
+// setup & start event handler server
+const startEventServer = async () => ServiceEventHandler.run(Config)
+
+async function startServices (...services: Array<Promise<any>>) {
+  try {
+    await Promise.all(services)
+  } catch (error) {
+    logger.error(error)
+    process.exit(1)
+  }
+}
 
 // handle script parameters
 const program = new Command(Config.PACKAGE.name)
@@ -39,19 +53,23 @@ program
   .description('thirdparty-api-adapter cli')
   .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
   .option('-H, --host <string>', 'listen on host', Config.HOST)
-  .parse(process.argv)
 
 // overload Config with script parameters
 Config.PORT = program.port
 Config.HOST = program.host
 
-Promise.all([
-  // setup & start @hapi server
-  ServiceServer.run(Config),
+// Start the API Server only
+program.command('api')
+  .description('start the api server only')
+  .action(() => startServices(startApiServer()))
 
-  // setup & start event handler server
-  ServiceEventHandler.run(Config)
-]).catch((error: Error) => {
-  logger.error(error)
-  process.exit(1)
-})
+// Start the Event Server only
+program.command('event')
+  .description('start the event server only')
+  .action(() => startServices(startEventServer()))
+
+program.command('all')
+  .description('start all services')
+  .action(() => startServices(startApiServer(), startEventServer()))
+
+program.parse(process.argv)

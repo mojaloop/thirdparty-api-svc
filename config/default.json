@@ -40,7 +40,7 @@
     "CONSUMER": [
       {
         "eventType": "notification",
-        "eventAction": "event",
+        "eventAction": "commit",
         "options": {
           "mode": 2,
           "batchSize": 1,
