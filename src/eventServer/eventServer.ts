@@ -22,14 +22,14 @@
  --------------
  ******/
 
-import { ServiceConfig } from '~/shared/config'
-import Consumer from '~/shared/consumer'
-import eventHandlers from './eventHandlers'
-import { mapServiceConfigToConsumerConfig } from '~/shared/util'
 import { EventActionEnum, EventTypeEnum } from '@mojaloop/central-services-shared'
+import eventHandlers from './eventHandlers'
+import { ServiceConfig } from '../shared/config'
+import Consumer from '../shared/consumer'
+import { mapServiceConfigToConsumerConfig } from '../shared/util'
 
 export class HandlerNotFoundError extends Error {
-  constructor (eventAction: EventActionEnum, eventType: EventTypeEnum) {
+  public constructor (eventAction: EventActionEnum, eventType: EventTypeEnum) {
     super(`No Handler found for action: ${eventAction} and type: ${eventType}`)
   }
 }

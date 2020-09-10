@@ -28,11 +28,11 @@
  *   This allows us to nicely and easily set composite keys
  */
 export default class CompositeKeyMap<T, U> extends Map {
-  get (key: T): U {
+  public get (key: T): U {
     return super.get(JSON.stringify(key))
   }
 
-  set (key: T, value: U): this {
+  public set (key: T, value: U): this {
     return super.set(JSON.stringify(key), value)
   }
 }

@@ -34,7 +34,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
 import { ConsumerConfig } from './consumer'
-import { NotificationMessage } from '~/eventServer/eventHandlers/notificationEvent'
+import { NotificationMessage } from '../eventServer/eventHandlers/notificationEvent'
 import { ExternalServiceKafkaConfig } from './config'
 
 /**
