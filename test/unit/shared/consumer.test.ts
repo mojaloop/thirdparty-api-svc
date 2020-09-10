@@ -81,7 +81,9 @@ describe('consumer', () => {
   })
 
   describe('isConnected', () => {
-    let consumer: Consumer;
+    // Any is fine here - we are mocking the handler
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let consumer: Consumer<any>;
 
     beforeEach(() => {
       mockCreateGeneralTopicConf.mockReturnValueOnce({
@@ -147,7 +149,8 @@ describe('consumer', () => {
   })
 
   describe('disconnect', () => {
-    let consumer: Consumer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let consumer: Consumer<any>;
 
     beforeEach(() => {
       mockCreateGeneralTopicConf.mockReturnValueOnce({

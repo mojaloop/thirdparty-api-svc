@@ -39,6 +39,7 @@ import { EventTypeEnum } from '@mojaloop/central-services-shared'
 export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
 const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error | null, payload: NotificationMessage | Array<NotificationMessage>) => {
+  console.log(JSON.stringify(payload))
   if (!Array.isArray(payload)) {
     payload = [payload]
   }

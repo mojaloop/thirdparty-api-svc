@@ -22,17 +22,20 @@
  --------------
  ******/
 
+import stringify from 'canonical-json'
+
 /**
  * @class CompositeKeyMap
- * @description CompositeKeyMap is a special extension of Map, which will stringify the `key` value passed in
- *   This allows us to nicely and easily set composite keys
+ * @description CompositeKeyMap is a special extension of Map, which will stringify the `key`
+ *   value passed in. This allows us to nicely and easily set composite keys.
  */
+
 export default class CompositeKeyMap<T, U> extends Map {
   public get (key: T): U {
-    return super.get(JSON.stringify(key))
+    return super.get(stringify(key))
   }
 
   public set (key: T, value: U): this {
-    return super.set(JSON.stringify(key), value)
+    return super.set(stringify(key), value)
   }
 }

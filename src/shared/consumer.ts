@@ -13,14 +13,12 @@ export interface ConsumerConfig {
  * @class Consumer
  * @description A utility class that wraps around the `@mojaloop/central-services-stream` Kafka Consumer
  */
-export default class Consumer {
+export default class Consumer<Payload> {
   private topicName: string;
   private rdKafkaConsumer: Kafka.Consumer;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private handlerFunc: ConsumeCallback<any>;
+  private handlerFunc: ConsumeCallback<Payload>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<any>) {
+  public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<Payload>) {
     const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName

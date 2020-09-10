@@ -39,7 +39,8 @@ export class HandlerNotFoundError extends Error {
  * @description Creates the Kafka Consumer server based on config
  * @param { ServiceConfig } config
  */
-export function create (config: ServiceConfig): Consumer[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function create (config: ServiceConfig): Consumer<any>[] {
   const topicTemplate = config.KAFKA.TOPIC_TEMPLATES.GENERAL_TOPIC_TEMPLATE.TEMPLATE
   const consumerConfigs = config.KAFKA.CONSUMER
 
@@ -54,6 +55,7 @@ export function create (config: ServiceConfig): Consumer[] {
   })
 }
 
-export async function start (consumers: Consumer[]): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function start (consumers: Consumer<any>[]): Promise<void> {
   await Promise.all(consumers.map(c => c.start()))
 }
