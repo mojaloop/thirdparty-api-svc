@@ -563,5 +563,6 @@ declare module '@hapi/good'
 declare module 'hapi-openapi'
 declare module 'blipp'
 declare module 'canonical-json' {
-  export default function stringify(value: any, replacer ?: ((this: any, key: string, value: any) => any) | undefined, space ?: string | number | undefined): string
+  export type ReplacerFunc = ((this: unknown, key: unknown, value: unknown) => unknown)
+  export default function stringify(value: any, replacer?: ReplacerFunc, space?: string | number): string
 }
