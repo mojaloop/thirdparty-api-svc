@@ -232,6 +232,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
         Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
         Enum.Http.RestMethods.PATCH
       )
 
@@ -249,6 +250,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
         Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
         Enum.Http.RestMethods.PATCH
       )
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -266,6 +268,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
         Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
         Enum.Http.RestMethods.PATCH
       )
       await expect(action).rejects.toThrow('Failed to send HTTP request')

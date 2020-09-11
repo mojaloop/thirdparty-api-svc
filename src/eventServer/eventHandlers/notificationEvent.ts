@@ -41,7 +41,6 @@ import { forwardTransactionRequestNotification } from '~/domain/thirdpartyReques
 export type NotificationMessage = GenericMessage<EventTypeEnum.NOTIFICATION, 'commit' | 'prepare' | 'reserved' | 'abort'>
 
 const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>> = async (_error: Error | null, payload: NotificationMessage | Array<NotificationMessage>) => {
-  //console.log(JSON.stringify(payload))
   if (!Array.isArray(payload)) {
     payload = [payload]
   }
@@ -56,15 +55,18 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
   .forEach(message => {
     // Pretend this is related to a pre-specified thirdpartyRequest/transaction
     const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
-    // console.log("TODO: sending callback to PISP", mockThirdpartyTransactionRequest)
 
-    // Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST is a temporary template.
-    // todo: switch to a patch template endpoint after it's checked in
+    // todo: Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST is a temporary template.
+    //       switch to a patch template endpoint after it's checked in
+    // todo: TP_CB_URL_TRANSACTION_REQUEST_POST is a temporary interim endpoint
+    //       we are using until a PATCH TPR transaction endpoint is added.
+    //       i.e TP_CB_URL_TRANSACTION_REQUEST_PATCH
     forwardTransactionRequestNotification(
       mockThirdpartyTransactionRequest.value.content.headers as Hapi.Util.Dictionary<string>,
       mockThirdpartyTransactionRequest.value.id,
       mockThirdpartyTransactionRequest.value.content.payload,
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
       Enum.Http.RestMethods.PATCH
     )
   })

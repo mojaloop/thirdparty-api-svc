@@ -108,6 +108,7 @@ describe('notificationEvent', () => {
       exampleMessage.value.id,
       exampleMessage.value.content.payload,
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
       Enum.Http.RestMethods.PATCH
     )
   })
@@ -124,6 +125,7 @@ describe('notificationEvent', () => {
       exampleMessage.value.id,
       exampleMessage.value.content.payload,
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
       Enum.Http.RestMethods.PATCH
     )
   })

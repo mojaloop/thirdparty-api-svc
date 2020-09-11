@@ -41,6 +41,7 @@ import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
 import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
+import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
 /**
  * @function forwardTransactionRequest
@@ -192,12 +193,10 @@ async function forwardTransactionRequestNotification(
   transactionRequestId: string,
   payload: string,
   path: string,
+  endpointType: FspEndpointTypesEnum,
   method: RestMethodsEnum,
   ): Promise<void> {
 
-  // todo: this is a temporary interim endpoint we are using until a PATCH TPR transaction endpoint is added.
-  //       i.e TP_CB_URL_TRANSACTION_REQUEST_PATCH
-  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
@@ -222,11 +221,11 @@ async function forwardTransactionRequestNotification(
       method,
       payload,
       Enum.Http.ResponseTypes.JSON,
-      // todo: is span something we need to handle?
       null)
 
   } catch (err) {
-    // todo: do we need forward any errors here and to who?
+    // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
+    Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     throw fspiopError
   }
