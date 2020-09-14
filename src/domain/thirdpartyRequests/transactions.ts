@@ -43,7 +43,6 @@ import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
-
 /**
  * @function forwardTransactionRequest
  * @description Forwards a POST transactions requests to destination FSP for processing
