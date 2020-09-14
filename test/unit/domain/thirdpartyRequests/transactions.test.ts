@@ -76,7 +76,7 @@ const sendRequestExpectedKafkaMessage = [
   notificationEventCommit.value.content.headers['fspiop-source'],
   notificationEventCommit.value.content.headers['fspiop-destination'],
   Enum.Http.RestMethods.PATCH,
-  notificationEventCommit.value.content.payload,
+  Util.StreamingProtocol.decodePayload(notificationEventCommit.value.content.payload, { asParsed: true }),
   Enum.Http.ResponseTypes.JSON,
   null
 ]

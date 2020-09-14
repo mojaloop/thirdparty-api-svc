@@ -43,6 +43,7 @@ import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
+
 /**
  * @function forwardTransactionRequest
  * @description Forwards a POST transactions requests to destination FSP for processing
@@ -183,7 +184,7 @@ async function forwardTransactionRequestError(
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method PATCH
- * @param {string} payload Body of the received kafka commit message.
+ * @param {string} payload Base64 encoded payload string of the received kafka commit message.
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
@@ -199,6 +200,7 @@ async function forwardTransactionRequestNotification(
 
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const decodedPayload: object = Util.StreamingProtocol.decodePayload(payload, { asParsed: true })
 
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
@@ -219,7 +221,7 @@ async function forwardTransactionRequestNotification(
       fspiopSource,
       fspiopDestination,
       method,
-      payload,
+      decodedPayload,
       Enum.Http.ResponseTypes.JSON,
       null)
 

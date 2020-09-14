@@ -418,12 +418,17 @@ declare module '@mojaloop/central-services-shared' {
     createGeneralTopicConf(template: string, functionality: string, action: string, key?: string, partition?: number, opaqueKey?: any): {topicName: string, key: string | null, partition: number | null, opaqueKey: any }
   }
 
+  interface StreamingProtocol {
+    decodePayload(input: string, options: Object): Object
+  }
+
   interface Util {
     Endpoints: Endpoints;
     Hapi: any;
     Kafka: Kafka;
     OpenapiBackend: any;
     Request: Request;
+    StreamingProtocol: StreamingProtocol;
   }
 
   const Enum: Enum
