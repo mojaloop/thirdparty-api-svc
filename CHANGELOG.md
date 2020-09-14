@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.6.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.5.0...v11.6.0) (2020-09-14)
+
+
+### Features
+
+* add notification patch forwarding ([#26](https://github.com/mojaloop/thirdparty-api-adapter/issues/26)) ([82cf72e](https://github.com/mojaloop/thirdparty-api-adapter/commit/82cf72e5d3e2951ef6d9fdbc44f76eab33d9c35d))
+
 ## [11.5.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.4.0...v11.5.0) (2020-09-10)
 
 
