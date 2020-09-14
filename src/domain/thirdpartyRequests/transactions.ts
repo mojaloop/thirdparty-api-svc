@@ -41,6 +41,7 @@ import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
 import { getStackOrInspect, finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
+import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
 /**
  * @function forwardTransactionRequest
@@ -176,7 +177,61 @@ async function forwardTransactionRequestError(
   }
 }
 
+/**
+ * @function forwardTransactionRequestNotification
+ * @description Forwards a PATCH transactions requests to destination PISP for processing
+ * @param {string} path Callback endpoint path
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {RestMethodsEnum} method The http method PATCH
+ * @param {string} payload Body of the received kafka commit message.
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ * found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+async function forwardTransactionRequestNotification(
+  headers: Hapi.Util.Dictionary<string>,
+  transactionRequestId: string,
+  payload: string,
+  path: string,
+  endpointType: FspEndpointTypesEnum,
+  method: RestMethodsEnum,
+  ): Promise<void> {
+
+  const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+
+  try {
+    const endpoint = await Util.Endpoints.getEndpoint(
+      Config.ENDPOINT_SERVICE_URL,
+      fspiopDestination,
+      endpointType)
+    Logger.info(`transactions::forwardTransactionRequestNotification -
+      Resolved PISP party ${endpointType} endpoint for transactionRequest
+      ${transactionRequestId} to: ${inspect(endpoint)}`)
+
+    const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+    Logger.info(`transactions::forwardTransactionRequestNotification -
+      Forwarding transaction request to endpoint: ${fullUrl}`)
+
+    await Util.Request.sendRequest(
+      fullUrl,
+      headers,
+      fspiopSource,
+      fspiopDestination,
+      method,
+      payload,
+      Enum.Http.ResponseTypes.JSON,
+      null)
+
+  } catch (err) {
+    // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
+    Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    throw fspiopError
+  }
+}
 export {
   forwardTransactionRequest,
-  forwardTransactionRequestError
+  forwardTransactionRequestError,
+  forwardTransactionRequestNotification
 }
