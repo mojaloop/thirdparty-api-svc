@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.6.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.1...v11.6.2) (2020-09-14)
+
+
+### Code Refactor
+
+* decode notification payload ([#28](https://github.com/mojaloop/thirdparty-api-adapter/issues/28)) ([e9d8035](https://github.com/mojaloop/thirdparty-api-adapter/commit/e9d80353c448949747615d06bc01bc0f0a737cee))
+
 ### [11.6.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.0...v11.6.1) (2020-09-14)
 
 
