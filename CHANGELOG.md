@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.6.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.0...v11.6.1) (2020-09-14)
+
+
+### Bug Fixes
+
+* **types:** clean up `canonical-json` types in ambient.d.ts ([#27](https://github.com/mojaloop/thirdparty-api-adapter/issues/27)) ([71100e2](https://github.com/mojaloop/thirdparty-api-adapter/commit/71100e29328cf5cf7bbb453a1565f71301f1c1a8))
+
 ## [11.6.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.5.0...v11.6.0) (2020-09-14)
 
 
