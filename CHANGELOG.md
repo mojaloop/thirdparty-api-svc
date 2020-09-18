@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.6.3](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.2...v11.6.3) (2020-09-18)
+
+
+### Maintenance
+
+* add thirdparty request patch endpoint ([#29](https://github.com/mojaloop/thirdparty-api-adapter/issues/29)) ([609f930](https://github.com/mojaloop/thirdparty-api-adapter/commit/609f930e549a0a46e278c6250117c4b1332198d8))
+
 ### [11.6.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.1...v11.6.2) (2020-09-14)
 
 
