@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.6.4](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.3...v11.6.4) (2020-09-18)
+
+
+### Code Refactor
+
+* change event notification to use patch endpoint and template ([#30](https://github.com/mojaloop/thirdparty-api-adapter/issues/30)) ([1cda15e](https://github.com/mojaloop/thirdparty-api-adapter/commit/1cda15e62be71fa9861c8e70d3c5a401daf001c3))
+
 ### [11.6.3](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.2...v11.6.3) (2020-09-18)
 
 
