@@ -65,8 +65,8 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
       mockThirdpartyTransactionRequest.value.content.headers as Hapi.Util.Dictionary<string>,
       mockThirdpartyTransactionRequest.value.id,
       mockThirdpartyTransactionRequest.value.content.payload,
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
-      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
       Enum.Http.RestMethods.PATCH
     )
   })

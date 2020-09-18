@@ -68,10 +68,10 @@ const expectedErrorHeaders = {
 const getEndpointExpectedKafkaMessage = [
   'http://central-ledger.local:3001',
   notificationEventCommit.value.content.headers['fspiop-destination'],
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH
 ]
 const sendRequestExpectedKafkaMessage = [
-  'http://pispa-sdk/thirdpartyRequests/transactions',
+  'http://pispa-sdk/thirdpartyRequests/transactions/bc1a9c36-4429-4205-8553-11f92de1919e',
   notificationEventCommit.value.content.headers,
   notificationEventCommit.value.content.headers['fspiop-source'],
   notificationEventCommit.value.content.headers['fspiop-destination'],
@@ -231,8 +231,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
-        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
         Enum.Http.RestMethods.PATCH
       )
 
@@ -249,8 +249,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
-        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
         Enum.Http.RestMethods.PATCH
       )
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -267,8 +267,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         notificationEventCommit.value.content.headers as Hapi.Util.Dictionary<string>,
         notificationEventCommit.value.id,
         notificationEventCommit.value.content.payload,
-        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
+        Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
         Enum.Http.RestMethods.PATCH
       )
       await expect(action).rejects.toThrow('Failed to send HTTP request')
