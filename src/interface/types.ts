@@ -77,7 +77,7 @@ interface TransactionType {
   balanceOfPayments?: string;
 }
 /**
-* This interface used for consentRequests
+* This interface is used for consentRequests
 */
 interface Scope {
   accountId: string;

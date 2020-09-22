@@ -32,19 +32,29 @@ import { ConsentRequests } from '~/domain'
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
 
+/**
+ * summary: CreateConsentRequest
+ * description: The HTTP request POST /consentRequests is used to establish consent
+ * between a PISP, DFSP and user.
+ * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri, fspiop-http-method
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function post(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
-  const transactionRequestId: string = request.params.ID
+  const consentRequestsId: string = request.params.ID
   const payload = request.payload as types.ConsentRequestPayload
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      Enum.Events.Event.Type.AUTHORIZATION,
+      // todo: add a consentRequest eventType to central-services-shared
+      '',
       Enum.Events.Event.Action.POST,
-      { transactionRequestId })
+      { consentRequestsId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -62,7 +72,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
       span
     )
     .catch(err => {
-        // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
+        // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
         Logger.error('ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
       })

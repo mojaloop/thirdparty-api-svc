@@ -42,6 +42,19 @@ import {
 import { finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
 
+/**
+ * @function forwardConsentRequestsRequest
+ * @description Forwards a /consentRequests request
+ * @param {string} path Callback endpoint path
+ * @param {FspEndpointTypesEnum} path Callback endpoint template
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {RestMethodsEnum} method The http method POST or PUT
+ * @param {object} payload Body of the request
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the consentRequests requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
 export async function forwardConsentRequestsRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
@@ -101,6 +114,18 @@ export async function forwardConsentRequestsRequest(
   }
 }
 
+/**
+ * @function forwardConsentRequestsRequestError
+ * @description Generic function to handle sending `PUT .../consentRequests/error` back to the FSPIOP-Source
+ * @param {string} path Callback endpoint path
+ * @param {string} consentRequestsRequestId the ID of the consentRequest
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {APIErrorObject} error Error details
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
 export async function forwardConsentRequestsRequestError(
   path: string,
   consentRequestsRequestId: string,
@@ -108,7 +133,7 @@ export async function forwardConsentRequestsRequestError(
   error: APIErrorObject,
   span?: any): Promise<void> {
 
-  const childSpan = span?.getChild('forwardAuthorizationRequestError')
+  const childSpan = span?.getChild('forwardConsentRequestsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR
