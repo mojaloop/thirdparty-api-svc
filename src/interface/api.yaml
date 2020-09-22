@@ -220,6 +220,192 @@ paths:
 
         - Called by a `PISP` to initiate a third party transaction flow
       parameters:
+        - $ref: '#/paths/~1consentRequests/post/parameters/0'
+        - $ref: '#/paths/~1consentRequests/post/parameters/1'
+        - $ref: '#/paths/~1consentRequests/post/parameters/2'
+        - $ref: '#/paths/~1consentRequests/post/parameters/3'
+        - $ref: '#/paths/~1consentRequests/post/parameters/4'
+        - $ref: '#/paths/~1consentRequests/post/parameters/5'
+        - $ref: '#/paths/~1consentRequests/post/parameters/6'
+        - $ref: '#/paths/~1consentRequests/post/parameters/7'
+        - $ref: '#/paths/~1consentRequests/post/parameters/8'
+        - $ref: '#/paths/~1consentRequests/post/parameters/9'
+        - $ref: '#/paths/~1consentRequests/post/parameters/10'
+      requestBody:
+        description: Transaction request to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThirdpartyTransactionRequest'
+            example:
+              transactionRequestId: 8d34f91d-d078-4077-8263-2c047876fcf6
+              sourceAccountId: dfspa.alice.1234
+              consentId: '111'
+              payee:
+                partyIdInfo:
+                  partyIdType: MSISDN
+                  partyIdentifier: +44 1234 5678
+                  fspId: dfspb
+              payer:
+                personalInfo:
+                  complexName:
+                    firstName: Alice
+                    lastName: K
+                partyIdInfo:
+                  partyIdType: MSISDN
+                  partyIdentifier: +44 8765 4321
+                  fspId: dfspa
+              amountType: SEND
+              amount:
+                amount: '100'
+                currency: USD
+              transactionType:
+                scenario: TRANSFER
+                initiator: PAYER
+                initiatorType: CONSUMER
+              expiration: '2020-07-15T22:17:28.985-01:00'
+      responses:
+        '202':
+          $ref: '#/paths/~1consentRequests/post/responses/202'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
+  '/thirdpartyRequests/transactions/{ID}/authorizations':
+    post:
+      tags:
+        - thirdpartyRequests
+        - sampled
+      operationId: VerifyThirdPartyAuthorization
+      summary: VerifyThirdPartyAuthorization
+      description: |
+        The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is used by the DFSP to verify a third party authorization.
+      parameters:
+        - $ref: '#/paths/~1thirdpartyRequests~1transactions~1%7BID%7D~1authorizations/put/parameters/0'
+        - $ref: '#/paths/~1consentRequests/post/parameters/0'
+        - $ref: '#/paths/~1consentRequests/post/parameters/1'
+        - $ref: '#/paths/~1consentRequests/post/parameters/2'
+        - $ref: '#/paths/~1consentRequests/post/parameters/3'
+        - $ref: '#/paths/~1consentRequests/post/parameters/4'
+        - $ref: '#/paths/~1consentRequests/post/parameters/5'
+        - $ref: '#/paths/~1consentRequests/post/parameters/6'
+        - $ref: '#/paths/~1consentRequests/post/parameters/7'
+        - $ref: '#/paths/~1consentRequests/post/parameters/8'
+        - $ref: '#/paths/~1consentRequests/post/parameters/9'
+        - $ref: '#/paths/~1consentRequests/post/parameters/10'
+      requestBody:
+        description: The thirdparty authorization details to verify
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyThirdPartyAuthorizationRequest'
+            example:
+              challenge: <QuoteResponse object>
+              value: <base64 encoded binary - the signed quote response object>
+              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
+              sourceAccountId: dfspa.alice.1234
+              status: PENDING
+      responses:
+        '202':
+          $ref: '#/paths/~1consentRequests/post/responses/202'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
+    put:
+      tags:
+        - thirdpartyRequests
+        - sampled
+      operationId: UpdateThirdpartyAuthorization
+      summary: UpdateThirdpartyAuthorization
+      description: |
+        The HTTP request `PUT /thirdpartyRequests/transactions/{id}/authorizations` is used by the auth-service to update a thirdparty authorization after successful validation.
+        For an unsuccessful authorization result, the `PUT /thirdpartyRequests/transactions/{id}/authorizations/error` will be called by the auth-service, instead of this endpoint.
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The identifier value.
+        - $ref: '#/paths/~1consentRequests/post/parameters/1'
+        - $ref: '#/paths/~1consentRequests/post/parameters/2'
+        - $ref: '#/paths/~1consentRequests/post/parameters/3'
+        - $ref: '#/paths/~1consentRequests/post/parameters/4'
+        - $ref: '#/paths/~1consentRequests/post/parameters/5'
+        - $ref: '#/paths/~1consentRequests/post/parameters/6'
+        - $ref: '#/paths/~1consentRequests/post/parameters/7'
+        - $ref: '#/paths/~1consentRequests/post/parameters/8'
+        - $ref: '#/paths/~1consentRequests/post/parameters/9'
+        - $ref: '#/paths/~1consentRequests/post/parameters/10'
+      requestBody:
+        description: The thirdparty authorization details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateThirdpartyAuthorizationRequest'
+            example:
+              challenge: <QuoteResponse object>
+              value: <base64 encoded binary - the signed quote response object>
+              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
+              sourceAccountId: dfspa.alice.1234
+              status: VERIFIED
+      responses:
+        '200':
+          $ref: '#/paths/~1health/get/responses/200'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
+  /consentRequests:
+    post:
+      tags:
+        - consentRequests
+        - sampled
+      operationId: CreateConsentRequest
+      summary: CreateConsentRequest
+      description: |
+        A request from a PISP to a DFSP to start the process of delegating consent
+      parameters:
         - name: Accept
           in: header
           required: true
@@ -324,154 +510,31 @@ paths:
             Required if signature verification is used, for more information, see
             [the API Signature document](https://github.com/mojaloop/docs/tree/master/Specification%20Document%20Set).
       requestBody:
-        description: Transaction request to be created.
+        description: The consentRequest to create
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ThirdpartyTransactionRequest'
+              $ref: '#/components/schemas/ConsentRequestsPostRequest'
             example:
-              transactionRequestId: 8d34f91d-d078-4077-8263-2c047876fcf6
-              sourceAccountId: dfspa.alice.1234
-              consentId: '111'
-              payee:
-                partyIdInfo:
-                  partyIdType: MSISDN
-                  partyIdentifier: +44 1234 5678
-                  fspId: dfspb
-              payer:
-                personalInfo:
-                  complexName:
-                    firstName: Alice
-                    lastName: K
-                partyIdInfo:
-                  partyIdType: MSISDN
-                  partyIdentifier: +44 8765 4321
-                  fspId: dfspa
-              amountType: SEND
-              amount:
-                amount: '100'
-                currency: USD
-              transactionType:
-                scenario: TRANSFER
-                initiator: PAYER
-                initiatorType: CONSUMER
-              expiration: '2020-07-15T22:17:28.985-01:00'
+              id: '456'
+              initiatorId: pispA
+              authChannels:
+                - WEB
+                - OTP
+              scopes:
+                - accountId: dfspa.username.1234
+                  actions:
+                    - accounts.transfer
+                    - accounts.getBalance
+                - accountId: dfspa.username.5678
+                  actions:
+                    - accounts.transfer
+                    - accounts.getBalance
+              callbackUri: 'pisp-app://callback.com'
       responses:
         '202':
           description: Accepted
-        '400':
-          $ref: '#/paths/~1health/get/responses/400'
-        '401':
-          $ref: '#/paths/~1health/get/responses/401'
-        '403':
-          $ref: '#/paths/~1health/get/responses/403'
-        '404':
-          $ref: '#/paths/~1health/get/responses/404'
-        '405':
-          $ref: '#/paths/~1health/get/responses/405'
-        '406':
-          $ref: '#/paths/~1health/get/responses/406'
-        '501':
-          $ref: '#/paths/~1health/get/responses/501'
-        '503':
-          $ref: '#/paths/~1health/get/responses/503'
-  '/thirdpartyRequests/transactions/{ID}/authorizations':
-    post:
-      tags:
-        - thirdpartyRequests
-        - sampled
-      operationId: VerifyThirdPartyAuthorization
-      summary: VerifyThirdPartyAuthorization
-      description: |
-        The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is used by the DFSP to verify a third party authorization.
-      parameters:
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions~1%7BID%7D~1authorizations/put/parameters/0'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/0'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/1'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/2'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/3'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/4'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/5'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/6'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/7'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/8'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/9'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/10'
-      requestBody:
-        description: The thirdparty authorization details to verify
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VerifyThirdPartyAuthorizationRequest'
-            example:
-              challenge: <QuoteResponse object>
-              value: <base64 encoded binary - the signed quote response object>
-              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
-              sourceAccountId: dfspa.alice.1234
-              status: PENDING
-      responses:
-        '202':
-          $ref: '#/paths/~1thirdpartyRequests~1transactions/post/responses/202'
-        '400':
-          $ref: '#/paths/~1health/get/responses/400'
-        '401':
-          $ref: '#/paths/~1health/get/responses/401'
-        '403':
-          $ref: '#/paths/~1health/get/responses/403'
-        '404':
-          $ref: '#/paths/~1health/get/responses/404'
-        '405':
-          $ref: '#/paths/~1health/get/responses/405'
-        '406':
-          $ref: '#/paths/~1health/get/responses/406'
-        '501':
-          $ref: '#/paths/~1health/get/responses/501'
-        '503':
-          $ref: '#/paths/~1health/get/responses/503'
-    put:
-      tags:
-        - thirdpartyRequests
-        - sampled
-      operationId: UpdateThirdpartyAuthorization
-      summary: UpdateThirdpartyAuthorization
-      description: |
-        The HTTP request `PUT /thirdpartyRequests/transactions/{id}/authorizations` is used by the auth-service to update a thirdparty authorization after successful validation.
-        For an unsuccessful authorization result, the `PUT /thirdpartyRequests/transactions/{id}/authorizations/error` will be called by the auth-service, instead of this endpoint.
-      parameters:
-        - name: ID
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The identifier value.
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/1'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/2'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/3'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/4'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/5'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/6'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/7'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/8'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/9'
-        - $ref: '#/paths/~1thirdpartyRequests~1transactions/post/parameters/10'
-      requestBody:
-        description: The thirdparty authorization details to update
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateThirdpartyAuthorizationRequest'
-            example:
-              challenge: <QuoteResponse object>
-              value: <base64 encoded binary - the signed quote response object>
-              consentId: 8d34f91d-d078-4077-8263-2c0498dhbjr
-              sourceAccountId: dfspa.alice.1234
-              status: VERIFIED
-      responses:
-        '200':
-          $ref: '#/paths/~1health/get/responses/200'
         '400':
           $ref: '#/paths/~1health/get/responses/400'
         '401':
@@ -501,7 +564,7 @@ components:
       properties:
         transactionRequestId:
           allOf:
-            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
           description: |
             Common ID between the FSPs for the transaction request object. The ID should be reused for resends of the same transaction request. A new ID should be generated for each new transaction request.
         sourceAccountId:
@@ -510,16 +573,7 @@ components:
           description: 'DFSP specific account identifiers, e.g. `dfspa.alice.1234`'
         consentId:
           allOf:
-            - title: CorrelationId
-              type: string
-              pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-              description: |
-                Identifier that correlates all messages of the same sequence.
-                The API data type UUID (Universally Unique Identifier) is a JSON String
-                in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122),
-                that is restricted by a regular expression for interoperability reasons.
-                A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
-              example: b51ec534-ee48-4575-b6a9-ead2955b8069
+            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         payee:
@@ -958,7 +1012,7 @@ components:
                   description: Data model for the complex type Refund.
                   properties:
                     originalTransactionId:
-                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
                     refundReason:
                       title: RefundReason
                       type: string
@@ -1018,7 +1072,7 @@ components:
           description: Base64 encoded binary string - the signed challenge
         consentId:
           allOf:
-            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         sourceAccountId:
@@ -1050,7 +1104,7 @@ components:
           description: Base64 encoded binary string - the signed challenge
         consentId:
           allOf:
-            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         sourceAccountId:
@@ -1068,3 +1122,78 @@ components:
         - consentId
         - sourceAccountId
         - status
+    ConsentRequestsPostRequest:
+      title: ConsentRequestsPostRequest
+      type: object
+      description: The object sent in a `POST /consentRequests` request.
+      properties:
+        id:
+          title: CorrelationId
+          type: string
+          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+          description: |
+            Identifier that correlates all messages of the same sequence.
+            The API data type UUID (Universally Unique Identifier) is a JSON String
+            in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122),
+            that is restricted by a regular expression for interoperability reasons.
+            A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
+          example: b51ec534-ee48-4575-b6a9-ead2955b8069
+        initiatorId:
+          type: string
+          description: The id of the PISP who will initiate transactions on a user's behalf.
+        scopes:
+          type: array
+          items:
+            title: Scope
+            type: object
+            description: Scope + Account Identifier mapping for a Consent.
+            properties:
+              scope:
+                title: ConsentScopeType
+                type: string
+                enum:
+                  - accounts.getBalance
+                  - accounts.transfer
+                description: |
+                  The scopes requested for a ConsentRequest.
+                  - "accounts.getBalance" - Get the balance of a given account.
+                  - "accounts.transfer" - Initiate a transfer from an account.
+              accountId:
+                title: AccountAddress
+                type: string
+                description: |
+                  A long-lived unique account identifier provided by the DFSP. This MUST NOT
+                  be Bank Account Number or anything that may expose a User's private bank
+                  account information.
+                pattern: '^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$'
+                minLength: 1
+                maxLength: 1023
+            required:
+              - scope
+              - accountId
+        authChannels:
+          type: array
+          items:
+            title: AuthorizationChannelType
+            type: string
+            enum:
+              - OTP
+              - QRCODE
+              - U2F
+            description: |
+              Below are the allowed values for the enumeration AuthorizationChannelType.
+              - OTP - One-time password generated by the Payer FSP.
+              - QRCODE - QR code used as One Time Password.
+              - U2F - U2F is a new addition isolated to Thirdparty stream.
+
+              This is based on FSPIOP `AuthenticationType` with U2F added.
+            example: U2F
+        callbackUri:
+          type: string
+          description: The callback uri that the user will be redirected to after completing the WEB auth channel.
+      required:
+        - id
+        - initiatorId
+        - scopes
+        - authChannels
+        - callbackUri

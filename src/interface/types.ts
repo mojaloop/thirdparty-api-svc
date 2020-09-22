@@ -19,6 +19,7 @@
  - Name Surname <name.surname@gatesfoundation.com>
 
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
 
  --------------
  ******/
@@ -76,6 +77,13 @@ interface TransactionType {
   balanceOfPayments?: string;
 }
 /**
+* This interface used for consentRequests
+*/
+interface Scope {
+  accountId: string;
+  scope: string;
+}
+/**
 * This interface used for transaction requests
 */
 export interface ThirdPartyTransactionRequest {
@@ -118,4 +126,14 @@ export interface AuthorizationPayload {
   consentId: string;
   sourceAccountId: string;
   status: AuthorizationStatus;
+}
+/**
+* used for consentRequests requests
+*/
+export interface ConsentRequestPayload {
+  id: string;
+  initiatorId: string;
+  authChannels: Array<string>;
+  sourceAccountId: Array<Scope>;
+  callbackUri: string;
 }

@@ -20,12 +20,15 @@
 
  - Paweł Marzec <pawel.marzec@modusbox.com>
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
+
  --------------
  ******/
 import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
+import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
@@ -54,6 +57,14 @@ export default {
     [
       'thirdpartyRequests_transactions_authorizations_put',
       'Put thirdpartyRequests transactions authorizations request',
+      ['success']
+    ]
+  ),
+  CreateConsentRequest: wrapWithHistogram(
+    ConsentRequests.post,
+    [
+      'consentRequests_post',
+      'Post consentRequests request',
       ['success']
     ]
   ),
