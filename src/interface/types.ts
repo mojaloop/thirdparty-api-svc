@@ -130,10 +130,21 @@ export interface AuthorizationPayload {
 /**
 * used for consentRequests requests
 */
-export interface ConsentRequestPayload {
+export interface ConsentRequestsPayload {
   id: string;
   initiatorId: string;
+  scopes: Array<Scope>;
   authChannels: Array<string>;
-  sourceAccountId: Array<Scope>;
   callbackUri: string;
+}
+/**
+* used for consentRequests/{ID} requests
+*/
+export interface ConsentRequestsIDPayload {
+  initiatorId: string;
+  scopes: Array<Scope>;
+  authChannels: Array<string>;
+  callbackUri: string;
+  authUri?: string | null;
+  authToken?: string;
 }

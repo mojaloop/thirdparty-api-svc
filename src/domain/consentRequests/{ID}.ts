@@ -35,16 +35,17 @@ import {
 import Config from '~/shared/config'
 import { inspect } from 'util'
 import {
+  APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
 import { finishChildSpan } from '~/shared/util'
 import * as types from '~/interface/types'
-import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests/{ID}'
 
 /**
- * @function forwardConsentRequestsRequest
- * @description Forwards a /consentRequests request
+ * @function forwardConsentRequestsIdRequest
+ * @description Forwards a /consentRequests/{ID} request
+ * @param {string} consentRequestsRequestId ConsentRequest ID
  * @param {string} path Callback endpoint path
  * @param {FspEndpointTypesEnum} path Callback endpoint template
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
@@ -55,26 +56,28 @@ import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests/{
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentRequestsRequest(
+export async function forwardConsentRequestsIdRequest(
+  consentRequestsRequestId: string,
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentRequestsPayload,
+  payload: types.ConsentRequestsIDPayload,
   span?: any): Promise<void> {
 
-  const childSpan = span?.getChild('forwardConsentRequestsRequest')
+  const childSpan = span?.getChild('forwardConsentRequestsIDRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+
   try {
     const endpoint = await Util.Endpoints.getEndpoint(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
       endpointType
     )
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Resolved destination party ${endpointType} endpoint to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, {})
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`)
+    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Resolved destination party ${endpointType} for consentRequest ${consentRequestsRequestId} endpoint to: ${inspect(endpoint)}`)
+    const url: string = Mustache.render(endpoint + path, { ID: consentRequestsRequestId })
+    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -87,12 +90,12 @@ export async function forwardConsentRequestsRequest(
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarded consentRequest: ${consentRequestsRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
+    Logger.error(`consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -101,12 +104,71 @@ export async function forwardConsentRequestsRequest(
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardConsentRequestsIdRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
-      payload.id,
+      consentRequestsRequestId,
       errorHeaders,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan
     )
 
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
+    }
+    throw fspiopError
+  }
+}
+
+/**
+ * @function forwardConsentRequestsIDRequestError
+ * @description Generic function to handle sending `PUT .../consentRequests/error` back to the FSPIOP-Source
+ * @param {string} path Callback endpoint path
+ * @param {string} consentRequestsRequestId the ID of the consentRequest
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {APIErrorObject} error Error details
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+export async function forwardConsentRequestsIdRequestError(
+  path: string,
+  consentRequestsRequestId: string,
+  headers: HapiUtil.Dictionary<string>,
+  error: APIErrorObject,
+  span?: any): Promise<void> {
+
+  const childSpan = span?.getChild('forwardConsentRequestsRequestError')
+  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR
+
+  try {
+    const endpoint = await Util.Endpoints.getEndpoint(
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
+      endpointType)
+    Logger.info(`consentRequest::forwardConsentRequestsRequest - Resolved destinationDfsp endpoint: ${endpointType}to: ${inspect(endpoint)}`)
+    const url: string = Mustache.render(endpoint + path, { ID: consentRequestsRequestId })
+    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      Enum.Http.RestMethods.PUT,
+      error,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
+
+  } catch (err) {
+    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest error to endpoint: ${inspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
     }

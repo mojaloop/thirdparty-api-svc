@@ -46,7 +46,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsId: string = request.params.ID
-  const payload = request.payload as types.ConsentRequestPayload
+  const payload = request.payload as types.ConsentRequestsPayload
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
