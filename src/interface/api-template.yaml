@@ -350,7 +350,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponse.yaml'
+              oneOf:
+                - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWeb.yaml'
+                - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWebAuth.yaml'
+                - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseOTP.yaml'
+                - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseOTPAuth.yaml'
       responses:
         202:
           $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/responses/index.yaml#/202'
