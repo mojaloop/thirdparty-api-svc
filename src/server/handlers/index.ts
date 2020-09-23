@@ -30,6 +30,7 @@ import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
+import ConsentRequestsId from './consentRequests/{ID}'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -65,6 +66,14 @@ export default {
     [
       'consentRequests_post',
       'Post consentRequests request',
+      ['success']
+    ]
+  ),
+  UpdateConsentRequest: wrapWithHistogram(
+    ConsentRequestsId.put,
+    [
+      'consentRequestsId_put',
+      'Put consentRequestsId request',
       ['success']
     ]
   ),
