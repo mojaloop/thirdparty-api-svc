@@ -323,12 +323,8 @@ paths:
       description: |
         DFSP updates auth channels and/or auth uri in response to consentRequest.
 
-        DFSP -> Switch
-
         PISP updates the consentRequest to include authorization token from their user,
         which the DFSP is to then verify.
-
-        Switch -> DFSP
       parameters:
         #Path
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/ID.yaml'
@@ -345,7 +341,6 @@ paths:
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-URI.yaml'
         - $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/parameters/FSPIOP-HTTP-Method.yaml'
       requestBody:
-        description: The updated consentRequest body.
         required: true
         content:
           application/json:
