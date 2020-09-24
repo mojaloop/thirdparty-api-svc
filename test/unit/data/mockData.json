@@ -184,5 +184,43 @@
         "protocol.createdAt": 1599623916963
       }
     }
+  },
+  "consentRequestsPostRequest": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "dfspA"
+    },
+    "params": {},
+    "payload": {
+      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
+      "initiatorId": "pispA",
+      "authChannels": ["OTP", "WEB"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "scope": "accounts.transfer"
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com"
+    }
+  },
+  "consentRequestsPutRequest": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "initiatorId": "pispA",
+      "authChannels": ["OTP", "WEB"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "scope": "accounts.transfer"
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com",
+      "authUri": "dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe"
+    }
   }
 }

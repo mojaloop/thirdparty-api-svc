@@ -31,7 +31,8 @@ import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
-import { ConsentRequestsId } from '~/domain/consentRequests/';
+import { ConsentRequestsId } from '~/domain/consentRequests/index'
+
 
 /**
   * summary: UpdateConsentRequest
@@ -65,7 +66,7 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
     ConsentRequestsId.forwardConsentRequestsIdRequest(
       consentRequestsRequestId,
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT,
-      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT,
       request.headers,
       Enum.Http.RestMethods.PUT,
       payload,
@@ -77,7 +78,7 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
         Logger.error(ReformatFSPIOPError(err))
       })
 
-    return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)

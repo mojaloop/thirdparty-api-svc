@@ -22,17 +22,190 @@
 
  --------------
  ******/
+import { Request } from '@hapi/hapi'
+import Logger from '@mojaloop/central-services-logger'
 
-describe('consentRequestsId handler', () => {
+//import { Util, Enum } from '@mojaloop/central-services-shared'
+import ConsentRequestsIdHandler from '~/server/handlers/consentRequests/{ID}'
+import { ConsentRequestsId } from '~/domain/consentRequests/'
+import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
+
+
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+
+const putConsentRequestsIdRequestWeb = {
+  headers: {
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'pispA'
+  },
+  params: {
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
+  payload: {
+    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+    initiatorId: 'pispA',
+    authChannels: ['WEB'],
+    scopes: [
+      {
+        accountId: 'dfspa.username.1234',
+        scope: 'accounts.transfer'
+      }
+    ],
+    callbackUri:'pisp-app://callback.com',
+    authUri:'dfspa.com/authorize?consentRequestId=b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  }
+}
+
+const mockForwardConsentRequestsIdRequestExpectedWeb = [
+  'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  '/consentRequests/{{ID}}',
+  'TP_CB_URL_CONSENT_REQUEST_PUT',
+  putConsentRequestsIdRequestWeb.headers,
+  'PUT',
+  putConsentRequestsIdRequestWeb.payload,
+  undefined
+]
+/*
+const putConsentRequestsIdRequestWebAuth = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA'
+  },
+  payload: {
+    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+    initiatorId: 'pispA',
+    authChannels: ['OTP', 'WEB'],
+    scopes: [
+      {
+        accountId: 'dfspa.username.1234',
+        scope: 'accounts.transfer'
+      }
+    ],
+    callbackUri:'pisp-app://callback.com'
+  }
+}
+
+const putConsentRequestsIdRequestExpectedWebAuth = [
+  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  'TP_CB_URL_CONSENT_REQUEST_PUT',
+  putConsentRequestsIdRequestWeb.headers,
+  'PUT',
+  putConsentRequestsIdRequestWeb.payload,
+  undefined
+]
+
+const putConsentRequestsIdRequestOTP = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA'
+  },
+  payload: {
+    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+    initiatorId: 'pispA',
+    authChannels: ['OTP', 'WEB'],
+    scopes: [
+      {
+        accountId: 'dfspa.username.1234',
+        scope: 'accounts.transfer'
+      }
+    ],
+    callbackUri:'pisp-app://callback.com'
+  }
+}
+
+const putConsentRequestsIdRequestExpectedOTP = [
+  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  'TP_CB_URL_CONSENT_REQUEST_PUT',
+  putConsentRequestsIdRequestWeb.headers,
+  'PUT',
+  putConsentRequestsIdRequestWeb.payload,
+  undefined
+]
+
+const putConsentRequestsIdRequestOTPAuth = {
+  headers: {
+    'fspiop-source': 'pispA',
+    'fspiop-destination': 'dfspA'
+  },
+  payload: {
+    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+    initiatorId: 'pispA',
+    authChannels: ['OTP', 'WEB'],
+    scopes: [
+      {
+        accountId: 'dfspa.username.1234',
+        scope: 'accounts.transfer'
+      }
+    ],
+    callbackUri:'pisp-app://callback.com'
+  }
+}
+
+const putConsentRequestsIdRequestExpectedOTPAuth = [
+  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  'TP_CB_URL_CONSENT_REQUEST_PUT',
+  putConsentRequestsIdRequestWeb.headers,
+  'PUT',
+  putConsentRequestsIdRequestWeb.payload,
+  undefined
+]
+*/
+describe('consentRequests handler', () => {
   describe('PUT /consentRequests/{ID}', () => {
     beforeEach((): void => {
       jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
     })
-  })
 
-  describe('PUT /consentRequests/{ID}/error', () => {
-    beforeEach((): void => {
-      jest.clearAllMocks()
+    it('handles a successful request', async () => {
+      // Arrange
+      mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+      const request = putConsentRequestsIdRequestWeb
+      const expected = mockForwardConsentRequestsIdRequestExpectedWeb
+
+      // Act
+      const response = await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles errors asynchronously', async () => {
+      // Arrange
+      mockForwardConsentRequestsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
+      const request = putConsentRequestsIdRequestWeb
+      const expected = mockForwardConsentRequestsIdRequestExpectedWeb
+
+      // Act
+      const response = await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      // wait once more for the event loop - since we can't await `runAllImmediates`
+      // this helps make sure the tests don't become flaky
+      await new Promise(resolve => setImmediate(resolve))
+      // The main test here is that there is no unhandledPromiseRejection!
+      expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles validation errors synchronously', async () => {
+      // Arrange
+      const request = {
+        ...putConsentRequestsIdRequestWeb,
+        // Will setting the span to null do stuff?
+        span: {
+        }
+      }
+
+      // Act
+      const action = async () => await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
 })
