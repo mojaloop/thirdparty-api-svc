@@ -22,11 +22,12 @@
 
  --------------
  ******/
+'use strict'
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
 import ConsentRequestsHandler from '~/server/handlers/consentRequests'
-import { ConsentRequests } from '~/domain'
+import { ConsentRequests } from '~/domain/index'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 

@@ -133,8 +133,8 @@ export interface AuthorizationPayload {
 export interface ConsentRequestsPayload {
   id: string;
   initiatorId: string;
-  scopes: Array<Scope>;
-  authChannels: Array<string>;
+  scopes: Scope[];
+  authChannels: string[];
   callbackUri: string;
 }
 /**
@@ -142,8 +142,8 @@ export interface ConsentRequestsPayload {
 */
 export interface ConsentRequestsIDPayload {
   initiatorId: string;
-  scopes: Array<Scope>;
-  authChannels: Array<string>;
+  scopes: Scope[];
+  authChannels: string[];
   callbackUri: string;
   authUri?: string | null;
   authToken?: string;

@@ -55,14 +55,13 @@ import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests/{
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentRequestsRequest(
+export async function forwardConsentRequestsRequest (
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: types.ConsentRequestsPayload,
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardConsentRequestsRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

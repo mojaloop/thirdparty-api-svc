@@ -27,7 +27,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import TestData from 'test/unit/data/mockData.json'
 import Span from 'test/unit/__mocks__/span'
-import { ConsentRequests } from '~/domain'
+import { ConsentRequests } from '~/domain/index'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 
 const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
