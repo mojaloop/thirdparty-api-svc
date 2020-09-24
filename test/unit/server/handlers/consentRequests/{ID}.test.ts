@@ -25,11 +25,9 @@
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
-//import { Util, Enum } from '@mojaloop/central-services-shared'
-import ConsentRequestsIdHandler from '~/server/handlers/consentRequests/{ID}'
-import { ConsentRequestsId } from '~/domain/consentRequests/'
+import { ConsentRequestsId } from '~/domain/consentRequests/index'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
-
+import ConsentRequestsIdHandler from '~/server/handlers/consentRequests/{ID}'
 
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
@@ -67,91 +65,7 @@ const mockForwardConsentRequestsIdRequestExpectedWeb = [
   putConsentRequestsIdRequestWeb.payload,
   undefined
 ]
-/*
-const putConsentRequestsIdRequestWebAuth = {
-  headers: {
-    'fspiop-source': 'pispA',
-    'fspiop-destination': 'dfspA'
-  },
-  payload: {
-    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
-    initiatorId: 'pispA',
-    authChannels: ['OTP', 'WEB'],
-    scopes: [
-      {
-        accountId: 'dfspa.username.1234',
-        scope: 'accounts.transfer'
-      }
-    ],
-    callbackUri:'pisp-app://callback.com'
-  }
-}
 
-const putConsentRequestsIdRequestExpectedWebAuth = [
-  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
-  'TP_CB_URL_CONSENT_REQUEST_PUT',
-  putConsentRequestsIdRequestWeb.headers,
-  'PUT',
-  putConsentRequestsIdRequestWeb.payload,
-  undefined
-]
-
-const putConsentRequestsIdRequestOTP = {
-  headers: {
-    'fspiop-source': 'pispA',
-    'fspiop-destination': 'dfspA'
-  },
-  payload: {
-    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
-    initiatorId: 'pispA',
-    authChannels: ['OTP', 'WEB'],
-    scopes: [
-      {
-        accountId: 'dfspa.username.1234',
-        scope: 'accounts.transfer'
-      }
-    ],
-    callbackUri:'pisp-app://callback.com'
-  }
-}
-
-const putConsentRequestsIdRequestExpectedOTP = [
-  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
-  'TP_CB_URL_CONSENT_REQUEST_PUT',
-  putConsentRequestsIdRequestWeb.headers,
-  'PUT',
-  putConsentRequestsIdRequestWeb.payload,
-  undefined
-]
-
-const putConsentRequestsIdRequestOTPAuth = {
-  headers: {
-    'fspiop-source': 'pispA',
-    'fspiop-destination': 'dfspA'
-  },
-  payload: {
-    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
-    initiatorId: 'pispA',
-    authChannels: ['OTP', 'WEB'],
-    scopes: [
-      {
-        accountId: 'dfspa.username.1234',
-        scope: 'accounts.transfer'
-      }
-    ],
-    callbackUri:'pisp-app://callback.com'
-  }
-}
-
-const putConsentRequestsIdRequestExpectedOTPAuth = [
-  '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
-  'TP_CB_URL_CONSENT_REQUEST_PUT',
-  putConsentRequestsIdRequestWeb.headers,
-  'PUT',
-  putConsentRequestsIdRequestWeb.payload,
-  undefined
-]
-*/
 describe('consentRequests handler', () => {
   describe('PUT /consentRequests/{ID}', () => {
     beforeEach((): void => {
