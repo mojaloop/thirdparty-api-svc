@@ -27,7 +27,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { AuditEventAction } from '@mojaloop/event-sdk'
-import { ConsentRequests } from '~/domain'
+import * as ConsentRequests from '~/domain/consentRequests'
 
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
@@ -71,7 +71,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
       payload,
       span
     )
-    .catch(err => {
+    .catch((err: any) => {
         // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
         Logger.error('ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))

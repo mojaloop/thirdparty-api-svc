@@ -27,7 +27,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
 import ConsentRequestsHandler from '~/server/handlers/consentRequests'
-import { ConsentRequests } from '~/domain/index'
+import * as ConsentRequests from '~/domain/consentRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 
