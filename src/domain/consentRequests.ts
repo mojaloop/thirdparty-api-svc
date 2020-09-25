@@ -32,15 +32,20 @@ import {
   FspEndpointTypesEnum,
   RestMethodsEnum
 } from '@mojaloop/central-services-shared'
-import Config from 'src/shared/config'
+// eslint is complaining about these imports. not sure why.
+// eslint-disable-next-line import/no-unresolved
+import Config from '~/shared/config'
 import { inspect } from 'util'
 import {
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
-import { finishChildSpan } from 'src/shared/util'
-import * as types from 'src/interface/types'
-import { forwardConsentRequestsIdRequestError } from 'src/domain/consentRequests/{ID}'
+// eslint-disable-next-line import/no-unresolved
+import { finishChildSpan } from '~/shared/util'
+// eslint-disable-next-line import/no-unresolved
+import * as types from '~/interface/types'
+// eslint-disable-next-line import/no-unresolved
+import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests/{ID}'
 
 /**
  * @function forwardConsentRequestsRequest
