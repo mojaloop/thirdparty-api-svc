@@ -345,7 +345,7 @@ paths:
         content:
           application/json:
             schema:
-              anyOf:
+              oneOf:
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWeb.yaml'
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWebAuth.yaml'
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseOTP.yaml'
