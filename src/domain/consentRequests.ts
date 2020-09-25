@@ -32,19 +32,15 @@ import {
   FspEndpointTypesEnum,
   RestMethodsEnum
 } from '@mojaloop/central-services-shared'
-// eslint-disable-next-line import/no-unresolved
-import Config from '~/shared/config'
+import Config from 'src/shared/config'
 import { inspect } from 'util'
 import {
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
-// eslint-disable-next-line import/no-unresolved
-import { finishChildSpan } from '~/shared/util'
-// eslint-disable-next-line import/no-unresolved
-import * as types from '~/interface/types'
-// eslint-disable-next-line import/no-unresolved
-import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests/{ID}'
+import { finishChildSpan } from 'src/shared/util'
+import * as types from 'src/interface/types'
+import { forwardConsentRequestsIdRequestError } from 'src/domain/consentRequests/{ID}'
 
 /**
  * @function forwardConsentRequestsRequest

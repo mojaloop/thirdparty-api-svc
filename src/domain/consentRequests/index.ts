@@ -22,4 +22,4 @@
 
  --------------
  ******/
-export * as ConsentRequestsId from './{ID}'
+export * as ConsentRequests from './{ID}'
