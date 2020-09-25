@@ -79,9 +79,13 @@ interface TransactionType {
 /**
 * This interface is used for consentRequests
 */
+export enum ConsentScopeType {
+  ACCOUNTS_GET_BALANCE = 'accounts.getBalance',
+  ACCOUNTS_TRANSFER = 'accounts.transfer',
+}
 interface Scope {
   accountId: string;
-  scope: string;
+  actions: ConsentScopeType[];
 }
 /**
 * This interface used for transaction requests
@@ -127,6 +131,10 @@ export interface AuthorizationPayload {
   sourceAccountId: string;
   status: AuthorizationStatus;
 }
+export enum ConsentRequestChannelType {
+  WEB = 'WEB',
+  OTP = 'OTP',
+}
 /**
 * used for consentRequests requests
 */
@@ -134,7 +142,7 @@ export interface ConsentRequestsPayload {
   id: string;
   initiatorId: string;
   scopes: Scope[];
-  authChannels: string[];
+  authChannels: ConsentRequestChannelType[];
   callbackUri: string;
 }
 /**
@@ -143,8 +151,8 @@ export interface ConsentRequestsPayload {
 export interface ConsentRequestsIDPayload {
   initiatorId: string;
   scopes: Scope[];
-  authChannels: string[];
+  authChannels: ConsentRequestChannelType[];
   callbackUri: string;
-  authUri?: string | null;
+  authUri?: string;
   authToken?: string;
 }
