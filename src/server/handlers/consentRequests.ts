@@ -27,7 +27,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { AuditEventAction } from '@mojaloop/event-sdk'
-import * as ConsentRequests from '~/domain/consentRequests'
+import { forwardConsentRequestsRequest } from '~/domain/consentRequests'
 
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
@@ -51,8 +51,8 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // todo: add a consentRequest eventType to central-services-shared
-      '',
+      // todo: add a consent-request/thirdparty? eventType to central-services-shared
+      'consent-request',
       Enum.Events.Event.Action.POST,
       { consentRequestsId })
 
@@ -63,7 +63,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
-    ConsentRequests.forwardConsentRequestsRequest(
+    forwardConsentRequestsRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_POST,
       request.headers,
