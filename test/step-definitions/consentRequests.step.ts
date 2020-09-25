@@ -88,7 +88,7 @@ defineFeature(feature, (test): void => {
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
-        mockData.consentRequestsPutRequestWeb.payload.id,
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
         'TP_CB_URL_CONSENT_REQUEST_PUT',
         expect.objectContaining(request.headers),
@@ -128,7 +128,7 @@ defineFeature(feature, (test): void => {
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
-        mockData.consentRequestsPutRequestWebAuth.payload.id,
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
         'TP_CB_URL_CONSENT_REQUEST_PUT',
         expect.objectContaining(request.headers),
@@ -168,7 +168,7 @@ defineFeature(feature, (test): void => {
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
-        mockData.consentRequestsPutRequestOTP.payload.id,
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
         'TP_CB_URL_CONSENT_REQUEST_PUT',
         expect.objectContaining(request.headers),
@@ -208,7 +208,7 @@ defineFeature(feature, (test): void => {
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
-        mockData.consentRequestsPutRequestOTPAuth.payload.id,
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
         'TP_CB_URL_CONSENT_REQUEST_PUT',
         expect.objectContaining(request.headers),

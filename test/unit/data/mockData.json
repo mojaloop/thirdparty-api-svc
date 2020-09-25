@@ -211,7 +211,6 @@
     },
     "params": {},
     "payload": {
-      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "initiatorId": "pispA",
       "authChannels": ["WEB"],
       "scopes": [
@@ -231,7 +230,6 @@
     },
     "params": {},
     "payload": {
-      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "initiatorId": "pispA",
       "authChannels": ["WEB"],
       "scopes": [
@@ -252,7 +250,6 @@
     },
     "params": {},
     "payload": {
-      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "initiatorId": "pispA",
       "authChannels": ["OTP"],
       "scopes": [
@@ -271,7 +268,6 @@
     },
     "params": {},
     "payload": {
-      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "initiatorId": "pispA",
       "authChannels": ["OTP"],
       "scopes": [
