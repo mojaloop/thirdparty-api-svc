@@ -510,7 +510,73 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsentRequestsPostRequest'
+              title: ConsentRequestsPostRequest
+              type: object
+              description: The object sent in a `POST /consentRequests` request.
+              properties:
+                id:
+                  $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+                initiatorId:
+                  type: string
+                  description: The id of the PISP who will initiate transactions on a user's behalf.
+                scopes:
+                  type: array
+                  items:
+                    title: Scope
+                    type: object
+                    description: Scope + Account Identifier mapping for a Consent.
+                    example: |
+                      {
+                        accountId: "dfsp.username.5678",
+                        actions: [ "accounts.transfer", "accounts.getBalance" ]
+                      }
+                    properties:
+                      accountId:
+                        title: AccountAddress
+                        type: string
+                        description: |
+                          A long-lived unique account identifier provided by the DFSP. This MUST NOT
+                          be Bank Account Number or anything that may expose a User's private bank
+                          account information.
+                        pattern: '^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$'
+                        minLength: 1
+                        maxLength: 1023
+                      actions:
+                        type: array
+                        items:
+                          title: ConsentScopeType
+                          type: string
+                          enum:
+                            - accounts.getBalance
+                            - accounts.transfer
+                          description: |
+                            The scopes requested for a ConsentRequest.
+                            - "accounts.getBalance" - Get the balance of a given account.
+                            - "accounts.transfer" - Initiate a transfer from an account.
+                    required:
+                      - accountId
+                      - actions
+                authChannels:
+                  type: array
+                  items:
+                    title: ConsentRequestChannelType
+                    type: string
+                    enum:
+                      - WEB
+                      - OTP
+                    description: |
+                      The auth channel being used for the consentRequest.
+                      - "WEB" - The Web auth channel.
+                      - "OTP" - The OTP auth channel.
+                callbackUri:
+                  type: string
+                  description: The callback uri that the user will be redirected to after completing the WEB auth channel.
+              required:
+                - id
+                - initiatorId
+                - scopes
+                - authChannels
+                - callbackUri
             example:
               id: '456'
               initiatorId: pispA
@@ -555,12 +621,8 @@ paths:
       description: |
         DFSP updates auth channels and/or auth uri in response to consentRequest.
 
-        DFSP -> Switch
-
         PISP updates the consentRequest to include authorization token from their user,
         which the DFSP is to then verify.
-
-        Switch -> DFSP
       parameters:
         - name: ID
           in: path
@@ -580,12 +642,11 @@ paths:
         - $ref: '#/paths/~1consentRequests/post/parameters/9'
         - $ref: '#/paths/~1consentRequests/post/parameters/10'
       requestBody:
-        description: The updated consentRequest body.
         required: true
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - title: ConsentRequestsIDPutResponseWeb
                   type: object
                   description: |
@@ -597,14 +658,14 @@ paths:
                     the user can prove their identity (e.g., by logging in).
                   properties:
                     id:
-                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
                     initiatorId:
                       type: string
                       description: The id of the PISP who will initiate transactions on a user's behalf.
                     scopes:
                       type: array
                       items:
-                        $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/scopes/items'
+                        $ref: '#/paths/~1consentRequests/post/requestBody/content/application~1json/schema/properties/scopes/items'
                     authChannels:
                       type: array
                       items:
@@ -637,18 +698,18 @@ paths:
                     or secret to the PISP.
                   properties:
                     id:
-                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
                     initiatorId:
                       type: string
                       description: The id of the PISP who will initiate transactions on a user's behalf.
                     scopes:
                       type: array
                       items:
-                        $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/scopes/items'
+                        $ref: '#/paths/~1consentRequests/post/requestBody/content/application~1json/schema/properties/scopes/items'
                     authChannels:
                       type: array
                       items:
-                        $ref: '#/paths/~1consentRequests~1%7BID%7D/put/requestBody/content/application~1json/schema/oneOf/0/properties/authChannels/items'
+                        $ref: '#/paths/~1consentRequests~1%7BID%7D/put/requestBody/content/application~1json/schema/anyOf/0/properties/authChannels/items'
                     callbackUri:
                       type: string
                       description: The callback uri that the user will be redirected to after completing the WEB auth channel.
@@ -674,14 +735,14 @@ paths:
                     Schema used in the request consent phase of the account linking OTP/SMS flow.
                   properties:
                     id:
-                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
                     initiatorId:
                       type: string
                       description: The id of the PISP who will initiate transactions on a user's behalf.
                     scopes:
                       type: array
                       items:
-                        $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/scopes/items'
+                        $ref: '#/paths/~1consentRequests/post/requestBody/content/application~1json/schema/properties/scopes/items'
                     authChannels:
                       type: array
                       items:
@@ -710,18 +771,18 @@ paths:
                     or secret to the PISP.
                   properties:
                     id:
-                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
                     initiatorId:
                       type: string
                       description: The id of the PISP who will initiate transactions on a user's behalf.
                     scopes:
                       type: array
                       items:
-                        $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/scopes/items'
+                        $ref: '#/paths/~1consentRequests/post/requestBody/content/application~1json/schema/properties/scopes/items'
                     authChannels:
                       type: array
                       items:
-                        $ref: '#/paths/~1consentRequests~1%7BID%7D/put/requestBody/content/application~1json/schema/oneOf/2/properties/authChannels/items'
+                        $ref: '#/paths/~1consentRequests~1%7BID%7D/put/requestBody/content/application~1json/schema/anyOf/2/properties/authChannels/items'
                     callbackUri:
                       type: string
                       description: The callback uri that the user will be redirected to after completing the WEB auth channel.
@@ -767,7 +828,7 @@ components:
       properties:
         transactionRequestId:
           allOf:
-            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
           description: |
             Common ID between the FSPs for the transaction request object. The ID should be reused for resends of the same transaction request. A new ID should be generated for each new transaction request.
         sourceAccountId:
@@ -776,7 +837,16 @@ components:
           description: 'DFSP specific account identifiers, e.g. `dfspa.alice.1234`'
         consentId:
           allOf:
-            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+            - title: CorrelationId
+              type: string
+              pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+              description: |
+                Identifier that correlates all messages of the same sequence.
+                The API data type UUID (Universally Unique Identifier) is a JSON String
+                in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122),
+                that is restricted by a regular expression for interoperability reasons.
+                A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
+              example: b51ec534-ee48-4575-b6a9-ead2955b8069
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         payee:
@@ -1215,7 +1285,7 @@ components:
                   description: Data model for the complex type Refund.
                   properties:
                     originalTransactionId:
-                      $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+                      $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
                     refundReason:
                       title: RefundReason
                       type: string
@@ -1275,7 +1345,7 @@ components:
           description: Base64 encoded binary string - the signed challenge
         consentId:
           allOf:
-            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         sourceAccountId:
@@ -1307,7 +1377,7 @@ components:
           description: Base64 encoded binary string - the signed challenge
         consentId:
           allOf:
-            - $ref: '#/components/schemas/ConsentRequestsPostRequest/properties/id'
+            - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
           description: |
             Common ID between the PISP and FSP for the Consent object This tells DFSP and auth-service which constent allows the PISP to initiate transaction.
         sourceAccountId:
@@ -1325,78 +1395,3 @@ components:
         - consentId
         - sourceAccountId
         - status
-    ConsentRequestsPostRequest:
-      title: ConsentRequestsPostRequest
-      type: object
-      description: The object sent in a `POST /consentRequests` request.
-      properties:
-        id:
-          title: CorrelationId
-          type: string
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-          description: |
-            Identifier that correlates all messages of the same sequence.
-            The API data type UUID (Universally Unique Identifier) is a JSON String
-            in canonical format, conforming to [RFC 4122](https://tools.ietf.org/html/rfc4122),
-            that is restricted by a regular expression for interoperability reasons.
-            A UUID is always 36 characters long, 32 hexadecimal symbols and 4 dashes (‘-‘).
-          example: b51ec534-ee48-4575-b6a9-ead2955b8069
-        initiatorId:
-          type: string
-          description: The id of the PISP who will initiate transactions on a user's behalf.
-        scopes:
-          type: array
-          items:
-            title: Scope
-            type: object
-            description: Scope + Account Identifier mapping for a Consent.
-            properties:
-              scope:
-                title: ConsentScopeType
-                type: string
-                enum:
-                  - accounts.getBalance
-                  - accounts.transfer
-                description: |
-                  The scopes requested for a ConsentRequest.
-                  - "accounts.getBalance" - Get the balance of a given account.
-                  - "accounts.transfer" - Initiate a transfer from an account.
-              accountId:
-                title: AccountAddress
-                type: string
-                description: |
-                  A long-lived unique account identifier provided by the DFSP. This MUST NOT
-                  be Bank Account Number or anything that may expose a User's private bank
-                  account information.
-                pattern: '^([0-9A-Za-z_~\-\.]+[0-9A-Za-z_~\-])$'
-                minLength: 1
-                maxLength: 1023
-            required:
-              - scope
-              - accountId
-        authChannels:
-          type: array
-          items:
-            title: AuthorizationChannelType
-            type: string
-            enum:
-              - OTP
-              - QRCODE
-              - U2F
-            description: |
-              Below are the allowed values for the enumeration AuthorizationChannelType.
-              - OTP - One-time password generated by the Payer FSP.
-              - QRCODE - QR code used as One Time Password.
-              - U2F - U2F is a new addition isolated to Thirdparty stream.
-
-              This is based on FSPIOP `AuthenticationType` with U2F added.
-            example: U2F
-        callbackUri:
-          type: string
-          description: The callback uri that the user will be redirected to after completing the WEB auth channel.
-      required:
-        - id
-        - initiatorId
-        - scopes
-        - authChannels
-        - callbackUri

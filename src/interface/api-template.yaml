@@ -280,7 +280,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsentRequestsPostRequest'
+              $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsPostRequest.yaml'
             example:
               id: '456'
               initiatorId: 'pispA'
@@ -345,7 +345,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWeb.yaml'
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseWebAuth.yaml'
                 - $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/ConsentRequestsIDPutResponseOTP.yaml'
@@ -502,32 +502,3 @@ components:
         - consentId
         - sourceAccountId
         - status
-    ConsentRequestsPostRequest:
-      title: ConsentRequestsPostRequest
-      type: object
-      description: The object sent in a `POST /consentRequests` request.
-      properties:
-        id:
-          $ref: '../../node_modules/@mojaloop/api-snippets/v1.0/openapi3/schemas/CorrelationId.yaml'
-        initiatorId:
-          type: string
-          description: The id of the PISP who will initiate transactions on a user's behalf.
-        scopes:
-          type: array
-          items:
-            $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/Scope.yaml'
-        authChannels:
-          type: array
-          items:
-            $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/schemas/AuthorizationChannelType.yaml'
-          # TODO: min and max
-        callbackUri:
-          # TODO: enforce uri type
-          type: string
-          description: The callback uri that the user will be redirected to after completing the WEB auth channel.
-      required:
-        - id
-        - initiatorId
-        - scopes
-        - authChannels
-        - callbackUri

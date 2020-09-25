@@ -36,7 +36,7 @@ const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
-const request = mockData.consentRequestsPutRequest
+const request = mockData.consentRequestsPutRequestWeb
 
 const getEndpointExpected = [
   'http://central-ledger.local:3001',
