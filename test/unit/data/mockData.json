@@ -184,5 +184,100 @@
         "protocol.createdAt": 1599623916963
       }
     }
+  },
+  "consentRequestsPostRequest": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "dfspA"
+    },
+    "params": {},
+    "payload": {
+      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
+      "initiatorId": "pispA",
+      "authChannels": ["OTP", "WEB"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com"
+    }
+  },
+  "consentRequestsPutRequestWeb": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "initiatorId": "pispA",
+      "authChannels": ["WEB"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com",
+      "authUri": "dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe"
+    }
+  },
+  "consentRequestsPutRequestWebAuth": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "initiatorId": "pispA",
+      "authChannels": ["WEB"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com",
+      "authUri": "dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe",
+      "authToken": "SECRET"
+    }
+  },
+  "consentRequestsPutRequestOTP": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "initiatorId": "pispA",
+      "authChannels": ["OTP"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com"
+    }
+  },
+  "consentRequestsPutRequestOTPAuth": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "initiatorId": "pispA",
+      "authChannels": ["OTP"],
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "callbackUri": "pisp-app://callback.com",
+      "authToken": "SECRET_OTP"
+    }
   }
 }
