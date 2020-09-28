@@ -28,6 +28,7 @@ import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
+import Consents from './consents'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 import ConsentRequestsId from './consentRequests/{ID}'
@@ -74,6 +75,14 @@ export default {
     [
       'consentRequestsId_put',
       'Put consentRequestsId request',
+      ['success']
+    ]
+  ),
+  CreateConsent: wrapWithHistogram(
+    Consents.post,
+    [
+      'consents_post',
+      'Post consents request',
       ['success']
     ]
   ),

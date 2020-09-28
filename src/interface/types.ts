@@ -156,3 +156,13 @@ export interface ConsentRequestsIDPayload {
   authUri?: string;
   authToken?: string;
 }
+/**
+* used for consents requests
+*/
+export interface ConsentsPayload {
+  id: string;
+  requestId: string;
+  initiatorId: string;
+  participantId: string;
+  scopes: Scope[];
+}
