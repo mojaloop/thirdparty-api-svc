@@ -94,7 +94,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestWeb.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -134,7 +134,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestWebAuth.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -174,7 +174,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestOTP.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -214,7 +214,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestOTPAuth.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)

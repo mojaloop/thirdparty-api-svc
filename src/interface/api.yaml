@@ -491,6 +491,7 @@ paths:
     put:
       tags:
         - consentRequests
+        - sampled
       operationId: UpdateConsentRequest
       summary: UpdateConsentRequest
       description: |
@@ -691,6 +692,7 @@ paths:
       operationId: CreateConsent
       tags:
         - consent
+        - sampled
       requestBody:
         required: true
         content:

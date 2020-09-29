@@ -52,7 +52,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'POST',
         mockData.consentsPostRequest.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
