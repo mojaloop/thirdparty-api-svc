@@ -136,7 +136,7 @@ defineFeature(feature, (test): void => {
         mockData.consentRequestsPutRequestWebAuth.payload,
         undefined
       ]
-      console.log(response)
+
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
       expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)

@@ -296,8 +296,7 @@
           "accountId": "dfspa.username.1234",
           "actions": [ "accounts.transfer", "accounts.getBalance" ]
         }
-      ],
-      "credential": null
+      ]
     }
   }
 }

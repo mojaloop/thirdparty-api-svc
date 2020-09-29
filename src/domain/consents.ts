@@ -44,7 +44,7 @@ import { finishChildSpan } from '~/shared/util'
 // eslint-disable-next-line import/no-unresolved
 import * as types from '~/interface/types'
 // eslint-disable-next-line import/no-unresolved
-import { forwardConsentsRequestError } from '~/domain/consents/{ID}'
+import { forwardConsentsIdRequestError } from '~/domain/consents/{ID}'
 
 /**
  * @function forwardConsentsRequest
@@ -104,7 +104,7 @@ export async function forwardConsentsRequest (
       'fspiop-destination': sourceDfspId
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
-    await forwardConsentsRequestError(
+    await forwardConsentsIdRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT_ERROR,
       payload.id,
       errorHeaders,

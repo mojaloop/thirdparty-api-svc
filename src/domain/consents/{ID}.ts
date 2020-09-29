@@ -40,7 +40,7 @@ import {
 import { finishChildSpan } from '~/shared/util'
 
 /**
- * @function forwardConsentsIDRequestError
+ * @function forwardConsentsIdRequestError
  * @description Generic function to handle sending `PUT .../consents/error` back to the FSPIOP-Source
  * @param {string} path Callback endpoint path
  * @param {string} consentsId the ID of the consents request
@@ -51,7 +51,7 @@ import { finishChildSpan } from '~/shared/util'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentsRequestError(
+export async function forwardConsentsIdRequestError(
   path: string,
   consentsId: string,
   headers: HapiUtil.Dictionary<string>,
