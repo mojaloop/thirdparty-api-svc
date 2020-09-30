@@ -31,9 +31,15 @@ import { Server } from '@hapi/hapi'
 import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
+import * as Consents from '~/domain/consents'
+import * as ConsentRequests from '~/domain/consentRequests'
+import { ConsentRequestsId } from '~/domain/consentRequests/'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
+const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
+const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -349,6 +355,329 @@ describe('index', (): void => {
         expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
       })
     })
+
+    describe('POST /consents', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('posts successfully', async (): Promise<void> => {
+        mockForwardConsentsRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/consents',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsPostRequest.headers
+          },
+          payload: {
+            ...mockData.consentsPostRequest.payload
+          }
+        }
+        const expected = [
+          '/consents',
+          'TP_CB_URL_CONSENT_POST',
+          expect.objectContaining(request.headers),
+          'POST',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/consents',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsPostRequest.headers
+          },
+          payload: {
+            ...mockData.consentsPostRequest.payload
+          }
+        }
+        delete request.payload.id
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'id\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentsRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('POST /consentsRequests', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('posts successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/consentRequests',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPostRequest.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPostRequest.payload
+          }
+        }
+        const expected = [
+          '/consentRequests',
+          'TP_CB_URL_CONSENT_REQUEST_POST',
+          expect.objectContaining(request.headers),
+          'POST',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/consentRequests',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPostRequest.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPostRequest.payload
+          }
+        }
+        delete request.payload.initiatorId
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'initiatorId\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentRequestsRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /consentRequests', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('puts /consentRequests/{{ID}} web payload successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPutRequestWeb.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPutRequestWeb.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consentRequests/{{ID}}',
+          'TP_CB_URL_CONSENT_REQUEST_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('puts /consentRequests/{{ID}} web auth payload successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPutRequestWebAuth.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPutRequestWebAuth.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consentRequests/{{ID}}',
+          'TP_CB_URL_CONSENT_REQUEST_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('puts /consentRequests/{{ID}} otp payload successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPutRequestOTP.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPutRequestOTP.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consentRequests/{{ID}}',
+          'TP_CB_URL_CONSENT_REQUEST_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('puts /consentRequests/{{ID}} otp auth payload successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPutRequestOTPAuth.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPutRequestOTPAuth.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consentRequests/{{ID}}',
+          'TP_CB_URL_CONSENT_REQUEST_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPutRequestWeb.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPutRequestWeb.payload
+          }
+        }
+        delete request.payload.initiatorId
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'initiatorId\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentRequestsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
     describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
