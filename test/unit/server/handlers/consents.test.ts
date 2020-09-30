@@ -22,52 +22,49 @@
 
  --------------
  ******/
+'use strict'
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
-import * as ConsentRequests from '~/domain/consentRequests'
+import ConsentsHandler from '~/server/handlers/consents'
+import * as Consents from '~/domain/consents'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
-import ConsentRequestsIdHandler from '~/server/handlers/consentRequests/{ID}'
 
-const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+
+const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-
-const putConsentRequestsIdRequestWeb = {
+const postConsentsRequest = {
   headers: {
     'fspiop-source': 'dfspA',
     'fspiop-destination': 'pispA'
   },
-  params: {
-    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
-  },
   payload: {
-    id: 'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+    id: 'b23428b9-43f6-12ba-f5c4-74527d5740fe',
+    requestId: 'a45238b9-99z4-12ba-f5c4-73245d5740fe',
     initiatorId: 'pispA',
-    authChannels: ['WEB'],
+    participantId: 'dfspA',
     scopes: [
       {
         accountId: 'dfspa.username.1234',
-        scope: 'accounts.transfer'
+        actions: [ 'accounts.transfer', 'accounts.getBalance' ]
       }
-    ],
-    callbackUri:'pisp-app://callback.com',
-    authUri:'dfspa.com/authorize?consentRequestId=b82348b9-81f6-42ea-b5c4-80667d5740fe'
+    ]
   }
 }
 
-const mockForwardConsentRequestsIdRequestExpectedWeb = [
-  'b82348b9-81f6-42ea-b5c4-80667d5740fe',
-  '/consentRequests/{{ID}}',
-  'TP_CB_URL_CONSENT_REQUEST_PUT',
-  putConsentRequestsIdRequestWeb.headers,
-  'PUT',
-  putConsentRequestsIdRequestWeb.payload,
+const postConsentsRequestExpected = [
+  '/consents',
+  'TP_CB_URL_CONSENT_POST',
+  postConsentsRequest.headers,
+  'POST',
+  postConsentsRequest.payload,
   undefined
 ]
 
-describe('consentRequests handler', () => {
-  describe('PUT /consentRequests/{ID}', () => {
+
+describe('consents handler', () => {
+  describe('POST /consents', () => {
     beforeEach((): void => {
       jest.clearAllMocks()
       mockLoggerPush.mockReturnValue(null)
@@ -76,26 +73,26 @@ describe('consentRequests handler', () => {
 
     it('handles a successful request', async () => {
       // Arrange
-      mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
-      const request = putConsentRequestsIdRequestWeb
-      const expected = mockForwardConsentRequestsIdRequestExpectedWeb
+      mockForwardConsentsRequest.mockResolvedValueOnce()
+      const request = postConsentsRequest
+      const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      mockForwardConsentRequestsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
-      const request = putConsentRequestsIdRequestWeb
-      const expected = mockForwardConsentRequestsIdRequestExpectedWeb
+      mockForwardConsentsRequest.mockRejectedValueOnce(new Error('Test Error'))
+      const request = postConsentsRequest
+      const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -103,20 +100,20 @@ describe('consentRequests handler', () => {
       // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles validation errors synchronously', async () => {
       // Arrange
       const request = {
-        ...putConsentRequestsIdRequestWeb,
+        ...postConsentsRequest,
         // Will setting the span to null do stuff?
         span: {
         }
       }
 
       // Act
-      const action = async () => await ConsentRequestsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () => await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

@@ -5,14 +5,13 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import * as ConsentRequests from '~/domain/consentRequests'
-import { ConsentRequestsId } from '~/domain/consentRequests/'
 import TestData from 'test/unit/data/mockData.json'
 
 const featurePath = path.join(__dirname, '../features/consentRequests.feature')
 const feature = loadFeature(featurePath)
 
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
-const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -94,7 +93,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestWeb.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -134,9 +133,9 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestWebAuth.payload,
-        undefined
+        expect.any(Object)
       ]
-      console.log(response)
+
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
       expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
@@ -174,7 +173,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestOTP.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
@@ -214,7 +213,7 @@ defineFeature(feature, (test): void => {
         expect.objectContaining(request.headers),
         'PUT',
         mockData.consentRequestsPutRequestOTPAuth.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
