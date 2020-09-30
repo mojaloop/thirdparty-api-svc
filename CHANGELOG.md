@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.8.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.7.0...v11.8.0) (2020-09-30)
+
+
+### Features
+
+* add post consents handler ([#32](https://github.com/mojaloop/thirdparty-api-adapter/issues/32)) ([fca9418](https://github.com/mojaloop/thirdparty-api-adapter/commit/fca94181437c129c91cdf5a4cff44ca091c7db81))
+
 ## [11.7.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.6.4...v11.7.0) (2020-09-28)
 
 
