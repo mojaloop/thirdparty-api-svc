@@ -25,11 +25,11 @@
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
-import { ConsentRequestsId } from '~/domain/consentRequests/'
+import * as ConsentRequests from '~/domain/consentRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ConsentRequestsIdHandler from '~/server/handlers/consentRequests/{ID}'
 
-const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 

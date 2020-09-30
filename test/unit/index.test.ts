@@ -33,13 +33,12 @@ import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
 import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
-import { ConsentRequestsId } from '~/domain/consentRequests/'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
-const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequestsId, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))

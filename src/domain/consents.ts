@@ -36,6 +36,7 @@ import {
 import Config from '~/shared/config'
 import { inspect } from 'util'
 import {
+  APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
@@ -43,8 +44,64 @@ import {
 import { finishChildSpan } from '~/shared/util'
 // eslint-disable-next-line import/no-unresolved
 import * as types from '~/interface/types'
-// eslint-disable-next-line import/no-unresolved
-import { forwardConsentsIdRequestError } from '~/domain/consents/{ID}'
+
+/**
+ * @function forwardConsentsIdRequestError
+ * @description Generic function to handle sending `PUT .../consents/error` back to the FSPIOP-Source
+ * @param {string} path Callback endpoint path
+ * @param {string} consentsId the ID of the consents request
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {APIErrorObject} error Error details
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+export async function forwardConsentsIdRequestError (
+  path: string,
+  consentsId: string,
+  headers: HapiUtil.Dictionary<string>,
+  error: APIErrorObject,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  span?: any): Promise<void> {
+  const childSpan = span?.getChild('forwardConsentsRequestError')
+  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
+
+  try {
+    const endpoint = await Util.Endpoints.getEndpoint(
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
+      endpointType)
+    Logger.info(`consents::forwardConsentsRequestError - Resolved destinationDfsp endpoint: ${endpointType}to: ${inspect(endpoint)}`)
+    const url: string = Mustache.render(endpoint + path, { ID: consentsId })
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      Enum.Http.RestMethods.PUT,
+      error,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`consents::forwardConsentsRequestError - Forwarded consents error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
+  } catch (err) {
+    Logger.error(`consents::forwardConsentsRequestError - Error forwarding consents error to endpoint: ${inspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
+    }
+    throw fspiopError
+  }
+}
 
 /**
  * @function forwardConsentsRequest

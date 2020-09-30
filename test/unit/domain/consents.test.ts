@@ -217,3 +217,52 @@ describe('domain/consents', () => {
     })
   })
 })
+
+describe('domain/consents/{ID}', () => {
+  describe('forwardConsentsIdRequestError', () => {
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT_ERROR
+
+    beforeEach((): void => {
+      jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    it('forwards the PUT /consents/{ID} error', async () => {
+      // Arrange
+      mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
+      mockSendRequest.mockResolvedValue({ status: 202, payload: null })
+      const headers = {
+        'fspiop-source': 'switch',
+        'fspiop-destination': 'dfspA'
+      }
+      const id = '123456'
+      const fspiopError = ReformatFSPIOPError(new Error('Test Error'))
+      const payload = fspiopError.toApiErrorObject(true, true)
+      const getEndpointErrorExpected = [
+        'http://central-ledger.local:3001',
+        'dfspA',
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
+      ]
+      const sendRequestErrorExpected = [
+        'http://dfspa-sdk/consents/123456/error',
+        headers,
+        'switch',
+        'dfspA',
+        Enum.Http.RestMethods.PUT,
+        payload,
+        Enum.Http.ResponseTypes.JSON,
+        undefined
+      ]
+
+      // Act
+      await Consents.forwardConsentsIdRequestError(
+        path, id, headers, payload
+      )
+
+      // Assert
+      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointErrorExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
+    })
+  })
+})

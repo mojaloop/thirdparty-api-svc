@@ -31,7 +31,7 @@ import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
-import { forwardConsentRequestsIdRequest } from '~/domain/consentRequests/{ID}'
+import { forwardConsentRequestsIdRequest } from '~/domain/consentRequests'
 
 
 /**
