@@ -29,7 +29,10 @@ RUN adduser -D ml-user
 USER ml-user
 
 COPY --chown=ml-user --from=builder /opt/thirdparty-api-adapter .
-RUN npm prune --production
+
+# skip this step for now - in the future we need to properly compile to js
+# but before then, we still need ts-node and friends
+# RUN npm prune --production
 
 EXPOSE 3008
 CMD ["npm", "run", "start"]
