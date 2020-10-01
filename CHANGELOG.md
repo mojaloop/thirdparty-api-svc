@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.8.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.1...v11.8.2) (2020-10-01)
+
+
+### Bug Fixes
+
+* **ci:** publish step missing image cache ([#35](https://github.com/mojaloop/thirdparty-api-adapter/issues/35)) ([7e687a0](https://github.com/mojaloop/thirdparty-api-adapter/commit/7e687a0b236c07eb1619c86a168f0f372d4b2029))
+
 ### [11.8.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.0...v11.8.1) (2020-10-01)
 
 
