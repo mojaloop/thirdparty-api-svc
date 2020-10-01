@@ -36,7 +36,6 @@ import {
   Util,
   RestMethodsEnum
 } from '@mojaloop/central-services-shared'
-import Mustache from 'mustache'
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
 import { getStackOrInspect, finishChildSpan } from '~/shared/util'
@@ -71,13 +70,13 @@ async function forwardTransactionRequest(
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       fspiopDest,
-      endpointType)
-    Logger.info(`transactions::forwardTransactionRequest - Resolved PAYER party ${endpointType} endpoint for transactionRequest
-     ${transactionRequestId} to: ${inspect(endpoint)}`)
-    const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+      endpointType,
+      path,
+      {}
+    )
     Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
     await Util.Request.sendRequest(
       fullUrl,
@@ -142,14 +141,13 @@ async function forwardTransactionRequestError(
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       fspiopDestination,
-      endpointType)
-    Logger.info(`transactions::forwardTransactionRequestError - Resolved PAYER party ${endpointType} endpoint for transactionRequest
-      ${transactionRequestId} to: ${inspect(endpoint)}`)
-
-    const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+      endpointType,
+      path,
+      { ID: transactionRequestId }
+    )
     Logger.info(`transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${fullUrl}`)
 
     await Util.Request.sendRequest(
@@ -202,15 +200,13 @@ async function forwardTransactionRequestNotification(
   const decodedPayload: object = Util.StreamingProtocol.decodePayload(payload, { asParsed: true })
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       fspiopDestination,
-      endpointType)
-    Logger.info(`transactions::forwardTransactionRequestNotification -
-      Resolved PISP party ${endpointType} endpoint for transactionRequest
-      ${transactionRequestId} to: ${inspect(endpoint)}`)
-
-    const fullUrl: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+      endpointType,
+      path,
+      { ID: transactionRequestId }
+    )
     Logger.info(`transactions::forwardTransactionRequestNotification -
       Forwarding transaction request to endpoint: ${fullUrl}`)
 

@@ -23,7 +23,6 @@
  --------------
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
-import Mustache from 'mustache'
 import Logger from '@mojaloop/central-services-logger'
 
 import {
@@ -71,12 +70,12 @@ export async function forwardConsentRequestsIdRequestError (
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType)
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Resolved destinationDfsp endpoint: ${endpointType}to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, { ID: consentRequestsRequestId })
+      endpointType,
+      path,
+      { ID: consentRequestsRequestId })
     Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
@@ -129,13 +128,12 @@ export async function forwardConsentRequestsRequest (
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType
-    )
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Resolved destination party ${endpointType} endpoint to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, {})
+      endpointType,
+      path,
+      {})
     Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
@@ -204,13 +202,12 @@ export async function forwardConsentRequestsIdRequest (
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType
-    )
-    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Resolved destination party ${endpointType} for consentRequest ${consentRequestsRequestId} endpoint to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, { ID: consentRequestsRequestId })
+      endpointType,
+      path,
+      { ID: consentRequestsRequestId })
     Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`)
 
     await Util.Request.sendRequest(

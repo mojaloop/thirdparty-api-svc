@@ -131,8 +131,8 @@ export async function forwardConsentsRequest (
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
       endpointType,
-      path)
-    console.log(url)
+      path
+    )
     Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
