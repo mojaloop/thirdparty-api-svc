@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.8.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.0...v11.8.1) (2020-10-01)
+
+
+### Bug Fixes
+
+* **ci:** remove license scan and image scan since we can't prune the devDepencencies ([#34](https://github.com/mojaloop/thirdparty-api-adapter/issues/34)) ([666a6f9](https://github.com/mojaloop/thirdparty-api-adapter/commit/666a6f9ffaffb0ba8965cbfa38418db24eea8b3c))
+* **dockerfile:** remove npm prune step ([#33](https://github.com/mojaloop/thirdparty-api-adapter/issues/33)) ([d281ae0](https://github.com/mojaloop/thirdparty-api-adapter/commit/d281ae022f5d2f2936082cf7daf4266c1cb21339))
+
 ## [11.8.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.7.0...v11.8.0) (2020-09-30)
 
 
