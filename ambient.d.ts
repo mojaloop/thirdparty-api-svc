@@ -198,7 +198,7 @@ declare module '@mojaloop/central-services-stream' {
 declare module '@hapi/good'
 declare module 'hapi-openapi'
 declare module 'blipp'
-declare module '@mojaloop/central-services-shared'
+
 declare module 'canonical-json' {
   export type ReplacerFunc = ((this: unknown, key: unknown, value: unknown) => unknown)
   export default function stringify(value: unknown, replacer?: ReplacerFunc, space?: string | number): string
