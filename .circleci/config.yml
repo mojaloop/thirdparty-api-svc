@@ -566,6 +566,7 @@ workflows:
       - publish:
           context: org-global
           requires:
+            - build-local
             # - license-scan
             # - image-scan
             - test-unit
