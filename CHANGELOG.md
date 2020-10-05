@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.8.3](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.2...v11.8.3) (2020-10-05)
+
+
+### Code Refactor
+
+* refactor getEndpoint and render ([#36](https://github.com/mojaloop/thirdparty-api-adapter/issues/36)) ([64a810c](https://github.com/mojaloop/thirdparty-api-adapter/commit/64a810c1b2fbf84c73128527e876fc4aea965f31))
+
 ### [11.8.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.1...v11.8.2) (2020-10-01)
 
 
