@@ -25,7 +25,6 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import Mustache from 'mustache'
 import Logger from '@mojaloop/central-services-logger'
 
 import {
@@ -70,13 +69,13 @@ export async function forwardAuthorizationRequest(
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType
+      endpointType,
+      path,
+      { ID: transactionRequestId }
     )
-    Logger.info(`authorizations::forwardAuthorizationRequest - Resolved destination party ${endpointType} endpoint for thirdpartyTransaction: ${transactionRequestId} to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
     Logger.info(`authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
@@ -142,12 +141,13 @@ export async function forwardAuthorizationRequestError(path: string,
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType)
-    Logger.info(`authorizations::forwardAuthorizationRequestError - Resolved destinationDfsp endpoint: ${endpointType} for transactionRequest${transactionRequestId} to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, { ID: transactionRequestId })
+      endpointType,
+      path,
+      { ID: transactionRequestId }
+    )
     Logger.info(`authorizations::forwardAuthorizationRequestError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(

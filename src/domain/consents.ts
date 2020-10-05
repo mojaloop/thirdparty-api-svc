@@ -22,7 +22,6 @@
  --------------
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
-import Mustache from 'mustache'
 import Logger from '@mojaloop/central-services-logger'
 
 import {
@@ -70,12 +69,12 @@ export async function forwardConsentsIdRequestError (
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
 
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType)
-    Logger.info(`consents::forwardConsentsRequestError - Resolved destinationDfsp endpoint: ${endpointType}to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, { ID: consentsId })
+      endpointType,
+      path,
+      { ID: consentsId })
     Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
@@ -128,14 +127,13 @@ export async function forwardConsentsRequest (
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
-    const endpoint = await Util.Endpoints.getEndpoint(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
       destinationDfspId,
-      endpointType
+      endpointType,
+      path
     )
-    Logger.info(`consents::forwardConsentsRequest - Resolved destination party ${endpointType} endpoint to: ${inspect(endpoint)}`)
-    const url: string = Mustache.render(endpoint + path, {})
-    Logger.info(`consents::forwardConsentsRequest - Forwarding consents to endpoint: ${url}`)
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,

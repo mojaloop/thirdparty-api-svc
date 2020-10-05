@@ -33,7 +33,7 @@ import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Span from 'test/unit/__mocks__/span'
 import * as types from '~/interface/types'
 
-const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
+const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -53,7 +53,7 @@ describe('domain/authorizations', () => {
 
     it('forwards the POST `thirdpartyRequests/transactions/{id}/authorizations request', async () => {
       // Arrange
-      mockGetEndpoint.mockResolvedValue('http://auth-service.local')
+      mockGetEndpointAndRender.mockResolvedValue('http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'pispA',
@@ -68,10 +68,12 @@ describe('domain/authorizations', () => {
         status: types.AuthorizationStatus.PENDING
       }
 
-      const getEndpointExpected = [
+      const getEndpointAndRenderExpected = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -89,13 +91,13 @@ describe('domain/authorizations', () => {
       await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
     })
 
-    it('handles `getEndpoint` failure', async () => {
+    it('handles `getEndpointAndRender` failure', async () => {
       // Arrange
-      mockGetEndpoint
+      mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispA.local')
       const headers = {
@@ -112,15 +114,19 @@ describe('domain/authorizations', () => {
       }
       const mockSpan = new Span()
 
-      const getEndpointExpectedFirst = [
+      const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
-      const getEndpointExpectedSecond = [
+      const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        errorEndpointType
+        errorEndpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations/error",
+        {"ID": "123456"}
       ]
 
       // Act
@@ -128,8 +134,8 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
       // Children's children in `forwardAuthorizationRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -138,9 +144,9 @@ describe('domain/authorizations', () => {
       expect(mockSpan.child?.error).toHaveBeenCalledTimes(1)
     })
 
-    it('handles `getEndpoint` failure twice', async () => {
+    it('handles `getEndpointAndRender` failure twice', async () => {
       // Arrange
-      mockGetEndpoint
+      mockGetEndpointAndRender
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
       const headers = {
@@ -156,15 +162,19 @@ describe('domain/authorizations', () => {
         status: types.AuthorizationStatus.PENDING
       }
 
-      const getEndpointExpectedFirst = [
+      const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
-      const getEndpointExpectedSecond = [
+      const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        errorEndpointType
+        errorEndpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations/error",
+        {"ID": "123456"}
       ]
 
       // Act
@@ -172,15 +182,15 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
     })
 
     it('handles `sendRequest` failure', async () => {
       // Arrange
-      mockGetEndpoint
-        .mockResolvedValueOnce('http://auth-service.local')
-        .mockResolvedValueOnce('http://pispA.local')
+      mockGetEndpointAndRender
+        .mockResolvedValueOnce('http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations')
+        .mockResolvedValueOnce('http://pispA.local/thirdpartyRequests/transactions/123456/authorizations/error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
         .mockResolvedValue({ status: 202, payload: null })
@@ -199,15 +209,19 @@ describe('domain/authorizations', () => {
       const mockSpan = new Span()
       const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
 
-      const getEndpointExpectedFirst = [
+      const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
-      const getEndpointExpectedSecond = [
+      const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        errorEndpointType
+        errorEndpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations/error",
+        {"ID": "123456"}
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -235,8 +249,8 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedFirst)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedSecond)
       // Children's children in `forwardAuthorizationRequestError()`
@@ -249,9 +263,9 @@ describe('domain/authorizations', () => {
 
     it('handles `sendRequest` failure twice', async (): Promise<void> => {
       // Arrange
-      mockGetEndpoint
-        .mockResolvedValueOnce('http://auth-service.local')
-        .mockResolvedValueOnce('http://pispA.local')
+      mockGetEndpointAndRender
+        .mockResolvedValueOnce('http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations')
+        .mockResolvedValueOnce('http://pispA.local/thirdpartyRequests/transactions/123456/authorizations/error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
@@ -269,15 +283,19 @@ describe('domain/authorizations', () => {
       }
       const errorPayload =
         ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
-      const getEndpointExpectedFirst = [
+      const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
-      const getEndpointExpectedSecond = [
+      const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
-        errorEndpointType
+        errorEndpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations/error",
+        {"ID": "123456"}
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -305,8 +323,8 @@ describe('domain/authorizations', () => {
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedFirst)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedFirst)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedSecond)
     })
@@ -323,7 +341,7 @@ describe('domain/authorizations', () => {
 
     it('forwards the POST /../authorization error', async () => {
       // Arrange
-      mockGetEndpoint.mockResolvedValue('http://pisp.local')
+      mockGetEndpointAndRender.mockResolvedValue('http://pisp.local/thirdpartyRequests/transactions/123456/authorizations/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'switch',
@@ -332,10 +350,12 @@ describe('domain/authorizations', () => {
       const id = '123456'
       const fspiopError = ReformatFSPIOPError(new Error('Test Error'))
       const payload = fspiopError.toApiErrorObject(true, true)
-      const getEndpointExpected = [
+      const getEndpointAndRenderExpected = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations/error",
+        {"ID": "123456"}
       ]
       const sendRequestExpected = [
         'http://pisp.local/thirdpartyRequests/transactions/123456/authorizations/error',
@@ -352,7 +372,7 @@ describe('domain/authorizations', () => {
       await Authorizations.forwardAuthorizationRequestError(path, headers, id, payload)
 
       // Assert
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
     })
   })
@@ -382,13 +402,15 @@ describe('domain/authorizations', () => {
         status: types.AuthorizationStatus.VERIFIED
       }
       // Arrange
-      mockGetEndpoint.mockResolvedValue('http://auth-service.local')
+      mockGetEndpointAndRender.mockResolvedValue('http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
 
-      const getEndpointExpected = [
+      const getEndpointAndRenderExpected = [
         'http://central-ledger.local:3001',
         'dfspA',
-        endpointType
+        endpointType,
+        "/thirdpartyRequests/transactions/{{ID}}/authorizations",
+        {"ID": "123456"}
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations',
@@ -406,7 +428,7 @@ describe('domain/authorizations', () => {
       await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
 
       // Assert
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
     })
   })

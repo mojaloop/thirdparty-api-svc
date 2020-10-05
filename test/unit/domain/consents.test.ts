@@ -30,7 +30,7 @@ import Span from 'test/unit/__mocks__/span'
 import  * as Consents from '~/domain/consents'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 
-const mockGetEndpoint = jest.spyOn(Util.Endpoints, 'getEndpoint')
+const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -40,13 +40,16 @@ const request = mockData.consentsPostRequest
 const getEndpointExpected = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
+  "/consents",
 ]
 
 const getEndpointExpectedSecond = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-source'],
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR,
+  "/consents/{{ID}}/error",
+  {"ID": "7b24ea42-6fdd-45f5-999e-0a6981c4198b"}
 ]
 
 const expectedErrorHeaders = {
@@ -75,7 +78,7 @@ describe('domain/consents', () => {
 
     it('forwards POST /consents request', async (): Promise<void> => {
       const mockSpan = new Span()
-      mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Consents.forwardConsentsRequest(
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
@@ -86,14 +89,14 @@ describe('domain/consents', () => {
         mockSpan
       )
 
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
     })
 
 
     it('handles `getEndpoint` failure', async (): Promise<void> => {
       const mockSpan = new Span()
-      mockGetEndpoint
+      mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispa-sdk')
 
@@ -107,8 +110,8 @@ describe('domain/consents', () => {
       )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -118,7 +121,7 @@ describe('domain/consents', () => {
     })
 
     it('handles `getEndpoint` failure twice', async (): Promise<void> => {
-      mockGetEndpoint
+      mockGetEndpointAndRender
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
@@ -131,8 +134,8 @@ describe('domain/consents', () => {
       )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
 
@@ -151,9 +154,9 @@ describe('domain/consents', () => {
         expect.objectContaining({ isFinished: false })
       ]
 
-      mockGetEndpoint
-        .mockResolvedValueOnce('http://dfspa-sdk')
-        .mockResolvedValue('http://pispa-sdk')
+      mockGetEndpointAndRender
+        .mockResolvedValueOnce('http://dfspa-sdk/consents')
+        .mockResolvedValue('http://pispa-sdk/consents/' + request.payload.id + '/error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
         .mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
@@ -167,8 +170,8 @@ describe('domain/consents', () => {
         mockSpan
       )
       await expect(action).rejects.toThrow('Failed to send HTTP request')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
@@ -193,9 +196,9 @@ describe('domain/consents', () => {
         Enum.Http.ResponseTypes.JSON,
         expect.objectContaining({ isFinished: false })
       ]
-      mockGetEndpoint
-        .mockResolvedValueOnce('http://dfspa-sdk')
-        .mockResolvedValue('http://pispa-sdk')
+      mockGetEndpointAndRender
+        .mockResolvedValueOnce('http://dfspa-sdk/consents')
+        .mockResolvedValue('http://pispa-sdk/consents/' + request.payload.id + '/error',)
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
@@ -210,8 +213,8 @@ describe('domain/consents', () => {
       )
 
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpected)
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointExpectedSecond)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
     })
@@ -230,22 +233,24 @@ describe('domain/consents/{ID}', () => {
 
     it('forwards the PUT /consents/{ID} error', async () => {
       // Arrange
-      mockGetEndpoint.mockResolvedValue('http://dfspa-sdk')
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'switch',
         'fspiop-destination': 'dfspA'
       }
-      const id = '123456'
+      const id = '7b24ea42-6fdd-45f5-999e-0a6981c4198b'
       const fspiopError = ReformatFSPIOPError(new Error('Test Error'))
       const payload = fspiopError.toApiErrorObject(true, true)
       const getEndpointErrorExpected = [
         'http://central-ledger.local:3001',
         'dfspA',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR,
+        "/consents/{{ID}}/error",
+        {"ID": "7b24ea42-6fdd-45f5-999e-0a6981c4198b"}
       ]
       const sendRequestErrorExpected = [
-        'http://dfspa-sdk/consents/123456/error',
+        'http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error',
         headers,
         'switch',
         'dfspA',
@@ -261,7 +266,7 @@ describe('domain/consents/{ID}', () => {
       )
 
       // Assert
-      expect(mockGetEndpoint).toHaveBeenCalledWith(...getEndpointErrorExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointErrorExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
     })
   })
