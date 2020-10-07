@@ -256,11 +256,11 @@ export async function forwardConsentsIdGenerateChallengeRequest (
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspAuthServiceId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspAuthServiceId,
+      destinationDfspId,
       endpointType,
       path,
       { ID: consentsIdGenerateChallengeRequestId }
@@ -271,14 +271,14 @@ export async function forwardConsentsIdGenerateChallengeRequest (
       url,
       headers,
       sourceDfspId,
-      destinationDfspAuthServiceId,
+      destinationDfspId,
       method,
       payload,
       Enum.Http.ResponseTypes.JSON,
       childSpan
     )
 
-    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspAuthServiceId}`)
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
