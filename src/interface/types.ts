@@ -166,3 +166,9 @@ export interface ConsentsPayload {
   participantId: string;
   scopes: Scope[];
 }
+/**
+* used for consents generate challenge requests
+*/
+export interface ConsentsGenerateChallengePayload {
+  type: string;
+}

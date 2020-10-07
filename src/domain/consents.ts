@@ -63,7 +63,7 @@ export async function forwardConsentsIdRequestError (
   error: APIErrorObject,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardConsentsRequestError')
+  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
@@ -75,7 +75,7 @@ export async function forwardConsentsIdRequestError (
       endpointType,
       path,
       { ID: consentsId })
-    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -162,6 +162,137 @@ export async function forwardConsentsRequest (
     await forwardConsentsIdRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT_ERROR,
       payload.id,
+      errorHeaders,
+      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      childSpan
+    )
+
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
+    }
+    throw fspiopError
+  }
+}
+
+/**
+ * @function forwardConsentsIdGenerateChallengeError
+ * @description Generic function to handle sending `PUT .../consents/{ID}/generateChallenge/error` back to the FSPIOP-Source
+ * @param {string} path Callback endpoint path
+ * @param {string} consentsId the ID of the consents request
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {APIErrorObject} error Error details
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the request is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+export async function forwardConsentsIdGenerateChallengeError (
+  path: string,
+  consentsId: string,
+  headers: HapiUtil.Dictionary<string>,
+  error: APIErrorObject,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  span?: any): Promise<void> {
+  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequestError')
+  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_GENERATE_CHALLENGE_PUT_ERROR
+
+  try {
+    const url = await Util.Endpoints.getEndpointAndRender(
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
+      endpointType,
+      path,
+      { ID: consentsId })
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequestError - Forwarding consents error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      Enum.Http.RestMethods.PUT,
+      error,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`consents::forwardConsentsRequestError - Forwarded consents error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
+  } catch (err) {
+    Logger.error(`consents::forwardConsentsRequestError - Error forwarding consents error to endpoint: ${inspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
+    }
+    throw fspiopError
+  }
+}
+
+/**
+ * @function forwardConsentsIdGenerateChallengeRequest
+ * @description Forwards a /consents/{ID}/generateChallenge request
+ * @param {string} path Callback endpoint path
+ * @param {FspEndpointTypesEnum} path Callback endpoint template
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {RestMethodsEnum} method The http method POST
+ * @param {object} payload Body of the request
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the consents generate challenge requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+export async function forwardConsentsIdGenerateChallengeRequest (
+  consentsIdGenerateChallengeRequestId: string,
+  path: string,
+  endpointType: FspEndpointTypesEnum,
+  headers: HapiUtil.Dictionary<string>,
+  method: RestMethodsEnum,
+  payload: types.ConsentsGenerateChallengePayload,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  span?: any): Promise<void> {
+  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequest')
+  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  try {
+    const url = await Util.Endpoints.getEndpointAndRender(
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
+      endpointType,
+      path,
+      { ID: consentsIdGenerateChallengeRequestId }
+    )
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequestError - Forwarding consents error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      method,
+      payload,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
+  } catch (err) {
+    Logger.error(`consents::forwardConsentsIdGenerateChallengeRequest - Error forwarding consents to endpoint: ${inspect(err)}`)
+    const errorHeaders = {
+      ...headers,
+      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+      'fspiop-destination': sourceDfspId
+    }
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    await forwardConsentsIdGenerateChallengeError(
+      Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_GENERATE_CHALLENGE_PUT_ERROR,
+      consentsIdGenerateChallengeRequestId,
       errorHeaders,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan
