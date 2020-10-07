@@ -73,8 +73,8 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
       span
     )
     .catch((err: any) => {
-        // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
-        Logger.error('ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error')
+        // Do nothing with the error - forwardConsentsIdGenerateChallengeRequest takes care of async errors
+        Logger.error('ConsentsGenerateChallenge::post - forwardConsentsIdGenerateChallengeRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
       })
 

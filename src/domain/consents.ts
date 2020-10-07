@@ -63,7 +63,7 @@ export async function forwardConsentsIdRequestError (
   error: APIErrorObject,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequestError')
+  const childSpan = span?.getChild('forwardConsentsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
@@ -75,7 +75,7 @@ export async function forwardConsentsIdRequestError (
       endpointType,
       path,
       { ID: consentsId })
-    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequestError - Forwarding consents error callback to endpoint: ${url}`)
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -193,7 +193,7 @@ export async function forwardConsentsIdGenerateChallengeError (
   error: APIErrorObject,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardConsentsRequestError')
+  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_GENERATE_CHALLENGE_PUT_ERROR
@@ -205,7 +205,7 @@ export async function forwardConsentsIdGenerateChallengeError (
       endpointType,
       path,
       { ID: consentsId })
-    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -218,12 +218,12 @@ export async function forwardConsentsIdGenerateChallengeError (
       childSpan
     )
 
-    Logger.info(`consents::forwardConsentsRequestError - Forwarded consents error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`consents::forwardConsentsIdGenerateChallengeError - Forwarded consents error callback: from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consents::forwardConsentsRequestError - Error forwarding consents error to endpoint: ${inspect(err)}`)
+    Logger.error(`consents::forwardConsentsIdGenerateChallengeError - Error forwarding consents error to endpoint: ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
