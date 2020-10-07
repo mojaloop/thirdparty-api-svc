@@ -193,7 +193,7 @@ export async function forwardConsentsIdGenerateChallengeError (
   error: APIErrorObject,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-  const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequestError')
+  const childSpan = span?.getChild('forwardConsentsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_GENERATE_CHALLENGE_PUT_ERROR
@@ -205,7 +205,7 @@ export async function forwardConsentsIdGenerateChallengeError (
       endpointType,
       path,
       { ID: consentsId })
-    Logger.info(`consents::forwardConsentsIdGenerateChallengeRequestError - Forwarding consents error callback to endpoint: ${url}`)
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
