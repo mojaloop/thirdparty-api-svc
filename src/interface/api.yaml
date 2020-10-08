@@ -905,6 +905,73 @@ paths:
           $ref: '#/paths/~1health/get/responses/501'
         '503':
           $ref: '#/paths/~1health/get/responses/503'
+  '/consents/{ID}/generateChallenge':
+    post:
+      tags:
+        - consents
+        - sampled
+      operationId: GenerateChallengeRequest
+      summary: GenerateChallengeRequest
+      description: |
+        PISP requests a challenge from the auth service.
+
+        PISP -> Switch
+      parameters:
+        - $ref: '#/paths/~1consentRequests~1%7BID%7D/put/parameters/0'
+        - $ref: '#/paths/~1consents/post/parameters/0'
+        - $ref: '#/paths/~1consents/post/parameters/1'
+        - $ref: '#/paths/~1consents/post/parameters/2'
+        - $ref: '#/paths/~1consents/post/parameters/3'
+        - $ref: '#/paths/~1consents/post/parameters/4'
+        - $ref: '#/paths/~1consents/post/parameters/5'
+        - $ref: '#/paths/~1consents/post/parameters/6'
+        - $ref: '#/paths/~1consents/post/parameters/7'
+        - $ref: '#/paths/~1consents/post/parameters/8'
+        - $ref: '#/paths/~1consents/post/parameters/9'
+        - $ref: '#/paths/~1consents/post/parameters/10'
+      requestBody:
+        description: GenerateChallengeRequest Body
+        required: true
+        content:
+          application/json:
+            schema:
+              title: ConsentsIDGenerateChallengePostRequest
+              type: object
+              description: |
+                A credential used to allow a user to prove their identity
+                and access to an account with a DFSP.
+              properties:
+                type:
+                  title: CredentialType
+                  type: string
+                  enum:
+                    - FIDO
+                  description: |
+                    The type of the Credential.
+                    - "FIDO" - A FIDO public/private keypair.
+              required:
+                - type
+            example:
+              type: FIDO
+      responses:
+        '202':
+          $ref: '#/paths/~1consents/post/responses/202'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
 components:
   schemas:
     AccountId:

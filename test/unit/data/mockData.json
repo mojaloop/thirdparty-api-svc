@@ -298,5 +298,15 @@
         }
       ]
     }
+  },
+  "consentsGenerateChallengeRequest": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "auth.dfspa"
+    },
+    "params": {},
+    "payload": {
+      "type": "FIDO"
+    }
   }
 }

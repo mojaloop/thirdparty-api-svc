@@ -39,6 +39,7 @@ const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAutho
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -674,6 +675,81 @@ describe('index', (): void => {
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardConsentRequestsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('POST /consents/{{ID}}/generateChallenge', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('posts /consents/{{ID}}/generateChallenge payload successfully', async (): Promise<void> => {
+        mockForwardConsentsIdGenerateChallengeRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsGenerateChallengeRequest.headers
+          },
+          payload: {
+            ...mockData.consentsGenerateChallengeRequest.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consents/{{ID}}/generateChallenge',
+          'TP_CB_URL_CONSENT_GENERATE_CHALLENGE_POST',
+          expect.objectContaining(request.headers),
+          'POST',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentsIdGenerateChallengeRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'POST',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsGenerateChallengeRequest.headers
+          },
+          payload: {
+            ...mockData.consentsGenerateChallengeRequest.payload
+          }
+        }
+        delete request.payload.type
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'type\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentsIdGenerateChallengeRequest).not.toHaveBeenCalled()
       })
     })
 
