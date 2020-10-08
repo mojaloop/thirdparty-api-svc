@@ -7,7 +7,7 @@ Scenario: CreateConsent
 
 Scenario: UpdateConsentTypeUnsigned
   Given thirdparty-api-adapter server
-  When I send a 'UpdateConsent' UpdateConsentTypeSigned request
+  When I send a 'UpdateConsent' UpdateConsentTypeUnsigned request
   Then I get a response with a status code of '202'
 
 Scenario: UpdateConsentTypeSigned

@@ -37,6 +37,7 @@ import * as ConsentRequests from '~/domain/consentRequests'
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
+const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
@@ -750,6 +751,82 @@ describe('index', (): void => {
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardConsentsIdGenerateChallengeRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /consents/{{ID}}', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('puts /consents/{{ID}} payload successfully', async (): Promise<void> => {
+        mockForwardConsentsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsIdPutRequestUnsigned.headers
+          },
+          payload: {
+            ...mockData.consentsIdPutRequestUnsigned.payload
+          }
+        }
+
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consents/{{ID}}',
+          'TP_CB_URL_CONSENT_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PUT',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentsIdPutRequestUnsigned.headers
+          },
+          payload: {
+            ...mockData.consentsIdPutRequestUnsigned.payload
+          }
+        }
+        delete request.payload.credential
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'credential\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentsIdRequest).not.toHaveBeenCalled()
       })
     })
 

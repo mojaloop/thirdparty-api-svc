@@ -978,6 +978,7 @@ paths:
       summary: UpdateConsent
       tags:
         - consent
+        - sampled
       operationId: UpdateConsent
       requestBody:
         required: true
