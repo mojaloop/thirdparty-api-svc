@@ -308,5 +308,86 @@
     "payload": {
       "type": "FIDO"
     }
+  },
+  "consentsIdPutRequestUnsigned": {
+    "headers": {
+      "fspiop-source": "auth.dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
+      "initiatorId": "pispA",
+      "participantId": "dfspA",
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "credential": {
+        "type": "FIDO",
+        "status": "PENDING",
+        "challenge": {
+          "payload": "challenge_payload"
+        }
+      }
+    }
+  },
+  "consentsIdPutRequestSigned": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "auth.dfspA"
+    },
+    "params": {},
+    "payload": {
+      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
+      "initiatorId": "pispA",
+      "participantId": "dfspA",
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "credential": {
+        "id": "71169e22-5ae3-4ef3-b919-98a8fbe32a92",
+        "type": "FIDO",
+        "status": "PENDING",
+        "challenge": {
+          "payload": "challenge_payload",
+          "signature": "challenge_signature"
+        },
+        "payload": "credential_payload"
+      }
+    }
+  },
+  "consentsIdPutRequestVerified": {
+    "headers": {
+      "fspiop-source": "auth.dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {},
+    "payload": {
+      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
+      "initiatorId": "pispA",
+      "participantId": "dfspA",
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+        }
+      ],
+      "credential": {
+        "id": "71169e22-5ae3-4ef3-b919-98a8fbe32a92",
+        "type": "FIDO",
+        "status": "VERIFIED",
+        "challenge": {
+          "payload": "challenge_payload",
+          "signature": "challenge_signature"
+        },
+        "payload": "credential_payload"
+      }
+    }
   }
 }
