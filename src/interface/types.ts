@@ -193,7 +193,7 @@ interface SignedCredential {
   type: string;
   status: string;
   challenge: CredentialChallengeSigned;
-  payload: string
+  payload: string;
 }
 
 interface CredentialChallengeUnsigned {

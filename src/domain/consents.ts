@@ -176,7 +176,6 @@ export async function forwardConsentsIdRequest (
   }
 }
 
-
 /**
  * @function forwardConsentsRequest
  * @description Forwards a /consents request
@@ -379,4 +378,3 @@ export async function forwardConsentsIdGenerateChallengeRequest (
     throw fspiopError
   }
 }
-
