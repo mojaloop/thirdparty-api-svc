@@ -29,6 +29,7 @@ import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
 import Consents from './consents'
+import ConsentsId from './consents/{ID}'
 import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
@@ -84,6 +85,14 @@ export default {
     [
       'consents_post',
       'Post consents request',
+      ['success']
+    ]
+  ),
+  UpdateConsent: wrapWithHistogram(
+    ConsentsId.put,
+    [
+      'consentsId_put',
+      'Put consentsId request',
       ['success']
     ]
   ),

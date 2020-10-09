@@ -294,7 +294,7 @@ paths:
       description: |
         The HTTP request `POST /thirdpartyRequests/transactions/{id}/authorizations` is used by the DFSP to verify a third party authorization.
       parameters:
-        - $ref: '#/paths/~1consentRequests~1%7BID%7D/put/parameters/0'
+        - $ref: '#/paths/~1consents~1%7BID%7D/put/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/1'
         - $ref: '#/paths/~1consents/post/parameters/2'
@@ -348,7 +348,7 @@ paths:
         The HTTP request `PUT /thirdpartyRequests/transactions/{id}/authorizations` is used by the auth-service to update a thirdparty authorization after successful validation.
         For an unsuccessful authorization result, the `PUT /thirdpartyRequests/transactions/{id}/authorizations/error` will be called by the auth-service, instead of this endpoint.
       parameters:
-        - $ref: '#/paths/~1consentRequests~1%7BID%7D/put/parameters/0'
+        - $ref: '#/paths/~1consents~1%7BID%7D/put/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/1'
         - $ref: '#/paths/~1consents/post/parameters/2'
         - $ref: '#/paths/~1consents/post/parameters/3'
@@ -500,12 +500,7 @@ paths:
         PISP updates the consentRequest to include authorization token from their user,
         which the DFSP is to then verify.
       parameters:
-        - name: ID
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The identifier value.
+        - $ref: '#/paths/~1consents~1%7BID%7D/put/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/1'
         - $ref: '#/paths/~1consents/post/parameters/2'
@@ -917,7 +912,7 @@ paths:
 
         PISP -> Switch
       parameters:
-        - $ref: '#/paths/~1consentRequests~1%7BID%7D/put/parameters/0'
+        - $ref: '#/paths/~1consents~1%7BID%7D/put/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/0'
         - $ref: '#/paths/~1consents/post/parameters/1'
         - $ref: '#/paths/~1consents/post/parameters/2'
@@ -954,6 +949,265 @@ paths:
             example:
               type: FIDO
       responses:
+        '202':
+          $ref: '#/paths/~1consents/post/responses/202'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
+  '/consents/{ID}':
+    put:
+      description: |
+        The HTTP request `PUT /consents/{ID}` is used by the PISP and Auth Service.
+
+        - Called by a `auth-service` to request PISP to add the credential details.
+        - Called by a `PISP` to after signing a challenge. Sent to an `auth-service` for verification.
+        - Called by a `auth-service` to notify a DFSP and PISP that a credential has been verified and registered.
+      summary: UpdateConsent
+      tags:
+        - consent
+        - sampled
+      operationId: UpdateConsent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - title: ConsentsIDPutResponseSigned
+                  type: object
+                  description: |
+                    The HTTP request `PUT /consents/{ID}` is used by the PISP to update a Consent
+                    with a signed challenge and register a credential.
+
+                    Called by a `PISP` to after signing a challenge. Sent to an `auth-service` for verification.
+                  properties:
+                    requestId:
+                      allOf:
+                        - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+                      description: |
+                        The id of the ConsentRequest that was used to initiate the
+                        creation of this Consent.
+                    participantId:
+                      $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                    initiatorId:
+                      allOf:
+                        - $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                      description: PISP identifier who uses this Consent.
+                    scopes:
+                      type: array
+                      items:
+                        $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/scopes/items'
+                    credential:
+                      title: SignedCredential
+                      type: object
+                      description: |
+                        A credential used to allow a user to prove their identity and access
+                        to an account with a DFSP.
+
+                        SignedCredential is a special formatting of the credential to allow us to be
+                        more explicit about the `status` field - it should only ever be PENDING when updating
+                        a credential.
+                      properties:
+                        id:
+                          type: string
+                          description: The id of a Credential.
+                        type:
+                          $ref: '#/paths/~1consents~1%7BID%7D~1generateChallenge/post/requestBody/content/application~1json/schema/properties/type'
+                        status:
+                          type: string
+                          enum:
+                            - PENDING
+                          description: The challenge has signed but not yet verified.
+                        challenge:
+                          title: CredentialChallengeSigned
+                          type: object
+                          description: |
+                            The challenge that has been signed by a PISP.
+                          properties:
+                            payload:
+                              type: string
+                              description: Base64 encoded binary of the challenge that must be answered by the PISP.
+                            signature:
+                              type: string
+                              description: Base64 encoded binary string or result of the payload signed by the PISP using the private key.
+                          required:
+                            - payload
+                            - signature
+                          additionalProperties: false
+                        payload:
+                          type: string
+                          description: Base64 encoded bytes - The public key of the Public/Private keypair.
+                      required:
+                        - id
+                        - type
+                        - status
+                        - challenge
+                        - payload
+                      additionalProperties: false
+                  required:
+                    - requestId
+                    - participantId
+                    - initiatorId
+                    - scopes
+                    - credential
+                - title: ConsentsIDPutResponseUnsigned
+                  type: object
+                  description: |
+                    The HTTP request `PUT /consents/{ID}` is used to request a PISP to sign a challenge.
+                    The `{ID}` in the URI should contain the `{ID}` that was used in the `POST /consents`.
+
+                    Called by a `auth-service` to request PISP to add the credential details.
+                  properties:
+                    requestId:
+                      allOf:
+                        - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+                      description: |
+                        The id of the ConsentRequest that was used to initiate the
+                        creation of this Consent.
+                    participantId:
+                      $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                    initiatorId:
+                      allOf:
+                        - $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                      description: PISP identifier who uses this Consent.
+                    scopes:
+                      type: array
+                      items:
+                        $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/scopes/items'
+                    credential:
+                      title: UnsignedCredential
+                      type: object
+                      description: |
+                        A credential used to allow a user to prove their identity and access
+                        to an account with a DFSP.
+
+                        UnsignedCredential is a special formatting of the credential to allow us to be
+                        more explicit about the `status` field - it should only ever be PENDING when updating
+                        a credential.
+                      properties:
+                        type:
+                          $ref: '#/paths/~1consents~1%7BID%7D~1generateChallenge/post/requestBody/content/application~1json/schema/properties/type'
+                        status:
+                          type: string
+                          enum:
+                            - PENDING
+                          description: The challenge has initialized but not yet answered by the PISP.
+                        challenge:
+                          title: CredentialChallengeSigned
+                          type: object
+                          description: |
+                            The challenge issued by a DFSP that must be answered by the PISP.
+                          properties:
+                            payload:
+                              type: string
+                              description: Base64 encoded binary of the challenge that must be answered by the PISP.
+                          required:
+                            - payload
+                          additionalProperties: false
+                      required:
+                        - type
+                        - status
+                        - challenge
+                      additionalProperties: false
+                  required:
+                    - requestId
+                    - participantId
+                    - initiatorId
+                    - scopes
+                    - credential
+                - title: ConsentsIDPutResponseVerified
+                  type: object
+                  description: |
+                    The HTTP request `PUT /consents/{ID}` is used by the DFSP or Auth-Service to
+                    update a Consent object once it has been Verified.
+
+                    Called by a `auth-service` to notify a DFSP and PISP that a credential has been verified and registered.
+                  properties:
+                    requestId:
+                      allOf:
+                        - $ref: '#/components/schemas/ThirdpartyTransactionRequest/properties/consentId/allOf/0'
+                      description: |
+                        The id of the ConsentRequest that was used to initiate the
+                        creation of this Consent.
+                    participantId:
+                      $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                    initiatorId:
+                      allOf:
+                        - $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/participantId'
+                      description: PISP identifier who uses this Consent.
+                    scopes:
+                      type: array
+                      items:
+                        $ref: '#/paths/~1consents/post/requestBody/content/application~1json/schema/properties/scopes/items'
+                    credential:
+                      title: VerifiedCredential
+                      type: object
+                      description: |
+                        A credential used to allow a user to prove their identity and access
+                        to an account with a DFSP.
+
+                        VerifiedCredential is a special formatting of the credential to allow us to be
+                        more explicit about the `status` field - it should only ever be VERIFIED when updating
+                        a credential.
+                      properties:
+                        id:
+                          type: string
+                          description: The id of a Credential.
+                        type:
+                          $ref: '#/paths/~1consents~1%7BID%7D~1generateChallenge/post/requestBody/content/application~1json/schema/properties/type'
+                        status:
+                          type: string
+                          enum:
+                            - VERIFIED
+                          description: 'The Credential is valid, and ready to be used by the PISP.'
+                        challenge:
+                          $ref: '#/paths/~1consents~1%7BID%7D/put/requestBody/content/application~1json/schema/oneOf/0/properties/credential/properties/challenge'
+                        payload:
+                          type: string
+                          description: Base64 encoded bytes - The public key of the Public/Private keypair.
+                      required:
+                        - type
+                        - status
+                        - challenge
+                      additionalProperties: false
+                  required:
+                    - requestId
+                    - participantId
+                    - initiatorId
+                    - scopes
+                    - credential
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The identifier value.
+        - $ref: '#/paths/~1consents/post/parameters/2'
+        - $ref: '#/paths/~1consents/post/parameters/3'
+        - $ref: '#/paths/~1consents/post/parameters/4'
+        - $ref: '#/paths/~1consents/post/parameters/5'
+        - $ref: '#/paths/~1consents/post/parameters/6'
+        - $ref: '#/paths/~1consents/post/parameters/7'
+        - $ref: '#/paths/~1consents/post/parameters/8'
+        - $ref: '#/paths/~1consents/post/parameters/9'
+        - $ref: '#/paths/~1consents/post/parameters/10'
+      responses:
+        '200':
+          $ref: '#/paths/~1health/get/responses/200'
         '202':
           $ref: '#/paths/~1consents/post/responses/202'
         '400':

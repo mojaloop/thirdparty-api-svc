@@ -172,3 +172,35 @@ export interface ConsentsPayload {
 export interface ConsentsGenerateChallengePayload {
   type: string;
 }
+/**
+* used for consents/{ID} requests
+*/
+export interface ConsentsIDPayload {
+  requestId: string;
+  participantId: string;
+  initiatorId: string;
+  scopes: Scope[];
+  credential: UnsignedCredential | SignedCredential;
+}
+
+interface UnsignedCredential {
+  type: string;
+  status: string;
+  challenge: CredentialChallengeUnsigned;
+}
+interface SignedCredential {
+  id: string;
+  type: string;
+  status: string;
+  challenge: CredentialChallengeSigned;
+  payload: string;
+}
+
+interface CredentialChallengeUnsigned {
+  payload: string;
+}
+
+interface CredentialChallengeSigned {
+  payload: string;
+  signature: string;
+}
