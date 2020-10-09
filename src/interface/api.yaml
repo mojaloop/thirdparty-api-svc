@@ -1046,6 +1046,7 @@ paths:
                           required:
                             - payload
                             - signature
+                          additionalProperties: false
                         payload:
                           type: string
                           description: Base64 encoded bytes - The public key of the Public/Private keypair.
@@ -1055,6 +1056,7 @@ paths:
                         - status
                         - challenge
                         - payload
+                      additionalProperties: false
                   required:
                     - requestId
                     - participantId
@@ -1114,10 +1116,12 @@ paths:
                               description: Base64 encoded binary of the challenge that must be answered by the PISP.
                           required:
                             - payload
+                          additionalProperties: false
                       required:
                         - type
                         - status
                         - challenge
+                      additionalProperties: false
                   required:
                     - requestId
                     - participantId
@@ -1178,6 +1182,7 @@ paths:
                         - type
                         - status
                         - challenge
+                      additionalProperties: false
                   required:
                     - requestId
                     - participantId
