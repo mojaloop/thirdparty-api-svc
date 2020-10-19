@@ -75,7 +75,7 @@ async function forwardTransactionRequest(
       fspiopDest,
       endpointType,
       path,
-      {}
+      params || {}
     )
     Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
     await Util.Request.sendRequest(

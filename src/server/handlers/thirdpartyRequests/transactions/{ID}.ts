@@ -49,7 +49,7 @@ const get = async (_context: any, request: Request, h: ResponseToolkit): Promise
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
-      Enum.Events.Event.Action.POST,
+      Enum.Events.Event.Action.GET,
       { transactionRequestId: request.params.transactionRequestId })
 
     span?.setTags(tags)

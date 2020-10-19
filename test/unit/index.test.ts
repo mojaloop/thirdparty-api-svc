@@ -104,6 +104,34 @@ describe('index', (): void => {
         expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
 
+      it('GET', async (): Promise<void> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'GET',
+          url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+          headers: reqHeaders
+        }
+
+        const expected = [
+          '/thirdpartyRequests/transactions/{{ID}}',
+          'TP_CB_URL_TRANSACTION_REQUEST_GET',
+          expect.objectContaining(request.headers),
+          'GET',
+          { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+          undefined,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      })
+
       it('mandatory fields validation', async (): Promise<void> => {
         const errPayload = Object.assign(trxnRequest.payload, { transactionRequestId: undefined })
         const request = {

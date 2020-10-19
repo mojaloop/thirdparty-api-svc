@@ -14,3 +14,8 @@ Scenario: UpdateThirdpartyAuthorization
   Given thirdparty-api-adapter server
   When I send a 'UpdateThirdpartyAuthorization' request
   Then I get a response with a status code of '200'
+
+Scenario: GetThirdpartyTransactionRequests
+  Given thirdparty-api-adapter server
+  When I send a 'GetThirdpartyTransactionRequests' request
+  Then I get a response with a status code of '202'
