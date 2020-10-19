@@ -53,6 +53,7 @@ describe('transactions handler', (): void => {
 
       const expected = [
         '/thirdpartyRequests/transactions',
+        'TP_CB_URL_TRANSACTION_REQUEST_POST',
         request.headers,
         'POST',
         {},
@@ -75,7 +76,7 @@ describe('transactions handler', (): void => {
       const request: Request = MockData.transactionRequest
       mockForwardTransactionRequest.mockResolvedValueOnce()
       mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
-      const expected = ['/thirdpartyRequests/transactions', request.headers, 'POST', {}, request.payload, undefined]
+      const expected = ['/thirdpartyRequests/transactions', 'TP_CB_URL_TRANSACTION_REQUEST_POST', request.headers, 'POST', {}, request.payload, undefined]
 
       // Act
       const response = await Handler.post(null, request, mockResponseToolkit)

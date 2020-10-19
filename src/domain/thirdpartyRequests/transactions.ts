@@ -44,7 +44,7 @@ import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
 /**
  * @function forwardTransactionRequest
- * @description Forwards a POST transactions requests to destination FSP for processing
+ * @description Forwards a POST /thirdpartyRequests/transactions and GET /thirdpartyRequests/transactions/{ID} to destination FSP for processing
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST
@@ -57,6 +57,7 @@ import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
  */
 async function forwardTransactionRequest(
   path: string,
+  endpointType: FspEndpointTypesEnum,
   headers: Hapi.Util.Dictionary<string>,
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
@@ -68,7 +69,6 @@ async function forwardTransactionRequest(
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
-  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,

@@ -37,6 +37,7 @@ const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const apiPath = '/thirdpartyRequests/transactions'
+const apiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
 const notificationEventCommit: NotificationMessage = mockData.notificationEventCommit
@@ -99,7 +100,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
-      await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, request.params, request.payload, mockSpan)
+      await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, request.params, request.payload, mockSpan)
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
@@ -108,7 +109,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
     it('handles when payload is undefined', async (): Promise<void> => {
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
-      await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, { ID: '12345' })
+      await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, { ID: '12345' })
 
       const sendReqParamsExpected = [
         'http://dfspa-sdk/thirdpartyRequests/transactions',
@@ -130,7 +131,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispa-sdk/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/error')
 
-      const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
+      const action = async () => await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
@@ -148,7 +149,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
-      const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)
+      const action = async () => await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, {}, request.payload)
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
@@ -177,7 +178,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
         .mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
 
-      const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
+      const action = async () => await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
 
       await expect(action).rejects.toThrow('Failed to send HTTP request')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
@@ -213,7 +214,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
 
-      const action = async () => await Transactions.forwardTransactionRequest(apiPath, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
+      const action = async () => await Transactions.forwardTransactionRequest(apiPath, apiEndpointType, request.headers, Enum.Http.RestMethods.POST, {}, request.payload, mockSpan)
 
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)

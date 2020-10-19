@@ -31,28 +31,26 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 
 /**
- * summary: CreateThirdpartyTransactionRequests
- * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request
+ * summary: GetThirdpartyTransactionRequests
+ * description: The HTTP request GET /thirdpartyRequests/transactions/{ID} is used to retrieve a transaction request
  * for the provided financial transaction in the server.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
- * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-urifspiop-http-method
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const post = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const get = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = (request as any).span
 
   try {
-    const payload = request.payload as types.ThirdPartyTransactionRequest
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST,
-      { transactionRequestId: payload.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -62,17 +60,17 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
-      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_GET,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET,
       request.headers,
-      Enum.Http.RestMethods.POST,
+      Enum.Http.RestMethods.GET,
       request.params,
-      payload,
+      undefined,
       span
     )
     .catch(err => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
+      Logger.error('Transactions::get - forwardTransactionRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -85,5 +83,5 @@ const post = async (_context: any, request: Request, h: ResponseToolkit): Promis
 }
 
 export default {
-  post
+  get
 }

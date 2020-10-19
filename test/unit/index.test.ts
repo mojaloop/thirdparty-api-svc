@@ -90,6 +90,7 @@ describe('index', (): void => {
 
         const expected = [
           '/thirdpartyRequests/transactions',
+          'TP_CB_URL_TRANSACTION_REQUEST_POST',
           expect.objectContaining(request.headers),
           'POST',
           {},
