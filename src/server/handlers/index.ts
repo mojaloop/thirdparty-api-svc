@@ -28,6 +28,7 @@ import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
+import ThirdpartyTransactionsId from './thirdpartyRequests/transactions/{ID}'
 import Consents from './consents'
 import ConsentsId from './consents/{ID}'
 import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
@@ -40,6 +41,14 @@ const OpenapiBackend = Util.OpenapiBackend
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
+  GetThirdpartyTransactionRequests: wrapWithHistogram(
+    ThirdpartyTransactionsId.get,
+    [
+      'thirdpartyRequests_transactions_get',
+      'Get thirdpartyRequests transactions request',
+      ['success']
+    ]
+  ),
   CreateThirdpartyTransactionRequests: wrapWithHistogram(
     ThirdpartyTransactions.post,
     [

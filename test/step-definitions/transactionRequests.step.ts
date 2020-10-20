@@ -49,6 +49,7 @@ defineFeature(feature, (test): void => {
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions',
+        'TP_CB_URL_TRANSACTION_REQUEST_POST',
         expect.objectContaining(request.headers),
         'POST',
         {},
@@ -158,6 +159,45 @@ defineFeature(feature, (test): void => {
       expect(response.result).toBeNull()
       expect(response.statusCode).toBe(200)
       expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
+  test('GetThirdpartyTransactionRequests', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.transactionRequest.headers,
+      date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'GET',
+      url: '/thirdpartyRequests/transactions/67fff06f-2380-4403-ba35-f97b6a4250a1',
+      headers: reqHeaders,
+    }
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'GetThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'202\'', (): void => {
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_GET',
+        expect.objectContaining(request.headers),
+        'GET',
+        { "ID": "67fff06f-2380-4403-ba35-f97b6a4250a1" },
+        undefined,
+        expect.any(Object)
+      ]
+
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeNull()
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
   })
 })

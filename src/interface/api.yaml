@@ -284,6 +284,45 @@ paths:
           $ref: '#/paths/~1health/get/responses/501'
         '503':
           $ref: '#/paths/~1health/get/responses/503'
+  '/thirdpartyRequests/transactions/{ID}':
+    get:
+      tags:
+        - thirdpartyRequests
+        - sampled
+      operationId: GetThirdpartyTransactionRequests
+      summary: GetThirdpartyTransactionRequests
+      description: |
+        The HTTP request `GET /thirdpartyRequests/transactions/{ID}` is used to request the retrieval of a third party transaction.
+      parameters:
+        - $ref: '#/paths/~1consents~1%7BID%7D/put/parameters/0'
+        - $ref: '#/paths/~1consents/post/parameters/0'
+        - $ref: '#/paths/~1consents/post/parameters/3'
+        - $ref: '#/paths/~1consents/post/parameters/4'
+        - $ref: '#/paths/~1consents/post/parameters/5'
+        - $ref: '#/paths/~1consents/post/parameters/6'
+        - $ref: '#/paths/~1consents/post/parameters/7'
+        - $ref: '#/paths/~1consents/post/parameters/8'
+        - $ref: '#/paths/~1consents/post/parameters/9'
+        - $ref: '#/paths/~1consents/post/parameters/10'
+      responses:
+        '202':
+          $ref: '#/paths/~1consents/post/responses/202'
+        '400':
+          $ref: '#/paths/~1health/get/responses/400'
+        '401':
+          $ref: '#/paths/~1health/get/responses/401'
+        '403':
+          $ref: '#/paths/~1health/get/responses/403'
+        '404':
+          $ref: '#/paths/~1health/get/responses/404'
+        '405':
+          $ref: '#/paths/~1health/get/responses/405'
+        '406':
+          $ref: '#/paths/~1health/get/responses/406'
+        '501':
+          $ref: '#/paths/~1health/get/responses/501'
+        '503':
+          $ref: '#/paths/~1health/get/responses/503'
   '/thirdpartyRequests/transactions/{ID}/authorizations':
     post:
       tags:

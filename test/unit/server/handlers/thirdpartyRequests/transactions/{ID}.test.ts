@@ -18,14 +18,14 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
 
  --------------
  ******/
 'use strict'
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import Handler from '~/server/handlers/thirdpartyRequests/transactions'
+import Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
@@ -35,10 +35,10 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
-const request: Request = MockData.transactionRequest
+const request: Request = MockData.getTransactionRequest
 
 describe('transactions handler', (): void => {
-  describe('POST /thirdpartyRequests/transactions', (): void => {
+  describe('GET /thirdpartyRequests/transactions/{ID}', (): void => {
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
@@ -52,17 +52,17 @@ describe('transactions handler', (): void => {
       mockForwardTransactionRequest.mockResolvedValueOnce()
 
       const expected = [
-        '/thirdpartyRequests/transactions',
-        'TP_CB_URL_TRANSACTION_REQUEST_POST',
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_GET',
         request.headers,
-        'POST',
-        {},
-        request.payload,
+        'GET',
+        {"ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"},
+        undefined,
         undefined
       ]
 
       // Act
-      const response = await Handler.post(null, request, mockResponseToolkit)
+      const response = await Handler.get(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -72,14 +72,19 @@ describe('transactions handler', (): void => {
 
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
-      const MockData = JSON.parse(JSON.stringify(TestData))
-      const request: Request = MockData.transactionRequest
       mockForwardTransactionRequest.mockResolvedValueOnce()
       mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
-      const expected = ['/thirdpartyRequests/transactions', 'TP_CB_URL_TRANSACTION_REQUEST_POST', request.headers, 'POST', {}, request.payload, undefined]
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_GET',
+        request.headers,
+        'GET',
+        {"ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"},
+        undefined,
+        undefined]
 
       // Act
-      const response = await Handler.post(null, request, mockResponseToolkit)
+      const response = await Handler.get(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -97,7 +102,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.get(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
