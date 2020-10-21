@@ -1,4 +1,16 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.10.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.9.0...v11.10.0) (2020-10-21)
+
+
+### Features
+
+* add get thirdparty transaction handler ([#39](https://github.com/mojaloop/thirdparty-api-adapter/issues/39)) ([b7273c3](https://github.com/mojaloop/thirdparty-api-adapter/commit/b7273c34c25fb8271e3af2592e9492c81504c912))
+
+
+### Maintenance
+
+* limit workers for coverage test ([#40](https://github.com/mojaloop/thirdparty-api-adapter/issues/40)) ([8fc251e](https://github.com/mojaloop/thirdparty-api-adapter/commit/8fc251e497439c97c9397ae208a1846a8e97d5ed))
+
 ## [11.9.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.8.4...v11.9.0) (2020-10-09)
 
 
