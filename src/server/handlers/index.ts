@@ -29,6 +29,7 @@ import Health from './health'
 import Metrics from './metrics'
 import ThirdpartyTransactions from './thirdpartyRequests/transactions'
 import ThirdpartyTransactionsId from './thirdpartyRequests/transactions/{ID}'
+import ThirdpartyTransactionsIdError from './thirdpartyRequests/transactions/{ID}/error'
 import Consents from './consents'
 import ConsentsId from './consents/{ID}'
 import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
@@ -54,6 +55,14 @@ export default {
     [
       'thirdpartyRequests_transactions_post',
       'Post thirdpartyRequests transactions request',
+      ['success']
+    ]
+  ),
+  ThirdpartyTransactionRequestsError: wrapWithHistogram(
+    ThirdpartyTransactionsIdError.put,
+    [
+      'thirdpartyRequests_transactions_error_put',
+      'Put thirdpartyRequests transactions error request',
       ['success']
     ]
   ),

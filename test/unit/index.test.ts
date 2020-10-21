@@ -35,6 +35,7 @@ import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
@@ -45,6 +46,7 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const trxnRequest = mockData.transactionRequest
+const trxnRequestError = mockData.genericThirdpartyError
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -151,6 +153,67 @@ describe('index', (): void => {
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
+      })
+    })
+
+
+    describe('/thirdpartyRequests/transactions/{ID}/error', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+        mockForwardTransactionRequestError.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequestError.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: reqHeaders,
+          payload: trxnRequestError.payload
+        }
+
+        const expected = [
+          expect.objectContaining(request.headers),
+          '/thirdpartyRequests/transactions/{{ID}}/error',
+          'PUT',
+          'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+          request.payload,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: trxnRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardTransactionRequestError).not.toHaveBeenCalled()
       })
     })
 
