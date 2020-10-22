@@ -11,6 +11,7 @@ const featurePath = path.join(__dirname, '../features/transactionRequests.featur
 const feature = loadFeature(featurePath)
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
@@ -198,6 +199,58 @@ defineFeature(feature, (test): void => {
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
+  test('ThirdpartyTransactionRequestsError', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.transactionRequest.headers,
+      date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'PUT',
+      url: '/thirdpartyRequests/transactions/67fff06f-2380-4403-ba35-f97b6a4250a1/error',
+      headers: reqHeaders,
+      payload: {
+        errorInformation: {
+          errorCode: '6000',
+          errorDescription: 'Generic third party error',
+          extensionList: {
+            extension: [
+              {
+                key: 'test',
+                value: 'test'
+              }
+            ]
+          }
+        }
+      }
+    }
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'ThirdpartyTransactionRequestsError\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequestError.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'200\'', (): void => {
+      const expected = [
+        expect.objectContaining(request.headers),
+        '/thirdpartyRequests/transactions/{{ID}}/error',
+        'PUT',
+        '67fff06f-2380-4403-ba35-f97b6a4250a1',
+        request.payload,
+        expect.any(Object)
+      ]
+
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeNull()
+      expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
     })
   })
 })
