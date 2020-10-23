@@ -156,6 +156,34 @@ describe('index', (): void => {
       })
     })
 
+    it('PUT', async (): Promise<void> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      const reqHeaders = Object.assign(mockData.updateTransactionRequest.headers, {
+        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+        accept: 'application/json'
+      })
+      const request = {
+        method: 'PUT',
+        url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+        headers: reqHeaders,
+        payload: mockData.updateTransactionRequest.payload
+      }
+
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        expect.objectContaining(request.headers),
+        'PUT',
+        { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+        request.payload,
+        expect.any(Object)
+      ]
+      const response = await server.inject(request)
+
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeNull()
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
 
     describe('/thirdpartyRequests/transactions/{ID}/error', (): void => {
       beforeAll((): void => {

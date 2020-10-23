@@ -102,6 +102,22 @@ export interface ThirdPartyTransactionRequest {
   expiration: string;
 }
 /**
+* Transaction request state
+*/
+export enum TransactionRequestState {
+  RECEIVED = 'RECEIVED',
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED'
+}
+/**
+* This interface used for update transaction requests
+*/
+export interface UpdateThirdPartyTransactionRequest {
+  transactionId: TransactionRequestState;
+  transactionRequestState: string;
+}
+/**
 * This interface used for common errors
 */
 export interface ErrorInformation {

@@ -44,7 +44,8 @@ import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
 
 /**
  * @function forwardTransactionRequest
- * @description Forwards a POST /thirdpartyRequests/transactions and GET /thirdpartyRequests/transactions/{ID} to destination FSP for processing
+ * @description Forwards a POST /thirdpartyRequests/transactions, GET /thirdpartyRequests/transactions/{ID} and 
+ *  PUT /thirdpartyRequests/transactions/{ID} to destination FSP for processing
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST
@@ -55,20 +56,21 @@ import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequest(
+async function forwardTransactionRequest (
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: Hapi.Util.Dictionary<string>,
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
-  payload?: types.ThirdPartyTransactionRequest,
+  payload?: types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardTransactionRequest')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
-  const transactionRequestId: string = (payload && payload.transactionRequestId) || params.ID
+  const transactionRequestId: string =
+    (payload && isItCreateRequest(payload)) ? payload.transactionRequestId : params.ID
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
@@ -116,6 +118,7 @@ async function forwardTransactionRequest(
   }
 }
 
+
 /**
  * @function forwardTransactionRequestError
  * @description Generic function to handle sending `PUT .../transactions/error` back to the FSPIOP-Source
@@ -128,7 +131,7 @@ async function forwardTransactionRequest(
  * error or if there are network errors or if there is a bad response.
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequestError(
+async function forwardTransactionRequestError (
   headers: Hapi.Util.Dictionary<string>,
   path: string,
   method: RestMethodsEnum,
@@ -186,14 +189,14 @@ async function forwardTransactionRequestError(
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequestNotification(
+async function forwardTransactionRequestNotification (
   headers: Hapi.Util.Dictionary<string>,
   transactionRequestId: string,
   payload: string,
   path: string,
   endpointType: FspEndpointTypesEnum,
   method: RestMethodsEnum,
-  ): Promise<void> {
+): Promise<void> {
 
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -227,6 +230,15 @@ async function forwardTransactionRequestNotification(
     throw fspiopError
   }
 }
+
+type CreateOrUpdateReq = types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest
+function isItCreateRequest (request: CreateOrUpdateReq): request is types.ThirdPartyTransactionRequest {
+  if ((request as types.ThirdPartyTransactionRequest).transactionRequestId) {
+    return true
+  }
+  return false
+}
+
 export {
   forwardTransactionRequest,
   forwardTransactionRequestError,

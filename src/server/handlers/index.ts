@@ -58,6 +58,14 @@ export default {
       ['success']
     ]
   ),
+  UpdateThirdPartyTransactionRequests: wrapWithHistogram(
+    ThirdpartyTransactionsId.put,
+    [
+      'thirdpartyRequests_transactions_put',
+      'Put thirdpartyRequests transactions request',
+      ['success']
+    ]
+  ),
   ThirdpartyTransactionRequestsError: wrapWithHistogram(
     ThirdpartyTransactionsIdError.put,
     [
