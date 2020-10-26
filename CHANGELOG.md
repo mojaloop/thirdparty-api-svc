@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.12.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.11.0...v11.12.0) (2020-10-26)
+
+
+### Features
+
+* Add PUT /thirdpartyRequests/transactions/{ID} endpoint ([#42](https://github.com/mojaloop/thirdparty-api-adapter/issues/42)) ([081581b](https://github.com/mojaloop/thirdparty-api-adapter/commit/081581b8c342cbe239933e6c1fa497b5f4728846))
+
 ## [11.11.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.10.0...v11.11.0) (2020-10-22)
 
 
