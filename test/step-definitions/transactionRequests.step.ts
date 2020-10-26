@@ -202,6 +202,46 @@ defineFeature(feature, (test): void => {
     })
   })
 
+  test('UpdateThirdPartyTransactionRequests', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.updateTransactionRequest.headers,
+      date: (new Date()).toISOString(),
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'PUT',
+      url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+      headers: reqHeaders,
+      payload: mockData.updateTransactionRequest.payload
+    }
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'UpdateThirdPartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'200\'', (): void => {
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        expect.objectContaining(request.headers),
+        'PUT',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        request.payload,
+        expect.any(Object)
+      ]
+
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeNull()
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
   test('ThirdpartyTransactionRequestsError', ({ given, when, then }): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,

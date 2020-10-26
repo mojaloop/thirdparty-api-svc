@@ -31,6 +31,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
+import * as types from '~/interface/types'
 
 /**
  * summary: GetThirdpartyTransactionRequests
@@ -82,6 +83,58 @@ const get = async (_context: any, request: Request, h: ResponseToolkit): Promise
   }
 }
 
+/**
+ * summary: UpdateThirdPartyTransactionRequests
+ * description: The HTTP request PUT /thirdpartyRequests/transactions/{ID} is used to inform the client about 
+ * status of a previously requested thirdparty transaction.
+ * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const put = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+  const payload = request.payload as types.UpdateThirdPartyTransactionRequest
+  const span = (request as any).span
+
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Action.PUT,
+      { transactionRequestId: request.params.transactionRequestId })
+
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    Transactions.forwardTransactionRequest(
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT,
+      request.headers,
+      Enum.Http.RestMethods.PUT,
+      request.params,
+      payload,
+      span
+    )
+      .catch(err => {
+        // Do nothing with the error - forwardTransactionRequest takes care of async errors
+        Logger.error('Transactions::put - forwardTransactionRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+
+    return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
+}
+
 export default {
-  get
+  get,
+  put
 }

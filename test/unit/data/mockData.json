@@ -50,6 +50,19 @@
     "params": {"ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"},
     "payload": {}
   },
+  "updateTransactionRequest": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"
+    },
+    "payload": {
+      "transactionId": "8e34f91d-d078-4077-8263-2c047876fcf6",
+      "transactionRequestState": "RECEIVED"
+    }
+  },
   "internalConfig": {
     "options": {
       "mode": 2,
