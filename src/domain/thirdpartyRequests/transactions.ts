@@ -70,7 +70,7 @@ async function forwardTransactionRequest (
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string =
-    (payload && isItCreateRequest(payload)) ? payload.transactionRequestId : params.ID
+    (payload && isCreateRequest(payload)) ? payload.transactionRequestId : params.ID
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
@@ -232,7 +232,7 @@ async function forwardTransactionRequestNotification (
 }
 
 type CreateOrUpdateReq = types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest
-function isItCreateRequest (request: CreateOrUpdateReq): request is types.ThirdPartyTransactionRequest {
+function isCreateRequest (request: CreateOrUpdateReq): request is types.ThirdPartyTransactionRequest {
   if ((request as types.ThirdPartyTransactionRequest).transactionRequestId) {
     return true
   }
@@ -242,5 +242,6 @@ function isItCreateRequest (request: CreateOrUpdateReq): request is types.ThirdP
 export {
   forwardTransactionRequest,
   forwardTransactionRequestError,
-  forwardTransactionRequestNotification
+  forwardTransactionRequestNotification,
+  isCreateRequest //for testing
 }

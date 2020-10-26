@@ -280,6 +280,11 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
     })
+
+    it('verify isCreateRequest', async (): Promise<void> => {
+      expect(Transactions.isCreateRequest(mockData.transactionRequest.payload)).toBeTruthy();
+      expect(Transactions.isCreateRequest(mockData.updateTransactionRequest.payload)).toBeFalsy();
+    })
   })
 
   describe('forwardTransactionRequestNotification', (): void => {

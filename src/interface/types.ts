@@ -114,8 +114,8 @@ export enum TransactionRequestState {
 * This interface used for update transaction requests
 */
 export interface UpdateThirdPartyTransactionRequest {
-  transactionId: TransactionRequestState;
-  transactionRequestState: string;
+  transactionId: string;
+  transactionRequestState: TransactionRequestState;
 }
 /**
 * This interface used for common errors
