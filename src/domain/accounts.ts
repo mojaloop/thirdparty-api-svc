@@ -32,6 +32,8 @@ import {
   FspEndpointTypesEnum,
   RestMethodsEnum
 } from '@mojaloop/central-services-shared'
+// eslint is complaining about these imports. not sure why.
+// eslint-disable-next-line import/no-unresolved
 import Config from '~/shared/config'
 import { inspect } from 'util'
 import {
@@ -39,8 +41,71 @@ import {
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+// eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
+// eslint-disable-next-line import/no-unresolved
 import * as types from '~/interface/types'
+
+/**
+ * @function forwardAccountsIdRequestError
+ * @description Generic function to handle sending `PUT .../accounts/{ID}/error` back to the FSPIOP-Source
+ * @param {string} path Callback endpoint path
+ * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {string} userId the ID of the /accounts/{ID} resource
+ * @param {APIErrorObject} error Error details
+ * @param {object} span optional request span
+ * @throws {FSPIOPError} Will throw an error if no endpoint to forward the accounts requests is
+ *  found, if there are network errors or if there is a bad response
+ * @returns {Promise<void>}
+ */
+export async function forwardAccountsIdRequestError (
+  path: string,
+  headers: HapiUtil.Dictionary<string>,
+  userId: string,
+  error: APIErrorObject,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  span?: any): Promise<void> {
+  const childSpan = span?.getChild('forwardAccountsIdRequestError')
+  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR
+
+  try {
+    const url = await Util.Endpoints.getEndpointAndRender(
+      Config.ENDPOINT_SERVICE_URL,
+      destinationDfspId,
+      endpointType,
+      path,
+      { ID: userId }
+    )
+    Logger.info(`accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`)
+
+    await Util.Request.sendRequest(
+      url,
+      headers,
+      sourceDfspId,
+      destinationDfspId,
+      Enum.Http.RestMethods.PUT,
+      error,
+      Enum.Http.ResponseTypes.JSON,
+      childSpan
+    )
+
+    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId} 
+    from ${sourceDfspId} to ${destinationDfspId}`)
+    if (childSpan && !childSpan.isFinished) {
+      childSpan.finish()
+    }
+  } catch (err) {
+    Logger.error(`accounts::forwardAccountsIdRequestError - Error forwarding accounts error to endpoint: 
+    ${inspect(err)}`)
+    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
+    if (childSpan && !childSpan.isFinished) {
+      await finishChildSpan(fspiopError, childSpan)
+    }
+    throw fspiopError
+  }
+}
 
 /**
  * @function forwardAccountsIdRequest
@@ -62,8 +127,8 @@ export async function forwardAccountsIdRequest (
   method: RestMethodsEnum,
   userId: string,
   payload?: types.AccountsIdRequest,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardAccountsIdRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -113,67 +178,4 @@ export async function forwardAccountsIdRequest (
     }
     throw fspiopError
   }
-
-}
-
-/**
- * @function forwardAccountsIdRequestError
- * @description Generic function to handle sending `PUT .../accounts/{ID}/error` back to the FSPIOP-Source
- * @param {string} path Callback endpoint path
- * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
- * @param {string} userId the ID of the /accounts/{ID} resource
- * @param {APIErrorObject} error Error details
- * @param {object} span optional request span
- * @throws {FSPIOPError} Will throw an error if no endpoint to forward the accounts requests is
- *  found, if there are network errors or if there is a bad response
- * @returns {Promise<void>}
- */
-export async function forwardAccountsIdRequestError (
-  path: string,
-  headers: HapiUtil.Dictionary<string>,
-  userId: string,
-  error: APIErrorObject,
-  span?: any): Promise<void> {
-
-  const childSpan = span?.getChild('forwardAccountsIdRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR
-
-  try {
-    const url = await Util.Endpoints.getEndpointAndRender(
-      Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
-      endpointType,
-      path,
-      { ID: userId }
-    )
-    Logger.info(`accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`)
-
-    await Util.Request.sendRequest(
-      url,
-      headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
-
-    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId} from ${sourceDfspId} to ${destinationDfspId}`)
-    if (childSpan && !childSpan.isFinished) {
-      childSpan.finish()
-    }
-
-  } catch (err) {
-    Logger.error(`accounts::forwardAccountsIdRequestError - Error forwarding accounts error to endpoint: 
-    ${inspect(err)}`)
-    const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
-    if (childSpan && !childSpan.isFinished) {
-      await finishChildSpan(fspiopError, childSpan)
-    }
-    throw fspiopError
-  }
-
 }
