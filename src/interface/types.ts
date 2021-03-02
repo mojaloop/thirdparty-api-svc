@@ -220,3 +220,11 @@ interface CredentialChallengeSigned {
   payload: string;
   signature: string;
 }
+/**
+* used for accounts requests
+*/
+export interface AccountsIdRequest {
+  accountNickname: string;
+  id: string;
+  currency: string;
+}

@@ -33,6 +33,7 @@ import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
 import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
+import * as Accounts from '~/domain/accounts'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
@@ -42,6 +43,8 @@ const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequ
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
+const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
+const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -947,6 +950,187 @@ describe('index', (): void => {
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardConsentsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('GET /accounts/{{ID}}', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('GET /accounts/{{ID}}', async (): Promise<void> => {
+        mockForwardAccountsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'GET',
+          url: '/accounts/username1234',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.accountsRequest.headers
+          }
+        }
+        const expected = [
+          '/accounts/{{ID}}',
+          'TP_CB_URL_ACCOUNTS_GET',
+          expect.objectContaining(request.headers),
+          'GET',
+          'username1234',
+          undefined,
+          expect.any(Object)
+        ]
+
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+    })
+
+    describe('PUT /accounts/{{ID}}', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('puts /accounts/{{ID}} payload successfully', async (): Promise<void> => {
+        mockForwardAccountsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/accounts/username1234',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.accountsRequest.headers
+          },
+          payload: [
+            ...mockData.accountsRequest.payload
+          ]
+        }
+
+        const expected = [
+          '/accounts/{{ID}}',
+          'TP_CB_URL_ACCOUNTS_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          'username1234',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PUT',
+          url: '/accounts/username1234',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.accountsRequest.headers
+          },
+          payload: [
+            {
+              "accountNickname": "dfspa.user.nickname",
+              "id": "dfspa.username.1234"
+            }
+          ]
+        }
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody[0] should have required property \'currency\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAccountsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('/accounts/{ID}/error', (): void => {
+      const acctRequestError = mockData.accountsRequestError
+
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+
+        mockForwardAccountsIdRequestError.mockResolvedValueOnce()
+
+        const reqHeaders = Object.assign(acctRequestError.headers, {
+          date: 'Tue, 02 Mar 2021 10:10:10 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/accounts/username1234/error',
+          headers: reqHeaders,
+          payload: acctRequestError.payload
+        }
+
+        const expected = [
+          '/accounts/{{ID}}/error',
+          expect.objectContaining(request.headers),
+          'username1234',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardAccountsIdRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(acctRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/accounts/username1234/error',
+          headers: trxnRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAccountsIdRequestError).not.toHaveBeenCalled()
       })
     })
 

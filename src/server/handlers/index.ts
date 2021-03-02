@@ -36,6 +36,8 @@ import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 import ConsentRequestsId from './consentRequests/{ID}'
+import Accounts from './accounts/{ID}'
+import AccountsByUserIdError from './accounts/{ID}/error'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -127,6 +129,30 @@ export default {
     [
       'consentsGenerateChallenge_post',
       'Post consents generate challenge request',
+      ['success']
+    ]
+  ),
+  GetAccountsByUserId: wrapWithHistogram(
+    Accounts.get,
+    [
+      'accounts_by_userid_get',
+      'Get Accounts by userId request',
+      ['success']
+    ]
+  ),
+  UpdateAccountsByUserId: wrapWithHistogram(
+    Accounts.put,
+    [
+      'accounts_by_userid_put',
+      'Put accountsByUserId request',
+      ['success']
+    ]
+  ),
+  UpdateAccountsByUserIdError: wrapWithHistogram(
+    AccountsByUserIdError.put,
+    [
+      'accounts_by_userid_error_put',
+      'Put accountsByUserIdError request',
       ['success']
     ]
   ),

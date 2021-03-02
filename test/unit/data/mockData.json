@@ -47,7 +47,9 @@
       "fspiop-source": "pispA",
       "fspiop-destination": "dfspA"
     },
-    "params": {"ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"},
+    "params": {
+      "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"
+    },
     "payload": {}
   },
   "updateTransactionRequest": {
@@ -215,11 +217,17 @@
     "payload": {
       "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "initiatorId": "pispA",
-      "authChannels": ["OTP", "WEB"],
+      "authChannels": [
+        "OTP",
+        "WEB"
+      ],
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "callbackUri": "pisp-app://callback.com"
@@ -233,11 +241,16 @@
     "params": {},
     "payload": {
       "initiatorId": "pispA",
-      "authChannels": ["WEB"],
+      "authChannels": [
+        "WEB"
+      ],
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "callbackUri": "pisp-app://callback.com",
@@ -252,11 +265,16 @@
     "params": {},
     "payload": {
       "initiatorId": "pispA",
-      "authChannels": ["WEB"],
+      "authChannels": [
+        "WEB"
+      ],
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "callbackUri": "pisp-app://callback.com",
@@ -272,11 +290,16 @@
     "params": {},
     "payload": {
       "initiatorId": "pispA",
-      "authChannels": ["OTP"],
+      "authChannels": [
+        "OTP"
+      ],
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "callbackUri": "pisp-app://callback.com"
@@ -290,11 +313,16 @@
     "params": {},
     "payload": {
       "initiatorId": "pispA",
-      "authChannels": ["OTP"],
+      "authChannels": [
+        "OTP"
+      ],
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "callbackUri": "pisp-app://callback.com",
@@ -315,7 +343,10 @@
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ]
     }
@@ -343,7 +374,10 @@
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "credential": {
@@ -368,7 +402,10 @@
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "credential": {
@@ -396,7 +433,10 @@
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
-          "actions": [ "accounts.transfer", "accounts.getBalance" ]
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "credential": {
@@ -416,7 +456,9 @@
       "fspiop-source": "dfspA",
       "fspiop-destination": "pispA"
     },
-    "params": { "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0" },
+    "params": {
+      "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0"
+    },
     "payload": {
       "errorInformation": {
         "errorCode": "6000",
@@ -426,6 +468,50 @@
             {
               "key": "test",
               "value": "test"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "accountsRequest": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "dfspA"
+    },
+    "params": {
+      "ID": "username1234"
+    },
+    "payload": [
+      {
+        "accountNickname": "dfspa.user.nickname1",
+        "id": "dfspa.username.1234",
+        "currency": "ZAR"
+      },
+      {
+        "accountNickname": "dfspa.user.nickname2",
+        "id": "dfspa.username.5678",
+        "currency": "USD"
+      }
+    ]
+  },
+  "accountsRequestError": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "dfspA"
+    },
+    "params": {
+      "ID": "username1234"
+    },
+    "payload": {
+      "errorInformation": {
+        "errorCode": "6000",
+        "errorDescription": "Generic accounts error",
+        "extensionList": {
+          "extension": [
+            {
+              "key": "test.k",
+              "value": "test.v"
             }
           ]
         }
