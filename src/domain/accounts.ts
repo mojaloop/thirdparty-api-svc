@@ -153,7 +153,7 @@ export async function forwardAccountsIdRequest (
       childSpan
     )
 
-    Logger.info(`authorizations::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
