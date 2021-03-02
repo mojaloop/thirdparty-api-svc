@@ -28,7 +28,7 @@
  ******/
 'use strict'
 
-import Hapi from '@hapi/hapi'
+import { Request } from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
@@ -70,7 +70,7 @@ function getStackOrInspect (err: Error): string {
  * @param {string} eventAction
  * @returns {Object}
  */
-function getSpanTags (request: Hapi.Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
+function getSpanTags (request: Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
   const tags: { [id: string]: string } = {
     eventType,
     eventAction,
