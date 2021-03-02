@@ -49,6 +49,96 @@
       "decision": "ignore",
       "madeAt": 1596720926399,
       "expiresAt": 1599312918432
+    },
+    "1589|@mojaloop/central-services-health>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-health>@mojaloop/central-services-shared>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-health>@mojaloop/central-services-shared>@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-shared>@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/event-sdk>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-shared>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-stream>@mojaloop/central-services-logger>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-health>@mojaloop/central-services-shared>@mojaloop/event-sdk>grpc>node-pre-gyp>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-shared>@mojaloop/event-sdk>grpc>node-pre-gyp>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/event-sdk>grpc>node-pre-gyp>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-health>@mojaloop/central-services-shared>@mojaloop/event-sdk>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-shared>@mojaloop/event-sdk>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/event-sdk>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|@mojaloop/central-services-shared>rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1589|rc>ini": {
+      "decision": "ignore",
+      "madeAt": 1614690720289,
+      "expiresAt": 1615295501953
+    },
+    "1500|@mojaloop/central-services-shared>widdershins>yargs>yargs-parser": {
+      "decision": "ignore",
+      "madeAt": 1614690728714,
+      "expiresAt": 1615295501953
+    },
+    "1594|@mojaloop/central-services-health>@mojaloop/central-services-shared>axios": {
+      "decision": "ignore",
+      "madeAt": 1614690804593,
+      "expiresAt": 1615295501953
     }
   },
   "rules": {},
