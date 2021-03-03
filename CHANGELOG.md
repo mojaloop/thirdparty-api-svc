@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.13.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.12.0...v11.13.0) (2021-03-03)
+
+
+### Features
+
+* Add accounts endpoints ([#43](https://github.com/mojaloop/thirdparty-api-adapter/issues/43)) ([b3343ef](https://github.com/mojaloop/thirdparty-api-adapter/commit/b3343ef4f9558c6041783b417a8f003558a7837a))
+
 ## [11.12.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.11.0...v11.12.0) (2020-10-26)
 
 
