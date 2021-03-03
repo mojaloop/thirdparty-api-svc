@@ -37,6 +37,11 @@ module.exports = {
     'cucumber/no-arrow-functions': 2,
     'max-len': ["warn", { "code": 120 }]
   },
+  settings: {
+    "import/resolver": {
+      typescript: {} // this loads <rootdir>/tsconfig.json to eslint
+    },
+  },
   overrides: [
     {
       // Disable some rules that we abuse in unit tests.
