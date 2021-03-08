@@ -222,7 +222,6 @@ defineFeature(feature, (test): void => {
     })
   })
 
-
   test('PatchConsentRequest', ({ given, when, then }): void => {
     const reqHeaders = {
       ...mockData.consentRequestsPatch.headers,
@@ -230,7 +229,7 @@ defineFeature(feature, (test): void => {
       accept: 'application/json'
     }
     const request = {
-      method: 'PUT',
+      method: 'PATCH',
       url: '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
       headers: reqHeaders,
       payload: mockData.consentRequestsPatch.payload
@@ -263,4 +262,3 @@ defineFeature(feature, (test): void => {
     })
   })
 })
-
