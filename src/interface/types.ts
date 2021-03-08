@@ -24,7 +24,6 @@
  --------------
  ******/
 'use strict'
-
 /**
  * This is used for personal information
  */
@@ -227,4 +226,8 @@ export interface AccountsIdRequest {
   accountNickname: string;
   id: string;
   currency: string;
+}
+
+export interface PatchConsentRequestsIDPayload {
+  authToken: string;
 }

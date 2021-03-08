@@ -222,5 +222,45 @@ defineFeature(feature, (test): void => {
     })
   })
 
+
+  test('PatchConsentRequest', ({ given, when, then }): void => {
+    const reqHeaders = {
+      ...mockData.consentRequestsPatch.headers,
+      date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+      accept: 'application/json'
+    }
+    const request = {
+      method: 'PUT',
+      url: '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+      headers: reqHeaders,
+      payload: mockData.consentRequestsPatch.payload
+    }
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'PatchConsentRequest\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'202\'', (): void => {
+      const expected = [
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+        '/consentRequests/{{ID}}',
+        'TP_CB_URL_CONSENT_REQUEST_PATCH',
+        expect.objectContaining(request.headers),
+        'PATCH',
+        mockData.consentRequestsPatch.payload,
+        expect.any(Object)
+      ]
+
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeNull()
+      expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
 })
 

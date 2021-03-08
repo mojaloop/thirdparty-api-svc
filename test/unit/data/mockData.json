@@ -517,5 +517,15 @@
         }
       }
     }
+  },
+  "consentRequestsPatch": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "dfspA"
+    },
+    "params": {},
+    "payload": {
+      "authToken": "SECRET_OTP"
+    }
   }
 }

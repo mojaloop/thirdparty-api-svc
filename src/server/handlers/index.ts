@@ -108,6 +108,14 @@ export default {
       ['success']
     ]
   ),
+  PatchConsentRequest: wrapWithHistogram(
+    ConsentRequestsId.patch,
+    [
+      'consentRequestsId_patch',
+      'Patch consentRequestsId request',
+      ['success']
+    ]
+  ),
   CreateConsent: wrapWithHistogram(
     Consents.post,
     [

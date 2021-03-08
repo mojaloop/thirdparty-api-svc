@@ -51,8 +51,7 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // todo: add a consent-request/thirdparty? eventType to central-services-shared
-      'consent-request',
+      Enum.Events.Event.Type.CONSENT_REQUEST,
       Enum.Events.Event.Action.PUT,
       { consentRequestsRequestId })
 
@@ -86,7 +85,58 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
   }
 }
 
+/**
+  * summary: PatchConsentRequest
+  * description: The method PATCH /consentRequests/ID is called by both a PISP and DFSP
+  * parameters: body, content-length
+  * produces: application/json
+  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function patch(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = (request as any).span
+  // Trust that hapi parsed the ID and Payload for us
+  const consentRequestsRequestId: string = request.params.ID
+  const payload = request.payload as types.PatchConsentRequestsIDPayload
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      Enum.Events.Event.Type.CONSENT_REQUEST,
+      Enum.Events.Event.Action.PATCH,
+      { consentRequestsRequestId })
+
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    forwardConsentRequestsIdRequest(
+      consentRequestsRequestId,
+      Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PATCH,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PATCH,
+      request.headers,
+      Enum.Http.RestMethods.PATCH,
+      payload,
+      span
+    )
+    .catch(err => {
+        // Do nothing with the error - forwardConsentRequestsIdRequest takes care of async errors
+        Logger.error('ConsentRequests::put - forwardConsentRequestsIdRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
+}
+
 export default {
+  patch,
   put
 }
 
