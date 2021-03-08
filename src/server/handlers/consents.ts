@@ -51,8 +51,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // todo: add a consents/thirdparty? eventType to central-services-shared
-      'consents',
+      Enum.Events.Event.Type.CONSENT,
       Enum.Events.Event.Action.POST,
       { consentsId })
 
