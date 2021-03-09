@@ -24,3 +24,8 @@ Scenario: UpdateConsentRequestTypeOTPAuth
  Given thirdparty-api-adapter server
  When I send a 'UpdateConsentRequestType' ConsentRequestsIDPutResponseOTPAuth request
  Then I get a response with a status code of '202'
+
+Scenario: PatchConsentRequest
+ Given thirdparty-api-adapter server
+ When I send a 'PatchConsentRequest' request
+ Then I get a response with a status code of '202'

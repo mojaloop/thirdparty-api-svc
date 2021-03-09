@@ -56,11 +56,6 @@ const onEvent: ConsumeCallback<NotificationMessage | Array<NotificationMessage>>
     // Pretend this is related to a pre-specified thirdpartyRequest/transaction
     const mockThirdpartyTransactionRequest = temporaryMockTransactionCallback(config.MOCK_CALLBACK, message)
 
-    // todo: Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST is a temporary template.
-    //       switch to a patch template endpoint after it's checked in
-    // todo: TP_CB_URL_TRANSACTION_REQUEST_POST is a temporary interim endpoint
-    //       we are using until a PATCH TPR transaction endpoint is added.
-    //       i.e TP_CB_URL_TRANSACTION_REQUEST_PATCH
     forwardTransactionRequestNotification(
       mockThirdpartyTransactionRequest.value.content.headers as Hapi.Util.Dictionary<string>,
       mockThirdpartyTransactionRequest.value.id,

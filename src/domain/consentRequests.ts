@@ -181,7 +181,7 @@ export async function forwardConsentRequestsRequest (
  * @param {string} path Callback endpoint path
  * @param {FspEndpointTypesEnum} path Callback endpoint template
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
- * @param {RestMethodsEnum} method The http method POST or PUT
+ * @param {RestMethodsEnum} method The http method POST, PUT or PATCH
  * @param {object} payload Body of the request
  * @param {object} span optional request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the consentRequests requests is
@@ -194,7 +194,7 @@ export async function forwardConsentRequestsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentRequestsIDPayload,
+  payload: types.ConsentRequestsIDPayload | types.PatchConsentRequestsIDPayload,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsIDRequest')

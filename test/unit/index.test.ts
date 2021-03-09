@@ -802,6 +802,81 @@ describe('index', (): void => {
       })
     })
 
+    describe('PATCH /consentRequests', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('patch /consentRequests/{{ID}} payload successfully', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'PATCH',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPatch.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPatch.payload
+          }
+        }
+        const expected = [
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          '/consentRequests/{{ID}}',
+          'TP_CB_URL_CONSENT_REQUEST_PATCH',
+          expect.objectContaining(request.headers),
+          'PATCH',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PATCH',
+          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...mockData.consentRequestsPatch.headers
+          },
+          payload: {
+            ...mockData.consentRequestsPatch.payload
+          }
+        }
+        delete request.payload.authToken
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'authToken\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentRequestsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
     describe('POST /consents/{{ID}}/generateChallenge', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)

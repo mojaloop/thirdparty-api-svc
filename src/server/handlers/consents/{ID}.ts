@@ -51,8 +51,7 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // todo: add a consent-request/thirdparty? eventType to central-services-shared
-      'consent',
+      Enum.Events.Event.Type.CONSENT,
       Enum.Events.Event.Action.PUT,
       { consentsRequestId })
 
