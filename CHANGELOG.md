@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.14.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.13.0...v11.14.0) (2021-03-09)
+
+
+### Features
+
+* add PATCH consentRequest handler ([#44](https://github.com/mojaloop/thirdparty-api-adapter/issues/44)) ([ca9d329](https://github.com/mojaloop/thirdparty-api-adapter/commit/ca9d329e572f67d2b3c6b0b09557d8822ce50d75))
+
 ## [11.13.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.12.0...v11.13.0) (2021-03-03)
 
 
