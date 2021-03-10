@@ -37,7 +37,7 @@ export interface ExternalServiceKafkaConfig extends RdKafkaConsumerConfig {
 
 export interface ServiceConfig {
   // package.json
-  PACKAGE: object;
+  PACKAGE: Record<string, unknown>;
 
   // ../server.ts
   PORT: number;
