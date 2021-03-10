@@ -639,7 +639,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchConsentRequest'
+              $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/components/schemas/ConsentRequestsIDPatchRequest.yaml'
       responses:
         202:
           $ref: '../../node_modules/@mojaloop/api-snippets/fspiop/v1_1/openapi3/components/responses/202.yaml'
@@ -968,11 +968,3 @@ components:
          - accountNickname
          - id
          - currency
-    PatchConsentRequest:
-      title: PatchConsentRequest
-      type: object
-      properties:
-        authToken:
-          type: string
-      required:
-        - authToken

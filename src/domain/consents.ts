@@ -30,6 +30,9 @@ import {
   FspEndpointTypesEnum,
   RestMethodsEnum
 } from '@mojaloop/central-services-shared'
+import {
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 // eslint is complaining about these imports. not sure why.
 // eslint-disable-next-line import/no-unresolved
 import Config from '~/shared/config'
@@ -194,7 +197,7 @@ export async function forwardConsentsRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentsPayload,
+  payload: tpAPI.Schemas.ConsentsPostRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequest')
@@ -235,7 +238,7 @@ export async function forwardConsentsRequest (
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardConsentsIdRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT_ERROR,
-      payload.id,
+      payload.consentId,
       errorHeaders,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan

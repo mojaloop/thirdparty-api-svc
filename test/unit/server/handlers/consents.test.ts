@@ -40,10 +40,8 @@ const postConsentsRequest = {
     'fspiop-destination': 'pispA'
   },
   payload: {
-    id: 'b23428b9-43f6-12ba-f5c4-74527d5740fe',
-    requestId: 'a45238b9-99z4-12ba-f5c4-73245d5740fe',
-    initiatorId: 'pispA',
-    participantId: 'dfspA',
+    consentId: 'b23428b9-43f6-12ba-f5c4-74527d5740fe',
+    consentRequestId: 'a45238b9-99z4-12ba-f5c4-73245d5740fe',
     scopes: [
       {
         accountId: 'dfspa.username.1234',

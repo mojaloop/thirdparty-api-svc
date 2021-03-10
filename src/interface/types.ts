@@ -172,16 +172,6 @@ export interface ConsentRequestsIDPayload {
   authToken?: string;
 }
 /**
-* used for consents requests
-*/
-export interface ConsentsPayload {
-  id: string;
-  requestId: string;
-  initiatorId: string;
-  participantId: string;
-  scopes: Scope[];
-}
-/**
 * used for consents generate challenge requests
 */
 export interface ConsentsGenerateChallengePayload {
