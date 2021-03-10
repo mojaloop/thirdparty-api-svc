@@ -336,10 +336,8 @@
     },
     "params": {},
     "payload": {
-      "id": "7b24ea42-6fdd-45f5-999e-0a6981c4198b",
-      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
-      "initiatorId": "pispA",
-      "participantId": "dfspA",
+      "consentId": "7b24ea42-6fdd-45f5-999e-0a6981c4198b",
+      "consentRequestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -525,7 +523,7 @@
     },
     "params": {},
     "payload": {
-      "authToken": "SECRET_OTP"
+      "authToken": "141321"
     }
   }
 }

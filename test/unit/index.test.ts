@@ -535,12 +535,12 @@ describe('index', (): void => {
             ...mockData.consentsPostRequest.payload
           }
         }
-        delete request.payload.id
+        delete request.payload.consentId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - .requestBody should have required property \'id\''
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'consentId\''
           }
         }
 

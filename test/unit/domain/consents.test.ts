@@ -210,7 +210,7 @@ describe('domain/consents', () => {
       const errorPayload =
         ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.id + '/error',
+        'http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.consentId + '/error',
         expectedForwardConsentsRequestErrorHeaders,
         expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
         expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
@@ -222,7 +222,7 @@ describe('domain/consents', () => {
 
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
-        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.id + '/error')
+        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.consentId + '/error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
         .mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
@@ -253,7 +253,7 @@ describe('domain/consents', () => {
       const errorPayload =
         ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.id + '/error',
+        'http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.consentId + '/error',
         expectedForwardConsentsRequestErrorHeaders,
         expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
         expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
@@ -264,7 +264,7 @@ describe('domain/consents', () => {
       ]
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
-        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.id + '/error',)
+        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequest.payload.consentId + '/error',)
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))

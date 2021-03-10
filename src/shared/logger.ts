@@ -26,13 +26,13 @@ import logger from '@mojaloop/central-services-logger'
 import inspect from './inspect'
 import { Request, ResponseObject } from '@hapi/hapi'
 
-interface RequestLogged extends Request {
-  response: ResponseLogged;
-}
-
 interface ResponseLogged extends ResponseObject {
   source: string;
   statusCode: number;
+}
+
+interface RequestLogged extends Request {
+  response: ResponseLogged;
 }
 
 function logResponse (request: RequestLogged): void {

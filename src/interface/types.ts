@@ -172,30 +172,19 @@ export interface ConsentRequestsIDPayload {
   authToken?: string;
 }
 /**
-* used for consents requests
-*/
-export interface ConsentsPayload {
-  id: string;
-  requestId: string;
-  initiatorId: string;
-  participantId: string;
-  scopes: Scope[];
-}
-/**
 * used for consents generate challenge requests
 */
 export interface ConsentsGenerateChallengePayload {
   type: string;
 }
-/**
-* used for consents/{ID} requests
-*/
-export interface ConsentsIDPayload {
-  requestId: string;
-  participantId: string;
-  initiatorId: string;
-  scopes: Scope[];
-  credential: UnsignedCredential | SignedCredential;
+
+interface CredentialChallengeUnsigned {
+  payload: string;
+}
+
+interface CredentialChallengeSigned {
+  payload: string;
+  signature: string;
 }
 
 interface UnsignedCredential {
@@ -211,14 +200,17 @@ interface SignedCredential {
   payload: string;
 }
 
-interface CredentialChallengeUnsigned {
-  payload: string;
+/**
+* used for consents/{ID} requests
+*/
+export interface ConsentsIDPayload {
+  requestId: string;
+  participantId: string;
+  initiatorId: string;
+  scopes: Scope[];
+  credential: UnsignedCredential | SignedCredential;
 }
 
-interface CredentialChallengeSigned {
-  payload: string;
-  signature: string;
-}
 /**
 * used for accounts requests
 */
