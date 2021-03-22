@@ -23,7 +23,7 @@ defineFeature(feature, (test): void => {
     server.stop()
   })
 
-  test('CreateConsent', ({ given, when, then }): void => {
+  test('PostConsents', ({ given, when, then }): void => {
     const reqHeaders = {
       ...mockData.consentsPostRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
@@ -40,7 +40,7 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'CreateConsent\' request', async (): Promise<ServerInjectResponse> => {
+    when('I send a \'PostConsents\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardConsentsRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response

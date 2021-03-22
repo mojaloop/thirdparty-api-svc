@@ -1,8 +1,8 @@
 Feature: thirdparty-api-adapters server
 
-Scenario: CreateConsent
+Scenario: PostConsents
   Given thirdparty-api-adapter server
-  When I send a 'CreateConsent' request
+  When I send a 'PostConsents' request
   Then I get a response with a status code of '202'
 
 Scenario: UpdateConsentTypeUnsigned
