@@ -116,7 +116,7 @@ export default {
       ['success']
     ]
   ),
-  CreateConsent: wrapWithHistogram(
+  PostConsents: wrapWithHistogram(
     Consents.post,
     [
       'consents_post',
