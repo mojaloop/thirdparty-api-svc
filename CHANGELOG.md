@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.15.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.14.1...v11.15.0) (2021-03-23)
+
+
+### Features
+
+* use api-snippets(thirdparty -api paths) in place of local defs ([#46](https://github.com/mojaloop/thirdparty-api-adapter/issues/46)) ([e4a0d4f](https://github.com/mojaloop/thirdparty-api-adapter/commit/e4a0d4f08f15da9365eeb1b92e764fe47e3da571))
+
 ### [11.14.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.14.0...v11.14.1) (2021-03-10)
 
 
