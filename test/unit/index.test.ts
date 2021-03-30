@@ -42,6 +42,7 @@ const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest'
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
 const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
@@ -49,7 +50,7 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const trxnRequest = mockData.transactionRequest
-const trxnRequestError = mockData.genericThirdpartyError
+const genericTPRequestError = mockData.genericThirdpartyError
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -200,7 +201,7 @@ describe('index', (): void => {
 
       it('PUT', async (): Promise<void> => {
         mockForwardTransactionRequestError.mockResolvedValueOnce()
-        const reqHeaders = Object.assign(trxnRequestError.headers, {
+        const reqHeaders = Object.assign(genericTPRequestError.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
           accept: 'application/json'
         })
@@ -208,7 +209,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
           headers: reqHeaders,
-          payload: trxnRequestError.payload
+          payload: genericTPRequestError.payload
         }
 
         const expected = [
@@ -227,11 +228,11 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(genericTPRequestError.payload, { errorInformation: undefined })
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
-          headers: trxnRequestError.headers,
+          headers: genericTPRequestError.headers,
           payload: errPayload
         }
         const expected = {
@@ -802,6 +803,65 @@ describe('index', (): void => {
       })
     })
 
+    describe('/consentRequests/{ID}/error', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+        mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(genericTPRequestError.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: reqHeaders,
+          payload: genericTPRequestError.payload
+        }
+
+        const expected = [
+          '/consentRequests/{{ID}}/error',
+          'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+          expect.objectContaining(request.headers),
+          request.payload,
+          undefined
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdErrorRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(genericTPRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: genericTPRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentRequestsIdErrorRequest).not.toHaveBeenCalled()
+      })
+    })
+
     describe('PATCH /consentRequests', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -1192,7 +1252,7 @@ describe('index', (): void => {
         const request = {
           method: 'PUT',
           url: '/accounts/username1234/error',
-          headers: trxnRequestError.headers,
+          headers: genericTPRequestError.headers,
           payload: errPayload
         }
         const expected = {

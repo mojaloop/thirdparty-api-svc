@@ -19,6 +19,8 @@ paths:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consentRequests.yaml'
   /consentRequests/{ID}:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consentRequests_ID.yaml'
+  /consentRequests/{ID}/error:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consentRequests_ID_error.yaml'
   /consents:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/consents.yaml'
   /consents/{ID}:

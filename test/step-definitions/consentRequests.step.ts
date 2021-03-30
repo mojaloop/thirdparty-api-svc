@@ -12,6 +12,7 @@ const feature = loadFeature(featurePath)
 
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -259,6 +260,46 @@ defineFeature(feature, (test): void => {
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
       expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
+  test('NotifyErrorConsentRequests', ({ given, when, then }): void => {
+
+    const consentRequestsError = mockData.genericThirdpartyError
+    const reqHeaders = Object.assign(consentRequestsError.headers, {
+      date: 'Tue, 02 Mar 2021 10:10:10 GMT',
+      accept: 'application/json'
+    })
+    const request = {
+      method: 'PUT',
+      url: '/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
+      headers: reqHeaders,
+      payload: consentRequestsError.payload
+    }
+
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'NotifyErrorConsentRequests\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'200\'', (): void => {
+      const expected = [
+        '/consentRequests/{{ID}}/error',
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+        expect.objectContaining(request.headers),
+        request.payload,
+        undefined
+      ]
+
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeNull()
+      expect(mockForwardConsentRequestsIdErrorRequest).toHaveBeenCalledWith(...expected)
     })
   })
 })

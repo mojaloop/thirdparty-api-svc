@@ -47,7 +47,7 @@ import * as types from '~/interface/types'
 
 /**
  * @function forwardConsentRequestsIDRequestError
- * @description Generic function to handle sending `PUT .../consentRequests/error` back to the FSPIOP-Source
+ * @description Generic function to handle sending `PUT .../consentRequests/{ID}/error` back to the FSPIOP-Source
  * @param {string} path Callback endpoint path
  * @param {string} consentRequestsRequestId the ID of the consentRequest
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
