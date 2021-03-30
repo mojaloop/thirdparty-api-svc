@@ -50,7 +50,8 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const trxnRequest = mockData.transactionRequest
-const genericTPRequestError = mockData.genericThirdpartyError
+const trxnRequestError = mockData.genericThirdpartyError
+const consentRequestsRequestError = mockData.consentRequestsThirdpartyError
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -127,7 +128,7 @@ describe('index', (): void => {
           'TP_CB_URL_TRANSACTION_REQUEST_GET',
           expect.objectContaining(request.headers),
           'GET',
-          { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+          { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
           undefined,
           expect.any(Object)
         ]
@@ -178,7 +179,7 @@ describe('index', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
         expect.objectContaining(request.headers),
         'PUT',
-        { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         expect.any(Object)
       ]
@@ -201,7 +202,7 @@ describe('index', (): void => {
 
       it('PUT', async (): Promise<void> => {
         mockForwardTransactionRequestError.mockResolvedValueOnce()
-        const reqHeaders = Object.assign(genericTPRequestError.headers, {
+        const reqHeaders = Object.assign(trxnRequestError.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
           accept: 'application/json'
         })
@@ -209,7 +210,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
           headers: reqHeaders,
-          payload: genericTPRequestError.payload
+          payload: trxnRequestError.payload
         }
 
         const expected = [
@@ -228,11 +229,11 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(genericTPRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
-          headers: genericTPRequestError.headers,
+          headers: trxnRequestError.headers,
           payload: errPayload
         }
         const expected = {
@@ -815,7 +816,7 @@ describe('index', (): void => {
 
       it('PUT', async (): Promise<void> => {
         mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
-        const reqHeaders = Object.assign(genericTPRequestError.headers, {
+        const reqHeaders = Object.assign(consentRequestsRequestError.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
           accept: 'application/json'
         })
@@ -823,7 +824,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
           headers: reqHeaders,
-          payload: genericTPRequestError.payload
+          payload: consentRequestsRequestError.payload
         }
 
         const expected = [
@@ -831,7 +832,7 @@ describe('index', (): void => {
           'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
           expect.objectContaining(request.headers),
           request.payload,
-          undefined
+          expect.any(Object)
         ]
         const response = await server.inject(request)
 
@@ -841,11 +842,11 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(genericTPRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(consentRequestsRequestError.payload, { errorInformation: undefined })
         const request = {
           method: 'PUT',
           url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
-          headers: genericTPRequestError.headers,
+          headers: consentRequestsRequestError.headers,
           payload: errPayload
         }
         const expected = {
@@ -1182,8 +1183,8 @@ describe('index', (): void => {
           },
           payload: [
             {
-              "accountNickname": "dfspa.user.nickname",
-              "id": "dfspa.username.1234"
+              accountNickname: 'dfspa.user.nickname',
+              id: 'dfspa.username.1234'
             }
           ]
         }
@@ -1218,7 +1219,6 @@ describe('index', (): void => {
       })
 
       it('PUT', async (): Promise<void> => {
-
         mockForwardAccountsIdRequestError.mockResolvedValueOnce()
 
         const reqHeaders = Object.assign(acctRequestError.headers, {
@@ -1252,7 +1252,7 @@ describe('index', (): void => {
         const request = {
           method: 'PUT',
           url: '/accounts/username1234/error',
-          headers: genericTPRequestError.headers,
+          headers: trxnRequestError.headers,
           payload: errPayload
         }
         const expected = {
