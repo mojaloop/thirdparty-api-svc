@@ -42,6 +42,7 @@ const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest'
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
 const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
@@ -50,6 +51,7 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const trxnRequest = mockData.transactionRequest
 const trxnRequestError = mockData.genericThirdpartyError
+const consentRequestsRequestError = mockData.consentRequestsThirdpartyError
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -126,7 +128,7 @@ describe('index', (): void => {
           'TP_CB_URL_TRANSACTION_REQUEST_GET',
           expect.objectContaining(request.headers),
           'GET',
-          { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+          { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
           undefined,
           expect.any(Object)
         ]
@@ -177,7 +179,7 @@ describe('index', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
         expect.objectContaining(request.headers),
         'PUT',
-        { 'ID': 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         expect.any(Object)
       ]
@@ -802,6 +804,65 @@ describe('index', (): void => {
       })
     })
 
+    describe('/consentRequests/{ID}/error', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+        mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(consentRequestsRequestError.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: reqHeaders,
+          payload: consentRequestsRequestError.payload
+        }
+
+        const expected = [
+          '/consentRequests/{{ID}}/error',
+          'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+          expect.objectContaining(request.headers),
+          request.payload,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentRequestsIdErrorRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(consentRequestsRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: consentRequestsRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentRequestsIdErrorRequest).not.toHaveBeenCalled()
+      })
+    })
+
     describe('PATCH /consentRequests', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -1122,8 +1183,8 @@ describe('index', (): void => {
           },
           payload: [
             {
-              "accountNickname": "dfspa.user.nickname",
-              "id": "dfspa.username.1234"
+              accountNickname: 'dfspa.user.nickname',
+              id: 'dfspa.username.1234'
             }
           ]
         }
@@ -1158,7 +1219,6 @@ describe('index', (): void => {
       })
 
       it('PUT', async (): Promise<void> => {
-
         mockForwardAccountsIdRequestError.mockResolvedValueOnce()
 
         const reqHeaders = Object.assign(acctRequestError.headers, {

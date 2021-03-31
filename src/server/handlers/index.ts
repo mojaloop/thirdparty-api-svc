@@ -38,6 +38,7 @@ import Authorizations from './thirdpartyRequests/transactions/{ID}/authorization
 import ConsentRequestsId from './consentRequests/{ID}'
 import Accounts from './accounts/{ID}'
 import AccountsByUserIdError from './accounts/{ID}/error'
+import ConsentRequestsByIdError from './consentRequests/{ID}/error'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -161,6 +162,14 @@ export default {
     [
       'accounts_by_userid_error_put',
       'Put accountsByUserIdError request',
+      ['success']
+    ]
+  ),
+  NotifyErrorConsentRequests: wrapWithHistogram(
+    ConsentRequestsByIdError.put,
+    [
+      'consentRequestsId_error_put',
+      'Put consentRequestsId error request',
       ['success']
     ]
   ),

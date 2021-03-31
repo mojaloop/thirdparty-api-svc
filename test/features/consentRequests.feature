@@ -29,3 +29,8 @@ Scenario: PatchConsentRequest
  Given thirdparty-api-adapter server
  When I send a 'PatchConsentRequest' request
  Then I get a response with a status code of '202'
+
+Scenario: NotifyErrorConsentRequests
+ Given thirdparty-api-adapter server
+ When I send a 'NotifyErrorConsentRequests' request
+ Then I get a response with a status code of '200'
