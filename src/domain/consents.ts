@@ -43,7 +43,6 @@ import Config from '~/shared/config'
 // eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
 
-
 /**
  * @function forwardConsentsIdRequestError
  * @description Generic function to handle sending `PUT .../consents/error` back to the FSPIOP-Source
