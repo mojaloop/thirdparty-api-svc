@@ -35,7 +35,8 @@ import Logger from '@mojaloop/central-services-logger'
 import {
   Enum,
   FspEndpointTypesEnum,
-  RestMethodsEnum, Util
+  RestMethodsEnum,
+  Util
 } from '@mojaloop/central-services-shared'
 
 import { inspect } from 'util'

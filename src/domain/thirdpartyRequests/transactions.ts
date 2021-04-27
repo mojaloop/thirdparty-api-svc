@@ -33,7 +33,10 @@ import {
 } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import {
-  Enum, FspEndpointTypesEnum, RestMethodsEnum, Util
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
 } from '@mojaloop/central-services-shared'
 
 import Config from '~/shared/config'

@@ -33,7 +33,8 @@ import Logger from '@mojaloop/central-services-logger'
 import {
   Enum,
   FspEndpointTypesEnum,
-  RestMethodsEnum, Util
+  RestMethodsEnum,
+  Util
 } from '@mojaloop/central-services-shared'
 
 import { inspect } from 'util'
@@ -192,8 +193,7 @@ export async function forwardConsentRequestsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload:
-  tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
+  payload: tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
   tpAPI.Schemas.ConsentRequestsIDPutResponseOTPAuth |
   tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
   tpAPI.Schemas.ConsentRequestsIDPutResponseWebAuth |
