@@ -42,8 +42,7 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function post(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const transactionRequestId: string = request.params.ID
@@ -93,8 +92,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function put(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const transactionRequestId: string = request.params.ID

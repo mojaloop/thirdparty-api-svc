@@ -41,8 +41,7 @@ import { forwardConsentsIdRequest } from '~/domain/consents'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function put(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID

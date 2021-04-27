@@ -26,8 +26,7 @@
 import Metrics from '@mojaloop/central-services-metrics'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function get (_context: any, _request: Request, h: ResponseToolkit): ResponseObject {
+function get (_context: unknown, _request: Request, h: ResponseToolkit): ResponseObject {
   const metrics = Metrics.getMetricsForPrometheus()
   return h.response(metrics).code(200)
 }
