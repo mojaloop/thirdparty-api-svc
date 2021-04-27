@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.16.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.16.0...v11.16.1) (2021-04-27)
+
+
+### Maintenance
+
+* bump packages and ignore vulnerabilities ([#48](https://github.com/mojaloop/thirdparty-api-adapter/issues/48)) ([94a3e2b](https://github.com/mojaloop/thirdparty-api-adapter/commit/94a3e2b965f568191314d992c6ae8a93fc377785))
+
 ## [11.16.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.15.0...v11.16.0) (2021-03-31)
 
 
