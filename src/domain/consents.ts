@@ -22,26 +22,27 @@
  --------------
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
-
-import {
-  Enum,
-  Util,
-  FspEndpointTypesEnum,
-  RestMethodsEnum
-} from '@mojaloop/central-services-shared'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-// eslint is complaining about these imports. not sure why.
-// eslint-disable-next-line import/no-unresolved
-import Config from '~/shared/config'
-import { inspect } from 'util'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import {
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
+} from '@mojaloop/central-services-shared'
+
+import { inspect } from 'util'
+// eslint is complaining about these imports. not sure why.
+// eslint-disable-next-line import/no-unresolved
+import Config from '~/shared/config'
 // eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
+
 
 /**
  * @function forwardConsentsIdRequestError
