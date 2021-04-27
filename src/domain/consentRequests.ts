@@ -23,27 +23,25 @@
  --------------
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
-
-import {
-  Enum,
-  Util,
-  FspEndpointTypesEnum,
-  RestMethodsEnum
-} from '@mojaloop/central-services-shared'
-// eslint is complaining about these imports. not sure why.
-// eslint-disable-next-line import/no-unresolved
-import Config from '~/shared/config'
-import { inspect } from 'util'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import {
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum, Util
+} from '@mojaloop/central-services-shared'
+
+import { inspect } from 'util'
+// eslint is complaining about these imports. not sure why.
+// eslint-disable-next-line import/no-unresolved
+import Config from '~/shared/config'
 // eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
-// eslint-disable-next-line import/no-unresolved
-import * as types from '~/interface/types'
 
 /**
  * @function forwardConsentRequestsIDRequestError
@@ -121,7 +119,7 @@ export async function forwardConsentRequestsRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentRequestsPayload,
+  payload: tpAPI.Schemas.ConsentRequestsPostRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsRequest')
@@ -194,7 +192,12 @@ export async function forwardConsentRequestsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentRequestsIDPayload | types.PatchConsentRequestsIDPayload,
+  payload:
+  tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
+  tpAPI.Schemas.ConsentRequestsIDPutResponseOTPAuth |
+  tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
+  tpAPI.Schemas.ConsentRequestsIDPutResponseWebAuth |
+  tpAPI.Schemas.ConsentRequestsIDPatchRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsIDRequest')

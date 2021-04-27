@@ -28,9 +28,9 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 import { forwardConsentsIdRequest } from '~/domain/consents'
 
 
@@ -46,7 +46,10 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
-  const payload = request.payload as types.ConsentsIDPayload
+  const payload = request.payload as
+    tpAPI.Schemas.ConsentsIDPutResponseVerified |
+    tpAPI.Schemas.ConsentsIDPutResponseSigned |
+    tpAPI.Schemas.ConsentsIDPutResponseUnsigned
 
   try {
     const tags: { [id: string]: string } = getSpanTags(

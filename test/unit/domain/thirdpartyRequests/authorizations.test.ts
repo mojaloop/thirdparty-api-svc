@@ -23,15 +23,13 @@
 
  --------------
  ******/
-
-import { Authorizations } from '~/domain/thirdpartyRequests'
-import Logger from '@mojaloop/central-services-logger'
-import {
-  Util, Enum
-} from '@mojaloop/central-services-shared'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import { Enum, Util } from '@mojaloop/central-services-shared'
 import Span from 'test/unit/__mocks__/span'
-import * as types from '~/interface/types'
+import { Authorizations } from '~/domain/thirdpartyRequests'
+import * as types from '~/interface/types';
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -60,7 +58,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -105,7 +103,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -154,7 +152,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -199,7 +197,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -274,7 +272,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',
@@ -394,7 +392,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: types.AuthorizationPayload = {
+      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse = {
         challenge: '12345',
         value: '12345',
         consentId: '12345',

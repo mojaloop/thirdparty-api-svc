@@ -22,15 +22,16 @@
 
  --------------
  ******/
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Enum } from '@mojaloop/central-services-shared'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
+import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
-import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 import { forwardConsentsIdGenerateChallengeRequest } from '~/domain/consents'
+import { getSpanTags } from '~/shared/util'
+
 
 /**
  * summary: GenerateChallengeRequest
@@ -46,7 +47,7 @@ async function post(_context: any, request: Request, h: ResponseToolkit): Promis
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentsIdGenerateChallengeId: string = request.params.ID
-  const payload = request.payload as types.ConsentsGenerateChallengePayload
+  const payload = request.payload as tpAPI.Schemas.ConsentsIDGenerateChallengePostRequest
 
   try {
     const tags: { [id: string]: string } = getSpanTags(

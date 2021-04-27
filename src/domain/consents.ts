@@ -125,7 +125,9 @@ export async function forwardConsentsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentsIDPayload,
+  payload: tpAPI.Schemas.ConsentsIDPutResponseVerified |
+  tpAPI.Schemas.ConsentsIDPutResponseSigned |
+  tpAPI.Schemas.ConsentsIDPutResponseUnsigned,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
@@ -328,7 +330,7 @@ export async function forwardConsentsIdGenerateChallengeRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentsGenerateChallengePayload,
+  payload: tpAPI.Schemas.ConsentsIDGenerateChallengePostRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequest')

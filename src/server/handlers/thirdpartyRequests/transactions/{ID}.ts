@@ -24,14 +24,15 @@
  ******/
 'use strict'
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 
 /**
  * summary: GetThirdpartyTransactionRequests
@@ -85,7 +86,7 @@ const get = async (_context: any, request: Request, h: ResponseToolkit): Promise
 
 /**
  * summary: UpdateThirdPartyTransactionRequests
- * description: The HTTP request PUT /thirdpartyRequests/transactions/{ID} is used to inform the client about 
+ * description: The HTTP request PUT /thirdpartyRequests/transactions/{ID} is used to inform the client about
  * status of a previously requested thirdparty transaction.
  * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
@@ -94,9 +95,8 @@ const get = async (_context: any, request: Request, h: ResponseToolkit): Promise
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const put = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const payload = request.payload as types.UpdateThirdPartyTransactionRequest
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
   const span = (request as any).span
-
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,

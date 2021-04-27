@@ -25,23 +25,23 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
-
-import {
-  Enum,
-  Util,
-  FspEndpointTypesEnum,
-  RestMethodsEnum
-} from '@mojaloop/central-services-shared'
-import Config from '~/shared/config'
-import { inspect } from 'util'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import {
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum, Util
+} from '@mojaloop/central-services-shared'
+
+import { inspect } from 'util'
+import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
-import * as types from '~/interface/types'
+
 
 /**
  * @function forwardAuthorizationRequest
@@ -62,7 +62,9 @@ export async function forwardAuthorizationRequest(
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   transactionRequestId: string,
-  payload: types.AuthorizationPayload,
+  payload:
+    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest |
+    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardAuthorizationRequest')
