@@ -45,7 +45,7 @@ import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
 /**
- * @function forwardConsentRequestsIDRequestError
+ * @function forwardConsentRequestsIdRequestError
  * @description Generic function to handle sending `PUT .../consentRequests/{ID}/error` back to the FSPIOP-Source
  * @param {string} path Callback endpoint path
  * @param {string} consentRequestsRequestId the ID of the consentRequest
