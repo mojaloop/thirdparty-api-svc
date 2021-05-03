@@ -142,7 +142,7 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
 const patch = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse
   const span = (request as any).span
   try {
     const tags: { [id: string]: string } = getSpanTags(

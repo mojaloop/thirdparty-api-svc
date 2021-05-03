@@ -46,8 +46,8 @@ import { finishChildSpan, getStackOrInspect } from '~/shared/util'
 
 /**
  * @function forwardTransactionRequest
- * @description Forwards a POST /thirdpartyRequests/transactions, GET /thirdpartyRequests/transactions/{ID} and
- *  PUT /thirdpartyRequests/transactions/{ID} to destination FSP for processing
+ * @description Forwards a POST /thirdpartyRequests/transactions and
+ * GET/PUT/PATCH /thirdpartyRequests/transactions/{ID} to destination FSP for processing
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST

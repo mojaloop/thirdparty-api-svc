@@ -293,4 +293,46 @@ defineFeature(feature, (test): void => {
       expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
     })
   })
+
+  test('NotifyThirdpartyTransactionRequests', ({ given, when, then }): void => {
+
+    const patchTPTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
+    const reqHeaders = Object.assign(patchTPTransactionIdRequest.headers, {
+      date: 'Tue, 02 Mar 2021 10:10:10 GMT',
+      accept: 'application/json'
+    })
+    const request = {
+      method: 'PATCH',
+      url: '/thirdpartyRequests/transactions/b82348b9-81f6-42ea-b5c4-80667d5740fe',
+      headers: reqHeaders,
+      payload: patchTPTransactionIdRequest.payload
+    }
+
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'NotifyThirdpartyTransactionRequests\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'202\'', (): void => {
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
+        expect.objectContaining(request.headers),
+        'PATCH',
+        { "ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe" },
+        request.payload,
+        undefined
+      ]
+
+      expect(response.statusCode).toBe(202)
+      expect(response.result).toBeNull()
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
 })

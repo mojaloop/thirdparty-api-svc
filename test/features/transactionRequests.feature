@@ -29,3 +29,8 @@ Scenario: ThirdpartyTransactionRequestsError
   Given thirdparty-api-adapter server
   When I send a 'ThirdpartyTransactionRequestsError' request
   Then I get a response with a status code of '200'
+
+Scenario: NotifyThirdpartyTransactionRequests
+ Given thirdparty-api-adapter server
+ When I send a 'NotifyThirdpartyTransactionRequests' request
+ Then I get a response with a status code of '202'
