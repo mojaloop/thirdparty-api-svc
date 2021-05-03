@@ -24,30 +24,30 @@
  ******/
 'use strict'
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 
 /**
  * summary: CreateThirdpartyTransactionRequests
  * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request
  * for the provided financial transaction in the server.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
- * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-urifspiop-http-method
+ * fspiop-destination, fspiop-encryption, fspiop-signature, fspiop-uri, fspiop-http-method
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const post = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const post = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = (request as any).span
 
   try {
-    const payload = request.payload as types.ThirdPartyTransactionRequest
+    const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,

@@ -22,16 +22,15 @@
 
  --------------
  ******/
-
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
-import { Enum } from '@mojaloop/central-services-shared'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
+import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
-import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 import { forwardConsentRequestsIdRequest } from '~/domain/consentRequests'
+import { getSpanTags } from '~/shared/util'
 
 
 /**
@@ -41,12 +40,15 @@ import { forwardConsentRequestsIdRequest } from '~/domain/consentRequests'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function put(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
-  const payload = request.payload as types.ConsentRequestsIDPayload
+  const payload = request.payload as
+    tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
+    tpAPI.Schemas.ConsentRequestsIDPutResponseOTPAuth |
+    tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
+    tpAPI.Schemas.ConsentRequestsIDPutResponseWebAuth
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -92,12 +94,11 @@ async function put(_context: any, request: Request, h: ResponseToolkit): Promise
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function patch(_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function patch(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
-  const payload = request.payload as types.PatchConsentRequestsIDPayload
+  const payload = request.payload as tpAPI.Schemas.ConsentRequestsIDPatchRequest
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,

@@ -18,7 +18,7 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kevin Leyow <sridhar.voruganti@modusbox.com>
+ - Kevin Leyow <kevin.leyow@modusbox.com>
 
  --------------
  ******/
@@ -29,29 +29,29 @@
  import { ReformatFSPIOPError, APIErrorObject } from '@mojaloop/central-services-error-handling'
  import { Enum } from '@mojaloop/central-services-shared'
  import { AuditEventAction } from '@mojaloop/event-sdk'
- import { forwardConsentRequestsIdRequestError } from '~/domain/consentRequests'
+ import { forwardConsentsIdRequestError } from '~/domain/consents'
  import { getSpanTags } from '~/shared/util'
 
  /**
-  * summary: NotifyErrorConsentRequests
-  * description: The HTTP request PUT /consentRequests/{ID}/error is used to inform the client
-  * about accounts error.
+  * summary: NotifyErrorConsents
+  * description: The HTTP request PUT /consents/{ID}/error is used to inform the client
+  * about consent error.
   * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
   * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
-const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
    const span = (request as any).span
-   const consentRequestsId: string = request.params.ID
+   const consentId: string = request.params.ID
    const payload = request.payload as APIErrorObject
 
    try {
      const tags: { [id: string]: string } = getSpanTags(
        request,
-       Enum.Events.Event.Type.CONSENT_REQUEST,
+       Enum.Events.Event.Type.CONSENT,
        Enum.Events.Event.Action.PUT,
-       { consentRequestsId })
+       { consentId })
 
      span?.setTags(tags)
      await span?.audit({
@@ -60,16 +60,16 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
      }, AuditEventAction.start)
 
      // Note: calling async function without `await`
-     forwardConsentRequestsIdRequestError(
-       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
-       consentRequestsId,
+     forwardConsentsIdRequestError(
+       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT_ERROR,
+       consentId,
        request.headers,
        payload,
        span
      )
        .catch(err => {
-         // Do nothing with the error - forwardConsentRequestsIdRequestError takes care of async errors
-         Logger.error('ConsentRequests::put:error - forwardConsentRequestsIdRequestError async handler threw an unhandled error')
+         // Do nothing with the error - forwardConsentsIdRequestError takes care of async errors
+         Logger.error('Consents::put:error - forwardConsentsIdRequestError async handler threw an unhandled error')
          Logger.error(ReformatFSPIOPError(err))
        })
 

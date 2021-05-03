@@ -25,22 +25,24 @@
 'use strict'
 
 import Hapi from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
 import {
   Enum,
-  Util,
-  RestMethodsEnum
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
 } from '@mojaloop/central-services-shared'
+
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
-import { getStackOrInspect, finishChildSpan } from '~/shared/util'
-import * as types from '~/interface/types'
-import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
+import { finishChildSpan, getStackOrInspect } from '~/shared/util'
+
 
 /**
  * @function forwardTransactionRequest
@@ -234,9 +236,11 @@ async function forwardTransactionRequestNotification (
   }
 }
 
-type CreateOrUpdateReq = types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest
-function isCreateRequest (request: CreateOrUpdateReq): request is types.ThirdPartyTransactionRequest {
-  if ((request as types.ThirdPartyTransactionRequest).transactionRequestId) {
+type CreateOrUpdateReq =
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+function isCreateRequest (request: CreateOrUpdateReq): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
+  if ((request as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest).transactionRequestId) {
     return true
   }
   return false

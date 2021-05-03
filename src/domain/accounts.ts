@@ -24,23 +24,23 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
-
-import {
-  Enum,
-  Util,
-  FspEndpointTypesEnum,
-  RestMethodsEnum
-} from '@mojaloop/central-services-shared'
-import Config from '~/shared/config'
-import { inspect } from 'util'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import {
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
+} from '@mojaloop/central-services-shared'
+
+import { inspect } from 'util'
+import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
-import * as types from '~/interface/types'
 
 /**
  * @function forwardAccountsIdRequestError
@@ -87,13 +87,13 @@ export async function forwardAccountsIdRequestError (
       childSpan
     )
 
-    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId} 
+    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId}
     from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`accounts::forwardAccountsIdRequestError - Error forwarding accounts error to endpoint: 
+    Logger.error(`accounts::forwardAccountsIdRequestError - Error forwarding accounts error to endpoint:
     ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
@@ -122,7 +122,7 @@ export async function forwardAccountsIdRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   userId: string,
-  payload?: types.AccountsIdRequest,
+  payload?: tpAPI.Schemas.AccountsIDPutResponse,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequest')

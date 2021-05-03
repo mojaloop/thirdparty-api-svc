@@ -29,21 +29,21 @@ import Logger from '@mojaloop/central-services-logger'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+
 import { forwardAccountsIdRequest } from '~/domain/accounts'
 import { getSpanTags } from '~/shared/util'
-import * as types from '~/interface/types'
 
 /**
  * summary: GetAccountsByUserId
- * description: The HTTP request GET /accounts/{ID} is used to retrieve the list of potential accounts 
+ * description: The HTTP request GET /accounts/{ID} is used to retrieve the list of potential accounts
  * available for linking.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const get = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const get = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = (request as any).span
   const userId: string = request.params.ID
   try {
@@ -85,16 +85,15 @@ const get = async (_context: any, request: Request, h: ResponseToolkit): Promise
 
 /**
  * summary: UpdateAccountsByUserId
- * description: The HTTP request PUT /accounts/{ID} is used to return the list of potential accounts 
+ * description: The HTTP request PUT /accounts/{ID} is used to return the list of potential accounts
  * available for linking.
  * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const put = async (_context: any, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const payload = request.payload as types.AccountsIdRequest
+const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+  const payload = request.payload as tpAPI.Schemas.AccountsIDPutResponse
   const span = (request as any).span
   const userId: string = request.params.ID
 
