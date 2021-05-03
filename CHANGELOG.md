@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.16.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.16.1...v11.16.2) (2021-05-03)
+
+
+### Code Refactor
+
+* fix typescript, update openapi interface & fix tests ([#49](https://github.com/mojaloop/thirdparty-api-adapter/issues/49)) ([ea24fe9](https://github.com/mojaloop/thirdparty-api-adapter/commit/ea24fe97a7e65020f67fa92d43e746a74d01717a))
+
 ### [11.16.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.16.0...v11.16.1) (2021-04-27)
 
 
