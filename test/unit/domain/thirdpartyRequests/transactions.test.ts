@@ -38,10 +38,12 @@ const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const postTransactionRequestApiPath = '/thirdpartyRequests/transactions'
 const postTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
-const getTransactionRequestApiPath = '/thirdpartyRequests/transactions/{ID}'
+const getPutPatchTransactionRequestApiPath = '/thirdpartyRequests/transactions/{ID}'
 const getTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET
+const patchTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
+const patchThirdpartyTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
 const notificationEventCommit: NotificationMessage = mockData.notificationEventCommit
 
 const getEndpointAndRenderExpectedPostTransactionRequest = [
@@ -84,6 +86,25 @@ const sendRequestExpectedGetTransactionRequest = [
   request.headers['fspiop-destination'],
   Enum.Http.RestMethods.GET,
   undefined,
+  Enum.Http.ResponseTypes.JSON,
+  expect.objectContaining({ isFinished: false })
+]
+
+const getEndpointAndRenderExpectedPatchTransactionRequest = [
+  'http://central-ledger.local:3001',
+  patchThirdpartyTransactionIdRequest.headers['fspiop-destination'],
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
+  "/thirdpartyRequests/transactions/{ID}",
+  {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"}
+]
+
+const sendRequestExpectedPatchTransactionRequest = [
+  'http://dfspa-sdk/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6',
+  patchThirdpartyTransactionIdRequest.headers,
+  patchThirdpartyTransactionIdRequest.headers['fspiop-source'],
+  patchThirdpartyTransactionIdRequest.headers['fspiop-destination'],
+  Enum.Http.RestMethods.PATCH,
+  patchThirdpartyTransactionIdRequest.payload,
   Enum.Http.ResponseTypes.JSON,
   expect.objectContaining({ isFinished: false })
 ]
@@ -133,7 +154,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Transactions.forwardTransactionRequest(
-        getTransactionRequestApiPath,
+        getPutPatchTransactionRequestApiPath,
         getTransactionRequestApiEndpointType,
         request.headers,
         Enum.Http.RestMethods.GET,
@@ -143,6 +164,23 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedGetTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedGetTransactionRequest)
+    })
+
+    it('forwards PATCH /thirdpartyRequests/transactions/{ID} request', async (): Promise<void> => {
+      const mockSpan = new Span()
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6')
+      mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+      await Transactions.forwardTransactionRequest(
+        getPutPatchTransactionRequestApiPath,
+        patchTransactionRequestApiEndpointType,
+        patchThirdpartyTransactionIdRequest.headers,
+        Enum.Http.RestMethods.PATCH,
+        {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"},
+        patchThirdpartyTransactionIdRequest.payload,
+        mockSpan)
+
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPatchTransactionRequest)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPatchTransactionRequest)
     })
 
     it('handles when payload is undefined', async (): Promise<void> => {
