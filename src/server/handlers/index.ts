@@ -32,6 +32,7 @@ import ThirdpartyTransactionsId from './thirdpartyRequests/transactions/{ID}'
 import ThirdpartyTransactionsIdError from './thirdpartyRequests/transactions/{ID}/error'
 import Consents from './consents'
 import ConsentsId from './consents/{ID}'
+import ConsentsByIdError from './consents/{ID}/error'
 import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
@@ -66,6 +67,14 @@ export default {
     [
       'thirdpartyRequests_transactions_put',
       'Put thirdpartyRequests transactions request',
+      ['success']
+    ]
+  ),
+  NotifyThirdpartyTransactionRequests: wrapWithHistogram(
+    ThirdpartyTransactionsId.patch,
+    [
+      'thirdpartyRequests_transactions_patch',
+      'Patch thirdpartyRequests transactions request',
       ['success']
     ]
   ),
@@ -130,6 +139,14 @@ export default {
     [
       'consentsId_put',
       'Put consentsId request',
+      ['success']
+    ]
+  ),
+  NotifyErrorConsents: wrapWithHistogram(
+    ConsentsByIdError.put,
+    [
+      'consentsId_error_put',
+      'Put consentsId error request',
       ['success']
     ]
   ),
