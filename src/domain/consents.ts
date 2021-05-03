@@ -22,30 +22,26 @@
  --------------
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
-
-import {
-  Enum,
-  Util,
-  FspEndpointTypesEnum,
-  RestMethodsEnum
-} from '@mojaloop/central-services-shared'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
-// eslint is complaining about these imports. not sure why.
-// eslint-disable-next-line import/no-unresolved
-import Config from '~/shared/config'
-import { inspect } from 'util'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
+import {
+  Enum,
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
+} from '@mojaloop/central-services-shared'
+
+import { inspect } from 'util'
+// eslint is complaining about these imports. not sure why.
+// eslint-disable-next-line import/no-unresolved
+import Config from '~/shared/config'
 // eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
-// eslint-disable-next-line import/no-unresolved
-import * as types from '~/interface/types'
 
 /**
  * @function forwardConsentsIdRequestError
@@ -125,7 +121,9 @@ export async function forwardConsentsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentsIDPayload,
+  payload: tpAPI.Schemas.ConsentsIDPutResponseVerified |
+  tpAPI.Schemas.ConsentsIDPutResponseSigned |
+  tpAPI.Schemas.ConsentsIDPutResponseUnsigned,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
@@ -328,7 +326,7 @@ export async function forwardConsentsIdGenerateChallengeRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: types.ConsentsGenerateChallengePayload,
+  payload: tpAPI.Schemas.ConsentsIDGenerateChallengePostRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdGenerateChallengeRequest')

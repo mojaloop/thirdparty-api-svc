@@ -25,26 +25,28 @@
 'use strict'
 
 import Hapi from '@hapi/hapi'
-import Logger from '@mojaloop/central-services-logger'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import {
   APIErrorObject,
   FSPIOPError,
   ReformatFSPIOPError
 } from '@mojaloop/central-services-error-handling'
+import Logger from '@mojaloop/central-services-logger'
 import {
   Enum,
-  Util,
-  RestMethodsEnum
+  FspEndpointTypesEnum,
+  RestMethodsEnum,
+  Util
 } from '@mojaloop/central-services-shared'
+
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
-import { getStackOrInspect, finishChildSpan } from '~/shared/util'
-import * as types from '~/interface/types'
-import { FspEndpointTypesEnum } from '@mojaloop/central-services-shared';
+import { finishChildSpan, getStackOrInspect } from '~/shared/util'
+
 
 /**
  * @function forwardTransactionRequest
- * @description Forwards a POST /thirdpartyRequests/transactions, GET /thirdpartyRequests/transactions/{ID} and 
+ * @description Forwards a POST /thirdpartyRequests/transactions, GET /thirdpartyRequests/transactions/{ID} and
  *  PUT /thirdpartyRequests/transactions/{ID} to destination FSP for processing
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
@@ -62,7 +64,9 @@ async function forwardTransactionRequest (
   headers: Hapi.Util.Dictionary<string>,
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
-  payload?: types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest,
+  payload?:
+    tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
+    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardTransactionRequest')
@@ -231,9 +235,11 @@ async function forwardTransactionRequestNotification (
   }
 }
 
-type CreateOrUpdateReq = types.ThirdPartyTransactionRequest | types.UpdateThirdPartyTransactionRequest
-function isCreateRequest (request: CreateOrUpdateReq): request is types.ThirdPartyTransactionRequest {
-  if ((request as types.ThirdPartyTransactionRequest).transactionRequestId) {
+type CreateOrUpdateReq =
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+function isCreateRequest (request: CreateOrUpdateReq): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
+  if ((request as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest).transactionRequestId) {
     return true
   }
   return false
