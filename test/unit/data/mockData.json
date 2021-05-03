@@ -554,5 +554,28 @@
         }
       }
     }
+  },
+  "consentsThirdpartyError": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0"
+    },
+    "payload": {
+      "errorInformation": {
+        "errorCode": "6000",
+        "errorDescription": "Generic third party error",
+        "extensionList": {
+          "extension": [
+            {
+              "key": "test",
+              "value": "test"
+            }
+          ]
+        }
+      }
+    }
   }
 }
