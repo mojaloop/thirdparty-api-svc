@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.17.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.16.2...v11.17.0) (2021-05-04)
+
+
+### Features
+
+* add new patch transaction and consent id error endpoint ([#50](https://github.com/mojaloop/thirdparty-api-adapter/issues/50)) ([733da99](https://github.com/mojaloop/thirdparty-api-adapter/commit/733da99a64ff0499bd6825ccf38dd0725178cd0d))
+
 ### [11.16.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.16.1...v11.16.2) (2021-05-03)
 
 
