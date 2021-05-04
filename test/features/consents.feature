@@ -19,3 +19,8 @@ Scenario: UpdateConsentTypeVerified
  Given thirdparty-api-adapter server
  When I send a 'UpdateConsent' UpdateConsentTypeVerified request
  Then I get a response with a status code of '202'
+
+Scenario: NotifyErrorConsents
+ Given thirdparty-api-adapter server
+ When I send a 'NotifyErrorConsents' request
+ Then I get a response with a status code of '200'

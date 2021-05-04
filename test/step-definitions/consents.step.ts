@@ -12,6 +12,7 @@ const feature = loadFeature(featurePath)
 
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
+const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -179,6 +180,46 @@ defineFeature(feature, (test): void => {
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
       expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+    })
+  })
+
+  test('NotifyErrorConsents', ({ given, when, then }): void => {
+
+    const consentsError = mockData.genericThirdpartyError
+    const reqHeaders = Object.assign(consentsError.headers, {
+      date: 'Tue, 02 Mar 2021 10:10:10 GMT',
+      accept: 'application/json'
+    })
+    const request = {
+      method: 'PUT',
+      url: '/consents/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
+      headers: reqHeaders,
+      payload: consentsError.payload
+    }
+
+    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when('I send a \'NotifyErrorConsents\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardConsentsIdRequestError.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
+
+    then('I get a response with a status code of \'200\'', (): void => {
+      const expected = [
+        '/consents/{{ID}}/error',
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+        expect.objectContaining(request.headers),
+        request.payload,
+        undefined
+      ]
+
+      expect(response.statusCode).toBe(200)
+      expect(response.result).toBeNull()
+      expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
     })
   })
 })

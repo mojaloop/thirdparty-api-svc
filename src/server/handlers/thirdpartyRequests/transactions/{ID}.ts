@@ -132,7 +132,57 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
   }
 }
 
+/**
+ * summary: NotifyThirdpartyTransactionRequests
+ * description: The HTTP request PATCH /thirdpartyRequests/transactions/{ID} is used to inform the client about
+ * outcome of a transaction request.
+ * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const patch = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse
+  const span = (request as any).span
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Action.PATCH,
+      { transactionRequestId: request.params.transactionRequestId })
+
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    Transactions.forwardTransactionRequest(
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
+      request.headers,
+      Enum.Http.RestMethods.PATCH,
+      request.params,
+      payload,
+      span
+    )
+      .catch(err => {
+        // Do nothing with the error - forwardTransactionRequest takes care of async errors
+        Logger.error('Transactions::patch - forwardTransactionRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
+}
+
 export default {
   get,
-  put
+  put,
+  patch
 }

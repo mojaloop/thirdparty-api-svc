@@ -40,6 +40,7 @@ const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTran
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
+const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
@@ -52,6 +53,8 @@ const mockData = JSON.parse(JSON.stringify(TestData))
 const trxnRequest = mockData.transactionRequest
 const trxnRequestError = mockData.genericThirdpartyError
 const consentRequestsRequestError = mockData.consentRequestsThirdpartyError
+const consentsRequestError = mockData.consentsThirdpartyError
+const patchThirdpartyTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
 
 describe('index', (): void => {
   it('should have proper layout', (): void => {
@@ -159,35 +162,86 @@ describe('index', (): void => {
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
       })
-    })
 
-    it('PUT', async (): Promise<void> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
-      const reqHeaders = Object.assign(mockData.updateTransactionRequest.headers, {
-        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-        accept: 'application/json'
+      it('PUT', async (): Promise<void> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(mockData.updateTransactionRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+          headers: reqHeaders,
+          payload: mockData.updateTransactionRequest.payload
+        }
+
+        const expected = [
+          '/thirdpartyRequests/transactions/{{ID}}',
+          'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+          request.payload,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
-      const request = {
-        method: 'PUT',
-        url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
-        headers: reqHeaders,
-        payload: mockData.updateTransactionRequest.payload
-      }
 
-      const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
-        expect.objectContaining(request.headers),
-        'PUT',
-        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
-        request.payload,
-        expect.any(Object)
-      ]
-      const response = await server.inject(request)
+      it('PATCH', async (): Promise<void> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(patchThirdpartyTransactionIdRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/json'
+        })
+        const request = {
+          method: 'PATCH',
+          url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+          headers: reqHeaders,
+          payload: patchThirdpartyTransactionIdRequest.payload
+        }
 
-      expect(response.statusCode).toBe(200)
-      expect(response.result).toBeNull()
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+        const expected = [
+          '/thirdpartyRequests/transactions/{{ID}}',
+          'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
+          expect.objectContaining(request.headers),
+          'PATCH',
+          { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
+          request.payload,
+          undefined
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      })
+
+
+      it('PATCH mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequest.payload, { })
+        const request = {
+          method: 'PATCH',
+          url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
+          headers: trxnRequest.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'transactionId\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
+      })
     })
 
     describe('/thirdpartyRequests/transactions/{ID}/error', (): void => {
@@ -556,7 +610,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /consentsRequests', (): void => {
+    describe('POST /consentRequests', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -1080,6 +1134,78 @@ describe('index', (): void => {
         }
 
         // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardConsentsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /consents/{{ID}}/error', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('puts /consents/{{ID}}/error payload successfully', async (): Promise<void> => {
+        mockForwardConsentsIdRequestError.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...consentsRequestError.headers
+          },
+          payload: {
+            ...consentsRequestError.payload
+          }
+        }
+
+        const expected = [
+          '/consents/{{ID}}/error',
+          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
+          expect.objectContaining(request.headers),
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PUT',
+          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
+          headers: {
+            accept: 'application/json',
+            date: (new Date()).toISOString(),
+            ...consentsRequestError.headers
+          },
+          payload: {
+            ...consentsRequestError.payload
+          }
+        }
+        delete request.payload.errorInformation
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - .requestBody should have required property \'errorInformation\''
+          }
+        }
         const response = await server.inject(request)
 
         // Assert

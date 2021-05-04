@@ -57,6 +57,20 @@
       "transactionRequestState": "RECEIVED"
     }
   },
+  "patchThirdpartyTransactionIdRequest": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802"
+    },
+    "payload": {
+      "transactionId": "8e34f91d-d078-4077-8263-2c047876fcf6",
+      "transactionRequestState": "ACCEPTED",
+      "transactionState": "COMPLETED"
+    }
+  },
   "internalConfig": {
     "options": {
       "mode": 2,
@@ -519,6 +533,29 @@
     }
   },
   "consentRequestsThirdpartyError": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0"
+    },
+    "payload": {
+      "errorInformation": {
+        "errorCode": "6000",
+        "errorDescription": "Generic third party error",
+        "extensionList": {
+          "extension": [
+            {
+              "key": "test",
+              "value": "test"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "consentsThirdpartyError": {
     "headers": {
       "fspiop-source": "dfspA",
       "fspiop-destination": "pispA"
