@@ -33,6 +33,10 @@ paths:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/health.yaml'
   /metrics:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/metrics.yaml'
+  /services/{ServiceType}:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/services_ServiceType.yaml'
+  /services/{ServiceType}/error:
+    $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/services_ServiceType_error.yaml'
   /thirdpartyRequests/transactions:
     $ref: '../../node_modules/@mojaloop/api-snippets/thirdparty/openapi3/paths/thirdpartyRequests_transactions.yaml'
   /thirdpartyRequests/transactions/{ID}:

@@ -577,5 +577,53 @@
         }
       }
     }
-  }
+  },
+  "getServicesByServiceTypeRequest": {
+    "headers": {
+      "fspiop-source": "pispA",
+      "fspiop-destination": "services-lookup"
+    },
+    "params": {
+      "ServiceType": "THIRD_PARTY_DFSP"
+    },
+    "payload": {}
+  },
+  "putServicesByServiceTypeRequest": {
+    "headers": {
+      "fspiop-source": "services-lookup",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ServiceType": "THIRD_PARTY_DFSP"
+    },
+    "payload": {
+      "providers": [
+        "dfspa",
+        "dfspb"
+      ]
+    }
+  },
+  "putServicesByServiceTypeRequestError": {
+    "headers": {
+      "fspiop-source": "services-lookup",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ServiceType": "THIRD_PARTY_DFSP"
+    },
+    "payload": {
+      "errorInformation": {
+        "errorCode": "7201",
+        "errorDescription": "No thirdparty enabled FSP found",
+        "extensionList": {
+          "extension": [
+            {
+              "key": "test",
+              "value": "test"
+            }
+          ]
+        }
+      }
+    }
+  },
 }
