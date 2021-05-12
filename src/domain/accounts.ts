@@ -93,6 +93,7 @@ export async function forwardAccountsIdRequestError (
       childSpan.finish()
     }
   } catch (err) {
+    console.log(error)
     Logger.error(`accounts::forwardAccountsIdRequestError - Error forwarding accounts error to endpoint:
     ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
