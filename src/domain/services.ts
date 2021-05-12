@@ -232,7 +232,7 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService (
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
-      'fspiop-destination': Enum.Http.Headers.FSPIOP.SWITCH.value,
+      'fspiop-destination': Enum.Http.Headers.FSPIOP.SWITCH.value
     }
 
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
