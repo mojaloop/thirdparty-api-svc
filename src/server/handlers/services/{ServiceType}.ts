@@ -52,7 +52,7 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      'services', // todo: add this as an event action type
+      Enum.Events.Event.Type.SERVICE,
       Enum.Events.Event.Action.GET,
       { serviceType })
 
@@ -101,7 +101,7 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      'services', // todo: add this as an event action type
+      Enum.Events.Event.Type.SERVICE,
       Enum.Events.Event.Action.PUT,
       { serviceType })
 
