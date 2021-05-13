@@ -208,8 +208,7 @@ export default {
       ['success']
     ]
   ),
-  // todo: fix operation id
-  PutServicesByIdAndError: wrapWithHistogram(
+  PutServicesByServiceTypeAndError: wrapWithHistogram(
     ServicesByServiceTypeError.put,
     [
       'servicesServiceType_error_put',

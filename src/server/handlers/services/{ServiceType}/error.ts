@@ -33,7 +33,7 @@
  import { getSpanTags } from '~/shared/util'
 
  /**
-  * summary: PutServicesByIdAndError
+  * summary: PutServicesByServiceTypeAndError
   * description: The HTTP request PUT /services/{ServiceType}/error is used to inform the client
   * about services error.
   * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
