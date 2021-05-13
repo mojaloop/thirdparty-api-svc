@@ -37,9 +37,11 @@ import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
 import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 import ConsentRequestsId from './consentRequests/{ID}'
+import ConsentRequestsByIdError from './consentRequests/{ID}/error'
 import Accounts from './accounts/{ID}'
 import AccountsByUserIdError from './accounts/{ID}/error'
-import ConsentRequestsByIdError from './consentRequests/{ID}/error'
+import Services from './services/{ServiceType}'
+import ServicesByServiceTypeError from './services/{ServiceType}/error'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -187,6 +189,30 @@ export default {
     [
       'consentRequestsId_error_put',
       'Put consentRequestsId error request',
+      ['success']
+    ]
+  ),
+  GetServicesByServiceType: wrapWithHistogram(
+    Services.get,
+    [
+      'servicesServiceType_get',
+      'Put servicesServiceType request',
+      ['success']
+    ]
+  ),
+  PutServicesByServiceType: wrapWithHistogram(
+    Services.put,
+    [
+      'servicesServiceType_put',
+      'Put servicesServiceType request',
+      ['success']
+    ]
+  ),
+  PutServicesByServiceTypeAndError: wrapWithHistogram(
+    ServicesByServiceTypeError.put,
+    [
+      'servicesServiceType_error_put',
+      'Put servicesServiceType error request',
       ['success']
     ]
   ),

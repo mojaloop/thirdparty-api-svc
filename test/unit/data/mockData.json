@@ -581,7 +581,7 @@
   "getServicesByServiceTypeRequest": {
     "headers": {
       "fspiop-source": "pispA",
-      "fspiop-destination": "services-lookup"
+      "fspiop-destination": "switch"
     },
     "params": {
       "ServiceType": "THIRD_PARTY_DFSP"
@@ -590,7 +590,7 @@
   },
   "putServicesByServiceTypeRequest": {
     "headers": {
-      "fspiop-source": "services-lookup",
+      "fspiop-source": "switch",
       "fspiop-destination": "pispA"
     },
     "params": {
@@ -605,7 +605,7 @@
   },
   "putServicesByServiceTypeRequestError": {
     "headers": {
-      "fspiop-source": "services-lookup",
+      "fspiop-source": "switch",
       "fspiop-destination": "pispA"
     },
     "params": {
