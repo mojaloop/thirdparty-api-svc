@@ -56,7 +56,7 @@ export interface ServiceConfig {
     generateTimeout: number;
   };
   ENDPOINT_SERVICE_URL: string;
-  SERVICE_PROVIDER_URL: string;
+  PARTICIPANT_LIST_SERVICE_URL: string;
   ERROR_HANDLING: {
     includeCauseExtension: boolean;
     truncateExtensions: boolean;

@@ -11,7 +11,7 @@
     "generateTimeout": 30000
   },
   "ENDPOINT_SERVICE_URL": "http://central-ledger.local:3001",
-  "SERVICE_PROVIDER_URL": "http://ml-testing-toolkit:5000",
+  "PARTICIPANT_LIST_SERVICE_URL": "http://ml-testing-toolkit:5000",
   "ERROR_HANDLING": {
     "includeCauseExtension": true,
     "truncateExtensions": true

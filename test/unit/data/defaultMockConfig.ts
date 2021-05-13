@@ -36,7 +36,7 @@ const defaultMockConfig: ServiceConfig = {
     generateTimeout: 5000
   },
   ENDPOINT_SERVICE_URL: 'central-ledger.local',
-  SERVICE_PROVIDER_URL: 'ml-testing-toolkit',
+  PARTICIPANT_LIST_SERVICE_URL: 'ml-testing-toolkit',
   ERROR_HANDLING: {
     includeCauseExtension: true,
     truncateExtensions: true,

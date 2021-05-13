@@ -129,7 +129,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService (
 
   try {
     // render provider service url and path
-    const urlPath = Config.SERVICE_PROVIDER_URL + path
+    const urlPath = Config.PARTICIPANT_LIST_SERVICE_URL + path
     const url = Mustache.render(urlPath, { ServiceType: serviceType })
 
     Logger.info(`services::forwardGetServicesServiceTypeRequestToProviderServicet - Forwarding services to endpoint: ${url}`)
@@ -226,7 +226,7 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService (
     Logger.error(`services::forwardGetServicesServiceTypeRequestFromProviderService - Error forwarding services request to endpoint: ${inspect(err)}`)
 
     // render provider service url and path
-    const urlPath = Config.SERVICE_PROVIDER_URL + Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT_ERROR
+    const urlPath = Config.PARTICIPANT_LIST_SERVICE_URL + Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT_ERROR
     const url = Mustache.render(urlPath, { ServiceType: serviceType })
 
     const errorHeaders = {
