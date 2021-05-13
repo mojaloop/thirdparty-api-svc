@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.18.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.17.1...v11.18.0) (2021-05-13)
+
+
+### Features
+
+* add service endpoint forwarding ([#53](https://github.com/mojaloop/thirdparty-api-adapter/issues/53)) ([6f53c66](https://github.com/mojaloop/thirdparty-api-adapter/commit/6f53c6616498b5c51e41820ff27f186ebd790ae8))
+
 ### [11.17.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.17.0...v11.17.1) (2021-05-11)
 
 
