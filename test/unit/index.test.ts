@@ -1274,9 +1274,9 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.accountsRequest.headers
           },
-          payload: [
+          payload: {
             ...mockData.accountsRequest.payload
-          ]
+          }
         }
 
         const expected = [
@@ -1307,18 +1307,20 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.accountsRequest.headers
           },
-          payload: [
-            {
-              accountNickname: 'dfspa.user.nickname',
-              id: 'dfspa.username.1234'
-            }
-          ]
+          payload: {
+            accounts: [
+              {
+                'accountNickname': 'dfspa.user.nickname',
+                'id': 'dfspa.username.1234'
+              }
+            ]
+          }
         }
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody/0 must have required property \'currency\''
+            errorDescription: 'Missing mandatory element - /requestBody/accounts/0 must have required property \'currency\''
           }
         }
 
