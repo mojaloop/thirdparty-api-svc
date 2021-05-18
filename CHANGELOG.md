@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.18.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.0...v11.18.1) (2021-05-18)
+
+
+### Code Refactor
+
+* update accounts handling ([#54](https://github.com/mojaloop/thirdparty-api-adapter/issues/54)) ([cc0e184](https://github.com/mojaloop/thirdparty-api-adapter/commit/cc0e184374becd209ea2a16418518a68af6ce68d))
+
 ## [11.18.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.17.1...v11.18.0) (2021-05-13)
 
 
