@@ -71,9 +71,9 @@ defineFeature(feature, (test): void => {
         date: (new Date()).toISOString(),
         ...mockData.accountsRequest.headers
       },
-      payload: [
+      payload: {
         ...mockData.accountsRequest.payload
-      ]
+      }
     }
 
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
