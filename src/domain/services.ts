@@ -125,14 +125,14 @@ export async function forwardGetServicesServiceTypeRequestToProviderService (
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestToProviderService')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const destinationDfspId = Enum.Http.Headers.FSPIOP.SWITCH.value
 
   try {
     // render provider service url and path
     const urlPath = Config.PARTICIPANT_LIST_SERVICE_URL + path
     const url = Mustache.render(urlPath, { ServiceType: serviceType })
 
-    Logger.info(`services::forwardGetServicesServiceTypeRequestToProviderServicet - Forwarding services to endpoint: ${url}`)
+    Logger.info(`services::forwardGetServicesServiceTypeRequestToProviderService - Forwarding services to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -145,12 +145,12 @@ export async function forwardGetServicesServiceTypeRequestToProviderService (
       childSpan
     )
 
-    Logger.info(`services::forwardServicesServiceTypeRequest - Forwarded services request : ${serviceType} from ${sourceDfspId}`)
+    Logger.info(`services::forwardGetServicesServiceTypeRequestToProviderService - Forwarded services request : ${serviceType} from ${sourceDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`services::forwardServicesServiceTypeRequest - Error forwarding services request to endpoint: ${inspect(err)}`)
+    Logger.error(`services::forwardGetServicesServiceTypeRequestToProviderService - Error forwarding services request to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
