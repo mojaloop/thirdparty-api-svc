@@ -582,8 +582,7 @@
   },
   "getServicesByServiceTypeRequest": {
     "headers": {
-      "fspiop-source": "pispA",
-      "fspiop-destination": "switch"
+      "fspiop-source": "pispA"
     },
     "params": {
       "ServiceType": "THIRD_PARTY_DFSP"
