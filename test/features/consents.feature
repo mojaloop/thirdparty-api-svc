@@ -1,8 +1,13 @@
 Feature: thirdparty-api-adapters server
 
-Scenario: PostConsents
+Scenario: PostConsents PISP
   Given thirdparty-api-adapter server
-  When I send a 'PostConsents' request
+  When I send a 'PostConsents PISP' request
+  Then I get a response with a status code of '202'
+
+Scenario: PostConsents AUTH
+  Given thirdparty-api-adapter server
+  When I send a 'PostConsents AUTH' request
   Then I get a response with a status code of '202'
 
 Scenario: UpdateConsentTypeSigned
