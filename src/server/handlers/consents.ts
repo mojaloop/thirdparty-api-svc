@@ -46,7 +46,9 @@ import { getSpanTags } from '~/shared/util'
 async function post (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
-  const payload = request.payload as tpAPI.Schemas.ConsentsPostRequest
+  const payload = request.payload as
+    tpAPI.Schemas.ConsentsPostRequestPISP |
+    tpAPI.Schemas.ConsentsPostRequestAUTH
   const consentsId: string = payload.consentId
 
   try {
@@ -71,11 +73,11 @@ async function post (_context: unknown, request: Request, h: ResponseToolkit): P
       payload,
       span
     )
-      .catch((err: any) => {
-        // Do nothing with the error - forwardConsentsRequest takes care of async errors
-        Logger.error('Consents::post - forwardConsentsRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    .catch((err: any) => {
+      // Do nothing with the error - forwardConsentsRequest takes care of async errors
+      Logger.error('Consents::post - forwardConsentsRequest async handler threw an unhandled error')
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {

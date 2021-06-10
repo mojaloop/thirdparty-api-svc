@@ -24,9 +24,9 @@ defineFeature(feature, (test): void => {
     server.stop()
   })
 
-  test('PostConsents', ({ given, when, then }): void => {
+  test('PostConsents PISP', ({ given, when, then }): void => {
     const reqHeaders = {
-      ...mockData.consentsPostRequest.headers,
+      ...mockData.consentsPostRequestPISP.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/json'
     }
@@ -34,14 +34,14 @@ defineFeature(feature, (test): void => {
       method: 'POST',
       url: '/consents',
       headers: reqHeaders,
-      payload: mockData.consentsPostRequest.payload
+      payload: mockData.consentsPostRequestPISP.payload
     }
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
 
-    when('I send a \'PostConsents\' request', async (): Promise<ServerInjectResponse> => {
+    when('I send a \'PostConsents PISP\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardConsentsRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
@@ -53,7 +53,7 @@ defineFeature(feature, (test): void => {
         'TP_CB_URL_CONSENT_POST',
         expect.objectContaining(request.headers),
         'POST',
-        mockData.consentsPostRequest.payload,
+        mockData.consentsPostRequestPISP.payload,
         expect.any(Object)
       ]
 
@@ -63,43 +63,42 @@ defineFeature(feature, (test): void => {
     })
   })
 
-  test('UpdateConsentTypeUnsigned', ({ given, when, then }): void => {
+  test('PostConsents AUTH', ({ given, when, then }): void => {
     const reqHeaders = {
-      ...mockData.consentsIdPutRequestUnsigned.headers,
+      ...mockData.consentsPostRequestAUTH.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/json'
     }
     const request = {
-      method: 'PUT',
-      url: '/consents/40746639-1564-4e95-ad42-2fbceb3ba4a5',
+      method: 'POST',
+      url: '/consents',
       headers: reqHeaders,
-      payload: mockData.consentsIdPutRequestUnsigned.payload
+      payload: mockData.consentsPostRequestAUTH.payload
     }
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
 
-    when('I send a \'UpdateConsent\' UpdateConsentTypeUnsigned request', async (): Promise<ServerInjectResponse> => {
-      mockForwardConsentsIdRequest.mockResolvedValueOnce()
+    when('I send a \'PostConsents AUTH\' request', async (): Promise<ServerInjectResponse> => {
+      mockForwardConsentsRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
     then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
-        '40746639-1564-4e95-ad42-2fbceb3ba4a5',
-        '/consents/{{ID}}',
-        'TP_CB_URL_CONSENT_PUT',
+        '/consents',
+        'TP_CB_URL_CONSENT_POST',
         expect.objectContaining(request.headers),
-        'PUT',
-        mockData.consentsIdPutRequestUnsigned.payload,
+        'POST',
+        mockData.consentsPostRequestAUTH.payload,
         expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
-      expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
     })
   })
 

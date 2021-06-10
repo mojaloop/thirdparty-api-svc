@@ -221,12 +221,8 @@
     },
     "params": {},
     "payload": {
-      "id": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
-      "initiatorId": "pispA",
-      "authChannels": [
-        "OTP",
-        "WEB"
-      ],
+      "consentRequestId": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
+      "userId": "dfspa.username",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -234,7 +230,18 @@
             "accounts.transfer",
             "accounts.getBalance"
           ]
+        },
+        {
+          "accountId": "dfspa.username.5678",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
+      ],
+      "authChannels": [
+        "WEB",
+        "OTP"
       ],
       "callbackUri": "pisp-app://callback.com"
     }
@@ -246,10 +253,7 @@
     },
     "params": {},
     "payload": {
-      "initiatorId": "pispA",
-      "authChannels": [
-        "WEB"
-      ],
+      "consentRequestId": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -257,35 +261,20 @@
             "accounts.transfer",
             "accounts.getBalance"
           ]
+        },
+        {
+          "accountId": "dfspa.username.5678",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
+      ],
+      "authChannels": [
+        "WEB"
       ],
       "callbackUri": "pisp-app://callback.com",
       "authUri": "dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe"
-    }
-  },
-  "consentRequestsPutRequestWebAuth": {
-    "headers": {
-      "fspiop-source": "dfspA",
-      "fspiop-destination": "pispA"
-    },
-    "params": {},
-    "payload": {
-      "initiatorId": "pispA",
-      "authChannels": [
-        "WEB"
-      ],
-      "scopes": [
-        {
-          "accountId": "dfspa.username.1234",
-          "actions": [
-            "accounts.transfer",
-            "accounts.getBalance"
-          ]
-        }
-      ],
-      "callbackUri": "pisp-app://callback.com",
-      "authUri": "dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe",
-      "authToken": "SECRET"
     }
   },
   "consentRequestsPutRequestOTP": {
@@ -295,10 +284,7 @@
     },
     "params": {},
     "payload": {
-      "initiatorId": "pispA",
-      "authChannels": [
-        "OTP"
-      ],
+      "consentRequestId": "b82348b9-81f6-42ea-b5c4-80667d5740fe",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -306,36 +292,22 @@
             "accounts.transfer",
             "accounts.getBalance"
           ]
+        },
+        {
+          "accountId": "dfspa.username.5678",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
+      ],
+      "authChannels": [
+        "OTP"
       ],
       "callbackUri": "pisp-app://callback.com"
     }
   },
-  "consentRequestsPutRequestOTPAuth": {
-    "headers": {
-      "fspiop-source": "dfspA",
-      "fspiop-destination": "pispA"
-    },
-    "params": {},
-    "payload": {
-      "initiatorId": "pispA",
-      "authChannels": [
-        "OTP"
-      ],
-      "scopes": [
-        {
-          "accountId": "dfspa.username.1234",
-          "actions": [
-            "accounts.transfer",
-            "accounts.getBalance"
-          ]
-        }
-      ],
-      "callbackUri": "pisp-app://callback.com",
-      "authToken": "SECRET_OTP"
-    }
-  },
-  "consentsPostRequest": {
+  "consentsPostRequestPISP": {
     "headers": {
       "fspiop-source": "dfspA",
       "fspiop-destination": "pispA"
@@ -355,6 +327,38 @@
       ]
     }
   },
+  "consentsPostRequestAUTH": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "central-auth"
+    },
+    "params": {},
+    "payload": {
+      "consentId": "7b24ea42-6fdd-45f5-999e-0a6981c4198b",
+      "scopes": [
+        {
+          "accountId": "dfspa.username.1234",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
+        }
+      ],
+      "credential": {
+        "credentialType": "FIDO",
+        "status": "PENDING",
+        "payload": {
+          "id": "credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "rawId": "raw credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "response": {
+            "clientDataJSON": "clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "attestationObject": "attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+          },
+          "type": "public-key"
+        }
+      }
+    }
+  },
   "consentsGenerateChallengeRequest": {
     "headers": {
       "fspiop-source": "pispA",
@@ -365,44 +369,15 @@
       "type": "FIDO"
     }
   },
-  "consentsIdPutRequestUnsigned": {
-    "headers": {
-      "fspiop-source": "auth.dfspA",
-      "fspiop-destination": "pispA"
-    },
-    "params": {},
-    "payload": {
-      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
-      "initiatorId": "pispA",
-      "participantId": "dfspA",
-      "scopes": [
-        {
-          "accountId": "dfspa.username.1234",
-          "actions": [
-            "accounts.transfer",
-            "accounts.getBalance"
-          ]
-        }
-      ],
-      "credential": {
-        "type": "FIDO",
-        "status": "PENDING",
-        "challenge": {
-          "payload": "challenge_payload"
-        }
-      }
-    }
-  },
   "consentsIdPutRequestSigned": {
     "headers": {
       "fspiop-source": "pispA",
       "fspiop-destination": "auth.dfspA"
     },
-    "params": {},
+    "params": {
+      "ID": "1b07d64d-ec7d-4582-989b-b6d7608e4218"
+    },
     "payload": {
-      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
-      "initiatorId": "pispA",
-      "participantId": "dfspA",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -410,17 +385,27 @@
             "accounts.transfer",
             "accounts.getBalance"
           ]
+        },
+        {
+          "accountId": "dfspa.username.5678",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "credential": {
-        "id": "71169e22-5ae3-4ef3-b919-98a8fbe32a92",
-        "type": "FIDO",
+        "credentialType": "FIDO",
         "status": "PENDING",
-        "challenge": {
-          "payload": "challenge_payload",
-          "signature": "challenge_signature"
-        },
-        "payload": "credential_payload"
+        "payload": {
+          "id": "credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "rawId": "raw credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "response": {
+            "clientDataJSON": "clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "attestationObject": "attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+          },
+          "type": "public-key"
+        }
       }
     }
   },
@@ -429,11 +414,10 @@
       "fspiop-source": "auth.dfspA",
       "fspiop-destination": "pispA"
     },
-    "params": {},
+    "params": {
+      "ID": "1b07d64d-ec7d-4582-989b-b6d7608e4218"
+    },
     "payload": {
-      "requestId": "1b07d64d-ec7d-4582-989b-b6d7608e4218",
-      "initiatorId": "pispA",
-      "participantId": "dfspA",
       "scopes": [
         {
           "accountId": "dfspa.username.1234",
@@ -441,17 +425,27 @@
             "accounts.transfer",
             "accounts.getBalance"
           ]
+        },
+        {
+          "accountId": "dfspa.username.5678",
+          "actions": [
+            "accounts.transfer",
+            "accounts.getBalance"
+          ]
         }
       ],
       "credential": {
-        "id": "71169e22-5ae3-4ef3-b919-98a8fbe32a92",
-        "type": "FIDO",
+        "credentialType": "FIDO",
         "status": "VERIFIED",
-        "challenge": {
-          "payload": "challenge_payload",
-          "signature": "challenge_signature"
-        },
-        "payload": "credential_payload"
+        "payload": {
+          "id": "credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "rawId": "raw credential id: identifier of pair of keys, base64 encoded, min length 59",
+          "response": {
+            "clientDataJSON": "clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "attestationObject": "attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+          },
+          "type": "public-key"
+        }
       }
     }
   },

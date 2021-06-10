@@ -160,7 +160,7 @@ export async function forwardConsentRequestsRequest (
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardConsentRequestsIdRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
-      payload.id,
+      payload.consentRequestId,
       errorHeaders,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan
@@ -194,9 +194,7 @@ export async function forwardConsentRequestsIdRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
-  tpAPI.Schemas.ConsentRequestsIDPutResponseOTPAuth |
   tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
-  tpAPI.Schemas.ConsentRequestsIDPutResponseWebAuth |
   tpAPI.Schemas.ConsentRequestsIDPatchRequest,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {

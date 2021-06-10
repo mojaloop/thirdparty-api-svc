@@ -26,8 +26,8 @@
 import Metrics from '@mojaloop/central-services-metrics'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-function get (_context: unknown, _request: Request, h: ResponseToolkit): ResponseObject {
-  const metrics = Metrics.getMetricsForPrometheus()
+async function get (_context: unknown, _request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  const metrics = await Metrics.getMetricsForPrometheus()
   return h.response(metrics).code(200)
 }
 

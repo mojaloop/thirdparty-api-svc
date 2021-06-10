@@ -51,7 +51,7 @@ declare module '@mojaloop/central-services-metrics' {
      * @function getMetricsForPrometheus
      * @description Gets the metrics
      */
-    getMetricsForPrometheus: () => string
+    getMetricsForPrometheus: () => Promise<string>
 
     /**
      * @function setup
@@ -194,6 +194,8 @@ declare module '@mojaloop/central-services-stream' {
     }
   }
 }
+
+declare module '@mojaloop/event-sdk'
 
 declare module '@hapi/good'
 declare module 'hapi-openapi'

@@ -46,9 +46,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
   const consentRequestsRequestId: string = request.params.ID
   const payload = request.payload as
     tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
-    tpAPI.Schemas.ConsentRequestsIDPutResponseOTPAuth |
-    tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
-    tpAPI.Schemas.ConsentRequestsIDPutResponseWebAuth
+    tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
