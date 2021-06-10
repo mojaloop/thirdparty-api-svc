@@ -195,7 +195,7 @@ export async function forwardConsentsRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentsPostRequestPISP |
-    tpAPI.Schemas.ConsentsPostRequestAUTH,
+  tpAPI.Schemas.ConsentsPostRequestAUTH,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequest')
