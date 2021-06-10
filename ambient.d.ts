@@ -51,7 +51,7 @@ declare module '@mojaloop/central-services-metrics' {
      * @function getMetricsForPrometheus
      * @description Gets the metrics
      */
-    getMetricsForPrometheus: () => string
+    getMetricsForPrometheus: () => Promise<string>
 
     /**
      * @function setup

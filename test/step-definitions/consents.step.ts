@@ -26,7 +26,7 @@ defineFeature(feature, (test): void => {
 
   test('PostConsents', ({ given, when, then }): void => {
     const reqHeaders = {
-      ...mockData.consentsPostRequest.headers,
+      ...mockData.consentsPostRequestPISP.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/json'
     }
@@ -34,7 +34,7 @@ defineFeature(feature, (test): void => {
       method: 'POST',
       url: '/consents',
       headers: reqHeaders,
-      payload: mockData.consentsPostRequest.payload
+      payload: mockData.consentsPostRequestPISP.payload
     }
     given('thirdparty-api-adapter server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -53,7 +53,7 @@ defineFeature(feature, (test): void => {
         'TP_CB_URL_CONSENT_POST',
         expect.objectContaining(request.headers),
         'POST',
-        mockData.consentsPostRequest.payload,
+        mockData.consentsPostRequestPISP.payload,
         expect.any(Object)
       ]
 

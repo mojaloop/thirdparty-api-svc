@@ -146,7 +146,7 @@ describe('domain/consentRequests', () => {
       const errorPayload =
         ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
-        'http://pispa-sdk/consentRequests/' + consentRequestsPostRequest.payload.id + '/error',
+        'http://pispa-sdk/consentRequests/' + consentRequestsPostRequest.payload.consentRequestId + '/error',
         expectedConsentRequestErrorHeaders,
         expectedConsentRequestErrorHeaders['fspiop-source'],
         expectedConsentRequestErrorHeaders['fspiop-destination'],

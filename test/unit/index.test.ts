@@ -554,10 +554,10 @@ describe('index', (): void => {
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
-            ...mockData.consentsPostRequest.headers
+            ...mockData.consentsPostRequestPISP.headers
           },
           payload: {
-            ...mockData.consentsPostRequest.payload
+            ...mockData.consentsPostRequestPISP.payload
           }
         }
         const expected = [
@@ -585,10 +585,10 @@ describe('index', (): void => {
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
-            ...mockData.consentsPostRequest.headers
+            ...mockData.consentsPostRequestPISP.headers
           },
           payload: {
-            ...mockData.consentsPostRequest.payload
+            ...mockData.consentsPostRequestPISP.payload
           }
         }
         delete request.payload.consentId
@@ -665,12 +665,12 @@ describe('index', (): void => {
             ...mockData.consentRequestsPostRequest.payload
           }
         }
-        delete request.payload.initiatorId
+        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'initiatorId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
           }
         }
 
@@ -727,39 +727,6 @@ describe('index', (): void => {
         expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it('puts /consentRequests/{{ID}} web auth payload successfully', async (): Promise<void> => {
-        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
-        const request = {
-          method: 'PUT',
-          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          headers: {
-            accept: 'application/json',
-            date: (new Date()).toISOString(),
-            ...mockData.consentRequestsPutRequestWebAuth.headers
-          },
-          payload: {
-            ...mockData.consentRequestsPutRequestWebAuth.payload
-          }
-        }
-        const expected = [
-          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          '/consentRequests/{{ID}}',
-          'TP_CB_URL_CONSENT_REQUEST_PUT',
-          expect.objectContaining(request.headers),
-          'PUT',
-          request.payload,
-          expect.any(Object)
-        ]
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(202)
-        expect(response.result).toBeNull()
-        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
-      })
-
       it('puts /consentRequests/{{ID}} otp payload successfully', async (): Promise<void> => {
         mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
         const request = {
@@ -772,39 +739,6 @@ describe('index', (): void => {
           },
           payload: {
             ...mockData.consentRequestsPutRequestOTP.payload
-          }
-        }
-        const expected = [
-          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          '/consentRequests/{{ID}}',
-          'TP_CB_URL_CONSENT_REQUEST_PUT',
-          expect.objectContaining(request.headers),
-          'PUT',
-          request.payload,
-          expect.any(Object)
-        ]
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(202)
-        expect(response.result).toBeNull()
-        expect(mockForwardConsentRequestsIdRequest).toHaveBeenCalledWith(...expected)
-      })
-
-      it('puts /consentRequests/{{ID}} otp auth payload successfully', async (): Promise<void> => {
-        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
-        const request = {
-          method: 'PUT',
-          url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          headers: {
-            accept: 'application/json',
-            date: (new Date()).toISOString(),
-            ...mockData.consentRequestsPutRequestOTPAuth.headers
-          },
-          payload: {
-            ...mockData.consentRequestsPutRequestOTPAuth.payload
           }
         }
         const expected = [
@@ -839,12 +773,12 @@ describe('index', (): void => {
             ...mockData.consentRequestsPutRequestWeb.payload
           }
         }
-        delete request.payload.initiatorId
+        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'initiatorId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
           }
         }
 
@@ -1085,10 +1019,10 @@ describe('index', (): void => {
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
-            ...mockData.consentsIdPutRequestUnsigned.headers
+            ...mockData.consentsIdPutRequestVerified.headers
           },
           payload: {
-            ...mockData.consentsIdPutRequestUnsigned.payload
+            ...mockData.consentsIdPutRequestVerified.payload
           }
         }
 
@@ -1118,10 +1052,10 @@ describe('index', (): void => {
           headers: {
             accept: 'application/json',
             date: (new Date()).toISOString(),
-            ...mockData.consentsIdPutRequestUnsigned.headers
+            ...mockData.consentsIdPutRequestVerified.headers
           },
           payload: {
-            ...mockData.consentsIdPutRequestUnsigned.payload
+            ...mockData.consentsIdPutRequestVerified.payload
           }
         }
         delete request.payload.credential

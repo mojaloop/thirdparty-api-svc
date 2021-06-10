@@ -136,7 +136,7 @@ export default {
       ['success']
     ]
   ),
-  UpdateConsent: wrapWithHistogram(
+  PutConsentByID: wrapWithHistogram(
     ConsentsId.put,
     [
       'consentsId_put',
