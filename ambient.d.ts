@@ -195,15 +195,7 @@ declare module '@mojaloop/central-services-stream' {
   }
 }
 
-declare module '@mojaloop/event-sdk' {
-  enum AuditEventAction {
-    default = "default",
-    start = "start",
-    finish = "finish",
-    ingress = "ingress",
-    egress = "egress"
-  }
-}
+declare module '@mojaloop/event-sdk'
 
 declare module '@hapi/good'
 declare module 'hapi-openapi'
