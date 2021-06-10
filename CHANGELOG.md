@@ -1,4 +1,6 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.18.3](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.2...v11.18.3) (2021-06-10)
+
 ### [11.18.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.1...v11.18.2) (2021-05-19)
 
 
