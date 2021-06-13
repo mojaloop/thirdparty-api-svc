@@ -620,5 +620,34 @@
         }
       }
     }
+  },
+  "patchConsentsByIdRequestVerified": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0"
+    },
+    "payload": {
+      "credential": {
+        "status": "VERIFIED"
+      }
+    }
+  },
+  "patchConsentsByIdRequestRevoked": {
+    "headers": {
+      "fspiop-source": "dfspA",
+      "fspiop-destination": "pispA"
+    },
+    "params": {
+      "ID": "a5bbfd51-d9fc-4084-961a-c2c2221a31e0"
+    },
+    "payload": {
+      "credential": {
+        "status": "VERIFIED",
+        "revokedAt": "some-date-time"
+      }
+    }
   }
 }

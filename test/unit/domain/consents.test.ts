@@ -38,6 +38,7 @@ const mockData = JSON.parse(JSON.stringify(TestData))
 const mockConsentsPostRequestPISP = mockData.consentsPostRequestPISP
 const mockConsentsIdPutRequest = mockData.consentsIdPutRequestVerified
 const mockConsentsPostGenerateChallengeRequest = mockData.consentsGenerateChallengeRequest
+const mockConsentIdPatchRequestVerified = mockData.patchConsentsByIdRequestVerified
 
 const getEndpointForwardConsentsRequestExpected = [
   'http://central-ledger.local:3001',
@@ -130,6 +131,26 @@ const sendRequestforwardConsentsIdRequestExpected = [
   mockConsentsIdPutRequest.headers['fspiop-destination'],
   Enum.Http.RestMethods.PUT,
   mockConsentsIdPutRequest.payload,
+  Enum.Http.ResponseTypes.JSON,
+  expect.objectContaining({ isFinished: false })
+]
+
+
+const getEndpointforwardConsentsIdRequestExpectedPatchRequest = [
+  'http://central-ledger.local:3001',
+  mockConsentIdPatchRequestVerified.headers['fspiop-destination'],
+  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PATCH,
+  "/consents/{{ID}}",
+  {"ID": "09595320-51e5-4c4e-a910-c56917e4cdc4"}
+]
+
+const sendRequestforwardConsentsIdRequestExpectedPatchRequest = [
+  'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/',
+  mockConsentIdPatchRequestVerified.headers,
+  mockConsentIdPatchRequestVerified.headers['fspiop-source'],
+  mockConsentIdPatchRequestVerified.headers['fspiop-destination'],
+  Enum.Http.RestMethods.PATCH,
+  mockConsentIdPatchRequestVerified.payload,
   Enum.Http.ResponseTypes.JSON,
   expect.objectContaining({ isFinished: false })
 ]
@@ -295,7 +316,7 @@ describe('domain/consents/{ID}', () => {
       mockLoggerError.mockReturnValue(null)
     })
 
-    it('forwards POST /consents request', async (): Promise<void> => {
+    it('forwards PUT /consents/{ID} request', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
@@ -313,6 +334,23 @@ describe('domain/consents/{ID}', () => {
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected )
     })
 
+    it('forwards PATCH /consents/{ID} request', async (): Promise<void> => {
+      const mockSpan = new Span()
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
+      mockSendRequest.mockResolvedValue({ ok: true, status: 200, statusText: 'Accepted', payload: null })
+      await Consents.forwardConsentsIdRequest(
+        '09595320-51e5-4c4e-a910-c56917e4cdc4',
+        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PATCH,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PATCH,
+        mockConsentIdPatchRequestVerified.headers,
+        Enum.Http.RestMethods.PATCH,
+        mockConsentIdPatchRequestVerified.payload,
+        mockSpan
+      )
+
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedPatchRequest)
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpectedPatchRequest)
+    })
 
     it('handles `getEndpoint` failure', async (): Promise<void> => {
       const mockSpan = new Span()
