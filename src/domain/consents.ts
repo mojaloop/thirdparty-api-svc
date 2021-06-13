@@ -122,9 +122,9 @@ export async function forwardConsentsIdRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentsIDPutResponseVerified |
-    tpAPI.Schemas.ConsentsIDPutResponseSigned |
-    tpAPI.Schemas.ConsentsIDPatchResponseVerified |
-    tpAPI.Schemas.ConsentsIDPatchResponseRevoked,
+  tpAPI.Schemas.ConsentsIDPutResponseSigned |
+  tpAPI.Schemas.ConsentsIDPatchResponseVerified |
+  tpAPI.Schemas.ConsentsIDPatchResponseRevoked,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
