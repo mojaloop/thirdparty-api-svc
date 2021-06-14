@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+## [11.19.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.3...v11.19.0) (2021-06-14)
+
+
+### Features
+
+* add request forwarding for final stages of account linking ([#57](https://github.com/mojaloop/thirdparty-api-adapter/issues/57)) ([f167523](https://github.com/mojaloop/thirdparty-api-adapter/commit/f1675233045175b94873cd6732a01399e52f88ba))
+
 ### [11.18.3](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.2...v11.18.3) (2021-06-10)
 
 ### [11.18.2](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.1...v11.18.2) (2021-05-19)
