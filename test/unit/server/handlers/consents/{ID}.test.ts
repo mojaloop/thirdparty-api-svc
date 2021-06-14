@@ -29,7 +29,7 @@ import * as Consents from '~/domain/consents'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ConsentsIdHandler from '~/server/handlers/consents/{ID}'
 
-const mockForwardConsentsIdPutRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
+const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
@@ -61,7 +61,7 @@ const mockPostConsentsIdPutRequest = {
   }
 }
 
-const mockForwardConsentsIdPutRequestExpected = [
+const mockForwardConsentsIdRequestExpected = [
   'b82348b9-81f6-42ea-b5c4-80667d5740fe',
   '/consents/{{ID}}',
   'TP_CB_URL_CONSENT_PUT',
@@ -70,6 +70,58 @@ const mockForwardConsentsIdPutRequestExpected = [
   mockPostConsentsIdPutRequest.payload,
   undefined
 ]
+
+const mockPatchConsentsIdPatchRequestVerified = {
+  headers: {
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'pispA'
+  },
+  params: {
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
+  payload: {
+    credential: {
+      status: 'VERIFIED'
+    }
+  }
+}
+
+const mockForwardConsentsIdRequestExpectedPatchRequestVerified  = [
+  'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  '/consents/{{ID}}',
+  'TP_CB_URL_CONSENT_PATCH',
+  mockPatchConsentsIdPatchRequestVerified.headers,
+  'PATCH',
+  mockPatchConsentsIdPatchRequestVerified.payload,
+  undefined
+]
+
+const mockPatchConsentsIdPatchRequestRevoked = {
+  headers: {
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'pispA'
+  },
+  params: {
+    ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
+  },
+  payload: {
+    credential: {
+      status: 'REVOKED',
+      revokedAt: 'some-date-time'
+    }
+  }
+}
+
+const mockForwardConsentsIdRequestExpectedPatchRequestRevoked = [
+  'b82348b9-81f6-42ea-b5c4-80667d5740fe',
+  '/consents/{{ID}}',
+  'TP_CB_URL_CONSENT_PATCH',
+  mockPatchConsentsIdPatchRequestRevoked.headers,
+  'PATCH',
+  mockPatchConsentsIdPatchRequestRevoked.payload,
+  undefined
+]
+
 
 describe('consentsId handler', () => {
   describe('PUT /consents/{ID}', () => {
@@ -81,23 +133,23 @@ describe('consentsId handler', () => {
 
     it('handles a successful request', async () => {
       // Arrange
-      mockForwardConsentsIdPutRequest.mockResolvedValueOnce()
+      mockForwardConsentsIdRequest.mockResolvedValueOnce()
       const request = mockPostConsentsIdPutRequest
-      const expected = mockForwardConsentsIdPutRequestExpected
+      const expected = mockForwardConsentsIdRequestExpected
 
       // Act
       const response = await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardConsentsIdPutRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      mockForwardConsentsIdPutRequest.mockRejectedValueOnce(new Error('Test Error'))
+      mockForwardConsentsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
       const request = mockPostConsentsIdPutRequest
-      const expected = mockForwardConsentsIdPutRequestExpected
+      const expected = mockForwardConsentsIdRequestExpected
 
       // Act
       const response = await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
@@ -108,7 +160,7 @@ describe('consentsId handler', () => {
       // this helps make sure the tests don't become flaky
       await new Promise(resolve => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(mockForwardConsentsIdPutRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles validation errors synchronously', async () => {
@@ -125,6 +177,114 @@ describe('consentsId handler', () => {
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
+  describe('PATCH /consents/{ID}', () => {
+    beforeEach((): void => {
+      jest.clearAllMocks()
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    describe('Verified Payload', () => {
+      it('handles a successful request', async () => {
+        // Arrange
+        mockForwardConsentsIdRequest.mockResolvedValueOnce()
+        const request = mockPatchConsentsIdPatchRequestVerified
+        const expected = mockForwardConsentsIdRequestExpectedPatchRequestVerified
+
+        // Act
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('handles errors asynchronously', async () => {
+        // Arrange
+        mockForwardConsentsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
+        const request = mockPatchConsentsIdPatchRequestVerified
+        const expected = mockForwardConsentsIdRequestExpectedPatchRequestVerified
+
+        // Act
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        // wait once more for the event loop - since we can't await `runAllImmediates`
+        // this helps make sure the tests don't become flaky
+        await new Promise(resolve => setImmediate(resolve))
+        // The main test here is that there is no unhandledPromiseRejection!
+        expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('handles validation errors synchronously', async () => {
+        // Arrange
+        const request = {
+          ...mockPatchConsentsIdPatchRequestVerified,
+          // Will setting the span to null do stuff?
+          span: {
+          }
+        }
+
+        // Act
+        const action = async () => await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        await expect(action).rejects.toThrowError('span.setTags is not a function')
+      })
+    })
+
+    describe('Revoked Payload', () => {
+      it('handles a successful request', async () => {
+        // Arrange
+        mockForwardConsentsIdRequest.mockResolvedValueOnce()
+        const request = mockPatchConsentsIdPatchRequestRevoked
+        const expected = mockForwardConsentsIdRequestExpectedPatchRequestRevoked
+
+        // Act
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('handles errors asynchronously', async () => {
+        // Arrange
+        mockForwardConsentsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
+        const request = mockPatchConsentsIdPatchRequestRevoked
+        const expected = mockForwardConsentsIdRequestExpectedPatchRequestRevoked
+
+        // Act
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        // wait once more for the event loop - since we can't await `runAllImmediates`
+        // this helps make sure the tests don't become flaky
+        await new Promise(resolve => setImmediate(resolve))
+        // The main test here is that there is no unhandledPromiseRejection!
+        expect(mockForwardConsentsIdRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('handles validation errors synchronously', async () => {
+        // Arrange
+        const request = {
+          ...mockPatchConsentsIdPatchRequestRevoked,
+          // Will setting the span to null do stuff?
+          span: {
+          }
+        }
+
+        // Act
+        const action = async () => await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
+
+        // Assert
+        await expect(action).rejects.toThrowError('span.setTags is not a function')
+      })
     })
   })
 })

@@ -144,6 +144,14 @@ export default {
       ['success']
     ]
   ),
+  PatchConsentByID: wrapWithHistogram(
+    ConsentsId.patch,
+    [
+      'consentsId_patch',
+      'Patch consentsId request',
+      ['success']
+    ]
+  ),
   NotifyErrorConsents: wrapWithHistogram(
     ConsentsByIdError.put,
     [
