@@ -15,6 +15,7 @@ paths:
   '/accounts/{ID}':
     parameters:
       - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
       - $ref: '#/components/parameters/FSPIOP-Source'
@@ -64,7 +65,6 @@ paths:
         - sampled
       parameters:
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
       requestBody:
         required: true
         content:
@@ -100,7 +100,6 @@ paths:
   '/accounts/{ID}/error':
     parameters:
       - $ref: '#/components/parameters/ID'
-      - $ref: '#/components/parameters/Content-Length'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
@@ -119,6 +118,8 @@ paths:
       tags:
         - accounts
         - sampled
+      parameters:
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
         description: Details of the error returned.
         required: true
@@ -146,6 +147,16 @@ paths:
         '503':
           $ref: '#/components/responses/503'
   /consentRequests:
+    parameters:
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     post:
       tags:
         - consentRequests
@@ -158,15 +169,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
       requestBody:
         description: The consentRequest to create
         required: true
@@ -212,7 +214,6 @@ paths:
   '/consentRequests/{ID}':
     parameters:
       - $ref: '#/components/parameters/ID'
-      - $ref: '#/components/parameters/Content-Length'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
@@ -237,6 +238,8 @@ paths:
         their user,
 
         which the DFSP is to then verify.
+      parameters:
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
         required: true
         content:
@@ -273,6 +276,9 @@ paths:
       description: >
         PISP sends user's OTP token to a DFSP to verify user trusts
         aforementioned PISP
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
         required: true
         content:
@@ -299,6 +305,17 @@ paths:
         '503':
           $ref: '#/components/responses/503'
   '/consentRequests/{ID}/error':
+    parameters:
+      - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     put:
       tags:
         - consentRequests
@@ -308,17 +325,7 @@ paths:
         DFSP responds to the PISP if something went wrong with validating an OTP
         or secret.
       parameters:
-        - $ref: '#/components/parameters/ID'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
       requestBody:
         description: Error information returned.
         required: true
@@ -346,6 +353,16 @@ paths:
         '503':
           $ref: '#/components/responses/503'
   /consents:
+    parameters:
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     post:
       tags:
         - consents
@@ -358,15 +375,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
       requestBody:
         required: true
         content:
@@ -466,6 +474,7 @@ paths:
                 - $ref: '#/components/schemas/ConsentsIDPatchResponseVerified'
                 - $ref: '#/components/schemas/ConsentsIDPatchResponseRevoked'
       parameters:
+        - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
       responses:
         '200':
@@ -541,6 +550,8 @@ paths:
 
         - Called by a PISP when a user wants to remove their consent.
       operationId: DeleteConsentByID
+      parameters:
+        - $ref: '#/components/parameters/Accept'
       tags:
         - consents
       responses:
@@ -563,6 +574,17 @@ paths:
         '503':
           $ref: '#/components/responses/503'
   '/consents/{ID}/error':
+    parameters:
+      - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     put:
       tags:
         - consents
@@ -572,17 +594,7 @@ paths:
         DFSP responds to the PISP if something went wrong with validating or
         storing consent.
       parameters:
-        - $ref: '#/components/parameters/ID'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
       requestBody:
         description: Error information returned.
         required: true
@@ -718,6 +730,7 @@ paths:
   '/services/{ServiceType}':
     parameters:
       - $ref: '#/components/parameters/ServiceType'
+      - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
       - $ref: '#/components/parameters/FSPIOP-Source'
@@ -771,7 +784,6 @@ paths:
         - sampled
       parameters:
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
       requestBody:
         required: true
         content:
@@ -800,7 +812,6 @@ paths:
   '/services/{ServiceType}/error':
     parameters:
       - $ref: '#/components/parameters/ServiceType'
-      - $ref: '#/components/parameters/Content-Length'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
@@ -819,6 +830,8 @@ paths:
       tags:
         - services
         - sampled
+      parameters:
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
         description: Details of the error returned.
         required: true
@@ -847,8 +860,6 @@ paths:
           $ref: '#/components/responses/503'
   /thirdpartyRequests/transactions:
     parameters:
-      - $ref: '#/components/parameters/Accept'
-      - $ref: '#/components/parameters/Content-Length'
       - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
@@ -859,6 +870,9 @@ paths:
       - $ref: '#/components/parameters/FSPIOP-URI'
       - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     post:
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Length'
       requestBody:
         description: Transaction request to be created.
         required: true
@@ -916,7 +930,7 @@ paths:
   '/thirdpartyRequests/transactions/{ID}':
     parameters:
       - $ref: '#/components/parameters/ID'
-      - $ref: '#/components/parameters/Accept'
+      - $ref: '#/components/parameters/Content-Type'
       - $ref: '#/components/parameters/Date'
       - $ref: '#/components/parameters/X-Forwarded-For'
       - $ref: '#/components/parameters/FSPIOP-Source'
@@ -933,9 +947,11 @@ paths:
       summary: GetThirdpartyTransactionRequests
       description: >
         The HTTP request `GET /thirdpartyRequests/transactions/{ID}` is used to
-        request the 
+        request the
 
         retrieval of a third party transaction request.
+      parameters:
+        - $ref: '#/components/parameters/Accept'
       responses:
         '202':
           $ref: '#/components/responses/202'
@@ -971,7 +987,6 @@ paths:
         Switch(Thirdparty API Adapter) -> PISP
       parameters:
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
       requestBody:
         required: true
         content:
@@ -1014,8 +1029,8 @@ paths:
       tags:
         - thirdpartyRequests
       parameters:
+        - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
       requestBody:
         required: true
         content:
@@ -1153,6 +1168,17 @@ paths:
         '503':
           $ref: '#/components/responses/503'
   '/thirdpartyRequests/transactions/{ID}/error':
+    parameters:
+      - $ref: '#/components/parameters/ID'
+      - $ref: '#/components/parameters/Content-Type'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/X-Forwarded-For'
+      - $ref: '#/components/parameters/FSPIOP-Source'
+      - $ref: '#/components/parameters/FSPIOP-Destination'
+      - $ref: '#/components/parameters/FSPIOP-Encryption'
+      - $ref: '#/components/parameters/FSPIOP-Signature'
+      - $ref: '#/components/parameters/FSPIOP-URI'
+      - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
     put:
       tags:
         - thirdpartyRequests
@@ -1167,21 +1193,11 @@ paths:
         used.
 
         The `{ID}` in the URI should contain the `transactionRequestId` that was
-        used for the creation of 
+        used for the creation of
 
         the thirdparty transaction request.
       parameters:
-        - $ref: '#/components/parameters/ID'
         - $ref: '#/components/parameters/Content-Length'
-        - $ref: '#/components/parameters/Content-Type'
-        - $ref: '#/components/parameters/Date'
-        - $ref: '#/components/parameters/X-Forwarded-For'
-        - $ref: '#/components/parameters/FSPIOP-Source'
-        - $ref: '#/components/parameters/FSPIOP-Destination'
-        - $ref: '#/components/parameters/FSPIOP-Encryption'
-        - $ref: '#/components/parameters/FSPIOP-Signature'
-        - $ref: '#/components/parameters/FSPIOP-URI'
-        - $ref: '#/components/parameters/FSPIOP-HTTP-Method'
       requestBody:
         description: Error information returned.
         required: true
@@ -1217,6 +1233,15 @@ components:
       schema:
         type: string
       description: The identifier value.
+    Content-Type:
+      name: Content-Type
+      in: header
+      schema:
+        type: string
+      required: true
+      description: >-
+        The `Content-Type` header indicates the specific version of the API used
+        to send the payload body.
     Date:
       name: Date
       in: header
@@ -1331,15 +1356,6 @@ components:
 
         **Note:** The API supports a maximum size of 5242880 bytes (5
         Megabytes).
-    Content-Type:
-      name: Content-Type
-      in: header
-      schema:
-        type: string
-      required: true
-      description: >-
-        The `Content-Type` header indicates the specific version of the API used
-        to send the payload body.
     ServiceType:
       name: ServiceType
       in: path
