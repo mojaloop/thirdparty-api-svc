@@ -27,7 +27,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.accountsRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'GET',
@@ -67,7 +68,7 @@ defineFeature(feature, (test): void => {
       method: 'PUT',
       url: '/accounts/username1234',
       headers: {
-        accept: 'application/json',
+        'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
         date: (new Date()).toISOString(),
         ...mockData.accountsRequest.headers
       },
@@ -109,7 +110,7 @@ defineFeature(feature, (test): void => {
     const acctRequestError = mockData.accountsRequestError
     const reqHeaders = Object.assign(acctRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      accept: 'application/json'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     })
     const request = {
       method: 'PUT',

@@ -34,6 +34,7 @@ import TestData from 'test/unit/data/mockData.json'
 import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
 import * as Accounts from '~/domain/accounts'
+import * as Services from '~/domain/services'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
@@ -47,6 +48,9 @@ const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'fo
 const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
+const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
+const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
+const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
@@ -89,7 +93,8 @@ describe('index', (): void => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(trxnRequest.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'POST',
@@ -118,7 +123,8 @@ describe('index', (): void => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(trxnRequest.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'GET',
@@ -167,7 +173,7 @@ describe('index', (): void => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(mockData.updateTransactionRequest.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'PUT',
@@ -196,7 +202,8 @@ describe('index', (): void => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(patchThirdpartyTransactionIdRequest.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'PATCH',
@@ -258,7 +265,7 @@ describe('index', (): void => {
         mockForwardTransactionRequestError.mockResolvedValueOnce()
         const reqHeaders = Object.assign(trxnRequestError.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'PUT',
@@ -320,7 +327,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA'
@@ -357,7 +365,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
@@ -391,7 +400,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
@@ -436,7 +446,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA'
@@ -473,7 +483,8 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
@@ -507,7 +518,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
@@ -552,7 +563,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consents',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsPostRequestPISP.headers
           },
@@ -583,7 +595,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consents',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsPostRequestPISP.headers
           },
@@ -626,7 +639,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consentRequests',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPostRequest.headers
           },
@@ -657,7 +671,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consentRequests',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPostRequest.headers
           },
@@ -700,7 +715,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPutRequestWeb.headers
           },
@@ -733,7 +748,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPutRequestOTP.headers
           },
@@ -765,7 +780,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPutRequestWeb.headers
           },
@@ -806,7 +821,7 @@ describe('index', (): void => {
         mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
         const reqHeaders = Object.assign(consentRequestsRequestError.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-          accept: 'application/json'
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'PUT',
@@ -867,7 +882,8 @@ describe('index', (): void => {
           method: 'PATCH',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPatch.headers
           },
@@ -899,7 +915,8 @@ describe('index', (): void => {
           method: 'PATCH',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPatch.headers
           },
@@ -942,7 +959,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsGenerateChallengeRequest.headers
           },
@@ -974,7 +992,8 @@ describe('index', (): void => {
           method: 'POST',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsGenerateChallengeRequest.headers
           },
@@ -1017,7 +1036,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsIdPutRequestVerified.headers
           },
@@ -1050,7 +1069,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.consentsIdPutRequestVerified.headers
           },
@@ -1093,7 +1112,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...consentsRequestError.headers
           },
@@ -1124,7 +1143,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...consentsRequestError.headers
           },
@@ -1165,7 +1184,8 @@ describe('index', (): void => {
           method: 'GET',
           url: '/accounts/username1234',
           headers: {
-            accept: 'application/json',
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.accountsRequest.headers
           }
@@ -1204,7 +1224,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/accounts/username1234',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.accountsRequest.headers
           },
@@ -1237,7 +1257,7 @@ describe('index', (): void => {
           method: 'PUT',
           url: '/accounts/username1234',
           headers: {
-            accept: 'application/json',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             ...mockData.accountsRequest.headers
           },
@@ -1285,7 +1305,7 @@ describe('index', (): void => {
 
         const reqHeaders = Object.assign(acctRequestError.headers, {
           date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-          accept: 'application/json'
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
         })
         const request = {
           method: 'PUT',
@@ -1314,6 +1334,183 @@ describe('index', (): void => {
         const request = {
           method: 'PUT',
           url: '/accounts/username1234/error',
+          headers: trxnRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAccountsIdRequestError).not.toHaveBeenCalled()
+      })
+    })
+
+
+    describe('GET /services/{{ServiceType}}', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('GET /services/{{ServiceType}}', async (): Promise<void> => {
+        mockForwardGetServicesServiceTypeRequestToProviderService.mockResolvedValueOnce()
+        const request = {
+          method: 'GET',
+          url: '/services/THIRD_PARTY_DFSP',
+          headers: {
+            accept: 'application/vnd.interoperability.services+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.service+json;version=1.0',
+            date: (new Date()).toISOString(),
+            ...mockData.getServicesByServiceTypeRequest.headers
+          }
+        }
+        const expected = [
+          '/services/{{ServiceType}}',
+          expect.objectContaining(request.headers),
+          'GET',
+          'THIRD_PARTY_DFSP',
+          expect.any(Object)
+        ]
+
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...expected)
+      })
+    })
+
+    describe('PUT /services/{{ServiceType}}', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('puts /services/{{ServiceType}} payload successfully', async (): Promise<void> => {
+        mockForwardGetServicesServiceTypeRequestFromProviderService.mockResolvedValueOnce()
+        const request = {
+          method: 'PUT',
+          url: '/services/THIRD_PARTY_DFSP',
+          headers: {
+            'content-type': 'application/vnd.interoperability.services+json;version=1.0',
+            date: (new Date()).toISOString(),
+            ...mockData.putServicesByServiceTypeRequest.headers
+          },
+          payload: {
+            ...mockData.putServicesByServiceTypeRequest.payload
+          }
+        }
+
+        const expected = [
+          '/services/{{ServiceType}}',
+          'TP_CB_URL_SERVICES_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          'THIRD_PARTY_DFSP',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const request = {
+          method: 'PUT',
+          url: '/services/THIRD_PARTY_DFSP',
+          headers: {
+            'content-type': 'application/vnd.interoperability.services+json;version=1.0',
+            date: (new Date()).toISOString(),
+            ...mockData.putServicesByServiceTypeRequest.headers
+          },
+          payload: {
+          }
+        }
+
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'providers\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAccountsIdRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /services/{{ServiceType}}/error', (): void => {
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+        mockForwardServicesServiceTypeRequestError.mockResolvedValueOnce()
+
+        const reqHeaders = Object.assign(mockData.putServicesByServiceTypeRequestError.headers, {
+          date: 'Tue, 02 Mar 2021 10:10:10 GMT',
+          'content-type': 'application/vnd.interoperability.services+json;version=1.0'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/services/THIRD_PARTY_DFSP/error',
+          headers: reqHeaders,
+          payload: mockData.putServicesByServiceTypeRequestError.payload
+        }
+
+        const expected = [
+          '/services/{{ServiceType}}/error',
+          expect.objectContaining(request.headers),
+          'THIRD_PARTY_DFSP',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardServicesServiceTypeRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(
+          mockData.putServicesByServiceTypeRequestError.payload,
+          { errorInformation: undefined }
+        )
+        const request = {
+          method: 'PUT',
+          url: '/services/{{ServiceType}}/error',
           headers: trxnRequestError.headers,
           payload: errPayload
         }

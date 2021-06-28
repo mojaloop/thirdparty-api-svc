@@ -28,7 +28,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.getServicesByServiceTypeRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.services+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
     }
     const request = {
       method: 'GET',
@@ -66,7 +67,7 @@ defineFeature(feature, (test): void => {
       method: 'PUT',
       url: '/services/THIRD_PARTY_DFSP',
       headers: {
-        accept: 'application/json',
+        'content-type': 'application/vnd.interoperability.service+json;version=1.0',
         date: (new Date()).toISOString(),
         ...mockData.putServicesByServiceTypeRequest.headers
       },
@@ -106,7 +107,7 @@ defineFeature(feature, (test): void => {
     const servicesRequestError = mockData.putServicesByServiceTypeRequestError
     const reqHeaders = Object.assign(servicesRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      accept: 'application/json'
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
     })
     const request = {
       method: 'PUT',
