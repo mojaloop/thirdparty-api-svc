@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-adapter](https://github.com/mojaloop/thirdparty-api-adapter)
+### [11.19.1](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.19.0...v11.19.1) (2021-06-29)
+
+
+### Bug Fixes
+
+* **#2311:** pull in updated snippets for header validation error ([#58](https://github.com/mojaloop/thirdparty-api-adapter/issues/58)) ([804e058](https://github.com/mojaloop/thirdparty-api-adapter/commit/804e05852341f4248ba8555f4f3b7d81ba2f63bc)), closes [#2311](https://github.com/mojaloop/thirdparty-api-adapter/issues/2311)
+
 ## [11.19.0](https://github.com/mojaloop/thirdparty-api-adapter/compare/v11.18.3...v11.19.0) (2021-06-14)
 
 
