@@ -28,7 +28,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'POST',
@@ -70,7 +71,8 @@ defineFeature(feature, (test): void => {
       date: (new Date()).toISOString(),
       'fspiop-source': 'dfspA',
       'fspiop-destination': 'dfspA',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'POST',
@@ -120,7 +122,7 @@ defineFeature(feature, (test): void => {
       date: (new Date()).toISOString(),
       'fspiop-source': 'dfspA',
       'fspiop-destination': 'dfspA',
-      accept: 'application/json'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'PUT',
@@ -167,7 +169,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'GET',
@@ -206,7 +209,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.updateTransactionRequest.headers,
       date: (new Date()).toISOString(),
-      accept: 'application/json'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'PUT',
@@ -246,7 +249,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/json'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     }
     const request = {
       method: 'PUT',
@@ -299,7 +302,8 @@ defineFeature(feature, (test): void => {
     const patchTPTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
     const reqHeaders = Object.assign(patchTPTransactionIdRequest.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      accept: 'application/json'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
     })
     const request = {
       method: 'PATCH',
