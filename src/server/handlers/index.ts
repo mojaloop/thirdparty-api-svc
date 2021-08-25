@@ -30,7 +30,6 @@ import Metrics from './metrics'
 import Consents from './consents'
 import ConsentsId from './consents/{ID}'
 import ConsentsByIdError from './consents/{ID}/error'
-import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
 import ConsentRequestsId from './consentRequests/{ID}'
 import ConsentRequestsByIdError from './consentRequests/{ID}/error'
@@ -40,6 +39,7 @@ import Services from './services/{ServiceType}'
 import ServicesByServiceTypeError from './services/{ServiceType}/error'
 import * as ThirdpartyTransactions from './thirdpartyRequests/transactions'
 import * as ThirdpartyRequestsAuthorizations from './thirdpartyRequests/authorizations'
+import * as ThirdpartyRequestsVerifications from './thirdpartyRequests/verifications'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -89,31 +89,51 @@ export default {
   PostThirdpartyRequestsAuthorizations: wrapWithHistogram(
     ThirdpartyRequestsAuthorizations.post,
     [
-      'thirdpartyRequests_transactions_authorizations_post',
-      'Post thirdpartyRequests transactions authorizations request',
+      'thirdpartyRequests_authorizations_post',
+      'Post thirdpartyRequests authorizations request',
       ['success']
     ]
   ),
   PutThirdpartyRequestsAuthorizationsById: wrapWithHistogram(
     ThirdpartyRequestsAuthorizations.put,
     [
-      'thirdpartyRequests_transactions_authorizations_put',
-      'Put thirdpartyRequests transactions authorizations request',
+      'thirdpartyRequests_authorizations_put',
+      'Put thirdpartyRequests authorizations request',
       ['success']
     ]
   ),
   PutThirdpartyRequestsAuthorizationsByIdAndError: wrapWithHistogram(
     ThirdpartyRequestsAuthorizations.putError,
     [
-      'thirdpartyRequests_transactions_authorizations_error_put',
-      'Put thirdpartyRequests transactions authorizations request error',
+      'thirdpartyRequests_authorizations_error_put',
+      'Put thirdpartyRequests authorizations request error',
       ['success']
     ]
   ),
-  // TODO: implement:
-  // PostThirdpartyRequestsVerifications
-  // PutThirdpartyRequestsVerificationsById
-  // PutThirdpartyRequestsVerificationsByIdAndError
+  PostThirdpartyRequestsVerifications: wrapWithHistogram(
+    ThirdpartyRequestsVerifications.post,
+    [
+      'thirdpartyRequests_verifications_post',
+      'Post thirdpartyRequests verifications request',
+      ['success']
+    ]
+  ),
+  PutThirdpartyRequestsVerificationsById: wrapWithHistogram(
+    ThirdpartyRequestsVerifications.put,
+    [
+      'thirdpartyRequests_verifications_put',
+      'Put thirdpartyRequests verifications request',
+      ['success']
+    ]
+  ),
+  PutThirdpartyRequestsVerificationsByIdAndError: wrapWithHistogram(
+    ThirdpartyRequestsVerifications.putError,
+    [
+      'thirdpartyRequests_verifications_error_put',
+      'Put thirdpartyRequests verifications request error',
+      ['success']
+    ]
+  ),
   CreateConsentRequest: wrapWithHistogram(
     ConsentRequests.post,
     [
@@ -167,14 +187,6 @@ export default {
     [
       'consentsId_error_put',
       'Put consentsId error request',
-      ['success']
-    ]
-  ),
-  GenerateChallengeRequest: wrapWithHistogram(
-    ConsentsIdGenerateChallenge.post,
-    [
-      'consentsGenerateChallenge_post',
-      'Post consents generate challenge request',
       ['success']
     ]
   ),
