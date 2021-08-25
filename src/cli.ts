@@ -50,7 +50,7 @@ async function startServices (...services: Array<Promise<any>>) {
 const program = new Command(Config.PACKAGE.name)
 program
   .version(Config.PACKAGE.version)
-  .description('thirdparty-api-adapter cli')
+  .description('thirdparty-api-svc cli')
   .option('-p, --port <number>', 'listen on port', Config.PORT.toString())
   .option('-H, --host <string>', 'listen on host', Config.HOST)
 

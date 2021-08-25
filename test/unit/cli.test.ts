@@ -67,7 +67,7 @@ describe('cli', (): void => {
             timeout: 5000,
             prefix: 'moja_3p_api',
             defaultLabels: {
-              serviceName: 'thirdparty-api-adapter'
+              serviceName: 'thirdparty-api-svc'
             }
           }
         }
@@ -120,7 +120,7 @@ describe('cli', (): void => {
             timeout: 5000,
             prefix: 'moja_3p_api',
             defaultLabels: {
-              serviceName: 'thirdparty-api-adapter'
+              serviceName: 'thirdparty-api-svc'
             }
           }
         }

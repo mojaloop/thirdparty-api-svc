@@ -1,3 +1,3 @@
-# thirdparty-api-adapter/src/domain
+# thirdparty-api-svc/src/domain
 
 domain code is living here.

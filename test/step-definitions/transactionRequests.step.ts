@@ -37,7 +37,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.transactionRequest.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -87,7 +87,7 @@ defineFeature(feature, (test): void => {
       }
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -137,7 +137,7 @@ defineFeature(feature, (test): void => {
       }
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -177,7 +177,7 @@ defineFeature(feature, (test): void => {
       url: '/thirdpartyRequests/transactions/67fff06f-2380-4403-ba35-f97b6a4250a1',
       headers: reqHeaders,
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -217,7 +217,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.updateTransactionRequest.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -270,7 +270,7 @@ defineFeature(feature, (test): void => {
         }
       }
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -312,7 +312,7 @@ defineFeature(feature, (test): void => {
       payload: patchTPTransactionIdRequest.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

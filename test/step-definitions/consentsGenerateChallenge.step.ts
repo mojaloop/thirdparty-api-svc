@@ -34,7 +34,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.consentsGenerateChallengeRequest.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

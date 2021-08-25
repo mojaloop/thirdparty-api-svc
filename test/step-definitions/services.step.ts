@@ -36,7 +36,7 @@ defineFeature(feature, (test): void => {
       url: '/services/THIRD_PARTY_DFSP',
       headers: reqHeaders,
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -74,7 +74,7 @@ defineFeature(feature, (test): void => {
       payload: mockData.putServicesByServiceTypeRequest.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -116,7 +116,7 @@ defineFeature(feature, (test): void => {
       payload: servicesRequestError.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

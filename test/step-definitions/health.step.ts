@@ -18,7 +18,7 @@ defineFeature(feature, (test): void => {
   })
 
   test('Health Check', ({ given, when, then }): void => {
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

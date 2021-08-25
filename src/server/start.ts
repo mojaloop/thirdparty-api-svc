@@ -30,7 +30,7 @@ import Config from '../shared/config'
 import Metrics from '@mojaloop/central-services-metrics'
 
 export default async function start (server: Server): Promise<Server> {
-  Logger.info(`thirdparty-api-adapter is running @ ${server.info.uri}`)
+  Logger.info(`thirdparty-api-svc is running @ ${server.info.uri}`)
   await Util.Endpoints.initializeCache(Config.ENDPOINT_CACHE_CONFIG)
   if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
     Metrics.setup(Config.INSTRUMENTATION.METRICS.config)

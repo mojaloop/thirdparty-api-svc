@@ -1,3 +1,3 @@
-# thirdparty-api-adapter/src/server/eventHandlers
+# thirdparty-api-svc/src/server/eventHandlers
 
 Handlers for Kafka Events. 
