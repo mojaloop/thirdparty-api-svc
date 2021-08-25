@@ -51,6 +51,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
+      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.POST,
       { verificationRequestId })
@@ -95,6 +96,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
+      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
       { verificationRequestId })
@@ -146,6 +148,7 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
+      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
       { transactionRequestId: request.params.transactionRequestId })
