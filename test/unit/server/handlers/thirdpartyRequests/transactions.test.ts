@@ -25,12 +25,13 @@
 'use strict'
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import Handler from '~/server/handlers/thirdpartyRequests/transactions'
+import * as Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
@@ -103,4 +104,268 @@ describe('transactions handler', (): void => {
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
+
+  describe('GET /thirdpartyRequests/transactions/{ID}', (): void => {
+    const request: Request = MockData.getTransactionRequest
+    beforeAll((): void => {
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    beforeEach((): void => {
+      jest.clearAllMocks()
+    })
+
+    it('handles a successful request', async (): Promise<void> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_GET',
+        request.headers,
+        'GET',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        undefined,
+        undefined
+      ]
+
+      // Act
+      const response = await Handler.get(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles errors in async manner', async (): Promise<void> => {
+      // Arrange
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_GET',
+        request.headers,
+        'GET',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        undefined,
+        undefined]
+
+      // Act
+      const response = await Handler.get(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      // Note: no promise rejection here!
+    })
+
+    it('handles validation errors synchonously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: {}
+      }
+
+      // Act
+      const action = async () => await Handler.get(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
+  describe('PUT /thirdpartyRequests/transactions/{ID}', (): void => {
+    const request: Request = MockData.updateTransactionRequest
+    beforeAll((): void => {
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    beforeEach((): void => {
+      jest.clearAllMocks()
+    })
+
+    it('handles a successful request', async (): Promise<void> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        request.headers,
+        'PUT',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        request.payload,
+        undefined
+      ]
+
+      // Act
+      const response = await Handler.put(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles errors in async manner', async (): Promise<void> => {
+      // Arrange
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        request.headers,
+        'PUT',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        request.payload,
+        undefined]
+
+      // Act
+      const response = await Handler.put(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      // Note: no promise rejection here!
+    })
+
+    it('handles validation errors synchonously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: {}
+      }
+
+      // Act
+      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
+  describe('PATCH /thirdpartyRequests/transactions/{ID}', (): void => {
+    const request: Request = MockData.patchThirdpartyTransactionIdRequest
+    beforeAll((): void => {
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    beforeEach((): void => {
+      jest.clearAllMocks()
+    })
+
+    it('handles a successful request', async (): Promise<void> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
+        request.headers,
+        'PATCH',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        request.payload,
+        undefined
+      ]
+
+      // Act
+      const response = await Handler.patch(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles errors in async manner', async (): Promise<void> => {
+      // Arrange
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      const expected = [
+        '/thirdpartyRequests/transactions/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
+        request.headers,
+        'PATCH',
+        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        request.payload,
+        undefined]
+
+      // Act
+      const response = await Handler.patch(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(202)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      // Note: no promise rejection here!
+    })
+
+    it('handles validation errors synchonously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: {}
+      }
+
+      // Act
+      const action = async () => await Handler.patch(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
+  describe('PUT /thirdpartyRequests/transactions/{ID}/error', (): void => {
+    beforeAll((): void => {
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
+
+    beforeEach((): void => {
+      jest.clearAllMocks()
+    })
+
+    it('handles a successful request', async (): Promise<void> => {
+      mockForwardTransactionRequestError.mockResolvedValueOnce()
+
+      const expected = [
+        expect.objectContaining(request.headers),
+        '/thirdpartyRequests/transactions/{{ID}}/error',
+        'PUT',
+        'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+        request.payload,
+        undefined
+      ]
+
+      // Act
+      const response = await Handler.put(null, request, mockResponseToolkit)
+
+      // Assert
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardTransactionRequestError).toHaveBeenCalledTimes(1)
+      expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
+    })
+
+    it('handles validation errors synchronously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: {}
+      }
+
+      // Act
+      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+
 })
