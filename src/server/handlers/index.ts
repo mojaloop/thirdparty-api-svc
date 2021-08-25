@@ -27,21 +27,19 @@
 import { Util } from '@mojaloop/central-services-shared'
 import Health from './health'
 import Metrics from './metrics'
-import ThirdpartyTransactions from './thirdpartyRequests/transactions'
-import ThirdpartyTransactionsId from './thirdpartyRequests/transactions/{ID}'
-import ThirdpartyTransactionsIdError from './thirdpartyRequests/transactions/{ID}/error'
 import Consents from './consents'
 import ConsentsId from './consents/{ID}'
 import ConsentsByIdError from './consents/{ID}/error'
 import ConsentsIdGenerateChallenge from './consents/{ID}/generateChallenge'
 import ConsentRequests from './consentRequests'
-import Authorizations from './thirdpartyRequests/transactions/{ID}/authorizations'
 import ConsentRequestsId from './consentRequests/{ID}'
 import ConsentRequestsByIdError from './consentRequests/{ID}/error'
 import Accounts from './accounts/{ID}'
 import AccountsByUserIdError from './accounts/{ID}/error'
 import Services from './services/{ServiceType}'
 import ServicesByServiceTypeError from './services/{ServiceType}/error'
+import * as ThirdpartyTransactions from './thirdpartyRequests/transactions'
+import * as ThirdpartyRequestsAuthorizations from './thirdpartyRequests/authorizations'
 import { wrapWithHistogram } from '~/shared/histogram'
 const OpenapiBackend = Util.OpenapiBackend
 
@@ -49,7 +47,7 @@ export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
   GetThirdpartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactionsId.get,
+    ThirdpartyTransactions.get,
     [
       'thirdpartyRequests_transactions_get',
       'Get thirdpartyRequests transactions request',
@@ -65,7 +63,7 @@ export default {
     ]
   ),
   UpdateThirdPartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactionsId.put,
+    ThirdpartyTransactions.put,
     [
       'thirdpartyRequests_transactions_put',
       'Put thirdpartyRequests transactions request',
@@ -73,7 +71,7 @@ export default {
     ]
   ),
   NotifyThirdpartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactionsId.patch,
+    ThirdpartyTransactions.patch,
     [
       'thirdpartyRequests_transactions_patch',
       'Patch thirdpartyRequests transactions request',
@@ -81,29 +79,41 @@ export default {
     ]
   ),
   ThirdpartyTransactionRequestsError: wrapWithHistogram(
-    ThirdpartyTransactionsIdError.put,
+    ThirdpartyTransactions.putError,
     [
       'thirdpartyRequests_transactions_error_put',
       'Put thirdpartyRequests transactions error request',
       ['success']
     ]
   ),
-  VerifyThirdPartyAuthorization: wrapWithHistogram(
-    Authorizations.post,
+  PostThirdpartyRequestsAuthorizations: wrapWithHistogram(
+    ThirdpartyRequestsAuthorizations.post,
     [
       'thirdpartyRequests_transactions_authorizations_post',
       'Post thirdpartyRequests transactions authorizations request',
       ['success']
     ]
   ),
-  UpdateThirdpartyAuthorization: wrapWithHistogram(
-    Authorizations.put,
+  PutThirdpartyRequestsAuthorizationsById: wrapWithHistogram(
+    ThirdpartyRequestsAuthorizations.put,
     [
       'thirdpartyRequests_transactions_authorizations_put',
       'Put thirdpartyRequests transactions authorizations request',
       ['success']
     ]
   ),
+  PutThirdpartyRequestsAuthorizationsByIdAndError: wrapWithHistogram(
+    ThirdpartyRequestsAuthorizations.putError,
+    [
+      'thirdpartyRequests_transactions_authorizations_error_put',
+      'Put thirdpartyRequests transactions authorizations request error',
+      ['success']
+    ]
+  ),
+  // TODO: implement:
+  // PostThirdpartyRequestsVerifications
+  // PutThirdpartyRequestsVerificationsById
+  // PutThirdpartyRequestsVerificationsByIdAndError
   CreateConsentRequest: wrapWithHistogram(
     ConsentRequests.post,
     [

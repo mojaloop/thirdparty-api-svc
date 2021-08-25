@@ -18,40 +18,33 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kevin Leyow <kevin.leyow@modusbox.com>
+ - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
 
  --------------
  ******/
 'use strict'
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import { ReformatFSPIOPError, APIErrorObject } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+
 import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 
-/**
- * summary: ThirdpartyTransactionRequestsError
- * description: The HTTP request PUT /thirdpartyRequests/transactions/{ID}/error is used to inform a thirdparty
- * of a transaction error.
- * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
- * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
- * produces: application/json
- * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
- */
-const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+
+const post = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = (request as any).span
-  const transactionRequestId: string = request.params.ID
-  const payload = request.payload as APIErrorObject
 
   try {
+    const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
-      Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      Enum.Events.Event.Action.POST,
+      { transactionRequestId: payload.transactionRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -60,21 +53,23 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
-    Transactions.forwardTransactionRequestError(
+    // TODO: do something 
+    Transactions.forwardTransactionRequest(
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
+      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
       request.headers,
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
-      Enum.Http.RestMethods.PUT,
-      transactionRequestId,
+      Enum.Http.RestMethods.POST,
+      request.params,
       payload,
       span
     )
-    .catch(err => {
-      // Do nothing with the error - forwardTransactionRequestError takes care of async errors
-      Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
-      Logger.error(ReformatFSPIOPError(err))
-    })
+      .catch(err => {
+        // Do nothing with the error - forwardTransactionRequest takes care of async errors
+        Logger.error('Verifications::post - forwardVerificationRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
 
-    return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
+    return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
@@ -83,5 +78,5 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
 }
 
 export default {
-  put
+  post
 }

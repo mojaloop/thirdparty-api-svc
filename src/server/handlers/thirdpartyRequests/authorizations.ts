@@ -25,19 +25,19 @@
 
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
-import { Authorizations } from '~/domain/thirdpartyRequests'
+import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 
 
 /**
   * summary: VerifyThirdPartyAuthorization
-  * description: The method POST /thirdpartyRequests/transactions/{ID}/authorizations is used
-  *   by the DFSP to verify an authorization result with the Auth-Service.
+  * description: The method POST /thirdpartyRequests/authorizations/{ID} is used
+  *   by the DFSP to ask the PISP to authorize a transaction before continuing
   * parameters: body, content-length
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
@@ -61,6 +61,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       payload: request.payload
     }, AuditEventAction.start)
 
+    // TODO: double check this!
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
@@ -87,7 +88,9 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
 
 /**
   * summary: UpdateThirdpartyAuthorization
-  * description: The method PUT /thirdpartyRequests/transactions/{ID}/authorizations is called by the Auth-Service on  * successful validation of authorization.
+  * description: The method PUT /thirdpartyRequests/authorizations/{ID}
+  * is called by the PISP to include the authorization result from their user.
+  * 
   * parameters: body, content-length
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
@@ -113,6 +116,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
+    // TODO: double check this!
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT,
@@ -122,7 +126,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       payload,
       span
     )
-    .catch(err => {
+      .catch(err => {
         // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
         Logger.error('Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -136,8 +140,60 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
   }
 }
 
-export default {
-  post,
-  put
+/**
+ * summary: ThirdpartyTransactionRequestsError
+ * description: The HTTP request PPUT /thirdpartyRequests/authorizations/{ID} is used to inform a thirdparty
+ * of an thirdparty transaction request error
+ * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const putError = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+  const span = (request as any).span
+  const transactionRequestId: string = request.params.ID
+  const payload = request.payload as APIErrorObject
+
+  try {
+    const tags: { [id: string]: string } = getSpanTags(
+      request,
+      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Action.PUT,
+      { transactionRequestId: request.params.transactionRequestId })
+
+    span?.setTags(tags)
+    await span?.audit({
+      headers: request.headers,
+      payload: request.payload
+    }, AuditEventAction.start)
+
+    // Note: calling async function without `await`
+    // TODO: change this!
+    Transactions.forwardTransactionRequestError(
+      request.headers,
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
+      Enum.Http.RestMethods.PUT,
+      transactionRequestId,
+      payload,
+      span
+    )
+      .catch(err => {
+        // Do nothing with the error - forwardTransactionRequestError takes care of async errors
+        Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+
+    return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
+  } catch (err) {
+    const fspiopError = ReformatFSPIOPError(err)
+    Logger.error(fspiopError)
+    throw fspiopError
+  }
 }
 
+
+export {
+  post,
+  put,
+  putError
+}

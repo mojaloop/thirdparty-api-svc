@@ -27,7 +27,7 @@
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 
-import AuthorizationsHandler from '~/server/handlers/thirdpartyRequests/transactions/{ID}/authorizations'
+import * as ThirdpartyRequestsAuthorizations from '~/server/handlers/thirdpartyRequests/authorizations'
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
@@ -90,7 +90,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ThirdpartyRequestsAuthorizations.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -112,7 +112,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ThirdpartyRequestsAuthorizations.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -133,7 +133,7 @@ describe('authorizations handler', () => {
       }
 
       // Act
-      const action = async () => await AuthorizationsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () => await ThirdpartyRequestsAuthorizations.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -162,7 +162,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ThirdpartyRequestsAuthorizations.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -184,7 +184,7 @@ describe('authorizations handler', () => {
       ]
 
       // Act
-      const response = await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ThirdpartyRequestsAuthorizations.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -205,7 +205,7 @@ describe('authorizations handler', () => {
       }
 
       // Act
-      const action = async () => await AuthorizationsHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () => await ThirdpartyRequestsAuthorizations.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
