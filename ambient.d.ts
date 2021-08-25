@@ -45,7 +45,7 @@ declare module '@mojaloop/central-services-metrics' {
      * @returns {Histogram} - The Prometheus Histogram object
      * @throws {Error} -
      */
-    getHistogram: (name: string, help?: string, labelNames?: string[], buckets?: number[]) => Histogram
+    getHistogram: (name: string, help?: string, labelNames?: string[], buckets?: number[]) => Histogram<string>
 
     /**
      * @function getMetricsForPrometheus
