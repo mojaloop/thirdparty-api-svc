@@ -142,7 +142,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
 
 /**
  * summary: ThirdpartyTransactionRequestsError
- * description: The HTTP request PPUT /thirdpartyRequests/authorizations/{ID} is used to inform a thirdparty
+ * description: The HTTP request PUT /thirdpartyRequests/authorizations/{ID} is used to inform a thirdparty
  * of an thirdparty transaction request error
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
@@ -151,15 +151,15 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
  */
 const putError = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = (request as any).span
-  const transactionRequestId: string = request.params.ID
+  const authorizationRequestId: string = request.params.ID
   const payload = request.payload as APIErrorObject
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      Enum.Events.Event.Type.TRANSACTION_REQUEST,
+      Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { authorizationRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -169,17 +169,16 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
 
     // Note: calling async function without `await`
     // TODO: change this!
-    Transactions.forwardTransactionRequestError(
+    Authorizations.forwardAuthorizationRequestError(
+      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
       request.headers,
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
-      Enum.Http.RestMethods.PUT,
-      transactionRequestId,
+      authorizationRequestId,
       payload,
       span
     )
       .catch(err => {
-        // Do nothing with the error - forwardTransactionRequestError takes care of async errors
-        Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
+        // Do nothing with the error - forwardAuthorizationRequestError takes care of async errors
+        Logger.error('ThirdpartyRequestsAuthorizations::put - forwardThirdpartyRequestsAuthorizationsError async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
       })
 

@@ -122,19 +122,20 @@ export async function forwardAuthorizationRequest(
 
 /**
  * @function forwardAuthorizationRequestError
- * @description Generic function to handle sending `PUT .../authorizations/error` back to the FSPIOP-Source
+ * @description Generic function to handle sending `PUT thirdpartyRequests/authorizations/{ID}/error` back to the FSPIOP-Source
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
- * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
+ * @param {string} authorizationRequestId the ID of the thirdpartyRequests/authorizations resource
  * @param {APIErrorObject} error Error details
  * @param {object} span optional request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequestError(path: string,
+export async function forwardAuthorizationRequestError(
+  path: string,
   headers: HapiUtil.Dictionary<string>,
-  transactionRequestId: string,
+  authorizationRequestId: string,
   error: APIErrorObject,
   span?: any): Promise<void> {
 
@@ -149,7 +150,7 @@ export async function forwardAuthorizationRequestError(path: string,
       destinationDfspId,
       endpointType,
       path,
-      { ID: transactionRequestId }
+      { ID: authorizationRequestId }
     )
     Logger.info(`authorizations::forwardAuthorizationRequestError - Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
 
@@ -164,7 +165,7 @@ export async function forwardAuthorizationRequestError(path: string,
       childSpan
     )
 
-    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization error callback: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization error callback: ${authorizationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
