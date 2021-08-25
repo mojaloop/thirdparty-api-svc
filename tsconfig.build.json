@@ -13,4 +13,17 @@
     "jest.bdd.config.js",
     "jest.config.js"
   ],
+  "compilerOptions": {
+    "paths": {
+      "@hapi/podium": [
+        "node_modules/@types/hapi__podium"
+      ],
+      "~/*": [
+        "src/*"
+      ],
+      "test/*": [
+        "test/*"
+      ]
+    },
+  }
 }

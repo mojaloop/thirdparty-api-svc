@@ -34,7 +34,6 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    // TODO: change back before PR!!!
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -42,12 +41,6 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      // @hapi/podium types are broken
-      // see https://github.com/hapijs/hapi/issues/4240#issuecomment-810860745
-      // for more info
-      "@hapi/podium": [
-        "node_modules/@types/hapi__podium"
-      ],
       "~/*": [
         "src/*"
       ],
