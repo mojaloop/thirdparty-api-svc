@@ -61,10 +61,9 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       payload: request.payload
     }, AuditEventAction.start)
 
-    // TODO: double check this!
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_POST,
+      Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST,
       request.headers,
       Enum.Http.RestMethods.POST,
@@ -118,7 +117,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
     // Note: calling async function without `await`
     // TODO: double check this!
     Authorizations.forwardAuthorizationRequest(
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT,
+      Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT,
       request.headers,
       Enum.Http.RestMethods.PUT,
@@ -170,7 +169,7 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
     // Note: calling async function without `await`
     // TODO: change this!
     Authorizations.forwardAuthorizationRequestError(
-      Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR,
+      Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT_ERROR,
       request.headers,
       authorizationRequestId,
       payload,
