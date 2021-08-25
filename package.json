@@ -12,7 +12,7 @@
     "audit:check": "SHELL=sh check-audit --production",
     "build": "tsc -p ./tsconfig.build.json",
     "build:openapi": "openapi bundle --output ./src/interface/api.yaml --ext yaml ./src/interface/api-template.yaml",
-    "dev": "ts-node-dev --no-notify -r tsconfig-paths/register -P ./tsconfig.json ./src/cli.ts",
+    "dev": "ts-node-dev --no-notify -r tsconfig-paths/register -P ./tsconfig.json ./src/cli.ts all",
     "docker:build": "docker build -t thirdparty-api-svc:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 3008:3008 thirdparty-api-svc:local",
     "lint": "eslint ./src/**/*.ts *.js",

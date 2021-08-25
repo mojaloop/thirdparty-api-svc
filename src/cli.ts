@@ -27,15 +27,11 @@
 
 import Config from './shared/config'
 import ServiceServer from './server'
-import ServiceEventHandler from './eventServer'
 import { Command } from 'commander'
 import logger from '@mojaloop/central-services-logger'
 
 // setup & start @hapi server
 const startApiServer = async () => ServiceServer.run(Config)
-
-// setup & start event handler server
-const startEventServer = async () => ServiceEventHandler.run(Config)
 
 async function startServices (...services: Array<Promise<any>>) {
   try {
@@ -63,13 +59,9 @@ program.command('api')
   .description('start the api server only')
   .action(() => startServices(startApiServer()))
 
-// Start the Event Server only
-program.command('event')
-  .description('start the event server only')
-  .action(() => startServices(startEventServer()))
 
 program.command('all')
   .description('start all services')
-  .action(() => startServices(startApiServer(), startEventServer()))
+  .action(() => startServices(startApiServer()))
 
 program.parse(process.argv)
