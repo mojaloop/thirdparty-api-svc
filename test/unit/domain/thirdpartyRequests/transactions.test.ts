@@ -30,7 +30,6 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import TestData from 'test/unit/data/mockData.json'
 import Span from 'test/unit/__mocks__/span'
-import { NotificationMessage } from '~/eventServer/eventHandlers/notificationEvent'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -44,7 +43,8 @@ const patchTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.T
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
 const patchThirdpartyTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
-const notificationEventCommit: NotificationMessage = mockData.notificationEventCommit
+// TODO: replace this data
+const notificationEventCommit = mockData.notificationEventCommit
 
 const getEndpointAndRenderExpectedPostTransactionRequest = [
   'http://central-ledger.local:3001',

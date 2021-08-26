@@ -251,7 +251,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('/thirdpartyRequests/transactions/{ID}/error', (): void => {
+    describe('PUT /thirdpartyRequests/transactions/{ID}/error', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -311,7 +311,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+    describe('POST /thirdpartyRequests/authorizations/{ID}', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -325,7 +325,7 @@ describe('index', (): void => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -363,7 +363,7 @@ describe('index', (): void => {
       it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -398,7 +398,7 @@ describe('index', (): void => {
       it('requires all fields to be set', async (): Promise<void> => {
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -430,7 +430,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('PUT /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+    describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -444,7 +444,7 @@ describe('index', (): void => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
@@ -460,7 +460,7 @@ describe('index', (): void => {
           }
         }
         const expected = [
-          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+          '/thirdpartyRequests/authorizations/{{ID}}',
           'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
           expect.objectContaining(request.headers),
           'PUT',
@@ -481,7 +481,7 @@ describe('index', (): void => {
       it('responds with a 400 when status !== VERIFIED', async (): Promise<void> => {
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -516,7 +516,7 @@ describe('index', (): void => {
       it('requires all fields to be set', async (): Promise<void> => {
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
@@ -545,6 +545,26 @@ describe('index', (): void => {
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
       })
+    })
+
+    describe('PUT /thirdpartyRequests/authorizations/{ID}/error', () => {
+      it.todo('responds with 200 for a valid request')
+      it.todo('responds with 400 for an invalid request')
+    })
+
+    describe('POST /thirdpartyRequests/verifications', (): void => {
+      it.todo('returns 202 for a valid request')
+      it.todo('mandatory fields validation')
+    })
+
+    describe('PUT /thirdpartyRequests/verifications/{ID}', (): void => {
+      it.todo('returns 202 for a valid request')
+      it.todo('mandatory fields validation')
+    })
+
+    describe('PUT /thirdpartyRequests/verifications/{ID}/error', (): void => {
+      it.todo('returns 202 for a valid request')
+      it.todo('mandatory fields validation')
     })
 
     describe('POST /consents', (): void => {
@@ -943,82 +963,6 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /consents/{{ID}}/generateChallenge', (): void => {
-      beforeAll((): void => {
-        mockLoggerPush.mockReturnValue(null)
-        mockLoggerError.mockReturnValue(null)
-      })
-
-      beforeEach((): void => {
-        jest.clearAllMocks()
-      })
-
-      it('posts /consents/{{ID}}/generateChallenge payload successfully', async (): Promise<void> => {
-        mockForwardConsentsIdGenerateChallengeRequest.mockResolvedValueOnce()
-        const request = {
-          method: 'POST',
-          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            ...mockData.consentsGenerateChallengeRequest.headers
-          },
-          payload: {
-            ...mockData.consentsGenerateChallengeRequest.payload
-          }
-        }
-        const expected = [
-          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          '/consents/{{ID}}/generateChallenge',
-          'TP_CB_URL_CONSENT_GENERATE_CHALLENGE_POST',
-          expect.objectContaining(request.headers),
-          'POST',
-          request.payload,
-          expect.any(Object)
-        ]
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(202)
-        expect(response.result).toBeNull()
-        expect(mockForwardConsentsIdGenerateChallengeRequest).toHaveBeenCalledWith(...expected)
-      })
-
-      it('requires all fields to be set', async (): Promise<void> => {
-        const request = {
-          method: 'POST',
-          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            ...mockData.consentsGenerateChallengeRequest.headers
-          },
-          payload: {
-            ...mockData.consentsGenerateChallengeRequest.payload
-          }
-        }
-        delete request.payload.type
-
-        const expected = {
-          errorInformation: {
-            errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'type\''
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        expect(mockForwardConsentsIdGenerateChallengeRequest).not.toHaveBeenCalled()
-      })
-    })
 
     describe('PUT /consents/{{ID}}', (): void => {
       beforeAll((): void => {

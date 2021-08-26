@@ -27,7 +27,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Metrics from '@mojaloop/central-services-metrics'
 
-import Handler from '~/server/handlers/thirdpartyRequests/transactions'
+import * as Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
 import { wrapWithHistogram } from '~/shared/histogram'
