@@ -165,7 +165,6 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
     }, AuditEventAction.start)
 
     // Note: calling async function without `await`
-    // TODO: change this!
     Authorizations.forwardAuthorizationRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT_ERROR,
       request.headers,
