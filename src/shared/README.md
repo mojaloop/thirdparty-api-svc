@@ -1,4 +1,4 @@
-# thirdparty-api-adapter/src/shared
+# thirdparty-api-svc/src/shared
 
 Helper modules shared across all source code.
 

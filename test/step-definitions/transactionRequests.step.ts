@@ -37,7 +37,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.transactionRequest.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -65,106 +65,6 @@ defineFeature(feature, (test): void => {
     })
   })
 
-  test('CreateThirdpartyTransactionRequestAuthorization', ({ given, when, then }): void => {
-    const reqHeaders = {
-      ...mockData.transactionRequest.headers,
-      date: (new Date()).toISOString(),
-      'fspiop-source': 'dfspA',
-      'fspiop-destination': 'dfspA',
-      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-    }
-    const request = {
-      method: 'POST',
-      url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
-      headers: reqHeaders,
-      payload: {
-        challenge: '12345',
-        value: '12345',
-        consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-        sourceAccountId: 'dfspa.alice.1234',
-        status: 'PENDING'
-      }
-    }
-
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
-      server = await ThirdPartyAPIAdapterService.run(Config)
-      return server
-    })
-
-    when('I send a \'CreateThirdpartyTransactionRequestAuthorization\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardAuthorizationRequest.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      })
-
-    then('I get a response with a status code of \'202\'', (): void => {
-      const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
-        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
-        expect.objectContaining(request.headers),
-        'POST',
-        '7d34f91d-d078-4077-8263-2c047876fcf6',
-        request.payload,
-        expect.any(Object)
-      ]
-
-      expect(response.result).toBeNull()
-      expect(response.statusCode).toBe(202)
-      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
-    })
-  })
-
-  test('UpdateThirdpartyAuthorization', ({ given, when, then }): void => {
-    const reqHeaders = {
-      ...mockData.transactionRequest.headers,
-      date: (new Date()).toISOString(),
-      'fspiop-source': 'dfspA',
-      'fspiop-destination': 'dfspA',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-    }
-    const request = {
-      method: 'PUT',
-      url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
-      headers: reqHeaders,
-      payload: {
-        challenge: '12345',
-        value: '12345',
-        consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-        sourceAccountId: 'dfspa.alice.1234',
-        status: 'VERIFIED'
-      }
-    }
-
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
-      server = await ThirdPartyAPIAdapterService.run(Config)
-      return server
-    })
-
-    when('I send a \'UpdateThirdpartyAuthorization\' request', async (): Promise<ServerInjectResponse> => {
-      mockForwardAuthorizationRequest.mockResolvedValueOnce()
-      response = await server.inject(request)
-      return response
-    })
-
-    then('I get a response with a status code of \'200\'', (): void => {
-      const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}/authorizations',
-        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
-        expect.objectContaining(request.headers),
-        'PUT',
-        '7d34f91d-d078-4077-8263-2c047876fcf6',
-        request.payload,
-        expect.any(Object)
-      ]
-
-      expect(response.result).toBeNull()
-      expect(response.statusCode).toBe(200)
-      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
-    })
-  })
-
   test('GetThirdpartyTransactionRequests', ({ given, when, then }): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
@@ -177,7 +77,7 @@ defineFeature(feature, (test): void => {
       url: '/thirdpartyRequests/transactions/67fff06f-2380-4403-ba35-f97b6a4250a1',
       headers: reqHeaders,
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -217,7 +117,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.updateTransactionRequest.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -270,7 +170,7 @@ defineFeature(feature, (test): void => {
         }
       }
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -312,7 +212,7 @@ defineFeature(feature, (test): void => {
       payload: patchTPTransactionIdRequest.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

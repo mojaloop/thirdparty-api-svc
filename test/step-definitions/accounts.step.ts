@@ -35,7 +35,7 @@ defineFeature(feature, (test): void => {
       url: '/accounts/username1234',
       headers: reqHeaders,
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -77,7 +77,7 @@ defineFeature(feature, (test): void => {
       }
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -119,7 +119,7 @@ defineFeature(feature, (test): void => {
       payload: acctRequestError.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

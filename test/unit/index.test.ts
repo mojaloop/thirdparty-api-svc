@@ -28,7 +28,7 @@ import index from '~/index'
 import Config from '~/shared/config'
 import { Server } from '@hapi/hapi'
 
-import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
+import { Authorizations, Transactions, Verifications } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import TestData from 'test/unit/data/mockData.json'
 import * as Consents from '~/domain/consents'
@@ -39,13 +39,15 @@ import * as Services from '~/domain/services'
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
+const mockForwardAuthorizationRequestError = jest.spyOn(Authorizations, 'forwardAuthorizationRequestError')
+const mockForwardVerificationRequest = jest.spyOn(Verifications, 'forwardVerificationRequest')
+const mockForwardVerificationRequestError = jest.spyOn(Verifications, 'forwardVerificationRequestError')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
 const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
-const mockForwardConsentsIdGenerateChallengeRequest = jest.spyOn(Consents, 'forwardConsentsIdGenerateChallengeRequest')
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
 const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
@@ -78,6 +80,7 @@ describe('index', (): void => {
       server.events.on('stop', done)
       server.stop()
     })
+    
 
     describe('/thirdpartyRequests/transactions', (): void => {
       beforeAll((): void => {
@@ -230,7 +233,7 @@ describe('index', (): void => {
 
 
       it('PATCH mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, { })
+        const errPayload = Object.assign(trxnRequest.payload, {})
         const request = {
           method: 'PATCH',
           url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
@@ -251,7 +254,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('/thirdpartyRequests/transactions/{ID}/error', (): void => {
+    describe('PUT /thirdpartyRequests/transactions/{ID}/error', (): void => {
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -311,7 +314,43 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+    describe('POST /thirdpartyRequests/authorizations', (): void => {
+      const authorizationPostRequestPayload = {
+        authorizationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+        transactionRequestId: '2cf08eed-3540-489e-85fa-b2477838a8c5',
+        challenge: '<base64 encoded binary - the encoded challenge>',
+        transferAmount: {
+          amount: '100',
+          currency: 'USD'
+        },
+        payeeReceiveAmount: {
+          amount: '99',
+          currency: 'USD'
+        },
+        fees: {
+          amount: '1',
+          currency: 'USD'
+        },
+        payee: {
+          partyIdInfo: {
+            partyIdType: 'MSISDN',
+            partyIdentifier: '+4412345678',
+            fspId: 'dfspb',
+          }
+        },
+        payer: {
+          partyIdType: 'THIRD_PARTY_LINK',
+          partyIdentifier: 'qwerty-123456',
+          fspId: 'dfspa'
+        },
+        transactionType: {
+          scenario: 'TRANSFER',
+          initiator: 'PAYER',
+          initiatorType: 'CONSUMER'
+        },
+        expiration: '2020-06-15T12:00:00.000Z'
+      }
+
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -325,28 +364,22 @@ describe('index', (): void => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
-            'fspiop-source': 'dfspA',
-            'fspiop-destination': 'dfspA'
+            'fspiop-source': 'dspa',
+            'fspiop-destination': 'pispa'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'PENDING'
-          }
+          payload: JSON.parse(JSON.stringify(authorizationPostRequestPayload))
         }
         const expected = [
-          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+          '/thirdpartyRequests/authorizations',
           'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
           expect.objectContaining(request.headers),
           'POST',
-          '7d34f91d-d078-4077-8263-2c047876fcf6',
+          '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           request.payload,
           expect.any(Object)
         ]
@@ -360,45 +393,12 @@ describe('index', (): void => {
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
-        const request = {
-          method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
-            'fspiop-destination': 'dfspA'
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'VERIFIED'
-          }
-        }
-        const expected = {
-          errorInformation: {
-            errorCode: '3100',
-            errorDescription: 'Generic validation error - /requestBody/status must be equal to one of the allowed values'
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
-      })
-
       it('requires all fields to be set', async (): Promise<void> => {
+        const invalidPayload = JSON.parse(JSON.stringify(authorizationPostRequestPayload))
+        delete invalidPayload.challenge
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -406,17 +406,12 @@ describe('index', (): void => {
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            status: 'PENDING'
-          }
+          payload: invalidPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'sourceAccountId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
           }
         }
 
@@ -430,7 +425,21 @@ describe('index', (): void => {
       })
     })
 
-    describe('PUT /thirdpartyRequests/transactions/{ID}/authorizations', (): void => {
+    describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
+      const authorizationPutRequestPayload = {
+        signedPayloadType: 'FIDO',
+        signedPayload: {
+          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+          response: {
+            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+          },
+          type: 'public-key'
+        }
+      }
+
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -444,23 +453,17 @@ describe('index', (): void => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'VERIFIED'
-          }
+          payload: authorizationPutRequestPayload
         }
         const expected = [
-          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+          '/thirdpartyRequests/authorizations/{{ID}}',
           'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
           expect.objectContaining(request.headers),
           'PUT',
@@ -472,16 +475,178 @@ describe('index', (): void => {
         // Act
         const response = await server.inject(request)
 
+        console.log('response', response)
+
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it('responds with a 400 when status !== VERIFIED', async (): Promise<void> => {
+      it('requires all fields to be set', async (): Promise<void> => {
+        const invalidPayload = JSON.parse(JSON.stringify(authorizationPutRequestPayload))
+        delete invalidPayload.signedPayloadType
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
+          headers: {
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'pispA',
+            'fspiop-destination': 'dfspA'
+          },
+          payload: invalidPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'signedPayloadType\''
+          }
+        }
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /thirdpartyRequests/authorizations/{ID}/error', () => {
+      const errorPayload = {
+        errorInformation: {
+          errorCode: '6000',
+          errorDescription: 'Generic third party error',
+        }
+      }
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('PUT', async (): Promise<void> => {
+        mockForwardAuthorizationRequestError.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequestError.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/authorizations/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: reqHeaders,
+          payload: errorPayload
+        }
+
+        const expected = [
+          '/thirdpartyRequests/authorizations/{{ID}}/error',
+          expect.objectContaining(request.headers),
+          'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+          request.payload,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+        console.log('PUT /thirdpartyRequests/authorizations/{ID}/error response', response)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardAuthorizationRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/authorizations/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
+          headers: trxnRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardAuthorizationRequestError).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('POST /thirdpartyRequests/verifications', (): void => {
+      const verificationPostRequestBody = {
+        verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+        challenge: '<base64 encoded binary - the encoded challenge>',
+        consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
+        signedPayloadType: 'FIDO',
+        signedPayload: {
+          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+          response: {
+            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
+          },
+          type: 'public-key'
+        }
+      }
+
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+
+      it('POST', async (): Promise<void> => {
+        mockForwardVerificationRequest.mockResolvedValueOnce()
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/verifications',
+          headers: {
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'dspa',
+            'fspiop-destination': 'pispa'
+          },
+          payload: verificationPostRequestBody
+        }
+        const expected = [
+          '/thirdpartyRequests/verifications',
+          'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST',
+          expect.objectContaining(request.headers),
+          'POST',
+          request.payload.verificationRequestId,
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(202)
+        expect(response.result).toBeNull()
+        expect(mockForwardVerificationRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const invalidPayload = JSON.parse(JSON.stringify(verificationPostRequestBody))
+        delete invalidPayload.challenge
+        const request = {
+          method: 'POST',
+          url: '/thirdpartyRequests/verifications',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -489,18 +654,12 @@ describe('index', (): void => {
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'PENDING'
-          }
+          payload: invalidPayload
         }
         const expected = {
           errorInformation: {
-            errorCode: '3100',
-            errorDescription: 'Generic validation error - /requestBody/status must be equal to one of the allowed values'
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
           }
         }
 
@@ -512,28 +671,73 @@ describe('index', (): void => {
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
       })
+    })
 
-      it('requires all fields to be set', async (): Promise<void> => {
+    describe('PUT /thirdpartyRequests/verifications/{ID}', (): void => {
+      const verificationPutRequestBody = {
+        authenticationResponse: 'VERIFIED'
+      }
+
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('returns 200 for a valid request', async (): Promise<void> => {
+        mockForwardVerificationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
-          url: '/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/authorizations',
+          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
           headers: {
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+            date: (new Date()).toISOString(),
+            'fspiop-source': 'centralauth',
+            'fspiop-destination': 'dfspa'
+          },
+          payload: verificationPutRequestBody
+        }
+        const expected = [
+          '/thirdpartyRequests/verifications/{{ID}}',
+          'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT',
+          expect.objectContaining(request.headers),
+          'PUT',
+          '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+          request.payload,
+          expect.any(Object)
+        ]
+
+        // Act
+        const response = await server.inject(request)
+
+        // Assert
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardVerificationRequest).toHaveBeenCalledWith(...expected)
+      })
+
+      it('requires all fields to be set', async (): Promise<void> => {
+        const invalidPayload = {}
+        const request = {
+          method: 'PUT',
+          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
+          headers: {
+            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            status: 'VERIFIED'
-          }
+          payload: invalidPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'sourceAccountId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'authenticationResponse\''
           }
         }
 
@@ -544,6 +748,72 @@ describe('index', (): void => {
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('PUT /thirdpartyRequests/verifications/{ID}/error', (): void => {
+      const errorPayload = {
+        errorInformation: {
+          errorCode: '6000',
+          errorDescription: 'Generic third party error',
+        }
+      }
+
+      beforeAll((): void => {
+        mockLoggerPush.mockReturnValue(null)
+        mockLoggerError.mockReturnValue(null)
+      })
+
+      beforeEach((): void => {
+        jest.clearAllMocks()
+      })
+
+      it('returns 200 for a valid request', async (): Promise<void> => {
+        mockForwardVerificationRequestError.mockResolvedValueOnce()
+        const reqHeaders = Object.assign(trxnRequestError.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+        })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df/error',
+          headers: reqHeaders,
+          payload: errorPayload
+        }
+
+        const expected = [
+          '/thirdpartyRequests/verifications/{{ID}}/error',
+          expect.objectContaining(request.headers),
+          '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+          request.payload,
+          expect.any(Object)
+        ]
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.result).toBeNull()
+        expect(mockForwardVerificationRequestError).toHaveBeenCalledWith(...expected)
+      })
+
+      it('mandatory fields validation', async (): Promise<void> => {
+        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const request = {
+          method: 'PUT',
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df/error',
+          headers: trxnRequestError.headers,
+          payload: errPayload
+        }
+        const expected = {
+          errorInformation: {
+            errorCode: '3102',
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+          }
+        }
+        const response = await server.inject(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.result).toStrictEqual(expected)
+        expect(mockForwardVerificationRequestError).not.toHaveBeenCalled()
       })
     })
 
@@ -943,82 +1213,6 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /consents/{{ID}}/generateChallenge', (): void => {
-      beforeAll((): void => {
-        mockLoggerPush.mockReturnValue(null)
-        mockLoggerError.mockReturnValue(null)
-      })
-
-      beforeEach((): void => {
-        jest.clearAllMocks()
-      })
-
-      it('posts /consents/{{ID}}/generateChallenge payload successfully', async (): Promise<void> => {
-        mockForwardConsentsIdGenerateChallengeRequest.mockResolvedValueOnce()
-        const request = {
-          method: 'POST',
-          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            ...mockData.consentsGenerateChallengeRequest.headers
-          },
-          payload: {
-            ...mockData.consentsGenerateChallengeRequest.payload
-          }
-        }
-        const expected = [
-          'cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
-          '/consents/{{ID}}/generateChallenge',
-          'TP_CB_URL_CONSENT_GENERATE_CHALLENGE_POST',
-          expect.objectContaining(request.headers),
-          'POST',
-          request.payload,
-          expect.any(Object)
-        ]
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(202)
-        expect(response.result).toBeNull()
-        expect(mockForwardConsentsIdGenerateChallengeRequest).toHaveBeenCalledWith(...expected)
-      })
-
-      it('requires all fields to be set', async (): Promise<void> => {
-        const request = {
-          method: 'POST',
-          url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/generateChallenge',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            ...mockData.consentsGenerateChallengeRequest.headers
-          },
-          payload: {
-            ...mockData.consentsGenerateChallengeRequest.payload
-          }
-        }
-        delete request.payload.type
-
-        const expected = {
-          errorInformation: {
-            errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'type\''
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        expect(mockForwardConsentsIdGenerateChallengeRequest).not.toHaveBeenCalled()
-      })
-    })
 
     describe('PUT /consents/{{ID}}', (): void => {
       beforeAll((): void => {

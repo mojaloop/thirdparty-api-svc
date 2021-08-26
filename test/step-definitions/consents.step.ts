@@ -36,7 +36,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.consentsPostRequestPISP.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -75,7 +75,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.consentsPostRequestAUTH.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -114,7 +114,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.consentsIdPutRequestSigned.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -154,7 +154,7 @@ defineFeature(feature, (test): void => {
       headers: reqHeaders,
       payload: mockData.consentsIdPutRequestVerified.payload
     }
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })
@@ -196,7 +196,7 @@ defineFeature(feature, (test): void => {
       payload: consentsError.payload
     }
 
-    given('thirdparty-api-adapter server', async (): Promise<Server> => {
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
       return server
     })

@@ -1,4 +1,4 @@
-# thirdparty-api-adapter/src/server
+# thirdparty-api-svc/src/server
 [@hapi](https://hapi.dev/) server setup
 
 

@@ -18,26 +18,70 @@
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
- - Kevin Leyow <kevin.leyow@modusbox.com>
  - Sridhar Voruganti <sridhar.voruganti@modusbox.com>
+
  --------------
  ******/
 'use strict'
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import Handler from '~/server/handlers/thirdpartyRequests/transactions/{ID}'
-import { Transactions } from '~/domain/thirdpartyRequests'
+import * as Handler from '~/server/handlers/thirdpartyRequests/authorizations'
+import { Authorizations } from '~/domain/thirdpartyRequests'
 import TestData from 'test/unit/data/mockData.json'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
+const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
+const mockForwardAuthorizationRequestError = jest.spyOn(Authorizations, 'forwardAuthorizationRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
-describe('/transactions/{ID} handler', (): void => {
-  describe('GET /thirdpartyRequests/transactions/{ID}', (): void => {
-    const request: Request = MockData.getTransactionRequest
+const request: Request = {
+  "headers": {
+    "fspiop-source": "dfspA",
+    "fspiop-destination": "pispA"
+  },
+  "params": {},
+  "payload": {
+    "authorizationRequestId": "5f8ee7f9-290f-4e03-ae1c-1e81ecf398df",
+    "transactionRequestId": "2cf08eed-3540-489e-85fa-b2477838a8c5",
+    "challenge": "<base64 encoded binary - the encoded challenge>",
+    "transferAmount": {
+      "amount": "100",
+      "currency": "USD"
+    },
+    "payeeReceiveAmount": {
+      "amount": "99",
+      "currency": "USD"
+    },
+    "fees": {
+      "amount": "1",
+      "currency": "USD"
+    },
+    "payee": {
+      "partyIdInfo": {
+        "partyIdType": "MSISDN",
+        "partyIdentifier": "+4412345678",
+        "fspId": "dfspb"
+      }
+    },
+    "payer": {
+      "partyIdType": "THIRD_PARTY_LINK",
+      "partyIdentifier": "qwerty-123456",
+      "fspId": "dfspa"
+    },
+    "transactionType": {
+      "scenario": "TRANSFER",
+      "initiator": "PAYER",
+      "initiatorType": "CONSUMER"
+    },
+    "expiration": "2020-06-15T12:00:00.000Z"
+  }
+} as unknown as Request
+const errorRequest: Request = MockData.genericThirdpartyError
+
+describe('authorizations handler', (): void => {
+  describe('POST /thirdpartyRequests/authorizations', (): void => {
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
@@ -48,47 +92,50 @@ describe('/transactions/{ID} handler', (): void => {
     })
 
     it('handles a successful request', async (): Promise<void> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
 
       const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_GET',
+        '/thirdpartyRequests/authorizations',
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
         request.headers,
-        'GET',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
-        undefined,
+        'POST',
+        '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+        request.payload,
         undefined
       ]
 
       // Act
-      const response = await Handler.get(null, request, mockResponseToolkit)
+      const response = await Handler.post(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
-      mockForwardTransactionRequest.mockResolvedValueOnce()
-      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      const MockData = JSON.parse(JSON.stringify(TestData))
+      const request: Request = MockData.transactionRequest
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('authorizations forward Error'))
       const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_GET',
-        request.headers,
-        'GET',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        '/thirdpartyRequests/authorizations', 
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
+        request.headers, 
+        'POST', 
         undefined,
-        undefined]
+        request.payload,
+        undefined
+      ]
 
       // Act
-      const response = await Handler.get(null, request, mockResponseToolkit)
+      const response = await Handler.post(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       // Note: no promise rejection here!
     })
 
@@ -101,14 +148,15 @@ describe('/transactions/{ID} handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.get(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
 
-  describe('PUT /thirdpartyRequests/transactions/{ID}', (): void => {
+
+  describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
     const request: Request = MockData.updateTransactionRequest
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
@@ -120,14 +168,14 @@ describe('/transactions/{ID} handler', (): void => {
     })
 
     it('handles a successful request', async (): Promise<void> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
 
       const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        '/thirdpartyRequests/authorizations/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
         request.headers,
         'PUT',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        "b37605f7-bcd9-408b-9291-6c554aa4c802",
         request.payload,
         undefined
       ]
@@ -137,20 +185,20 @@ describe('/transactions/{ID} handler', (): void => {
 
       // Assert
       expect(response.statusCode).toBe(200)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
     })
 
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
-      mockForwardTransactionRequest.mockResolvedValueOnce()
-      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
+      mockForwardAuthorizationRequest.mockResolvedValueOnce()
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('authorizations forward Error'))
       const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_PUT',
+        '/thirdpartyRequests/authorizations/{{ID}}',
+        'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
         request.headers,
         'PUT',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        'b37605f7-bcd9-408b-9291-6c554aa4c802',
         request.payload,
         undefined]
 
@@ -159,8 +207,8 @@ describe('/transactions/{ID} handler', (): void => {
 
       // Assert
       expect(response.statusCode).toBe(200)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledTimes(1)
+      expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       // Note: no promise rejection here!
     })
 
@@ -180,8 +228,7 @@ describe('/transactions/{ID} handler', (): void => {
     })
   })
 
-  describe('PATCH /thirdpartyRequests/transactions/{ID}', (): void => {
-    const request: Request = MockData.patchThirdpartyTransactionIdRequest
+  describe('PUT /thirdpartyRequests/authorizations/{ID}/error', (): void => {
     beforeAll((): void => {
       mockLoggerPush.mockReturnValue(null)
       mockLoggerError.mockReturnValue(null)
@@ -192,51 +239,26 @@ describe('/transactions/{ID} handler', (): void => {
     })
 
     it('handles a successful request', async (): Promise<void> => {
-      mockForwardTransactionRequest.mockResolvedValueOnce()
+      mockForwardAuthorizationRequestError.mockResolvedValueOnce()
 
       const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
-        request.headers,
-        'PATCH',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
-        request.payload,
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        expect.objectContaining(errorRequest.headers),
+        'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
+        errorRequest.payload,
         undefined
       ]
 
       // Act
-      const response = await Handler.patch(null, request, mockResponseToolkit)
+      const response = await Handler.putError(null, errorRequest, mockResponseToolkit)
 
       // Assert
-      expect(response.statusCode).toBe(202)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardAuthorizationRequestError).toHaveBeenCalledTimes(1)
+      expect(mockForwardAuthorizationRequestError).toHaveBeenCalledWith(...expected)
     })
 
-    it('handles errors in async manner', async (): Promise<void> => {
-      // Arrange
-      mockForwardTransactionRequest.mockResolvedValueOnce()
-      mockForwardTransactionRequest.mockRejectedValueOnce(new Error('Transactions forward Error'))
-      const expected = [
-        '/thirdpartyRequests/transactions/{{ID}}',
-        'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
-        request.headers,
-        'PATCH',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
-        request.payload,
-        undefined]
-
-      // Act
-      const response = await Handler.patch(null, request, mockResponseToolkit)
-
-      // Assert
-      expect(response.statusCode).toBe(202)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
-      expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
-      // Note: no promise rejection here!
-    })
-
-    it('handles validation errors synchonously', async (): Promise<void> => {
+    it('handles validation errors synchronously', async (): Promise<void> => {
       // Arrange
       const badSpanRequest = {
         ...request,
@@ -245,10 +267,11 @@ describe('/transactions/{ID} handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.patch(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
+
 })

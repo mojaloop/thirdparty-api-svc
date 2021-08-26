@@ -1,6 +1,6 @@
-# thirdparty-api-adapter/Docs
+# thirdparty-api-svc/Docs
 
-Documentation for the thirdparty-api-adapter service
+Documentation for the thirdparty-api-svc service
 ## BDD
 
 [jest-cucumber](https://github.com/bencompton/jest-cucumber) allows to use `jest` to execute Gherkin scenarios. Thanks to `jest` we are getting also code coverage for BDD Scenarios.
@@ -131,9 +131,9 @@ To run the image with attached the log output to your terminal
 npm run docker:run
 ```
 
-When the image is run you should be able to reach the dockerized _thirdparty-api-adapter_ exposed on `http://localhost:3008`.
+When the image is run you should be able to reach the dockerized _thirdparty-api-svc_ exposed on `http://localhost:3008`.
 
-If you already added the `127.0.0.1 thirdparty-api-adapter.local` entry in your `/etc/hosts` then the _thirdparty-api-adapter_ is reachable on `http://thirdparty-api-adapter.local:3008`.
+If you already added the `127.0.0.1 thirdparty-api-svc.local` entry in your `/etc/hosts` then the _thirdparty-api-svc_ is reachable on `http://thirdparty-api-svc.local:3008`.
 
 ## `kafkacat` notes
 

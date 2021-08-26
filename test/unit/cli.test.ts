@@ -24,14 +24,10 @@
  ******/
 import Config from '~/shared/config'
 import server from '~/server'
-import eventServer from '~/eventServer'
 jest.mock('~/server')
-jest.mock('~/eventServer')
-
 
 describe('cli', (): void => {
   it('start all services', async (): Promise<void> => {
-    jest.spyOn(eventServer, 'run').mockResolvedValueOnce()
 
     process.argv = ['jest', 'cli.ts', 'all']
     const cli = await import('~/cli')
@@ -67,12 +63,11 @@ describe('cli', (): void => {
             timeout: 5000,
             prefix: 'moja_3p_api',
             defaultLabels: {
-              serviceName: 'thirdparty-api-adapter'
+              serviceName: 'thirdparty-api-svc'
             }
           }
         }
       },
-      KAFKA: Config.KAFKA,
       MOCK_CALLBACK: {
         transactionRequestId: 'abc-12345',
         pispId: 'pisp'
@@ -80,11 +75,9 @@ describe('cli', (): void => {
     })
 
     expect(server.run).toHaveBeenCalledWith(expectedConfig)
-    expect(eventServer.run).toHaveBeenCalledWith(expectedConfig)
   })
 
   it('start the api only', async (): Promise<void> => {
-    jest.spyOn(eventServer, 'run').mockResolvedValueOnce()
 
     process.argv = ['jest', 'cli.ts', 'api']
     const cli = await import('~/cli')
@@ -120,12 +113,11 @@ describe('cli', (): void => {
             timeout: 5000,
             prefix: 'moja_3p_api',
             defaultLabels: {
-              serviceName: 'thirdparty-api-adapter'
+              serviceName: 'thirdparty-api-svc'
             }
           }
         }
       },
-      KAFKA: Config.KAFKA,
       MOCK_CALLBACK: {
         transactionRequestId: 'abc-12345',
         pispId: 'pisp'
