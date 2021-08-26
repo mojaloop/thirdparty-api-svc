@@ -5,16 +5,6 @@ Scenario: CreateThirdpartyTransactionRequests
   When I send a 'CreateThirdpartyTransactionRequests' request
   Then I get a response with a status code of '202'
 
-Scenario: CreateThirdpartyTransactionRequestAuthorization
-  Given thirdparty-api-svc server
-  When I send a 'CreateThirdpartyTransactionRequestAuthorization' request
-  Then I get a response with a status code of '202'
-
-Scenario: UpdateThirdpartyAuthorization
-  Given thirdparty-api-svc server
-  When I send a 'UpdateThirdpartyAuthorization' request
-  Then I get a response with a status code of '200'
-
 Scenario: GetThirdpartyTransactionRequests
   Given thirdparty-api-svc server
   When I send a 'GetThirdpartyTransactionRequests' request
