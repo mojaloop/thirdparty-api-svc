@@ -138,8 +138,8 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
 }
 
 /**
- * summary: ThirdpartyTransactionRequestsError
- * description: The HTTP request PUT /thirdpartyRequests/authorizations/{ID} is used to inform a thirdparty
+ * summary: ThirdpartyAuthorizationRequestsError
+ * description: The HTTP request PUT /thirdpartyRequests/authorizations/{ID}/error is used to inform a thirdparty
  * of an thirdparty transaction request error
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method

@@ -45,7 +45,7 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
  * @function forwardAuthorizationRequest
- * @description Forwards a POST/PUT /thirdpartyRequests/transactions/{ID}/authorizations request
+ * @description Forwards a POST /thirdpartyRequests/authorizations or PUT /thirdpartyRequests/authorizations/{ID} request
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST or PUT
