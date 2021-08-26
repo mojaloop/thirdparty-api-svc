@@ -113,7 +113,7 @@
     "@mojaloop/central-services-stream": "^10.7.0",
     "@mojaloop/event-sdk": "^10.7.1",
     "@types/hapi": "^18.0.5",
-    "@types/hapi__hapi": "^20.0.7",
+    "@types/hapi__hapi": "^20.0.8",
     "@types/hapi__inert": "^5.2.2",
     "@types/hapi__vision": "^5.5.2",
     "@types/mustache": "^4.1.1",

@@ -15,9 +15,6 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@hapi/podium": [
-        "node_modules/@types/hapi__podium"
-      ],
       "~/*": [
         "src/*"
       ],
