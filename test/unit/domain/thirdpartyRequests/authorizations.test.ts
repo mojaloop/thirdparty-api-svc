@@ -36,9 +36,59 @@ const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
+const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest = {
+  authorizationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+  transactionRequestId: '2cf08eed-3540-489e-85fa-b2477838a8c5',
+  challenge: '<base64 encoded binary - the encoded challenge>',
+  transferAmount: {
+    amount: '100',
+    currency: 'USD'
+  },
+  payeeReceiveAmount: {
+    amount: '99',
+    currency: 'USD'
+  },
+  fees: {
+    amount: '1',
+    currency: 'USD'
+  },
+  payee: {
+    partyIdInfo: {
+      partyIdType: 'MSISDN',
+      partyIdentifier: '+4412345678',
+      fspId: 'dfspb',
+    }
+  },
+  payer: {
+    partyIdType: 'THIRD_PARTY_LINK',
+    partyIdentifier: 'qwerty-123456',
+    fspId: 'dfspa'
+  },
+  transactionType: {
+    scenario: 'TRANSFER',
+    initiator: 'PAYER',
+    initiatorType: 'CONSUMER'
+  },
+  expiration: '2020-06-15T12:00:00.000Z'
+}
+
+const validPutPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO  = {
+  signedPayloadType: 'FIDO',
+  signedPayload: {
+    id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+    rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+    response: {
+      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+      signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+    },
+    type: 'public-key'
+  }
+}
+
 describe('domain/authorizations', () => {
   describe('forwardAuthorizationRequest', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_POST
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_POST
     const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST
     const errorEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
     const method = Enum.Http.RestMethods.POST
@@ -58,13 +108,7 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.PENDING
-      }
+      
 
       const getEndpointAndRenderExpected = [
         'http://central-ledger.local:3001',
@@ -79,14 +123,14 @@ describe('domain/authorizations', () => {
         'pispA',
         'dfspA',
         Enum.Http.RestMethods.POST,
-        payload,
+        validPostPayload,
         Enum.Http.ResponseTypes.JSON,
         expect.objectContaining({ isFinished: false })
       ]
       const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
+      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPostPayload, mockSpan)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
@@ -103,13 +147,6 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.PENDING
-      }
       const mockSpan = new Span()
 
       const getEndpointAndRenderExpectedFirst = [
@@ -128,7 +165,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPostPayload, mockSpan)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint')
@@ -152,14 +189,6 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.PENDING
-      }
-
       const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
@@ -176,7 +205,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPostPayload)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
@@ -197,13 +226,6 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.PENDING
-      }
       const mockSpan = new Span()
       const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
 
@@ -227,7 +249,7 @@ describe('domain/authorizations', () => {
         'pispA',
         'dfspA',
         Enum.Http.RestMethods.POST,
-        payload,
+        validPostPayload,
         Enum.Http.ResponseTypes.JSON,
         expect.objectContaining({ isFinished: false })
       ]
@@ -243,7 +265,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPostPayload, mockSpan)
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request')
@@ -272,13 +294,6 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.PENDING
-      }
       const errorPayload =
         ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
       const getEndpointAndRenderExpectedFirst = [
@@ -301,7 +316,7 @@ describe('domain/authorizations', () => {
         'pispA',
         'dfspA',
         Enum.Http.RestMethods.POST,
-        payload,
+        validPostPayload,
         Enum.Http.ResponseTypes.JSON,
         undefined
       ]
@@ -317,7 +332,7 @@ describe('domain/authorizations', () => {
       ]
 
       // Act
-      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload)
+      const action = async () => await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPostPayload)
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
@@ -329,7 +344,7 @@ describe('domain/authorizations', () => {
   })
 
   describe('forwardAuthorizationRequestError', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT_ERROR
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT_ERROR
 
     beforeEach((): void => {
       jest.clearAllMocks()
@@ -376,7 +391,7 @@ describe('domain/authorizations', () => {
   })
 
   describe('PUT : forwardAuthorizationRequest', () => {
-    const path = Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_AUTHORIZATIONS_PUT
+    const path = Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT
     const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT
     const method = Enum.Http.RestMethods.PUT
 
@@ -392,13 +407,6 @@ describe('domain/authorizations', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const payload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse = {
-        challenge: '12345',
-        value: '12345',
-        consentId: '12345',
-        sourceAccountId: 'dfspa.12345.67890',
-        status: types.AuthorizationStatus.VERIFIED
-      }
       // Arrange
       mockGetEndpointAndRender.mockResolvedValue('http://auth-service.local/thirdpartyRequests/transactions/123456/authorizations')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
@@ -416,14 +424,14 @@ describe('domain/authorizations', () => {
         'pispA',
         'dfspA',
         Enum.Http.RestMethods.PUT,
-        payload,
+        validPutPayload,
         Enum.Http.ResponseTypes.JSON,
         expect.objectContaining({ isFinished: false })
       ]
       const mockSpan = new Span()
 
       // Act
-      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, payload, mockSpan)
+      await Authorizations.forwardAuthorizationRequest(path, endpointType, headers, method, id, validPutPayload, mockSpan)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
