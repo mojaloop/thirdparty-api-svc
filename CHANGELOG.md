@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [11.20.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.19.1...v11.20.0) (2021-08-26)
+
+
+### Features
+
+* **api:** implement /tpr/verifications and /tpr/authorizations ([#60](https://github.com/mojaloop/thirdparty-api-svc/issues/60)) ([9b68d9d](https://github.com/mojaloop/thirdparty-api-svc/commit/9b68d9daa0dd2aaf615db1bef10f75cce8c6c143))
+
 ### [11.19.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.19.0...v11.19.1) (2021-06-29)
 
 
