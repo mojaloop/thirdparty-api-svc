@@ -78,9 +78,8 @@ function getSpanTags (request: Request, eventType: string, eventAction: string, 
   return tags
 }
 
-
 export {
   finishChildSpan,
   getStackOrInspect,
-  getSpanTags,
+  getSpanTags
 }
