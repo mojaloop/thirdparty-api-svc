@@ -93,6 +93,8 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
 async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+  console.log("put thirdparty requests authorization!")
+  
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const authorizationRequestId: string = request.params.ID

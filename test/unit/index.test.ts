@@ -311,7 +311,7 @@ describe('index', (): void => {
       })
     })
 
-    describe('POST /thirdpartyRequests/authorizations/{ID}', (): void => {
+    describe('POST /thirdpartyRequests/authorizations', (): void => {
       const authorizationPostRequestPayload = {
         authorizationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
         transactionRequestId: '2cf08eed-3540-489e-85fa-b2477838a8c5',
@@ -391,7 +391,7 @@ describe('index', (): void => {
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it.only('requires all fields to be set', async (): Promise<void> => {
+      it('requires all fields to be set', async (): Promise<void> => {
         const invalidPayload = JSON.parse(JSON.stringify(authorizationPostRequestPayload))
         delete invalidPayload.challenge
         const request = {
@@ -424,6 +424,20 @@ describe('index', (): void => {
     })
 
     describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
+      const authorizationPutRequestPayload = {
+        signedPayloadType: 'FIDO',
+        signedPayload: {
+          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+          response: {
+            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+          },
+          type: 'public-key'
+        }
+      }
+
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -433,7 +447,7 @@ describe('index', (): void => {
         jest.clearAllMocks()
       })
 
-      it('PUT', async (): Promise<void> => {
+      it.only('PUT', async (): Promise<void> => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
@@ -444,13 +458,7 @@ describe('index', (): void => {
             'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'VERIFIED'
-          }
+          payload: authorizationPutRequestPayload
         }
         const expected = [
           '/thirdpartyRequests/authorizations/{{ID}}',
@@ -459,51 +467,19 @@ describe('index', (): void => {
           'PUT',
           '7d34f91d-d078-4077-8263-2c047876fcf6',
           request.payload,
-          expect.any(Object)
+          // span is undefined
+          undefined
         ]
 
         // Act
         const response = await server.inject(request)
 
+        console.log('response', response)
+
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
-      })
-
-      it('responds with a 400 when status !== VERIFIED', async (): Promise<void> => {
-        const request = {
-          method: 'PUT',
-          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
-            'fspiop-destination': 'dfspA'
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'PENDING'
-          }
-        }
-        const expected = {
-          errorInformation: {
-            errorCode: '3100',
-            errorDescription: 'Generic validation error - /requestBody/status must be equal to one of the allowed values'
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
