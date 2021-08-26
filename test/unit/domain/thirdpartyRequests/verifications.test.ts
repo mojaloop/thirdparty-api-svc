@@ -337,7 +337,7 @@ describe('domain/verifications', () => {
       const getEndpointAndRenderExpected = [
         'http://central-ledger.local:3001',
         'pispA',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR,
         "/thirdpartyRequests/verifications/{{ID}}/error",
         { "ID": "123456" }
       ]

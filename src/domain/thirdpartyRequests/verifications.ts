@@ -66,7 +66,7 @@ export async function forwardVerificationRequest(
       path,
       { ID: verificationRequestId }
     )
-    Logger.info(`verifications::forwardVerificationRequest - Forwarding authorization to endpoint: ${url}`)
+    Logger.info(`verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -117,7 +117,7 @@ export async function forwardVerificationRequestError(
   const childSpan = span?.getChild('forwardVerificationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
@@ -140,7 +140,7 @@ export async function forwardVerificationRequestError(
       childSpan
     )
 
-    Logger.info(`verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction authorization error callback: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction verification error callback: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
