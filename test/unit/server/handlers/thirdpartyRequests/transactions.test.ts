@@ -37,6 +37,7 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
+const errorRequest: Request = MockData.genericThirdpartyError
 
 describe('transactions handler', (): void => {
   describe('POST /thirdpartyRequests/transactions', (): void => {
@@ -335,16 +336,16 @@ describe('transactions handler', (): void => {
       mockForwardTransactionRequestError.mockResolvedValueOnce()
 
       const expected = [
-        expect.objectContaining(request.headers),
+        expect.objectContaining(errorRequest.headers),
         '/thirdpartyRequests/transactions/{{ID}}/error',
         'PUT',
         'a5bbfd51-d9fc-4084-961a-c2c2221a31e0',
-        request.payload,
+        errorRequest.payload,
         undefined
       ]
 
       // Act
-      const response = await Handler.put(null, request, mockResponseToolkit)
+      const response = await Handler.putError(null, errorRequest, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -361,7 +362,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
