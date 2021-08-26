@@ -25,12 +25,14 @@
 
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
 import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
+import { ThirdpartyRequestsAuthorizationsIDPutResponseFIDO, ThirdpartyRequestsAuthorizationsIDPutResponseGeneric, ThirdpartyRequestsAuthorizationsPostRequest } from '~/domain/thirdpartyRequests/authorizations'
 import { getSpanTags } from '~/shared/util'
 
 
@@ -44,16 +46,14 @@ import { getSpanTags } from '~/shared/util'
   */
 async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
-  // Trust that hapi parsed the ID and Payload for us
-  const transactionRequestId: string = request.params.ID
-  const payload = request.payload as
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest
+  const payload = request.payload as ThirdpartyRequestsAuthorizationsPostRequest
+  const authorizationRequestId = payload.authorizationRequestId
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.POST,
-      { transactionRequestId })
+      { authorizationRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -67,7 +67,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST,
       request.headers,
       Enum.Http.RestMethods.POST,
-      transactionRequestId,
+      authorizationRequestId,
       payload,
       span
     )
@@ -97,16 +97,17 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
 async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
-  const transactionRequestId: string = request.params.ID
-  const payload = request.payload as
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse
+  const authorizationRequestId: string = request.params.ID
+  const payload = request.payload as 
+    ThirdpartyRequestsAuthorizationsIDPutResponseFIDO | 
+    ThirdpartyRequestsAuthorizationsIDPutResponseGeneric
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId })
+      { authorizationRequestId })
 
     span?.setTags(tags)
     await span?.audit({
@@ -121,7 +122,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT,
       request.headers,
       Enum.Http.RestMethods.PUT,
-      transactionRequestId,
+      authorizationRequestId,
       payload,
       span
     )

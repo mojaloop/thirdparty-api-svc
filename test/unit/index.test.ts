@@ -321,28 +321,56 @@ describe('index', (): void => {
         jest.clearAllMocks()
       })
 
-      it('POST', async (): Promise<void> => {
+      it.only('POST', async (): Promise<void> => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
+          url: '/thirdpartyRequests/authorizations',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
             date: (new Date()).toISOString(),
-            'fspiop-source': 'dfspA',
-            'fspiop-destination': 'dfspA'
+            'fspiop-source': 'dspa',
+            'fspiop-destination': 'pispa'
           },
           payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'PENDING'
+              authorizationRequestId: '33333333-0000-0000-0000-000000000000',
+              transactionRequestId: '00000000-0000-0000-0000-000000000000',
+              challenge: '<base64 encoded binary - the encoded challenge>',
+              transferAmount: {
+                amount: '100',
+                currency: 'USD'
+              },
+              payeeReceiveAmount: {
+                amount: '99',
+                currency: 'USD'
+              },
+              fees: {
+                amount: '1',
+                currency: 'USD'
+              },
+              payee: {
+                partyIdInfo: {
+                  partyIdType: 'MSISDN',
+                  partyIdentifier: '+44 1234 5678',
+                  fspId: 'dfspb',
+                }
+              },
+              payer: {
+                partyIdType: 'THIRD_PARTY_LINK',
+                partyIdentifier: 'qwerty-123456',
+                fspId: 'dfspa'
+              },
+              transactionType: {
+                scenario: 'TRANSFER',
+                initiator: 'PAYER',
+                initiatorType: 'CONSUMER'
+              },
+              expiration: '2020-06-15T12:00:00.000'
           }
         }
         const expected = [
-          '/thirdpartyRequests/transactions/{{ID}}/authorizations',
+          '/thirdpartyRequests/authorizations',
           'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
           expect.objectContaining(request.headers),
           'POST',

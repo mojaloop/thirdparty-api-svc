@@ -25,7 +25,7 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
 import {
   APIErrorObject,
   FSPIOPError,
@@ -44,13 +44,20 @@ import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
 
+// import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+// TODO: delete me - need to make changes in api-snippets
+export type ThirdpartyRequestsAuthorizationsPostRequest = components['schemas']['ThirdpartyRequestsAuthorizationsPostRequest']
+export type ThirdpartyRequestsAuthorizationsIDPutResponseFIDO = components['schemas']['ThirdpartyRequestsAuthorizationsIDPutResponseFIDO']
+export type ThirdpartyRequestsAuthorizationsIDPutResponseGeneric = components['schemas']['ThirdpartyRequestsAuthorizationsIDPutResponseGeneric']
+
+
 /**
  * @function forwardAuthorizationRequest
  * @description Forwards a POST/PUT /thirdpartyRequests/transactions/{ID}/authorizations request
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST or PUT
- * @param {string} transactionRequestId the ID of the thirdpartyRequests/transactions resource
+ * @param {string} authorizationRequestId the ID of the thirdpartyRequests/transactions resource
  * @param {object} payload Body of the POST/PUT request
  * @param {object} span optional request span
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
@@ -62,10 +69,10 @@ export async function forwardAuthorizationRequest(
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  transactionRequestId: string,
-  payload:
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPostRequest |
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDAuthorizationsPutResponse,
+  authorizationRequestId: string,
+  payload: ThirdpartyRequestsAuthorizationsPostRequest
+    | ThirdpartyRequestsAuthorizationsIDPutResponseFIDO
+    | ThirdpartyRequestsAuthorizationsIDPutResponseGeneric,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardAuthorizationRequest')
@@ -77,7 +84,7 @@ export async function forwardAuthorizationRequest(
       destinationDfspId,
       endpointType,
       path,
-      { ID: transactionRequestId }
+      { ID: authorizationRequestId }
     )
     Logger.info(`authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`)
 
@@ -92,7 +99,7 @@ export async function forwardAuthorizationRequest(
       childSpan
     )
 
-    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization: ${transactionRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization: ${authorizationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
@@ -107,7 +114,7 @@ export async function forwardAuthorizationRequest(
     await forwardAuthorizationRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT_ERROR,
       errorHeaders,
-      transactionRequestId,
+      authorizationRequestId,
       fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
       childSpan
     )
