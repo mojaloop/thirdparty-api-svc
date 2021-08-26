@@ -230,7 +230,7 @@ describe('index', (): void => {
 
 
       it('PATCH mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, { })
+        const errPayload = Object.assign(trxnRequest.payload, {})
         const request = {
           method: 'PATCH',
           url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
@@ -312,6 +312,42 @@ describe('index', (): void => {
     })
 
     describe('POST /thirdpartyRequests/authorizations/{ID}', (): void => {
+      const authorizationPostRequestPayload = {
+        authorizationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+        transactionRequestId: '2cf08eed-3540-489e-85fa-b2477838a8c5',
+        challenge: '<base64 encoded binary - the encoded challenge>',
+        transferAmount: {
+          amount: '100',
+          currency: 'USD'
+        },
+        payeeReceiveAmount: {
+          amount: '99',
+          currency: 'USD'
+        },
+        fees: {
+          amount: '1',
+          currency: 'USD'
+        },
+        payee: {
+          partyIdInfo: {
+            partyIdType: 'MSISDN',
+            partyIdentifier: '+4412345678',
+            fspId: 'dfspb',
+          }
+        },
+        payer: {
+          partyIdType: 'THIRD_PARTY_LINK',
+          partyIdentifier: 'qwerty-123456',
+          fspId: 'dfspa'
+        },
+        transactionType: {
+          scenario: 'TRANSFER',
+          initiator: 'PAYER',
+          initiatorType: 'CONSUMER'
+        },
+        expiration: '2020-06-15T12:00:00.000Z'
+      }
+
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
         mockLoggerError.mockReturnValue(null)
@@ -321,7 +357,7 @@ describe('index', (): void => {
         jest.clearAllMocks()
       })
 
-      it.only('POST', async (): Promise<void> => {
+      it('POST', async (): Promise<void> => {
         mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const request = {
           method: 'POST',
@@ -333,50 +369,17 @@ describe('index', (): void => {
             'fspiop-source': 'dspa',
             'fspiop-destination': 'pispa'
           },
-          payload: {
-              authorizationRequestId: '33333333-0000-0000-0000-000000000000',
-              transactionRequestId: '00000000-0000-0000-0000-000000000000',
-              challenge: '<base64 encoded binary - the encoded challenge>',
-              transferAmount: {
-                amount: '100',
-                currency: 'USD'
-              },
-              payeeReceiveAmount: {
-                amount: '99',
-                currency: 'USD'
-              },
-              fees: {
-                amount: '1',
-                currency: 'USD'
-              },
-              payee: {
-                partyIdInfo: {
-                  partyIdType: 'MSISDN',
-                  partyIdentifier: '+44 1234 5678',
-                  fspId: 'dfspb',
-                }
-              },
-              payer: {
-                partyIdType: 'THIRD_PARTY_LINK',
-                partyIdentifier: 'qwerty-123456',
-                fspId: 'dfspa'
-              },
-              transactionType: {
-                scenario: 'TRANSFER',
-                initiator: 'PAYER',
-                initiatorType: 'CONSUMER'
-              },
-              expiration: '2020-06-15T12:00:00.000'
-          }
+          payload: authorizationPostRequestPayload
         }
         const expected = [
           '/thirdpartyRequests/authorizations',
           'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
           expect.objectContaining(request.headers),
           'POST',
-          '7d34f91d-d078-4077-8263-2c047876fcf6',
+          '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           request.payload,
-          expect.any(Object)
+          // span is undefined
+          undefined
         ]
 
         // Act
@@ -388,10 +391,12 @@ describe('index', (): void => {
         expect(mockForwardAuthorizationRequest).toHaveBeenCalledWith(...expected)
       })
 
-      it('responds with a 400 when status !== PENDING', async (): Promise<void> => {
+      it.only('requires all fields to be set', async (): Promise<void> => {
+        const invalidPayload = JSON.parse(JSON.stringify(authorizationPostRequestPayload))
+        delete invalidPayload.challenge
         const request = {
           method: 'POST',
-          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
+          url: '/thirdpartyRequests/authorizations',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -399,52 +404,12 @@ describe('index', (): void => {
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            sourceAccountId: 'dfspa.alice.1234',
-            status: 'VERIFIED'
-          }
-        }
-        const expected = {
-          errorInformation: {
-            errorCode: '3100',
-            errorDescription: 'Generic validation error - /requestBody/status must be equal to one of the allowed values'
-          }
-        }
-
-        // Act
-        const response = await server.inject(request)
-
-        // Assert
-        expect(response.statusCode).toBe(400)
-        expect(response.result).toStrictEqual(expected)
-        expect(mockForwardAuthorizationRequest).not.toHaveBeenCalled()
-      })
-
-      it('requires all fields to be set', async (): Promise<void> => {
-        const request = {
-          method: 'POST',
-          url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
-          headers: {
-            accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
-            'fspiop-source': 'pispA',
-            'fspiop-destination': 'dfspA'
-          },
-          payload: {
-            challenge: '12345',
-            value: '12345',
-            consentId: '8e34f91d-d078-4077-8263-2c047876fcf6',
-            status: 'PENDING'
-          }
+          payload: invalidPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'sourceAccountId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
           }
         }
 

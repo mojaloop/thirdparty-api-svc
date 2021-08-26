@@ -24,14 +24,12 @@
  ******/
 
 import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
-import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
 import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
-import { Authorizations, Transactions } from '~/domain/thirdpartyRequests'
+import { Authorizations } from '~/domain/thirdpartyRequests'
 import { ThirdpartyRequestsAuthorizationsIDPutResponseFIDO, ThirdpartyRequestsAuthorizationsIDPutResponseGeneric, ThirdpartyRequestsAuthorizationsPostRequest } from '~/domain/thirdpartyRequests/authorizations'
 import { getSpanTags } from '~/shared/util'
 
