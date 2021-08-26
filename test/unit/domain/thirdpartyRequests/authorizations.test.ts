@@ -29,7 +29,6 @@ import Logger from '@mojaloop/central-services-logger'
 import { Enum, Util } from '@mojaloop/central-services-shared'
 import Span from 'test/unit/__mocks__/span'
 import { Authorizations } from '~/domain/thirdpartyRequests'
-import * as types from '~/interface/types';
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
