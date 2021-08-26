@@ -1169,7 +1169,6 @@ paths:
         - authorizations
       parameters:
         - $ref: '#/components/parameters/Content-Length'
-      # TODO: fix back upstream!
       requestBody:
         description: Signed authorization object
         required: true
@@ -3026,7 +3025,6 @@ components:
       description: POST /thirdpartyRequests/authorizations request object.
       type: object
       properties:
-      # TODO: fix api snippets!
         authorizationRequestId:
           $ref: '#/components/schemas/CorrelationId'
         transactionRequestId:

@@ -28,9 +28,11 @@ import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+import {
+  thirdparty as tpAPI
+} from '@mojaloop/api-snippets'
 
 import { Authorizations } from '~/domain/thirdpartyRequests'
-import { ThirdpartyRequestsAuthorizationsIDPutResponseFIDO, ThirdpartyRequestsAuthorizationsIDPutResponseGeneric, ThirdpartyRequestsAuthorizationsPostRequest } from '~/domain/thirdpartyRequests/authorizations'
 import { getSpanTags } from '~/shared/util'
 
 
@@ -44,7 +46,7 @@ import { getSpanTags } from '~/shared/util'
   */
 async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
-  const payload = request.payload as ThirdpartyRequestsAuthorizationsPostRequest
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
   const authorizationRequestId = payload.authorizationRequestId
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -93,15 +95,10 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
 async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  console.log("put thirdparty requests authorization!")
-  
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const authorizationRequestId: string = request.params.ID
-  const payload = request.payload as 
-    ThirdpartyRequestsAuthorizationsIDPutResponseFIDO | 
-    ThirdpartyRequestsAuthorizationsIDPutResponseGeneric
-
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,

@@ -44,10 +44,9 @@ import { getSpanTags } from '~/shared/util'
   */
 async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
-  // Trust that hapi parsed the ID and Payload for us
-  const verificationRequestId: string = request.params.ID
   const payload = request.payload as
     tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
+  const verificationRequestId = payload.verificationRequestId
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,

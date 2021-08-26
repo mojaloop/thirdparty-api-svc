@@ -25,7 +25,6 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import { components } from '@mojaloop/api-snippets/lib/thirdparty/openapi'
 import {
   APIErrorObject,
   FSPIOPError,
@@ -42,14 +41,7 @@ import {
 import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
-
-
-// import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-// TODO: delete me - need to make changes in api-snippets
-export type ThirdpartyRequestsAuthorizationsPostRequest = components['schemas']['ThirdpartyRequestsAuthorizationsPostRequest']
-export type ThirdpartyRequestsAuthorizationsIDPutResponseFIDO = components['schemas']['ThirdpartyRequestsAuthorizationsIDPutResponseFIDO']
-export type ThirdpartyRequestsAuthorizationsIDPutResponseGeneric = components['schemas']['ThirdpartyRequestsAuthorizationsIDPutResponseGeneric']
-
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 /**
  * @function forwardAuthorizationRequest
@@ -70,9 +62,8 @@ export async function forwardAuthorizationRequest(
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   authorizationRequestId: string,
-  payload: ThirdpartyRequestsAuthorizationsPostRequest
-    | ThirdpartyRequestsAuthorizationsIDPutResponseFIDO
-    | ThirdpartyRequestsAuthorizationsIDPutResponseGeneric,
+  payload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
+    | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
   span?: any): Promise<void> {
 
   const childSpan = span?.getChild('forwardAuthorizationRequest')

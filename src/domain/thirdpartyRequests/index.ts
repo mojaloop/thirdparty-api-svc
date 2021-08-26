@@ -25,3 +25,4 @@
  ******/
 export * as Transactions from './transactions'
 export * as Authorizations from './authorizations'
+export * as Verifications from './verifications'
