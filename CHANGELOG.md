@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [11.20.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.20.0...v11.20.1) (2021-09-28)
+
+
+### Bug Fixes
+
+* remove dev dependencies ([#61](https://github.com/mojaloop/thirdparty-api-svc/issues/61)) ([bc74cc0](https://github.com/mojaloop/thirdparty-api-svc/commit/bc74cc017e776ff23e7aa84f417d4eff0cc7ceb3))
+
 ## [11.20.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.19.1...v11.20.0) (2021-08-26)
 
 
