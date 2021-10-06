@@ -12,6 +12,10 @@
   },
   "ENDPOINT_SERVICE_URL": "http://central-ledger.local:3001",
   "PARTICIPANT_LIST_SERVICE_URL": "http://ml-testing-toolkit:5000",
+  "PARTICIPANT_LIST_LOCAL": [
+    "dfspa",
+    "dfspb"
+  ],
   "ERROR_HANDLING": {
     "includeCauseExtension": true,
     "truncateExtensions": true

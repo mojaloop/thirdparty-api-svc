@@ -24,6 +24,13 @@ optionally within square brackets <email>.
 ******/
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
+import Config from '~/shared/config'
+
+jest.mock('~/shared/config', () => ({
+  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
+  PARTICIPANT_LIST_LOCAL: undefined
+}));
+
 
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
@@ -111,6 +118,7 @@ describe('ServicesServiceType handler', () => {
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
+
 
   describe('PUT /services/{{ServiceType}}', () => {
     beforeEach((): void => {
