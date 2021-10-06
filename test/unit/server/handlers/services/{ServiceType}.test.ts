@@ -26,6 +26,11 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Config from '~/shared/config'
 
+jest.mock('~/shared/config', () => ({
+  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
+  PARTICIPANT_LIST_LOCAL: undefined
+}));
+
 
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
@@ -114,42 +119,6 @@ describe('ServicesServiceType handler', () => {
     })
   })
 
-  describe('GET /services/{{ServiceType}} with PARTICIPANT_LIST_LOCAL', () => {
-    jest.mock('~/shared/config', () => ({
-      __esModule: true, // this property makes it work
-      default: 'mockedDefaultExport',
-      namedExport: jest.fn(),
-    }));
-
-    // Custom Config override
-    Config.PARTICIPANT_LIST_SERVICE_URL = undefined
-    Config.PARTICIPANT_LIST_LOCAL = [ 'dfspa', 'dfspb' ]
-
-    it('handles a successful request', async () => {
-      // Arrange
-      forwardGetServicesServiceTypeRequestFromProviderService.mockResolvedValueOnce()
-      const expected = [
-        '/services/{{ServiceType}}',
-        'TP_CB_URL_SERVICES_PUT',
-        putServicesByServiceTypeRequest.headers,
-        'PUT',
-        getServicesByServiceTypeRequest.params.ServiceType,
-        putServicesByServiceTypeRequest.payload,
-        undefined
-      ]
-
-      // Act
-      const response = await ServicesServiceTypeHandler.get(
-        null,
-        getServicesByServiceTypeRequest as unknown as Request,
-        mockResponseToolkit
-      )
-
-      // Assert
-      expect(response.statusCode).toBe(202)
-      expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
-    })
-  })
 
   describe('PUT /services/{{ServiceType}}', () => {
     beforeEach((): void => {

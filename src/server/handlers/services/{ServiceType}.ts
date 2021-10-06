@@ -47,7 +47,7 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-const get = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const get = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {  
   const span = (request as any).span
   const serviceType: string = request.params.ServiceType
   try {
