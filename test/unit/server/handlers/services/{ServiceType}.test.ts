@@ -125,7 +125,7 @@ describe('ServicesServiceType handler', () => {
     Config.PARTICIPANT_LIST_SERVICE_URL = undefined
     Config.PARTICIPANT_LIST_LOCAL = [ 'dfspa', 'dfspb' ]
 
-    it.only('handles a successful request', async () => {
+    it('handles a successful request', async () => {
       // Arrange
       forwardGetServicesServiceTypeRequestFromProviderService.mockResolvedValueOnce()
       const expected = [
