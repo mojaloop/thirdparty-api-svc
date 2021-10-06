@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [11.21.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.20.1...v11.21.0) (2021-10-06)
+
+
+### Features
+
+* **services:** allow local config to be used instead of redirecting to a URL ([#62](https://github.com/mojaloop/thirdparty-api-svc/issues/62)) ([717503d](https://github.com/mojaloop/thirdparty-api-svc/commit/717503d5f73c45dee2ed5541c31d29d876554f6e))
+
 ### [11.20.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.20.0...v11.20.1) (2021-09-28)
 
 
