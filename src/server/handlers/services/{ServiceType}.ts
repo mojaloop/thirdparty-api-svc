@@ -65,19 +65,20 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
 
     // If PARTICIPANT_LIST_LOCAL is set, then we should use the local config to
     // respond to this request instead of forwarding it to another service
+    // This is guaranteed to be mutually exclusive by Config
     if (Config.PARTICIPANT_LIST_LOCAL) {
       const payload: tpAPI.Schemas.ServicesServiceTypePutResponse = {
         providers: Config.PARTICIPANT_LIST_LOCAL
       }
 
-      // reverse the Source and Destination headers
-      const sourceDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-      const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+      // this is a reply: Source header must become Destination
+      // destination header should be Switch
+      const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       const headers = {
         ...request.headers,
       }
-      headers[Enum.Http.Headers.FSPIOP.DESTINATION] = sourceDfspId
-      headers[Enum.Http.Headers.FSPIOP.SOURCE] = destinationDfspId
+      headers[Enum.Http.Headers.FSPIOP.SOURCE] = Enum.Http.Headers.FSPIOP.SWITCH.value
+      headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationDfspId
 
       // Note: calling async function without `await`
       forwardGetServicesServiceTypeRequestFromProviderService(

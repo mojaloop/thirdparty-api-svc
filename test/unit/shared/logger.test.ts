@@ -27,7 +27,9 @@ import inspect from '~/shared/inspect'
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 jest.mock('@mojaloop/central-services-logger', () => ({
-  info: jest.fn()
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }))
 
 describe('shared/logger', (): void => {
