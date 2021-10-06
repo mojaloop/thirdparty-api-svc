@@ -26,6 +26,8 @@ import rc from 'rc'
 import parse from 'parse-strings-in-object'
 import Config from '../../config/default.json'
 import Package from '../../package.json'
+import logger from '@mojaloop/central-services-logger'
+
 export interface ServiceConfig {
   // package.json
   PACKAGE: Record<string, unknown>;
@@ -47,7 +49,10 @@ export interface ServiceConfig {
     generateTimeout: number;
   };
   ENDPOINT_SERVICE_URL: string;
-  PARTICIPANT_LIST_SERVICE_URL: string;
+  // if set, will use this url to lookup the /services/{ServiceType} call
+  PARTICIPANT_LIST_SERVICE_URL?: string;
+  // if set, will respond with this static list of participants
+  PARTICIPANT_LIST_LOCAL?: Array<string>;
   ERROR_HANDLING: {
     includeCauseExtension: boolean;
     truncateExtensions: boolean;
@@ -72,6 +77,17 @@ export interface ServiceConfig {
 }
 
 const RC = parse(rc('THIRD_PARTY', Config)) as ServiceConfig
+
+// Custom validation
+if (RC.PARTICIPANT_LIST_LOCAL && RC.PARTICIPANT_LIST_SERVICE_URL) {
+  logger.warn('Both `PARTICIPANT_LIST_LOCAL` and `PARTICIPANT_LIST_SERVICE_URL` set. Defaulting to `PARTICIPANT_LIST_SERVICE_URL`')
+  RC.PARTICIPANT_LIST_LOCAL = undefined
+}
+
+if (!RC.PARTICIPANT_LIST_LOCAL && !RC.PARTICIPANT_LIST_SERVICE_URL) {
+  logger.error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
+  throw new Error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
+}
 
 export default {
   ...RC,

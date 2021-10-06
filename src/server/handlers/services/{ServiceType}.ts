@@ -30,6 +30,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
+import Config from '~/shared/config'
 
 import {
   forwardGetServicesServiceTypeRequestToProviderService,
@@ -62,19 +63,53 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
       payload: request.payload
     }, AuditEventAction.start)
 
-    // Note: calling async function without `await`
-    forwardGetServicesServiceTypeRequestToProviderService(
-      Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_GET,
-      request.headers,
-      Enum.Http.RestMethods.GET,
-      serviceType,
-      span
-    )
-    .catch(err => {
-      // Do nothing with the error - forwardServicesServiceTypeRequest takes care of async errors
-      Logger.error('Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error')
-      Logger.error(ReformatFSPIOPError(err))
-    })
+    // If PARTICIPANT_LIST_LOCAL is set, then we should use the local config to
+    // respond to this request instead of forwarding it to another service
+    if (Config.PARTICIPANT_LIST_LOCAL) {
+      const payload: tpAPI.Schemas.ServicesServiceTypePutResponse = {
+        providers: Config.PARTICIPANT_LIST_LOCAL
+      }
+
+      // reverse the Source and Destination headers
+      const sourceDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
+      const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+      const headers = {
+        ...request.headers,
+      }
+      headers[Enum.Http.Headers.FSPIOP.DESTINATION] = sourceDfspId
+      headers[Enum.Http.Headers.FSPIOP.SOURCE] = destinationDfspId
+
+      // Note: calling async function without `await`
+      forwardGetServicesServiceTypeRequestFromProviderService(
+        Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT,
+        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT,
+        headers,
+        Enum.Http.RestMethods.PUT,
+        serviceType,
+        payload,
+        span
+      )
+        .catch(err => {
+          // Do nothing with the error - forwardGetServicesServiceTypeRequestFromProviderService takes care of async errors
+          Logger.error('Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error')
+          Logger.error(ReformatFSPIOPError(err))
+        })
+
+    } else {
+      // Note: calling async function without `await`
+      forwardGetServicesServiceTypeRequestToProviderService(
+        Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_GET,
+        request.headers,
+        Enum.Http.RestMethods.GET,
+        serviceType,
+        span
+      )
+      .catch(err => {
+        // Do nothing with the error - forwardServicesServiceTypeRequest takes care of async errors
+        Logger.error('Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
+    }
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
