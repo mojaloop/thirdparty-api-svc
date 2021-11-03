@@ -14,6 +14,9 @@ RUN npm ci
 # check in .dockerignore what is skipped during copy
 COPY . .
 
+RUN npm run build
+RUN rm -rf src
+
 # cleanup
 RUN apk del build-dependencies
 

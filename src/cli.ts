@@ -25,6 +25,10 @@
  --------------
  ******/
 
+// This is required so that once we compile to js
+// the js `require()` can resolve the '~' paths
+require('module-alias/register')
+
 import Config from './shared/config'
 import ServiceServer from './server'
 import { Command } from 'commander'
