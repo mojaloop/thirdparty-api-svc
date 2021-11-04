@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [11.22.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.21.0...v11.22.0) (2021-11-03)
+
+
+### Features
+
+* add pr-title-check step to ci/cd ([#63](https://github.com/mojaloop/thirdparty-api-svc/issues/63)) ([2aa9d32](https://github.com/mojaloop/thirdparty-api-svc/commit/2aa9d320cc55e860441c55d9257c9604cd97d3e9))
+
 ## [11.21.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.20.1...v11.21.0) (2021-10-06)
 
 

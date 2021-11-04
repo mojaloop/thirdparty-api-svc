@@ -1,9 +1,9 @@
-# thirdparty-api-svc (Work in Progress)
+# thirdparty-api-svc
 [![Git Commit](https://img.shields.io/github/last-commit/mojaloop/thirdparty-api-svc.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-svc/commits/master)
 [![Git Releases](https://img.shields.io/github/release/mojaloop/thirdparty-api-svc.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-svc/releases)
 [![CircleCI](https://circleci.com/gh/mojaloop/thirdparty-api-svc.svg?style=svg)](https://circleci.com/gh/mojaloop/thirdparty-api-svc)
 
-The thirdparty-api-svc service is used to handle HTTP requests from third parties.
+The thirdparty-api-svc service handles HTTP Requests from the Mojaloop Third Party API
 
 ## Overview
 
