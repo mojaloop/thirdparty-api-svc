@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [11.23.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.22.0...v11.23.0) (2021-11-04)
+
+
+### Features
+
+* compile ts to js and remove devDependencies ([#64](https://github.com/mojaloop/thirdparty-api-svc/issues/64)) ([ef777fe](https://github.com/mojaloop/thirdparty-api-svc/commit/ef777fe2eb8b1e2e69c73999e86ac462548ff06b))
+
 ## [11.22.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.21.0...v11.22.0) (2021-11-03)
 
 
