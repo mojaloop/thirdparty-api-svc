@@ -7,6 +7,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": "=14.x"
+  },
   "scripts": {
     "audit:resolve": "SHELL=sh resolve-audit --production",
     "audit:check": "SHELL=sh check-audit --production",
@@ -114,7 +117,7 @@
     "@hapi/hapi": "^20.1.2",
     "@hapi/inert": "^6.0.3",
     "@hapi/vision": "^6.0.1",
-    "@mojaloop/api-snippets": "^12.6.6",
+    "@mojaloop/api-snippets": "^13.0.7",
     "@mojaloop/central-services-error-handling": "11.3.0",
     "@mojaloop/central-services-health": "^13.0.0",
     "@mojaloop/central-services-logger": "10.6.1",
@@ -128,8 +131,7 @@
     "canonical-json": "0.0.4",
     "commander": "5.1.0",
     "hapi-openapi": "^3.0.0",
-    "hapi-swagger": "^14.1.1",
-    "module-alias": "^2.2.2",
+    "hapi-swagger": "^14.2.5",
     "mustache": "^4.2.0",
     "parse-strings-in-object": "^2.0.0",
     "rc": "^1.2.8",
