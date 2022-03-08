@@ -37,7 +37,6 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const mockConsentsPostRequestPISP = mockData.consentsPostRequestPISP
 const mockConsentsIdPutRequest = mockData.consentsIdPutRequestVerified
-const mockConsentsPostGenerateChallengeRequest = mockData.consentsGenerateChallengeRequest
 const mockConsentIdPatchRequestVerified = mockData.patchConsentsByIdRequestVerified
 
 const getEndpointForwardConsentsRequestExpected = [
