@@ -132,6 +132,7 @@
     "commander": "5.1.0",
     "hapi-openapi": "^3.0.0",
     "hapi-swagger": "^14.2.5",
+    "module-alias": "^2.2.2",
     "mustache": "^4.2.0",
     "parse-strings-in-object": "^2.0.0",
     "rc": "^1.2.8",
