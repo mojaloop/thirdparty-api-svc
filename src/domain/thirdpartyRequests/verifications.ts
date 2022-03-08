@@ -1,20 +1,20 @@
 /*****
  License
  --------------
- Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+ Copyright © 2020 Mojaloop Foundation The Mojaloop files are made available by the Mojaloop Foundation
+ under the Apache License, Version 2.0 (the 'License') and you may not
+ use these files except in compliance with the License. You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License. Contributors
  --------------
- This is the official list of the Mojaloop project contributors for this file.
- Names of the original copyright holders (individuals or organizations)
- should be listed with a '*' in the first column. People who have
- contributed from an organization can be listed under the organization
- that actually holds the copyright for their contributions (see the
- Gates Foundation organization for an example). Those individuals should have
- their names indented and be marked with a '-'. Email address can be added
- optionally within square brackets <email>.
+ This is the official list of the Mojaloop project contributors for this file. Names of the original
+ copyright holders (individuals or organizations) should be listed with a '*' in the first column.
+ People who have contributed from an organization can be listed under the organization that actually
+ holds the copyright for their contributions (see the Gates Foundation organization for an example).
+ Those individuals should have their names indented and be marked with a '-'. Email address can be
+ added optionally within square brackets <email>.
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
@@ -43,18 +43,17 @@ import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
-
-export async function forwardVerificationRequest(
+export async function forwardVerificationRequest (
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   verificationRequestId: string,
   payload:
-    tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest |
-    tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
+  tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest |
+  tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardVerificationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -104,16 +103,15 @@ export async function forwardVerificationRequest(
     }
     throw fspiopError
   }
-
 }
 
-export async function forwardVerificationRequestError(
+export async function forwardVerificationRequestError (
   path: string,
   headers: HapiUtil.Dictionary<string>,
   verificationRequestId: string,
   error: APIErrorObject,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardVerificationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -144,7 +142,6 @@ export async function forwardVerificationRequestError(
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
-
   } catch (err) {
     Logger.error(`verifications::forwardVerificationRequestError - Error forwarding thirdpartyTransaction verification error to endpoint: ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
@@ -153,5 +150,4 @@ export async function forwardVerificationRequestError(
     }
     throw fspiopError
   }
-
 }
