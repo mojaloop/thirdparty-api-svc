@@ -55,7 +55,7 @@ const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostReques
     partyIdInfo: {
       partyIdType: 'MSISDN',
       partyIdentifier: '+4412345678',
-      fspId: 'dfspb',
+      fspId: 'dfspb'
     }
   },
   payer: {
@@ -71,17 +71,20 @@ const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostReques
   expiration: '2020-06-15T12:00:00.000Z'
 }
 
-const validPutPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO  = {
-  signedPayloadType: 'FIDO',
+const validPutPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO = {
+  responseType: 'ACCEPTED',
   signedPayload: {
-    id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-    rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-    response: {
-      authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-      clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-      signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-    },
-    type: 'public-key'
+    signedPayloadType: 'FIDO',
+    fidoSignedPayload: {
+      id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+      rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+      response: {
+        authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+        signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+      },
+      type: 'public-key'
+    }
   }
 }
 
@@ -112,8 +115,8 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/authorizations',
@@ -151,15 +154,15 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/authorizations/{{ID}}/error",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        { ID: '123456' }
       ]
 
       // Act
@@ -191,15 +194,15 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/authorizations/{{ID}}/error",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        { ID: '123456' }
       ]
 
       // Act
@@ -231,15 +234,15 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/authorizations/{{ID}}/error",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/authorizations',
@@ -298,15 +301,15 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/authorizations/{{ID}}/error",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/authorizations',
@@ -365,8 +368,8 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR,
-        "/thirdpartyRequests/authorizations/{{ID}}/error",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://pisp.local/thirdpartyRequests/authorizations/123456/error',
@@ -413,8 +416,8 @@ describe('domain/authorizations', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/authorizations/{{ID}}",
-        {"ID": "123456"}
+        '/thirdpartyRequests/authorizations/{{ID}}',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/authorizations/123456',
