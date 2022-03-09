@@ -29,7 +29,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Enum, Util } from '@mojaloop/central-services-shared'
 import Span from 'test/unit/__mocks__/span'
 import { Verifications } from '~/domain/thirdpartyRequests'
-import * as types from '~/interface/types';
+import * as types from '~/interface/types'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -41,18 +41,17 @@ const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
   challenge: '<base64 encoded binary - the encoded challenge>',
   consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
   signedPayloadType: 'FIDO',
-  signedPayload: {
+  fidoSignedPayload: {
     id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
     rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
     response: {
       authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
       clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-      signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
+      signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
     },
     type: 'public-key'
   }
 }
-
 
 const validPutPayload: tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse = {
   authenticationResponse: 'VERIFIED'
@@ -85,8 +84,8 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/verifications',
@@ -124,15 +123,15 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/verifications/{{ID}}/error",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}/error',
+        { ID: '123456' }
       ]
 
       // Act
@@ -164,15 +163,15 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/verifications/{{ID}}/error",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}/error',
+        { ID: '123456' }
       ]
 
       // Act
@@ -204,15 +203,15 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/verifications/{{ID}}/error",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/verifications',
@@ -271,15 +270,15 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications',
+        { ID: '123456' }
       ]
       const getEndpointAndRenderExpectedSecond = [
         'http://central-ledger.local:3001',
         'pispA',
         errorEndpointType,
-        "/thirdpartyRequests/verifications/{{ID}}/error",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpectedFirst = [
         'http://auth-service.local/thirdpartyRequests/verifications',
@@ -338,8 +337,8 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR,
-        "/thirdpartyRequests/verifications/{{ID}}/error",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}/error',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://pisp.local/thirdpartyRequests/verifications/123456/error',
@@ -386,8 +385,8 @@ describe('domain/verifications', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         endpointType,
-        "/thirdpartyRequests/verifications/{{ID}}",
-        { "ID": "123456" }
+        '/thirdpartyRequests/verifications/{{ID}}',
+        { ID: '123456' }
       ]
       const sendRequestExpected = [
         'http://auth-service.local/thirdpartyRequests/verifications/123456',

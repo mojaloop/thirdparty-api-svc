@@ -43,7 +43,6 @@ import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
 import { finishChildSpan, getStackOrInspect } from '~/shared/util'
 
-
 /**
  * @function forwardTransactionRequest
  * @description Forwards a POST /thirdpartyRequests/transactions and
@@ -65,11 +64,11 @@ async function forwardTransactionRequest (
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
   payload?:
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse |
-    tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse |
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
-
   const childSpan = span?.getChild('forwardTransactionRequest')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -123,7 +122,6 @@ async function forwardTransactionRequest (
   }
 }
 
-
 /**
  * @function forwardTransactionRequestError
  * @description Generic function to handle sending `PUT .../transactions/error` back to the FSPIOP-Source
@@ -142,6 +140,7 @@ async function forwardTransactionRequestError (
   method: RestMethodsEnum,
   transactionRequestId: string,
   error: APIErrorObject,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -200,11 +199,11 @@ async function forwardTransactionRequestNotification (
   payload: string,
   path: string,
   endpointType: FspEndpointTypesEnum,
-  method: RestMethodsEnum,
+  method: RestMethodsEnum
 ): Promise<void> {
-
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const decodedPayload: object = Util.StreamingProtocol.decodePayload(payload, { asParsed: true })
 
   try {
@@ -227,7 +226,6 @@ async function forwardTransactionRequestNotification (
       decodedPayload,
       Enum.Http.ResponseTypes.JSON,
       null)
-
   } catch (err) {
     // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
     Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
@@ -250,5 +248,5 @@ export {
   forwardTransactionRequest,
   forwardTransactionRequestError,
   forwardTransactionRequestNotification,
-  isCreateRequest //for testing
+  isCreateRequest // for testing
 }
