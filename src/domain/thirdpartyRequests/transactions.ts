@@ -173,7 +173,7 @@ async function forwardTransactionRequestError (
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`transactions::forwardTransactionRequestError - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
+    Logger.error(`transactions::forwardTransactionRequestError - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err as Error)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -228,7 +228,7 @@ async function forwardTransactionRequestNotification (
       null)
   } catch (err) {
     // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
-    Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err)}`)
+    Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err as Error)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     throw fspiopError
   }
