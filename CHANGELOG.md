@@ -1,4 +1,20 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [12.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.23.0...v12.0.0) (2022-03-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* update api to v1.0 (#65)
+
+### Code Refactor
+
+* update api to v1.0 ([#65](https://github.com/mojaloop/thirdparty-api-svc/issues/65)) ([e360006](https://github.com/mojaloop/thirdparty-api-svc/commit/e36000645bf928792c4324282de562c54910185a))
+
+
+### Maintenance
+
+* address vulnerabilities and update codeowners ([#71](https://github.com/mojaloop/thirdparty-api-svc/issues/71)) ([6fc2a7c](https://github.com/mojaloop/thirdparty-api-svc/commit/6fc2a7c2a9d04026b8d98dc941080047593462b7))
+
 ## [11.23.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.22.0...v11.23.0) (2021-11-04)
 
 
