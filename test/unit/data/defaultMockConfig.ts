@@ -38,17 +38,17 @@ const defaultMockConfig: ServiceConfig = {
   PARTICIPANT_LIST_SERVICE_URL: 'ml-testing-toolkit',
   ERROR_HANDLING: {
     includeCauseExtension: true,
-    truncateExtensions: true,
+    truncateExtensions: true
   },
   INSTRUMENTATION: {
     METRICS: {
       DISABLED: false,
       labels: {
-        eventId: "*"
+        eventId: '*'
       },
       config: {
         timeout: 5000,
-        prefix: "moja_3p_api"
+        prefix: 'moja_3p_api'
       }
     }
   },
