@@ -29,7 +29,7 @@ import inspect from '~/shared/inspect'
 jest.mock('@mojaloop/central-services-logger', () => ({
   info: jest.fn(),
   warn: jest.fn(),
-  error: jest.fn(),
+  error: jest.fn()
 }))
 
 describe('shared/logger', (): void => {

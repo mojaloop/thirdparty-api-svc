@@ -5,7 +5,7 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import * as Services from '~/domain/services'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/services.feature')
 const feature = loadFeature(featurePath)
@@ -29,12 +29,12 @@ defineFeature(feature, (test): void => {
       ...mockData.getServicesByServiceTypeRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/vnd.interoperability.services+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
     }
     const request = {
       method: 'GET',
       url: '/services/THIRD_PARTY_DFSP',
-      headers: reqHeaders,
+      headers: reqHeaders
     }
     given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -103,11 +103,10 @@ defineFeature(feature, (test): void => {
   })
 
   test('PutServicesByIdAndError', ({ given, when, then }): void => {
-
     const servicesRequestError = mockData.putServicesByServiceTypeRequestError
     const reqHeaders = Object.assign(servicesRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
     })
     const request = {
       method: 'PUT',

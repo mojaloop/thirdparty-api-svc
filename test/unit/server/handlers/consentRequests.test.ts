@@ -30,7 +30,6 @@ import ConsentRequestsHandler from '~/server/handlers/consentRequests'
 import * as ConsentRequests from '~/domain/consentRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-
 const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -49,7 +48,7 @@ const postConsentRequestsRequest = {
         scope: 'accounts.transfer'
       }
     ],
-    callbackUri:'pisp-app://callback.com'
+    callbackUri: 'pisp-app://callback.com'
   }
 }
 
@@ -61,7 +60,6 @@ const postConsentRequestsRequestExpected = [
   postConsentRequestsRequest.payload,
   undefined
 ]
-
 
 describe('consentRequests handler', () => {
   describe('POST /consentRequests', () => {

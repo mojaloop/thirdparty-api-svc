@@ -25,9 +25,9 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
-import  * as ConsentRequests from '~/domain/consentRequests'
+import * as ConsentRequests from '~/domain/consentRequests'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
@@ -42,7 +42,7 @@ const getEndpointAndRenderConsentRequestsExpected = [
   'http://central-ledger.local:3001',
   consentRequestsPostRequest.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_POST,
-  "/consentRequests",
+  '/consentRequests',
   {}
 ]
 
@@ -50,8 +50,8 @@ const getEndpointAndRenderConsentRequestsExpectedSecond = [
   'http://central-ledger.local:3001',
   consentRequestsPostRequest.headers['fspiop-source'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR,
-  "/consentRequests/{{ID}}/error",
-  {"ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe"}
+  '/consentRequests/{{ID}}/error',
+  { ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe' }
 ]
 
 const expectedConsentRequestErrorHeaders = {
@@ -95,7 +95,6 @@ describe('domain/consentRequests', () => {
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestConsentRequestsExpected)
     })
 
-
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender
@@ -132,7 +131,7 @@ describe('domain/consentRequests', () => {
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_POST,
         consentRequestsPostRequest.headers,
         Enum.Http.RestMethods.POST,
-        consentRequestsPostRequest.payload,
+        consentRequestsPostRequest.payload
       )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
@@ -227,16 +226,16 @@ const getEndpointAndRenderConsentRequestsIdExpected = [
   'http://central-ledger.local:3001',
   'pispA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT,
-  "/consentRequests/{{ID}}",
-  {"ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe"}
+  '/consentRequests/{{ID}}',
+  { ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe' }
 ]
 
 const getEndpointAndRenderConsentRequestsIdExpectedSecond = [
   'http://central-ledger.local:3001',
   consentRequestsIdPutRequest.headers['fspiop-source'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR,
-  "/consentRequests/{{ID}}/error",
-  {"ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe"}
+  '/consentRequests/{{ID}}/error',
+  { ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe' }
 ]
 
 const sendRequestConsentRequestsIdExpected = [
@@ -258,11 +257,11 @@ describe('domain/consentRequests/{ID}', () => {
     })
 
     it('forwards PUT /consentRequests request', async (): Promise<void> => {
-      const mockSpan = new Span
+      const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await ConsentRequests.forwardConsentRequestsIdRequest(
-        "b82348b9-81f6-42ea-b5c4-80667d5740fe",
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT,
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT,
         consentRequestsIdPutRequest.headers,
@@ -282,7 +281,7 @@ describe('domain/consentRequests/{ID}', () => {
         .mockResolvedValueOnce('http://dfspa-sdk/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe/error')
 
       const action = async () => await ConsentRequests.forwardConsentRequestsIdRequest(
-        "b82348b9-81f6-42ea-b5c4-80667d5740fe",
+        'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT,
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT,
         consentRequestsIdPutRequest.headers,
@@ -327,8 +326,8 @@ describe('domain/consentRequests/{ID}', () => {
         'http://central-ledger.local:3001',
         'dfspA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT_ERROR,
-        "/consentRequests/{{ID}}/error",
-        {"ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe"}
+        '/consentRequests/{{ID}}/error',
+        { ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe' }
       ]
       const sendRequestErrorExpected = [
         'http://dfspa-sdk/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',

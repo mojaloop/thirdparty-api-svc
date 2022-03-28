@@ -25,7 +25,7 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 import * as Consents from '~/domain/consents'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'

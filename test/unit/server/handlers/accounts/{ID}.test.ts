@@ -28,7 +28,7 @@ import Logger from '@mojaloop/central-services-logger'
 import * as Accounts from '~/domain/accounts'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import AccountsIdHandler from '~/server/handlers/accounts/{ID}'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')

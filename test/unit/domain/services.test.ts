@@ -27,7 +27,7 @@ import * as Services from '~/domain/services'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
@@ -53,8 +53,8 @@ const getEndpointAndRenderPutServicesRequestToFSPsExpected = [
   'http://central-ledger.local:3001',
   'pispA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT,
-  "/services/{{ServiceType}}",
-  { "ServiceType": "THIRD_PARTY_DFSP" }
+  '/services/{{ServiceType}}',
+  { ServiceType: 'THIRD_PARTY_DFSP' }
 ]
 
 const sendRequestPutServicesRequestsToFSPExpected = [
@@ -71,8 +71,8 @@ const sendRequestPutServicesRequestsToFSPExpected = [
 const sendRequestPutServicesRequestsToFSPExpectedProviderError = [
   'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP/error',
   {
-    "fspiop-destination": "switch",
-    "fspiop-source": "switch",
+    'fspiop-destination': 'switch',
+    'fspiop-source': 'switch'
   },
   'switch',
   'switch',
@@ -93,7 +93,7 @@ describe('domain/services/{ServiceType}', () => {
     })
 
     it('forwards GET /services/{ServiceType} request to provider service', async (): Promise<void> => {
-      const mockSpan = new Span
+      const mockSpan = new Span()
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Services.forwardGetServicesServiceTypeRequestToProviderService(
         '/services/{{ServiceType}}',
@@ -107,7 +107,7 @@ describe('domain/services/{ServiceType}', () => {
     })
 
     it('forwards PUT /services/{ServiceType} request to FSP', async (): Promise<void> => {
-      const mockSpan = new Span
+      const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://pisp-sdk/services/THIRD_PARTY_DFSP')
       mockSendRequest.mockResolvedValue({ ok: true, status: 200, statusText: 'OK', payload: null })
       await Services.forwardGetServicesServiceTypeRequestFromProviderService(
@@ -175,8 +175,8 @@ describe('domain/services/{ServiceType}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT_ERROR,
-        "/services/{{ServiceType}}/error",
-        { "ServiceType": "THIRD_PARTY_DFSP" }
+        '/services/{{ServiceType}}/error',
+        { ServiceType: 'THIRD_PARTY_DFSP' }
       ]
       const sendRequestErrorExpected = [
         'http://pispa-sdk/services/THIRD_PARTY_DFSP/error',
@@ -209,8 +209,8 @@ describe('domain/services/{ServiceType}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT_ERROR,
-        "/services/{{ServiceType}}/error",
-        { "ServiceType": "THIRD_PARTY_DFSP" }
+        '/services/{{ServiceType}}/error',
+        { ServiceType: 'THIRD_PARTY_DFSP' }
       ]
       mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))

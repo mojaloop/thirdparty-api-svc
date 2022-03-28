@@ -28,7 +28,7 @@ import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
@@ -50,15 +50,15 @@ const getEndpointAndRenderExpectedPostTransactionRequest = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
-  "/thirdpartyRequests/transactions",
+  '/thirdpartyRequests/transactions',
   {}
 ]
 const getEndpointAndRenderExpectedSecondPostTransactionRequest = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-source'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR,
-  "/thirdpartyRequests/transactions/{{ID}}/error",
-  {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"}
+  '/thirdpartyRequests/transactions/{{ID}}/error',
+  { ID: '7d34f91d-d078-4077-8263-2c047876fcf6' }
 ]
 const sendRequestExpectedPostTransactionRequest = [
   'http://dfspa-sdk/thirdpartyRequests/transactions',
@@ -75,8 +75,8 @@ const getEndpointAndRenderExpectedGetTransactionRequest = [
   'http://central-ledger.local:3001',
   request.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET,
-  "/thirdpartyRequests/transactions/{ID}",
-  {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"}
+  '/thirdpartyRequests/transactions/{ID}',
+  { ID: '7d34f91d-d078-4077-8263-2c047876fcf6' }
 ]
 
 const sendRequestExpectedGetTransactionRequest = [
@@ -94,8 +94,8 @@ const getEndpointAndRenderExpectedPatchTransactionRequest = [
   'http://central-ledger.local:3001',
   patchThirdpartyTransactionIdRequest.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
-  "/thirdpartyRequests/transactions/{ID}",
-  {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"}
+  '/thirdpartyRequests/transactions/{ID}',
+  { ID: '7d34f91d-d078-4077-8263-2c047876fcf6' }
 ]
 
 const sendRequestExpectedPatchTransactionRequest = [
@@ -117,8 +117,8 @@ const getEndpointAndRenderExpectedKafkaMessage = [
   'http://central-ledger.local:3001',
   notificationEventCommit.value.content.headers['fspiop-destination'],
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
-  "/thirdpartyRequests/transactions/{{ID}}",
-  {"ID": "bc1a9c36-4429-4205-8553-11f92de1919e"}
+  '/thirdpartyRequests/transactions/{{ID}}',
+  { ID: 'bc1a9c36-4429-4205-8553-11f92de1919e' }
 ]
 const sendRequestExpectedKafkaMessage = [
   'http://pispa-sdk/thirdpartyRequests/transactions/bc1a9c36-4429-4205-8553-11f92de1919e',
@@ -158,7 +158,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         getTransactionRequestApiEndpointType,
         request.headers,
         Enum.Http.RestMethods.GET,
-        {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"},
+        { ID: '7d34f91d-d078-4077-8263-2c047876fcf6' },
         undefined,
         mockSpan)
 
@@ -175,7 +175,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         patchTransactionRequestApiEndpointType,
         patchThirdpartyTransactionIdRequest.headers,
         Enum.Http.RestMethods.PATCH,
-        {"ID": "7d34f91d-d078-4077-8263-2c047876fcf6"},
+        { ID: '7d34f91d-d078-4077-8263-2c047876fcf6' },
         patchThirdpartyTransactionIdRequest.payload,
         mockSpan)
 
@@ -320,8 +320,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
     })
 
     it('verify isCreateRequest', async (): Promise<void> => {
-      expect(Transactions.isCreateRequest(mockData.transactionRequest.payload)).toBeTruthy();
-      expect(Transactions.isCreateRequest(mockData.updateTransactionRequest.payload)).toBeFalsy();
+      expect(Transactions.isCreateRequest(mockData.transactionRequest.payload)).toBeTruthy()
+      expect(Transactions.isCreateRequest(mockData.updateTransactionRequest.payload)).toBeFalsy()
     })
   })
 
@@ -348,7 +348,6 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedKafkaMessage)
     })
 
-
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
@@ -363,7 +362,6 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
       )
       await expect(action).rejects.toThrow('Cannot find endpoint')
     })
-
 
     it('handles `sendRequest` failure', async (): Promise<void> => {
       mockGetEndpointAndRender

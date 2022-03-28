@@ -31,14 +31,11 @@ import { Request } from '@hapi/hapi'
 import {
   finishChildSpan,
   getStackOrInspect,
-  getSpanTags,
+  getSpanTags
 } from '~/shared/util'
 import * as types from '~/interface/types'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
-import { Enum } from '@mojaloop/central-services-shared'
-
-const mockData = require('../data/mockData.json')
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -46,15 +43,13 @@ const headers = {
 }
 
 describe('util', (): void => {
- 
-
   describe('finishChildSpan', (): void => {
     it('calls error and finish', async (): Promise<void> => {
       // Arrange
       const error: FSPIOPError = ReformatFSPIOPError(new Error('Test Error'))
       const mockSpan = {
         error: jest.fn(),
-        finish: jest.fn(),
+        finish: jest.fn()
       }
       const expectedState = new EventStateMetadata(
         EventStatusType.failed,
@@ -83,6 +78,7 @@ describe('util', (): void => {
   })
   describe('getSpanTags', (): void => {
     it('create correct span tags', (): void => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const request: Request = {
         headers: headers,
@@ -102,6 +98,7 @@ describe('util', (): void => {
     })
 
     it('create correct span tags when headers and customTags are not set', (): void => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const request: Request = {
         headers: {},

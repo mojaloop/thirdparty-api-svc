@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -35,7 +36,6 @@ import {
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 
-
 /**
   * summary: VerifyThirdPartyAuthorization
   * description: The method POST /thirdpartyRequests/authorizations/{ID} is used
@@ -44,7 +44,7 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function post (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
   const authorizationRequestId = payload.authorizationRequestId
@@ -71,7 +71,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       payload,
       span
     )
-    .catch(err => {
+      .catch(err => {
         // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
         Logger.error('Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -89,12 +89,12 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   * summary: UpdateThirdpartyAuthorization
   * description: The method PUT /thirdpartyRequests/authorizations/{ID}
   * is called by the PISP to include the authorization result from their user.
-  * 
+  *
   * parameters: body, content-length
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const authorizationRequestId: string = request.params.ID
@@ -185,7 +185,6 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
     throw fspiopError
   }
 }
-
 
 export {
   post,

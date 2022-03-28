@@ -27,7 +27,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
@@ -90,7 +90,7 @@ describe('transactions handler', (): void => {
       // Note: no promise rejection here!
     })
 
-    it('handles validation errors synchonously', async (): Promise<void> => {
+    it('handles validation errors synchronously', async (): Promise<void> => {
       // Arrange
       const badSpanRequest = {
         ...request,
@@ -125,7 +125,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_GET',
         request.headers,
         'GET',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         undefined,
         undefined
       ]
@@ -148,7 +148,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_GET',
         request.headers,
         'GET',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         undefined,
         undefined]
 
@@ -197,7 +197,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
         request.headers,
         'PUT',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         undefined
       ]
@@ -220,7 +220,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
         request.headers,
         'PUT',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         undefined]
 
@@ -269,7 +269,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
         request.headers,
         'PATCH',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         undefined
       ]
@@ -292,7 +292,7 @@ describe('transactions handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
         request.headers,
         'PATCH',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         undefined]
 
@@ -368,5 +368,4 @@ describe('transactions handler', (): void => {
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 })

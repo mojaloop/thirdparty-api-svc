@@ -27,7 +27,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import AccountsIdHandler from '~/server/handlers/accounts/{ID}/error'
 import * as Accounts from '~/domain/accounts'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardAccountsRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')

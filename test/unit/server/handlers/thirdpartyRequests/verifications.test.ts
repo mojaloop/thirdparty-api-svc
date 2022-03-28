@@ -27,7 +27,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import * as Handler from '~/server/handlers/thirdpartyRequests/verifications'
 import { Verifications } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardVerificationRequest = jest.spyOn(Verifications, 'forwardVerificationRequest')
@@ -38,8 +38,8 @@ const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = {
   headers: {
-    'fspiop-source': "dfspA",
-    'fspiop-destination': "pispA"
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'pispA'
   },
   params: {},
   payload: {
@@ -53,7 +53,7 @@ const request: Request = {
       response: {
         authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
         clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-        signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
+        signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
       },
       type: 'public-key'
     }
@@ -136,7 +136,6 @@ describe('verifications handler', (): void => {
     })
   })
 
-
   describe('PUT /thirdpartyRequests/verifications/{ID}', (): void => {
     const request: Request = MockData.updateTransactionRequest
     beforeAll((): void => {
@@ -156,7 +155,7 @@ describe('verifications handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT',
         request.headers,
         'PUT',
-        "b37605f7-bcd9-408b-9291-6c554aa4c802",
+        'b37605f7-bcd9-408b-9291-6c554aa4c802',
         request.payload,
         undefined
       ]
@@ -254,5 +253,4 @@ describe('verifications handler', (): void => {
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 })

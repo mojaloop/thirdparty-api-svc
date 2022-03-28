@@ -29,7 +29,7 @@ import Metrics from '@mojaloop/central-services-metrics'
 
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { wrapWithHistogram } from '~/shared/histogram'
 import { mockResponseToolkit } from '../__mocks__/responseToolkit'
 
@@ -40,7 +40,6 @@ const mockMetrics = jest.spyOn(Metrics, 'getHistogram')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
-
 
 describe('histogram', (): void => {
   describe('wrapWithHistogram', () => {
@@ -56,7 +55,7 @@ describe('histogram', (): void => {
     it('does not call the histogram twice if an error occours', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      //@ts-ignore
+      // @ts-ignore
       mockMetrics.mockReturnValue({
         startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
       })
@@ -86,7 +85,7 @@ describe('histogram', (): void => {
     it('handles a handler error', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      //@ts-ignore
+      // @ts-ignore
       mockMetrics.mockReturnValue({
         startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
       })

@@ -26,16 +26,15 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Config from '~/shared/config'
 
-jest.mock('~/shared/config', () => ({
-  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
-  PARTICIPANT_LIST_LOCAL: undefined
-}));
-
-
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
+
+jest.mock('~/shared/config', () => ({
+  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
+  PARTICIPANT_LIST_LOCAL: undefined
+}))
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 const forwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
@@ -118,7 +117,6 @@ describe('ServicesServiceType handler', () => {
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 
   describe('PUT /services/{{ServiceType}}', () => {
     beforeEach((): void => {

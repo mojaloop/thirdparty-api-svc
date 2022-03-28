@@ -30,7 +30,6 @@ import ConsentsHandler from '~/server/handlers/consents'
 import * as Consents from '~/domain/consents'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -45,7 +44,7 @@ const postConsentsRequest = {
     scopes: [
       {
         accountId: 'dfspa.username.1234',
-        actions: [ 'accounts.transfer', 'accounts.getBalance' ]
+        actions: ['accounts.transfer', 'accounts.getBalance']
       }
     ]
   }
@@ -59,7 +58,6 @@ const postConsentsRequestExpected = [
   postConsentsRequest.payload,
   undefined
 ]
-
 
 describe('consents handler', () => {
   describe('POST /consents', () => {

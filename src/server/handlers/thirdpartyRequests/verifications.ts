@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -42,7 +43,7 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function post (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   const payload = request.payload as
     tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
@@ -50,7 +51,6 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.POST,
       { verificationRequestId })
@@ -85,7 +85,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
   }
 }
 
-async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function put (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const verificationRequestId: string = request.params.ID
@@ -95,7 +95,6 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
       { verificationRequestId })
@@ -147,7 +146,6 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
-      // @ts-ignore
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
       { transactionRequestId: request.params.transactionRequestId })
@@ -179,7 +177,6 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
     throw fspiopError
   }
 }
-
 
 export {
   post,

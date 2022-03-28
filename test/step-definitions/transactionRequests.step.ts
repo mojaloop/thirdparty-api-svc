@@ -5,7 +5,7 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import { Transactions, Authorizations } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/transactionRequests.feature')
 const feature = loadFeature(featurePath)
@@ -29,7 +29,7 @@ defineFeature(feature, (test): void => {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'POST',
@@ -70,12 +70,12 @@ defineFeature(feature, (test): void => {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'GET',
       url: '/thirdpartyRequests/transactions/67fff06f-2380-4403-ba35-f97b6a4250a1',
-      headers: reqHeaders,
+      headers: reqHeaders
     }
     given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -94,7 +94,7 @@ defineFeature(feature, (test): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_GET',
         expect.objectContaining(request.headers),
         'GET',
-        { "ID": "67fff06f-2380-4403-ba35-f97b6a4250a1" },
+        { ID: '67fff06f-2380-4403-ba35-f97b6a4250a1' },
         undefined,
         expect.any(Object)
       ]
@@ -109,7 +109,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.updateTransactionRequest.headers,
       date: (new Date()).toISOString(),
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'PUT',
@@ -134,7 +134,7 @@ defineFeature(feature, (test): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
         expect.objectContaining(request.headers),
         'PUT',
-        { "ID": "b37605f7-bcd9-408b-9291-6c554aa4c802" },
+        { ID: 'b37605f7-bcd9-408b-9291-6c554aa4c802' },
         request.payload,
         expect.any(Object)
       ]
@@ -149,7 +149,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'PUT',
@@ -198,12 +198,11 @@ defineFeature(feature, (test): void => {
   })
 
   test('NotifyThirdpartyTransactionRequests', ({ given, when, then }): void => {
-
     const patchTPTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
     const reqHeaders = Object.assign(patchTPTransactionIdRequest.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
       accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     })
     const request = {
       method: 'PATCH',
@@ -229,7 +228,7 @@ defineFeature(feature, (test): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_PATCH',
         expect.objectContaining(request.headers),
         'PATCH',
-        { "ID": "b82348b9-81f6-42ea-b5c4-80667d5740fe" },
+        { ID: 'b82348b9-81f6-42ea-b5c4-80667d5740fe' },
         request.payload,
         undefined
       ]

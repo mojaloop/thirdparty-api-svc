@@ -54,7 +54,7 @@ export default {
       ['success']
     ]
   ),
-  CreateThirdpartyTransactionRequests: wrapWithHistogram(
+  ThirdpartyRequestsTransactionsPost: wrapWithHistogram(
     ThirdpartyTransactions.post,
     [
       'thirdpartyRequests_transactions_post',

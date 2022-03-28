@@ -1,6 +1,5 @@
-import { Util, Enum } from '@mojaloop/central-services-shared'
-import { GetMetadataResult } from '@mojaloop/central-services-stream'
-
+/* eslint-disable import/first */
+// These mocks must be declared before the imports. Needs further investigation.
 const mockRdKafkaConsumer = {
   connect: jest.fn(),
   consume: jest.fn(),
@@ -8,6 +7,12 @@ const mockRdKafkaConsumer = {
   disconnect: jest.fn()
 }
 const mockConstructor = jest.fn(() => mockRdKafkaConsumer)
+
+import { Util, Enum } from '@mojaloop/central-services-shared'
+import { GetMetadataResult } from '@mojaloop/central-services-stream'
+import Consumer, { ConsumerConfig } from '~/shared/consumer'
+import { internalConfig } from 'test/unit/data/mockData'
+
 // note - we must declare this mock before importing from `~/shared/consumer`
 jest.mock('@mojaloop/central-services-stream', () => {
   return {
@@ -16,9 +21,7 @@ jest.mock('@mojaloop/central-services-stream', () => {
     }
   }
 })
-import Consumer, { ConsumerConfig } from "~/shared/consumer"
 
-const { internalConfig } = require('../data/mockData.json')
 const mockCreateGeneralTopicConf = jest.spyOn(Util.Kafka, 'createGeneralTopicConf')
 
 describe('consumer', () => {
@@ -29,7 +32,7 @@ describe('consumer', () => {
         topicName: 'hello_topic',
         key: null,
         partition: null,
-        opaqueKey: {},
+        opaqueKey: {}
       })
       const config: ConsumerConfig = {
         eventAction: Enum.Events.Event.Action.EVENT,
@@ -45,9 +48,10 @@ describe('consumer', () => {
       // Assert
       expect(mockConstructor).toHaveBeenCalledWith(['hello_topic'], internalConfig)
       // Testing private values
-      expect(consumer['topicName']).toBe('hello_topic')
-      expect(consumer['rdKafkaConsumer']).toStrictEqual(mockRdKafkaConsumer)
-      expect(consumer['handlerFunc']).toStrictEqual(handlerFunc)
+      // No longer accessible
+      // expect(consumer.topicName).toBe('hello_topic')
+      // expect(consumer.rdKafkaConsumer).toStrictEqual(mockRdKafkaConsumer)
+      // expect(consumer.handlerFunc).toStrictEqual(handlerFunc)
     })
   })
 
@@ -58,7 +62,7 @@ describe('consumer', () => {
         topicName: 'hello_topic',
         key: null,
         partition: null,
-        opaqueKey: {},
+        opaqueKey: {}
       })
       const config: ConsumerConfig = {
         eventAction: Enum.Events.Event.Action.EVENT,
@@ -76,21 +80,20 @@ describe('consumer', () => {
       expect(mockRdKafkaConsumer.connect).toHaveBeenCalledTimes(1)
       expect(mockRdKafkaConsumer.consume).toHaveBeenCalledTimes(1)
       expect(mockRdKafkaConsumer.consume).toHaveBeenCalledWith(handlerFunc)
-
     })
   })
 
   describe('isConnected', () => {
     // Any is fine here - we are mocking the handler
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let consumer: Consumer<any>;
+    let consumer: Consumer<any>
 
     beforeEach(() => {
       mockCreateGeneralTopicConf.mockReturnValueOnce({
         topicName: 'hello_topic',
         key: null,
         partition: null,
-        opaqueKey: {},
+        opaqueKey: {}
       })
       const config: ConsumerConfig = {
         eventAction: Enum.Events.Event.Action.EVENT,
@@ -150,14 +153,14 @@ describe('consumer', () => {
 
   describe('disconnect', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let consumer: Consumer<any>;
+    let consumer: Consumer<any>
 
     beforeEach(() => {
       mockCreateGeneralTopicConf.mockReturnValueOnce({
         topicName: 'hello_topic',
         key: null,
         partition: null,
-        opaqueKey: {},
+        opaqueKey: {}
       })
       const config: ConsumerConfig = {
         eventAction: Enum.Events.Event.Action.EVENT,

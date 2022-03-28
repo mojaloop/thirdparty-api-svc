@@ -51,12 +51,12 @@ const putConsentRequestsIdRequestWeb = {
         scope: 'accounts.transfer'
       }
     ],
-    callbackUri:'pisp-app://callback.com',
-    authUri:'dfspa.com/authorize?consentRequestId=b82348b9-81f6-42ea-b5c4-80667d5740fe'
+    callbackUri: 'pisp-app://callback.com',
+    authUri: 'dfspa.com/authorize?consentRequestId=b82348b9-81f6-42ea-b5c4-80667d5740fe'
   }
 }
 
-const patchConsentRequestsRequest =  {
+const patchConsentRequestsRequest = {
   headers: {
     'fspiop-source': 'pispA',
     'fspiop-destination': 'dfspA'

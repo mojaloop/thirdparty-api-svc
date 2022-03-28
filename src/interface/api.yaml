@@ -356,6 +356,7 @@ paths:
     put:
       tags:
         - consentRequests
+        - sampled
       operationId: NotifyErrorConsentRequests
       summary: NotifyErrorConsentRequests
       description: >
@@ -634,6 +635,7 @@ paths:
     put:
       tags:
         - consents
+        - sampled
       operationId: NotifyErrorConsents
       summary: NotifyErrorConsents
       description: >
@@ -871,6 +873,7 @@ paths:
         PISP to initiate a 3rd party Transaction request with a DFSP
       tags:
         - thirdpartyRequests
+        - sampled
       parameters:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
@@ -1109,6 +1112,7 @@ paths:
       summary: PostThirdpartyRequestsAuthorizations
       tags:
         - authorizations
+        - sampled
       parameters:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Content-Length'
@@ -1164,6 +1168,7 @@ paths:
       summary: GetThirdpartyRequestsAuthorizationsById
       tags:
         - authorizations
+        - sampled
       parameters:
         - $ref: '#/components/parameters/Accept'
       responses:
@@ -1202,6 +1207,7 @@ paths:
       summary: PutThirdpartyRequestsAuthorizationsById
       tags:
         - authorizations
+        - sampled
       parameters:
         - $ref: '#/components/parameters/Content-Length'
       requestBody:
@@ -2389,7 +2395,7 @@ components:
       title: FIDOPublicKeyCredentialAttestation
       type: object
       description: >
-        A data model representing a FIDO Attestation result. Derived from 
+        A data model representing a FIDO Attestation result. Derived from
 
         [`PublicKeyCredential`
         Interface](https://w3c.github.io/webauthn/#iface-pkcredential).
@@ -2788,7 +2794,7 @@ components:
         certificate
 
         number, and national registration number. The identifier number is added
-        in 
+        in
 
         the PartyIdentifier element. The personal identifier type is added in
         the
@@ -2849,10 +2855,10 @@ components:
         and
 
         a DFSP which allows the PISP permission to perform actions on behalf of
-        the 
+        the
 
         customer. A Consent has an authoritative source: either the DFSP who
-        issued 
+        issued
 
         the Consent, or an Auth Service which administers the Consent.
 
@@ -2860,10 +2866,10 @@ components:
         a PISP,
 
         a DFSP, and a specific Customer's account at the DFSP. The content of
-        the link 
+        the link
 
         is created by the DFSP at the time when it gives permission to the PISP
-        for 
+        for
 
         specific access to a given account.
       example: PERSONAL_ID

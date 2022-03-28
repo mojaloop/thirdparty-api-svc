@@ -30,11 +30,12 @@ import { Server } from '@hapi/hapi'
 
 import { Authorizations, Transactions, Verifications } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
 import * as Accounts from '~/domain/accounts'
 import * as Services from '~/domain/services'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets';
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
 const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
@@ -55,7 +56,7 @@ const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(S
 const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-const mockData = JSON.parse(JSON.stringify(TestData))
+const mockData = TestData
 const trxnRequest = mockData.transactionRequest
 const trxnRequestError = mockData.genericThirdpartyError
 const consentRequestsRequestError = mockData.consentRequestsThirdpartyError
@@ -80,7 +81,6 @@ describe('index', (): void => {
       server.events.on('stop', done)
       server.stop()
     })
-    
 
     describe('/thirdpartyRequests/transactions', (): void => {
       beforeAll((): void => {
@@ -231,23 +231,29 @@ describe('index', (): void => {
         expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
 
-
       it('PATCH mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, {})
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const errPayload = JSON.parse(JSON.stringify(TestData.patchThirdpartyTransactionIdRequest.payload))
+        delete errPayload.transactionRequestState
+        const reqHeaders = Object.assign(TestData.patchThirdpartyTransactionIdRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+
+        })
         const request = {
           method: 'PATCH',
           url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
-          headers: trxnRequest.headers,
+          headers: reqHeaders,
           payload: errPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'transactionId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'transactionRequestState\''
           }
         }
         const response = await server.inject(request)
-
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
@@ -286,7 +292,6 @@ describe('index', (): void => {
           expect.any(Object)
         ]
         const response = await server.inject(request)
-
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
@@ -335,7 +340,7 @@ describe('index', (): void => {
           partyIdInfo: {
             partyIdType: 'MSISDN',
             partyIdentifier: '+4412345678',
-            fspId: 'dfspb',
+            fspId: 'dfspb'
           }
         },
         payer: {
@@ -394,6 +399,7 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const invalidPayload = JSON.parse(JSON.stringify(authorizationPostRequestPayload))
         delete invalidPayload.challenge
         const request = {
@@ -426,17 +432,20 @@ describe('index', (): void => {
     })
 
     describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
-      const authorizationPutRequestPayload = {
-        signedPayloadType: 'FIDO',
+      const authorizationPutRequestPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO = {
+        responseType: 'ACCEPTED',
         signedPayload: {
-          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-          response: {
-            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-          },
-          type: 'public-key'
+          signedPayloadType: 'FIDO',
+          fidoSignedPayload: {
+            id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+            rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+            response: {
+              authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+              clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+              signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+            },
+            type: 'public-key'
+          }
         }
       }
 
@@ -474,9 +483,6 @@ describe('index', (): void => {
 
         // Act
         const response = await server.inject(request)
-
-        console.log('response', response)
-
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
@@ -484,8 +490,9 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const invalidPayload = JSON.parse(JSON.stringify(authorizationPutRequestPayload))
-        delete invalidPayload.signedPayloadType
+        delete invalidPayload.responseType
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
@@ -500,13 +507,13 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'signedPayloadType\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'responseType\''
           }
         }
 
         // Act
         const response = await server.inject(request)
-
+        console.log(response)
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -518,7 +525,7 @@ describe('index', (): void => {
       const errorPayload = {
         errorInformation: {
           errorCode: '6000',
-          errorDescription: 'Generic third party error',
+          errorDescription: 'Generic third party error'
         }
       }
       beforeAll((): void => {
@@ -551,8 +558,6 @@ describe('index', (): void => {
           expect.any(Object)
         ]
         const response = await server.inject(request)
-        console.log('PUT /thirdpartyRequests/authorizations/{ID}/error response', response)
-
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardAuthorizationRequestError).toHaveBeenCalledWith(...expected)
@@ -581,18 +586,18 @@ describe('index', (): void => {
     })
 
     describe('POST /thirdpartyRequests/verifications', (): void => {
-      const verificationPostRequestBody = {
+      const verificationPostRequestBody: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
         verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
         challenge: '<base64 encoded binary - the encoded challenge>',
         consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
         signedPayloadType: 'FIDO',
-        signedPayload: {
+        fidoSignedPayload: {
           id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
           rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
           response: {
             authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
             clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
+            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
           },
           type: 'public-key'
         }
@@ -606,7 +611,6 @@ describe('index', (): void => {
       beforeEach((): void => {
         jest.clearAllMocks()
       })
-
 
       it('POST', async (): Promise<void> => {
         mockForwardVerificationRequest.mockResolvedValueOnce()
@@ -691,7 +695,7 @@ describe('index', (): void => {
         mockForwardVerificationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
-          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -724,7 +728,7 @@ describe('index', (): void => {
         const invalidPayload = {}
         const request = {
           method: 'PUT',
-          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
@@ -755,7 +759,7 @@ describe('index', (): void => {
       const errorPayload = {
         errorInformation: {
           errorCode: '6000',
-          errorDescription: 'Generic third party error',
+          errorDescription: 'Generic third party error'
         }
       }
 
@@ -861,6 +865,8 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentsPostRequestPISP.payload))
+        delete payload.consentId
         const request = {
           method: 'POST',
           url: '/consents',
@@ -870,11 +876,8 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.consentsPostRequestPISP.headers
           },
-          payload: {
-            ...mockData.consentsPostRequestPISP.payload
-          }
+          payload
         }
-        delete request.payload.consentId
 
         const expected = {
           errorInformation: {
@@ -937,6 +940,8 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPostRequest.payload))
+        delete payload.consentRequestId
         const request = {
           method: 'POST',
           url: '/consentRequests',
@@ -946,11 +951,8 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPostRequest.headers
           },
-          payload: {
-            ...mockData.consentRequestsPostRequest.payload
-          }
+          payload
         }
-        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
@@ -1038,7 +1040,7 @@ describe('index', (): void => {
 
         // Act
         const response = await server.inject(request)
-
+        console.log(response)
         // Assert
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
@@ -1046,6 +1048,9 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPutRequestWeb.payload))
+        delete payload.scopes
         const request = {
           method: 'PUT',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
@@ -1054,22 +1059,18 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPutRequestWeb.headers
           },
-          payload: {
-            ...mockData.consentRequestsPutRequestWeb.payload
-          }
+          payload
         }
-        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
+            errorDescription: 'Missing mandatory element - /requestBody must have required property \'scopes\''
           }
         }
 
         // Act
         const response = await server.inject(request)
-
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -1181,6 +1182,8 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPatch.payload))
+        delete payload.authToken
         const request = {
           method: 'PATCH',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
@@ -1190,11 +1193,8 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.consentRequestsPatch.headers
           },
-          payload: {
-            ...mockData.consentRequestsPatch.payload
-          }
+          payload
         }
-        delete request.payload.authToken
 
         const expected = {
           errorInformation: {
@@ -1212,7 +1212,6 @@ describe('index', (): void => {
         expect(mockForwardConsentRequestsIdRequest).not.toHaveBeenCalled()
       })
     })
-
 
     describe('PUT /consents/{{ID}}', (): void => {
       beforeAll((): void => {
@@ -1259,6 +1258,9 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardConsentsIdRequest.mockResolvedValueOnce()
+        const payload = JSON.parse(JSON.stringify(mockData.consentsIdPutRequestVerified.payload))
+        delete payload.credential
         const request = {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
@@ -1267,11 +1269,8 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...mockData.consentsIdPutRequestVerified.headers
           },
-          payload: {
-            ...mockData.consentsIdPutRequestVerified.payload
-          }
+          payload
         }
-        delete request.payload.credential
 
         const expected = {
           errorInformation: {
@@ -1282,7 +1281,6 @@ describe('index', (): void => {
 
         // Act
         const response = await server.inject(request)
-
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -1333,6 +1331,8 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(consentsRequestError.payload))
+        delete payload.errorInformation
         const request = {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
@@ -1341,11 +1341,8 @@ describe('index', (): void => {
             date: (new Date()).toISOString(),
             ...consentsRequestError.headers
           },
-          payload: {
-            ...consentsRequestError.payload
-          }
+          payload
         }
-        delete request.payload.errorInformation
 
         const expected = {
           errorInformation: {
@@ -1458,8 +1455,8 @@ describe('index', (): void => {
           payload: {
             accounts: [
               {
-                'accountNickname': 'dfspa.user.nickname',
-                'id': 'dfspa.username.1234'
+                accountNickname: 'dfspa.user.nickname',
+                address: 'dfspa.username.1234'
               }
             ]
           }
@@ -1544,7 +1541,6 @@ describe('index', (): void => {
         expect(mockForwardAccountsIdRequestError).not.toHaveBeenCalled()
       })
     })
-
 
     describe('GET /services/{{ServiceType}}', (): void => {
       beforeAll((): void => {

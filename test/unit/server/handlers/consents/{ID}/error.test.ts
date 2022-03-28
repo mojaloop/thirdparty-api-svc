@@ -26,7 +26,7 @@
  import Logger from '@mojaloop/central-services-logger'
  import ConsentsIdErrorHandler from '~/server/handlers/consents/{ID}/error'
  import * as Consents from '~/domain/consents'
- import TestData from 'test/unit/data/mockData.json'
+ import * as TestData from 'test/unit/data/mockData'
  import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
  const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')

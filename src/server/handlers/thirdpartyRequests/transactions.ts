@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -35,7 +36,7 @@ import { Transactions } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
 
 /**
- * summary: CreateThirdpartyTransactionRequests
+ * summary: ThirdpartyRequestsTransactionsPost
  * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request
  * for the provided financial transaction in the server.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
@@ -70,14 +71,15 @@ const post = async (_context: unknown, request: Request, h: ResponseToolkit): Pr
       payload,
       span
     )
-    .catch(err => {
+      .catch(err => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
-      Logger.error(ReformatFSPIOPError(err))
-    })
+        Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
+        Logger.error(ReformatFSPIOPError(err))
+      })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
+    console.log(err)
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
     throw fspiopError

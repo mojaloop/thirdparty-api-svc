@@ -27,7 +27,7 @@ import * as Accounts from '~/domain/accounts'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
@@ -41,16 +41,16 @@ const getEndpointAndRenderAccountsRequestsIdExpected = [
   'http://central-ledger.local:3001',
   'dfspA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-  "/accounts/{{ID}}",
-  { "ID": "username1234" }
+  '/accounts/{{ID}}',
+  { ID: 'username1234' }
 ]
 
 const getEndpointAndRenderAccountRequestsIdExpectedSecond = [
   'http://central-ledger.local:3001',
   'pispA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-  "/accounts/{{ID}}/error",
-  { "ID": "username1234" }
+  '/accounts/{{ID}}/error',
+  { ID: 'username1234' }
 ]
 
 const sendRequestAccountsRequestsIdExpected = [
@@ -72,7 +72,7 @@ describe('domain/accounts/{ID}', () => {
     })
 
     it('forwards GET/PUT /accounts request', async (): Promise<void> => {
-      const mockSpan = new Span
+      const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/accounts/username1234')
       mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
       await Accounts.forwardAccountsIdRequest(
@@ -162,8 +162,8 @@ describe('domain/accounts/{ID}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-        "/accounts/{{ID}}/error",
-        { "ID": "username1234" }
+        '/accounts/{{ID}}/error',
+        { ID: 'username1234' }
       ]
       const sendRequestErrorExpected = [
         'http://pispa-sdk/accounts/username1234/error',
@@ -196,8 +196,8 @@ describe('domain/accounts/{ID}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-        "/accounts/{{ID}}/error",
-        { "ID": "username1234" }
+        '/accounts/{{ID}}/error',
+        { ID: 'username1234' }
       ]
       mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
@@ -41,7 +42,7 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
+async function post (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
   const span = (request as any).span
   // Trust that hapi parsed the ID and Payload for us
   const payload = request.payload as tpAPI.Schemas.ConsentRequestsPostRequest
@@ -69,7 +70,7 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       payload,
       span
     )
-    .catch((err: any) => {
+      .catch((err: any) => {
         // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
         Logger.error('ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -86,4 +87,3 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
 export default {
   post
 }
-

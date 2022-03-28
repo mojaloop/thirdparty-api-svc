@@ -5,7 +5,7 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import * as ConsentRequests from '~/domain/consentRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/consentRequests.feature')
 const feature = loadFeature(featurePath)
@@ -184,7 +184,6 @@ defineFeature(feature, (test): void => {
   })
 
   test('NotifyErrorConsentRequests', ({ given, when, then }): void => {
-
     const consentRequestsError = mockData.genericThirdpartyError
     const reqHeaders = Object.assign(consentRequestsError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
@@ -214,7 +213,7 @@ defineFeature(feature, (test): void => {
         'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         expect.objectContaining(request.headers),
         request.payload,
-        undefined
+        expect.any(Object)
       ]
 
       expect(response.statusCode).toBe(200)
