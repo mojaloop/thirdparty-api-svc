@@ -43,6 +43,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 
 import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
@@ -144,7 +145,7 @@ async function forwardTransactionRequestError (
   method: RestMethodsEnum,
   transactionRequestId: string,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

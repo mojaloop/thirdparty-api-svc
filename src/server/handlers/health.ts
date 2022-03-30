@@ -28,11 +28,11 @@
  --------------
  ******/
 
-import Shared from '@mojaloop/central-services-shared'
+import { HealthCheck } from '@mojaloop/central-services-shared'
 import Config from '../../shared/config'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
+const healthCheck = new HealthCheck.HealthCheck(Config.PACKAGE, [])
 /**
  * Operations on /health
  */

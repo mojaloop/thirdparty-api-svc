@@ -25,6 +25,9 @@
  ******/
 'use strict'
 
+import { Request } from '@hapi/hapi'
+import { Span } from '@mojaloop/event-sdk'
+
 export enum AmountType {
   SEND = 'SEND',
   RECEIVE = 'RECEIVE',
@@ -51,4 +54,8 @@ export enum AuthorizationStatus {
 export enum ConsentRequestChannelType {
   WEB = 'WEB',
   OTP = 'OTP',
+}
+
+export interface RequestSpanExtended extends Request {
+  span?: Span
 }

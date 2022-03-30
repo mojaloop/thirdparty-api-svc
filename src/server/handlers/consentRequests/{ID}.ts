@@ -27,7 +27,7 @@
 
  --------------
  ******/
-import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
@@ -35,6 +35,7 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { forwardConsentRequestsIdRequest } from '~/domain/consentRequests'
+import { RequestSpanExtended } from '~/interface/types'
 import { getSpanTags } from '~/shared/util'
 
 /**
@@ -44,8 +45,8 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function put (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+async function put (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
   const payload = request.payload as
@@ -96,8 +97,8 @@ async function put (_context: unknown, request: Request, h: ResponseToolkit): Pr
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function patch (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+async function patch (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
   const payload = request.payload as tpAPI.Schemas.ConsentRequestsIDPatchRequest

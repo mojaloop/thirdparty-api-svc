@@ -29,13 +29,14 @@
  ******/
 'use strict'
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import { ReformatFSPIOPError, APIErrorObject } from '@mojaloop/central-services-error-handling'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 import { forwardConsentsIdRequestError } from '~/domain/consents'
 import { getSpanTags } from '~/shared/util'
+import { RequestSpanExtended } from '~/interface/types'
 
 /**
   * summary: NotifyErrorConsents
@@ -46,8 +47,8 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
-const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+  const span = request.span
   const consentId: string = request.params.ID
   const payload = request.payload as APIErrorObject
 

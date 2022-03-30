@@ -28,9 +28,9 @@
 
  --------------
  ******/
- 'use strict'
+'use strict'
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import Logger from '@mojaloop/central-services-logger'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
@@ -43,6 +43,7 @@ import {
   forwardGetServicesServiceTypeRequestFromProviderService
 } from '~/domain/services'
 import { getSpanTags } from '~/shared/util'
+import { RequestSpanExtended } from '~/interface/types'
 
 /**
   * summary: GetServicesByServiceType
@@ -53,8 +54,8 @@ import { getSpanTags } from '~/shared/util'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-const get = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+  const span = request.span
   const serviceType: string = request.params.ServiceType
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -81,7 +82,7 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
       // destination header should be Switch
       const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
       const headers = {
-        ...request.headers,
+        ...request.headers
       }
       headers[Enum.Http.Headers.FSPIOP.SOURCE] = Enum.Http.Headers.FSPIOP.SWITCH.value
       headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationDfspId
@@ -101,7 +102,6 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
           Logger.error('Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error')
           Logger.error(ReformatFSPIOPError(err))
         })
-
     } else {
       // Note: calling async function without `await`
       forwardGetServicesServiceTypeRequestToProviderService(
@@ -111,11 +111,11 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
         serviceType,
         span
       )
-      .catch(err => {
+        .catch(err => {
         // Do nothing with the error - forwardServicesServiceTypeRequest takes care of async errors
-        Logger.error('Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+          Logger.error('Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error')
+          Logger.error(ReformatFSPIOPError(err))
+        })
     }
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
@@ -135,9 +135,9 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
-const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ServicesServiceTypePutResponse
-  const span = (request as any).span
+  const span = request.span
   const serviceType: string = request.params.ServiceType
 
   try {

@@ -40,6 +40,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
 // eslint is complaining about these imports. not sure why.
@@ -65,7 +66,7 @@ export async function forwardConsentsIdRequestError (
   consentsId: string,
   headers: HapiUtil.Dictionary<string>,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -129,7 +130,7 @@ export async function forwardConsentsIdRequest (
   tpAPI.Schemas.ConsentsIDPutResponseSigned |
   tpAPI.Schemas.ConsentsIDPatchResponseVerified |
   tpAPI.Schemas.ConsentsIDPatchResponseRevoked,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -201,7 +202,7 @@ export async function forwardConsentsRequest (
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentsPostRequestPISP |
   tpAPI.Schemas.ConsentsPostRequestAUTH,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

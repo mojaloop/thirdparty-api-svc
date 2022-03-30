@@ -43,6 +43,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
 import Config from '~/shared/config'
@@ -57,7 +58,7 @@ export async function forwardVerificationRequest (
   payload:
   tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest |
   tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -114,7 +115,7 @@ export async function forwardVerificationRequestError (
   headers: HapiUtil.Dictionary<string>,
   verificationRequestId: string,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

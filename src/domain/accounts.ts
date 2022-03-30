@@ -42,6 +42,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
 import Config from '~/shared/config'
@@ -64,7 +65,7 @@ export async function forwardAccountsIdRequestError (
   headers: HapiUtil.Dictionary<string>,
   userId: string,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -127,7 +128,7 @@ export async function forwardAccountsIdRequest (
   method: RestMethodsEnum,
   userId: string,
   payload?: tpAPI.Schemas.AccountsIDPutResponse,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

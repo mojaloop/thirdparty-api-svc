@@ -47,6 +47,7 @@ import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import { Span } from '@mojaloop/event-sdk'
 
 /**
  * @function forwardAuthorizationRequest
@@ -70,7 +71,7 @@ export async function forwardAuthorizationRequest (
   authorizationRequestId: string,
   payload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
   | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -140,7 +141,7 @@ export async function forwardAuthorizationRequestError (
   headers: HapiUtil.Dictionary<string>,
   authorizationRequestId: string,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

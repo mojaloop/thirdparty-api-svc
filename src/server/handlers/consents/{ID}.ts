@@ -37,6 +37,7 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 import { getSpanTags } from '~/shared/util'
 import { forwardConsentsIdRequest } from '~/domain/consents'
+import { RequestSpanExtended } from '~/interface/types'
 
 /**
   * summary: UpdateConsent
@@ -45,8 +46,8 @@ import { forwardConsentsIdRequest } from '~/domain/consents'
   * produces: application/json
   * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
   */
-async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+async function put (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
   const payload = request.payload as
@@ -76,7 +77,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       payload,
       span
     )
-    .catch(err => {
+      .catch(err => {
         // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
         Logger.error('Consents::put - forwardConsentsIdRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -97,8 +98,8 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
   * produces: application/json
   * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
   */
- async function patch(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+async function patch (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
   const payload = request.payload as
@@ -128,7 +129,7 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       payload,
       span
     )
-    .catch(err => {
+      .catch(err => {
         // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
         Logger.error('Consents::patch - forwardConsentsIdRequest async handler threw an unhandled error')
         Logger.error(ReformatFSPIOPError(err))
@@ -146,4 +147,3 @@ export default {
   put,
   patch
 }
-

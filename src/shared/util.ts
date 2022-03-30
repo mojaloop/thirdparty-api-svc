@@ -35,7 +35,7 @@
 import { Request } from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
-import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
+import { EventStateMetadata, EventStatusType, Span } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
 
 /**
@@ -45,7 +45,7 @@ import { FSPIOPError } from '@mojaloop/central-services-error-handling'
  * @param {any} span request span
  * @returns {Promise<void>}
  */
-async function finishChildSpan (fspiopError: FSPIOPError, childSpan: any): Promise<void> {
+async function finishChildSpan (fspiopError: FSPIOPError, childSpan: Span): Promise<void> {
   const state = new EventStateMetadata(
     EventStatusType.failed,
     fspiopError.apiErrorCode.code,

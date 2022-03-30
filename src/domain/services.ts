@@ -41,6 +41,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
 
 import { inspect } from 'util'
@@ -64,7 +65,7 @@ export async function forwardServicesServiceTypeRequestError (
   headers: HapiUtil.Dictionary<string>,
   serviceType: string,
   error: APIErrorObject,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardServicesServiceTypeRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -124,7 +125,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   serviceType: string,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestToProviderService')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = Enum.Http.Headers.FSPIOP.SWITCH.value
@@ -194,7 +195,7 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService (
   method: RestMethodsEnum,
   serviceType: string,
   payload?: tpAPI.Schemas.ServicesServiceTypePutResponse,
-  span?: any): Promise<void> {
+  span?: Span): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestFromProviderService')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]

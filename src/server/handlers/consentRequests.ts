@@ -27,7 +27,7 @@
 
  --------------
  ******/
-import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
@@ -36,6 +36,7 @@ import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { forwardConsentRequestsRequest } from '~/domain/consentRequests'
 import { getSpanTags } from '~/shared/util'
+import { RequestSpanExtended } from '../../interface/types'
 
 /**
  * summary: CreateConsentRequest
@@ -46,8 +47,8 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+async function post (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const payload = request.payload as tpAPI.Schemas.ConsentRequestsPostRequest
   const consentRequestsId: string = payload.consentRequestId
