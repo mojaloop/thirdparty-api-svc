@@ -152,6 +152,7 @@ describe('consumer', () => {
   })
 
   describe('disconnect', () => {
+    // Any is fine here - we are mocking the handler
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let consumer: Consumer<any>
 

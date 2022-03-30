@@ -195,7 +195,7 @@ declare module '@mojaloop/central-services-stream' {
   }
 }
 
-declare module '@mojaloop/event-sdk'
+// declare module '@mojaloop/event-sdk'
 
 declare module '@hapi/good'
 declare module 'hapi-openapi'

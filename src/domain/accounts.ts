@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -59,7 +64,6 @@ export async function forwardAccountsIdRequestError (
   headers: HapiUtil.Dictionary<string>,
   userId: string,
   error: APIErrorObject,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -123,7 +127,6 @@ export async function forwardAccountsIdRequest (
   method: RestMethodsEnum,
   userId: string,
   payload?: tpAPI.Schemas.AccountsIDPutResponse,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   span?: any): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
@@ -165,7 +168,10 @@ export async function forwardAccountsIdRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_ACCOUNTS_PUT_ERROR,
       errorHeaders,
       userId,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 
