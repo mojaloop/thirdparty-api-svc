@@ -22,7 +22,6 @@
  --------------
  ******/
 
-
 // for mojaloop there is lack for @types files
 // to stop typescript complains, we have to declare some modules here
 declare module '@mojaloop/central-services-logger'
@@ -64,7 +63,7 @@ declare module '@mojaloop/central-services-metrics' {
 
   // `@mojaloop/central-services/metrics` exports a new class
   // i.e. `new metrics.Metrics()`
-  const defaultMetrics: Metrics;
+  const defaultMetrics: Metrics
   export default defaultMetrics
 }
 
@@ -104,7 +103,7 @@ declare module '@mojaloop/central-services-error-handling' {
   export function CreateFSPIOPError(apiErrorCode?: any, message?: any, cause?: any, replyTo?: any, extensions?: any, useDescriptionAsMessage?: boolean): FSPIOPError
 }
 declare module '@mojaloop/central-services-stream' {
-  import { EventEmitter } from 'events';
+  import { EventEmitter } from 'events'
   export interface GenericMessage<EventType, EventAction> {
     value: {
       from: string,
@@ -141,7 +140,7 @@ declare module '@mojaloop/central-services-stream' {
           responseTo: string,
         },
         trace: unknown
-        "protocol.createdAt": number
+        'protocol.createdAt': number
       }
     },
     size: number,
@@ -194,8 +193,6 @@ declare module '@mojaloop/central-services-stream' {
     }
   }
 }
-
-// declare module '@mojaloop/event-sdk'
 
 declare module '@hapi/good'
 declare module 'hapi-openapi'
