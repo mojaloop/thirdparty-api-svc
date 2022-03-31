@@ -39,15 +39,19 @@ import { getSpanTags } from '~/shared/util'
 import { RequestSpanExtended } from '~/interface/types'
 
 /**
-  * summary: PutServicesByServiceTypeAndError
-  * description: The HTTP request PUT /services/{ServiceType}/error is used to inform the client
-  * about services error.
-  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
-  * fspiop-destination, fspiop-encryption, fspiop-signature, fspiop-uri fspiop-http-method
-  * produces: application/json
-  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+ * summary: PutServicesByServiceTypeAndError
+ * description: The HTTP request PUT /services/{ServiceType}/error is used to inform the client
+ * about services error.
+ * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption, fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const serviceType: string = request.params.ServiceType
   const payload = request.payload as APIErrorObject
@@ -57,13 +61,17 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.SERVICE,
       Enum.Events.Event.Action.PUT,
-      { serviceType })
+      { serviceType }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardServicesServiceTypeRequestError(
@@ -72,12 +80,13 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       serviceType,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardServicesServiceTypeRequestError takes care of async errors
-        Logger.error('Services::put:error - forwardServicesServiceTypeRequestError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardServicesServiceTypeRequestError takes care of async errors
+      Logger.error(
+        'Services::put:error - forwardServicesServiceTypeRequestError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {

@@ -49,7 +49,8 @@ async function finishChildSpan (fspiopError: FSPIOPError, childSpan: Span): Prom
   const state = new EventStateMetadata(
     EventStatusType.failed,
     fspiopError.apiErrorCode.code,
-    fspiopError.apiErrorCode.message)
+    fspiopError.apiErrorCode.message
+  )
   await childSpan.error(fspiopError, state)
   await childSpan.finish(fspiopError.message, state)
 }
@@ -75,7 +76,8 @@ function getSpanTags (
   request: Request,
   eventType: string,
   eventAction: string,
-  customTags: { [id: string]: string } = {}): { [id: string]: string } {
+  customTags: { [id: string]: string } = {}
+): { [id: string]: string } {
   const tags: { [id: string]: string } = {
     eventType,
     eventAction,
@@ -86,8 +88,4 @@ function getSpanTags (
   return tags
 }
 
-export {
-  finishChildSpan,
-  getStackOrInspect,
-  getSpanTags
-}
+export { finishChildSpan, getStackOrInspect, getSpanTags }

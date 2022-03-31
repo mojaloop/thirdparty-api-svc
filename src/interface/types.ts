@@ -30,12 +30,12 @@ import { Span } from '@mojaloop/event-sdk'
 
 export enum AmountType {
   SEND = 'SEND',
-  RECEIVE = 'RECEIVE',
+  RECEIVE = 'RECEIVE'
 }
 
 /**
-* Transaction request state
-*/
+ * Transaction request state
+ */
 export enum TransactionRequestState {
   RECEIVED = 'RECEIVED',
   PENDING = 'PENDING',
@@ -44,16 +44,16 @@ export enum TransactionRequestState {
 }
 
 /**
-* authorization status
-*/
+ * authorization status
+ */
 export enum AuthorizationStatus {
   PENDING = 'PENDING',
-  VERIFIED = 'VERIFIED',
+  VERIFIED = 'VERIFIED'
 }
 
 export enum ConsentRequestChannelType {
   WEB = 'WEB',
-  OTP = 'OTP',
+  OTP = 'OTP'
 }
 
 export interface RequestSpanExtended extends Request {

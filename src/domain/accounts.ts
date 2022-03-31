@@ -65,7 +65,8 @@ export async function forwardAccountsIdRequestError (
   headers: HapiUtil.Dictionary<string>,
   userId: string,
   error: APIErrorObject,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -79,7 +80,9 @@ export async function forwardAccountsIdRequestError (
       path,
       { ID: userId }
     )
-    Logger.info(`accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`)
+    Logger.info(
+      `accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -128,7 +131,8 @@ export async function forwardAccountsIdRequest (
   method: RestMethodsEnum,
   userId: string,
   payload?: tpAPI.Schemas.AccountsIDPutResponse,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -153,12 +157,18 @@ export async function forwardAccountsIdRequest (
       childSpan
     )
 
-    Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `accounts::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`accounts::forwardAccountsIdRequest - Error forwarding accounts request to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `accounts::forwardAccountsIdRequest - Error forwarding accounts request to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,

@@ -56,9 +56,10 @@ export async function forwardVerificationRequest (
   method: RestMethodsEnum,
   verificationRequestId: string,
   payload:
-  tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest |
-  tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
-  span?: Span): Promise<void> {
+  | tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
+  | tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -70,7 +71,9 @@ export async function forwardVerificationRequest (
       path,
       { ID: verificationRequestId }
     )
-    Logger.info(`verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`)
+    Logger.info(
+      `verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -83,12 +86,18 @@ export async function forwardVerificationRequest (
       childSpan
     )
 
-    Logger.info(`verifications::forwardVerificationRequest - Forwarded thirdpartyTransaction verification: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `verifications::forwardVerificationRequest - Forwarded thirdpartyTransaction verification: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`verifications::forwardVerificationRequest - Error forwarding thirdpartyTransaction verification to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `verifications::forwardVerificationRequest - Error forwarding thirdpartyTransaction verification to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -99,7 +108,10 @@ export async function forwardVerificationRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_VERIFICATIONS_PUT_ERROR,
       errorHeaders,
       verificationRequestId,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 
@@ -115,11 +127,13 @@ export async function forwardVerificationRequestError (
   headers: HapiUtil.Dictionary<string>,
   verificationRequestId: string,
   error: APIErrorObject,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
+  const endpointType =
+    Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
@@ -129,7 +143,9 @@ export async function forwardVerificationRequestError (
       path,
       { ID: verificationRequestId }
     )
-    Logger.info(`verifications::forwardVerificationRequestError - Forwarding thirdpartyTransaction verification error callback to endpoint: ${url}`)
+    Logger.info(
+      `verifications::forwardVerificationRequestError - Forwarding thirdpartyTransaction verification error callback to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -142,12 +158,18 @@ export async function forwardVerificationRequestError (
       childSpan
     )
 
-    Logger.info(`verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction verification error callback: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction verification error callback: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`verifications::forwardVerificationRequestError - Error forwarding thirdpartyTransaction verification error to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `verifications::forwardVerificationRequestError - Error forwarding thirdpartyTransaction verification error to endpoint: ${inspect(
+        err
+      )}`
+    )
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)

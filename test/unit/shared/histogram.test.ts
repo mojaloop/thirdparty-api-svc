@@ -62,15 +62,14 @@ describe('histogram', (): void => {
       mockMetrics.mockReturnValue({
         startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
       })
-      mockForwardTransactionRequest.mockRejectedValueOnce(() => { throw new Error('Test Error') })
-      const wrappedHandler = wrapWithHistogram(
-        Handler.post,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      mockForwardTransactionRequest.mockRejectedValueOnce(() => {
+        throw new Error('Test Error')
+      })
+      const wrappedHandler = wrapWithHistogram(Handler.post, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const response = await wrappedHandler(null, request, mockResponseToolkit)
@@ -82,7 +81,7 @@ describe('histogram', (): void => {
       expect(mockHistTimerEnd).toHaveBeenCalledWith({ success: 'true' })
 
       // wait once more for the event loop - since we can't await `forwardTransactionRequest`
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
     })
 
     it('handles a handler error', async (): Promise<void> => {
@@ -94,14 +93,11 @@ describe('histogram', (): void => {
       })
       const mockHandler = jest.fn().mockRejectedValueOnce(new Error('Test Error'))
 
-      const wrappedHandler = wrapWithHistogram(
-        mockHandler,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      const wrappedHandler = wrapWithHistogram(mockHandler, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const action = async () => await wrappedHandler(null, request, mockResponseToolkit)
@@ -115,16 +111,15 @@ describe('histogram', (): void => {
 
     it('throws original `Metrics.getHistogram()` error', async (): Promise<void> => {
       // Arrange
-      mockMetrics.mockImplementationOnce(() => { throw new Error('Test Error') })
+      mockMetrics.mockImplementationOnce(() => {
+        throw new Error('Test Error')
+      })
       const mockHandler = jest.fn()
-      const wrappedHandler = wrapWithHistogram(
-        mockHandler,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      const wrappedHandler = wrapWithHistogram(mockHandler, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const action = async () => await wrappedHandler(null, request, mockResponseToolkit)

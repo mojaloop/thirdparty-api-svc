@@ -47,7 +47,11 @@ import { RequestSpanExtended } from '../../interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+async function post(
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const payload = request.payload as tpAPI.Schemas.ConsentRequestsPostRequest
@@ -58,13 +62,17 @@ async function post (_context: unknown, request: RequestSpanExtended, h: Respons
       request,
       Enum.Events.Event.Type.CONSENT_REQUEST,
       Enum.Events.Event.Action.POST,
-      { consentRequestsId })
+      { consentRequestsId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardConsentRequestsRequest(
@@ -74,12 +82,13 @@ async function post (_context: unknown, request: RequestSpanExtended, h: Respons
       Enum.Http.RestMethods.POST,
       payload,
       span
-    )
-      .catch((err) => {
-        // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
-        Logger.error('ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardConsentRequestsRequest takes care of async errors
+      Logger.error(
+        'ConsentRequests::post - forwardConsentRequestsRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {

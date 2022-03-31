@@ -36,7 +36,10 @@ jest.mock('~/shared/config', () => ({
 }))
 const mockData = JSON.parse(JSON.stringify(TestData))
 
-const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
+const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
 const getServicesByServiceTypeRequest = mockData.getServicesByServiceTypeRequest
 const putServicesByServiceTypeRequest = mockData.putServicesByServiceTypeRequest
 
@@ -63,6 +66,8 @@ describe.only('GET /services/{{ServiceType}} with PARTICIPANT_LIST_LOCAL', () =>
 
     // Assert
     expect(response.statusCode).toBe(202)
-    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+      ...expected
+    )
   })
 })

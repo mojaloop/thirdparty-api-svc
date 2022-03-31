@@ -63,10 +63,11 @@ export const updateTransactionRequest = {
   payload: updateTransactionRequestPayload
 }
 
-const patchThirdpartyTransactionIdRequestPayload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse = {
-  transactionRequestState: 'ACCEPTED',
-  transactionState: 'COMPLETED'
-}
+const patchThirdpartyTransactionIdRequestPayload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse =
+  {
+    transactionRequestState: 'ACCEPTED',
+    transactionState: 'COMPLETED'
+  }
 
 export const patchThirdpartyTransactionIdRequest = {
   headers: {
@@ -111,7 +112,7 @@ export const notificationEventCommit = {
         id: 'bc1a9c36-4429-4205-8553-11f92de1919e'
       },
       headers: {
-        'content-type': 'application/vnd.interoperability.transfers+json;version=1.0',
+        'content-type': 'application/vnd.interoperability.transfers+jsonversion=1.0',
         date: '2020-09-09T03:58:36.000Z',
         'fspiop-source': 'dfspb',
         'fspiop-destination': 'dfspa',
@@ -120,7 +121,8 @@ export const notificationEventCommit = {
         host: 'ml-api-adapter:3000',
         connection: 'close'
       },
-      payload: 'data:application/vnd.interoperability.transfers+json;version=1.0;base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ'
+      payload:
+        'data:application/vnd.interoperability.transfers+jsonversion=1.0base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ'
     },
     type: 'application/json',
     metadata: {
@@ -144,7 +146,8 @@ export const notificationEventCommit = {
         spanId: '0b142ddb9e695312',
         parentSpanId: 'e933005ac5ade0c6',
         tags: {
-          tracestate: 'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
+          tracestate:
+            'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
           transactionType: 'transfer',
           transactionAction: 'fulfil',
           transactionId: 'bc1a9c36-4429-4205-8553-11f92de1919e',
@@ -173,7 +176,7 @@ export const notificationEventTransactionCommit = {
         id: 'bc1a9c36-4429-4205-8553-11f92de1919e'
       },
       headers: {
-        'content-type': 'application/vnd.interoperability.transfers+json;version=1.0',
+        'content-type': 'application/vnd.interoperability.transfers+jsonversion=1.0',
         date: '2020-09-09T03:58:36.000Z',
         'fspiop-source': 'Hub',
         'fspiop-destination': 'pispA',
@@ -182,7 +185,8 @@ export const notificationEventTransactionCommit = {
         host: 'ml-api-adapter:3000',
         connection: 'close'
       },
-      payload: 'data:application/vnd.interoperability.transfers+json;version=1.0;base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ'
+      payload:
+        'data:application/vnd.interoperability.transfers+jsonversion=1.0base64,eyJjb21wbGV0ZWRUaW1lc3RhbXAiOiIyMDIwLTA5LTA5VDAzOjU4OjM2Ljg0NFoiLCJ0cmFuc2ZlclN0YXRlIjoiQ09NTUlUVEVEIiwiZnVsZmlsbWVudCI6Ii1TODBPZ0pMbEpSVElHUFAxMlpZTnFjZEhLQlQ3WHNVZDFjenVOMUI5RzQifQ'
     },
     type: 'application/json',
     metadata: {
@@ -206,7 +210,8 @@ export const notificationEventTransactionCommit = {
         spanId: '0b142ddb9e695312',
         parentSpanId: 'e933005ac5ade0c6',
         tags: {
-          tracestate: 'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
+          tracestate:
+            'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
           transactionType: 'transfer',
           transactionAction: 'fulfil',
           transactionId: 'bc1a9c36-4429-4205-8553-11f92de1919e',
@@ -231,23 +236,14 @@ const consentRequestsPostRequestPayload: tpAPI.Schemas.ConsentRequestsPostReques
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     },
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
-  authChannels: [
-    'WEB',
-    'OTP'
-  ],
+  authChannels: ['WEB', 'OTP'],
   callbackUri: 'pisp-app://callback.com'
 }
 
@@ -264,22 +260,14 @@ const consentRequestsPutRequestWebPayload: tpAPI.Schemas.ConsentRequestsIDPutRes
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     },
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
-  authChannels: [
-    'WEB'
-  ],
+  authChannels: ['WEB'],
   callbackUri: 'pisp-app://callback.com',
   authUri: 'dfspa.com/authorize?consentRequestsId=b82348b9-81f6-42ea-b5c4-80667d5740fe'
 }
@@ -297,22 +285,14 @@ const consentRequestsPutRequestOTPPayload: tpAPI.Schemas.ConsentRequestsIDPutRes
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     },
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
-  authChannels: [
-    'OTP'
-  ],
+  authChannels: ['OTP'],
   callbackUri: 'pisp-app://callback.com'
 }
 
@@ -332,10 +312,7 @@ const consentsPostRequestPISPPayload: tpAPI.Schemas.ConsentsPostRequestPISP = {
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ]
 }
@@ -355,10 +332,7 @@ const consentsPostRequestAUTHPayload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
   credential: {
@@ -368,8 +342,10 @@ const consentsPostRequestAUTHPayload: tpAPI.Schemas.ConsentsPostRequestAUTH = {
       id: 'credential id: identifier of pair of keys, base64 encoded, min length 59',
       rawId: 'raw credential id: identifier of pair of keys, base64 encoded, min length 59',
       response: {
-        clientDataJSON: 'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        attestationObject: 'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+        clientDataJSON:
+          'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        attestationObject:
+          'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
       },
       type: 'public-key'
     }
@@ -389,17 +365,11 @@ const consentsIdPutRequestSignedPayload: tpAPI.Schemas.ConsentsIDPutResponseSign
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     },
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
   credential: {
@@ -409,8 +379,10 @@ const consentsIdPutRequestSignedPayload: tpAPI.Schemas.ConsentsIDPutResponseSign
       id: 'credential id: identifier of pair of keys, base64 encoded, min length 59',
       rawId: 'raw credential id: identifier of pair of keys, base64 encoded, min length 59',
       response: {
-        clientDataJSON: 'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        attestationObject: 'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+        clientDataJSON:
+          'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        attestationObject:
+          'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
       },
       type: 'public-key'
     }
@@ -432,17 +404,11 @@ const consentsIdPutRequestVerifiedPayload: tpAPI.Schemas.ConsentsIDPutResponseVe
   scopes: [
     {
       address: 'dfspa.username.1234',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     },
     {
       address: 'dfspa.username.5678',
-      actions: [
-        'ACCOUNTS_TRANSFER',
-        'ACCOUNTS_GET_BALANCE'
-      ]
+      actions: ['ACCOUNTS_TRANSFER', 'ACCOUNTS_GET_BALANCE']
     }
   ],
   credential: {
@@ -452,8 +418,10 @@ const consentsIdPutRequestVerifiedPayload: tpAPI.Schemas.ConsentsIDPutResponseVe
       id: 'credential id: identifier of pair of keys, base64 encoded, min length 59',
       rawId: 'raw credential id: identifier of pair of keys, base64 encoded, min length 59',
       response: {
-        clientDataJSON: 'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        attestationObject: 'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+        clientDataJSON:
+          'clientDataJSON-must-not-have-fewer-than-121-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        attestationObject:
+          'attestationObject-must-not-have-fewer-than-306-characters Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
       },
       type: 'public-key'
     }
@@ -616,10 +584,7 @@ export const getServicesByServiceTypeRequest = {
 }
 
 const putServicesByServiceTypeRequestPayload: tpAPI.Schemas.ServicesServiceTypePutResponse = {
-  providers: [
-    'dfspa',
-    'dfspb'
-  ]
+  providers: ['dfspa', 'dfspb']
 }
 
 export const putServicesByServiceTypeRequest = {

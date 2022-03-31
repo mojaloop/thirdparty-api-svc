@@ -10,9 +10,18 @@ import * as TestData from 'test/unit/data/mockData'
 const featurePath = path.join(__dirname, '../features/services.feature')
 const feature = loadFeature(featurePath)
 
-const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
-const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
-const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
+const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestToProviderService'
+)
+const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
+const mockForwardServicesServiceTypeRequestError = jest.spyOn(
+  Services,
+  'forwardServicesServiceTypeRequestError'
+)
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -28,8 +37,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.getServicesByServiceTypeRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/vnd.interoperability.services+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
+      accept: 'application/vnd.interoperability.services+jsonversion=1.0',
+      'content-type': 'application/vnd.interoperability.service+jsonversion=1.0'
     }
     const request = {
       method: 'GET',
@@ -41,13 +50,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'GetServicesByServiceType\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'GetServicesByServiceType' request", async (): Promise<ServerInjectResponse> => {
       mockForwardGetServicesServiceTypeRequestToProviderService.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/services/{{ServiceType}}',
         expect.objectContaining(request.headers),
@@ -58,7 +67,9 @@ defineFeature(feature, (test): void => {
 
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
-      expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...expected)
+      expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
+        ...expected
+      )
     })
   })
 
@@ -67,8 +78,8 @@ defineFeature(feature, (test): void => {
       method: 'PUT',
       url: '/services/THIRD_PARTY_DFSP',
       headers: {
-        'content-type': 'application/vnd.interoperability.service+json;version=1.0',
-        date: (new Date()).toISOString(),
+        'content-type': 'application/vnd.interoperability.service+jsonversion=1.0',
+        date: new Date().toISOString(),
         ...mockData.putServicesByServiceTypeRequest.headers
       },
       payload: mockData.putServicesByServiceTypeRequest.payload
@@ -79,13 +90,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'PutServicesByServiceType\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'PutServicesByServiceType' request", async (): Promise<ServerInjectResponse> => {
       mockForwardGetServicesServiceTypeRequestFromProviderService.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/services/{{ServiceType}}',
         'TP_CB_URL_SERVICES_PUT',
@@ -98,7 +109,9 @@ defineFeature(feature, (test): void => {
 
       expect(response.statusCode).toBe(200)
       expect(response.result).toBeNull()
-      expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+      expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+        ...expected
+      )
     })
   })
 
@@ -106,7 +119,7 @@ defineFeature(feature, (test): void => {
     const servicesRequestError = mockData.putServicesByServiceTypeRequestError
     const reqHeaders = Object.assign(servicesRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
+      'content-type': 'application/vnd.interoperability.service+jsonversion=1.0'
     })
     const request = {
       method: 'PUT',
@@ -120,13 +133,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'PutServicesByIdAndError\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'PutServicesByIdAndError' request", async (): Promise<ServerInjectResponse> => {
       mockForwardServicesServiceTypeRequestError.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/services/{{ServiceType}}/error',
         expect.objectContaining(request.headers),

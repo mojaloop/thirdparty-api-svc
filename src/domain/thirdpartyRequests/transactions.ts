@@ -70,16 +70,17 @@ async function forwardTransactionRequest (
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
   payload?:
-  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
-  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse |
-  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
-  span?: any): Promise<void> {
+  | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
+  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequest')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string =
-    (payload && isCreateRequest(payload)) ? payload.transactionRequestId : params.ID
+    payload && isCreateRequest(payload) ? payload.transactionRequestId : params.ID
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
@@ -88,7 +89,9 @@ async function forwardTransactionRequest (
       path,
       params || {}
     )
-    Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
+    Logger.info(
+      `transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`
+    )
     await Util.Request.sendRequest(
       fullUrl,
       headers,
@@ -97,15 +100,22 @@ async function forwardTransactionRequest (
       method,
       method.trim().toUpperCase() !== Enum.Http.RestMethods.GET ? payloadLocal : undefined,
       Enum.Http.ResponseTypes.JSON,
-      childSpan)
+      childSpan
+    )
 
-    Logger.info(`transactions::forwardTransactionRequest - Forwarded transaction request ${transactionRequestId} from ${fspiopSource} to ${fspiopDest}`)
+    Logger.info(
+      `transactions::forwardTransactionRequest - Forwarded transaction request ${transactionRequestId} from ${fspiopSource} to ${fspiopDest}`
+    )
 
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`transactions::forwardTransactionRequest - Error forwarding transaction request to endpoint : ${inspect(err)}`)
+    Logger.error(
+      `transactions::forwardTransactionRequest - Error forwarding transaction request to endpoint : ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -117,8 +127,12 @@ async function forwardTransactionRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
-      childSpan)
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
+      childSpan
+    )
 
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -145,7 +159,8 @@ async function forwardTransactionRequestError (
   method: RestMethodsEnum,
   transactionRequestId: string,
   error: APIErrorObject,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequestError')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -159,7 +174,9 @@ async function forwardTransactionRequestError (
       path,
       { ID: transactionRequestId }
     )
-    Logger.info(`transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${fullUrl}`)
+    Logger.info(
+      `transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${fullUrl}`
+    )
 
     await Util.Request.sendRequest(
       fullUrl,
@@ -169,15 +186,22 @@ async function forwardTransactionRequestError (
       method,
       error,
       Enum.Http.ResponseTypes.JSON,
-      childSpan)
+      childSpan
+    )
 
-    Logger.info(`transactions::forwardTransactionRequestError - Forwarding transaction request error for ${transactionRequestId} from ${fspiopSource} to ${fspiopDestination}`)
+    Logger.info(
+      `transactions::forwardTransactionRequestError - Forwarding transaction request error for ${transactionRequestId} from ${fspiopSource} to ${fspiopDestination}`
+    )
 
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`transactions::forwardTransactionRequestError - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err as Error)}`)
+    Logger.error(
+      `transactions::forwardTransactionRequestError - Error forwarding transaction request error to endpoint : ${getStackOrInspect(
+        err as Error
+      )}`
+    )
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -192,7 +216,7 @@ async function forwardTransactionRequestError (
  * @param {string} path Callback endpoint path
  * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method PATCH
- * @param {string} payload Base64 encoded payload string of the received kafka commit message.
+ * @param {string} payload Body of the PATCH request
  * @throws {FSPIOPError} Will throw an error if no endpoint to forward the transactions requests is
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
@@ -207,8 +231,6 @@ async function forwardTransactionRequestNotification (
 ): Promise<void> {
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const decodedPayload: object = Util.StreamingProtocol.decodePayload(payload, { asParsed: true })
 
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
@@ -227,21 +249,28 @@ async function forwardTransactionRequestNotification (
       fspiopSource,
       fspiopDestination,
       method,
-      decodedPayload,
+      payload,
       Enum.Http.ResponseTypes.JSON,
-      null)
+      null
+    )
   } catch (err) {
     // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
-    Logger.error(`transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(err as Error)}`)
+    Logger.error(
+      `transactions::forwardTransactionRequestNotification - Error forwarding transaction request error to endpoint : ${getStackOrInspect(
+        err as Error
+      )}`
+    )
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     throw fspiopError
   }
 }
 
 type CreateOrUpdateReq =
-  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest |
-  tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
-function isCreateRequest (request: CreateOrUpdateReq): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
+  | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
+  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+function isCreateRequest (
+  request: CreateOrUpdateReq
+): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
   if ((request as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest).transactionRequestId) {
     return true
   }

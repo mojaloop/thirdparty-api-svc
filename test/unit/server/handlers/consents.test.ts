@@ -77,7 +77,11 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -91,13 +95,17 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
     })
@@ -107,12 +115,12 @@ describe('consents handler', () => {
       const request = {
         ...postConsentsRequest,
         // Will setting the span to null do stuff?
-        span: {
-        }
+        span: {}
       }
 
       // Act
-      const action = async () => await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

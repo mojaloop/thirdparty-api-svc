@@ -38,33 +38,40 @@ import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import * as Verifications from '~/domain/thirdpartyRequests/verifications'
 import { getSpanTags } from '~/shared/util'
-import { RequestSpanExtended } from '../../../interface/types';
+import { RequestSpanExtended } from '../../../interface/types'
 
 /**
-  * summary: VerifyThirdPartyAuthorization
-  * description: The method POST /thirdpartyRequests/verifications/{ID} is used
-  *   by the DFSP to ask the PISP to authorize a transaction before continuing
-  * parameters: body, content-length
-  * produces: application/json
-  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-async function post (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+ * summary: VerifyThirdPartyAuthorization
+ * description: The method POST /thirdpartyRequests/verifications/{ID} is used
+ *   by the DFSP to ask the PISP to authorize a transaction before continuing
+ * parameters: body, content-length
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+async function post(
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
   const span = request.span
-  const payload = request.payload as
-    tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
   const verificationRequestId = payload.verificationRequestId
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.POST,
-      { verificationRequestId })
+      { verificationRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Verifications.forwardVerificationRequest(
@@ -75,12 +82,13 @@ async function post (_context: unknown, request: RequestSpanExtended, h: Respons
       verificationRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardVerificationRequest takes care of async errors
-        Logger.error('Verifications::post - forwardVerificationRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardVerificationRequest takes care of async errors
+      Logger.error(
+        'Verifications::post - forwardVerificationRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -90,25 +98,32 @@ async function post (_context: unknown, request: RequestSpanExtended, h: Respons
   }
 }
 
-async function put (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
+async function put(
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const verificationRequestId: string = request.params.ID
-  const payload = request.payload as
-    tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
+  const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
-      { verificationRequestId })
+      { verificationRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Verifications.forwardVerificationRequest(
@@ -119,12 +134,13 @@ async function put (_context: unknown, request: RequestSpanExtended, h: Response
       verificationRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardVerificationRequest takes care of async errors
-        Logger.error('Verifications::post - forwardVerificationRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardVerificationRequest takes care of async errors
+      Logger.error(
+        'Verifications::post - forwardVerificationRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -143,7 +159,11 @@ async function put (_context: unknown, request: RequestSpanExtended, h: Response
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const putError = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const putError = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const verificationRequestId: string = request.params.ID
   const payload = request.payload as APIErrorObject
@@ -153,13 +173,17 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
       request,
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Verifications.forwardVerificationRequestError(
@@ -168,12 +192,13 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
       verificationRequestId,
       payload,
       span
-    )
-      .catch((err: unknown) => {
-        // Do nothing with the error - forwardVerificationRequest takes care of async errors
-        Logger.error('Verifications::post - forwardVerificationRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err: unknown) => {
+      // Do nothing with the error - forwardVerificationRequest takes care of async errors
+      Logger.error(
+        'Verifications::post - forwardVerificationRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -183,8 +208,4 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
   }
 }
 
-export {
-  post,
-  put,
-  putError
-}
+export { post, put, putError }

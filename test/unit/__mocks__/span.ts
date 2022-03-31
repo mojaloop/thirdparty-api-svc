@@ -1,14 +1,15 @@
 /**
  * Mock Span
  */
+
 class Span {
   public child: Span | undefined
   public isFinished: boolean
-  public constructor () {
+  public constructor() {
     this.isFinished = false
   }
 
-  public getChild () {
+  public getChild() {
     this.child = new Span()
     return this.child
   }

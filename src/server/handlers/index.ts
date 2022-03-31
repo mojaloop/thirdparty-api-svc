@@ -51,62 +51,41 @@ const OpenapiBackend = Util.OpenapiBackend
 export default {
   HealthGet: Health.get,
   MetricsGet: Metrics.get,
-  GetThirdpartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactions.get,
-    [
-      'thirdpartyRequests_transactions_get',
-      'Get thirdpartyRequests transactions request',
-      ['success']
-    ]
-  ),
-  ThirdpartyRequestsTransactionsPost: wrapWithHistogram(
-    ThirdpartyTransactions.post,
-    [
-      'thirdpartyRequests_transactions_post',
-      'Post thirdpartyRequests transactions request',
-      ['success']
-    ]
-  ),
-  UpdateThirdPartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactions.put,
-    [
-      'thirdpartyRequests_transactions_put',
-      'Put thirdpartyRequests transactions request',
-      ['success']
-    ]
-  ),
-  NotifyThirdpartyTransactionRequests: wrapWithHistogram(
-    ThirdpartyTransactions.patch,
-    [
-      'thirdpartyRequests_transactions_patch',
-      'Patch thirdpartyRequests transactions request',
-      ['success']
-    ]
-  ),
-  ThirdpartyTransactionRequestsError: wrapWithHistogram(
-    ThirdpartyTransactions.putError,
-    [
-      'thirdpartyRequests_transactions_error_put',
-      'Put thirdpartyRequests transactions error request',
-      ['success']
-    ]
-  ),
-  PostThirdpartyRequestsAuthorizations: wrapWithHistogram(
-    ThirdpartyRequestsAuthorizations.post,
-    [
-      'thirdpartyRequests_authorizations_post',
-      'Post thirdpartyRequests authorizations request',
-      ['success']
-    ]
-  ),
-  PutThirdpartyRequestsAuthorizationsById: wrapWithHistogram(
-    ThirdpartyRequestsAuthorizations.put,
-    [
-      'thirdpartyRequests_authorizations_put',
-      'Put thirdpartyRequests authorizations request',
-      ['success']
-    ]
-  ),
+  GetThirdpartyTransactionRequests: wrapWithHistogram(ThirdpartyTransactions.get, [
+    'thirdpartyRequests_transactions_get',
+    'Get thirdpartyRequests transactions request',
+    ['success']
+  ]),
+  ThirdpartyRequestsTransactionsPost: wrapWithHistogram(ThirdpartyTransactions.post, [
+    'thirdpartyRequests_transactions_post',
+    'Post thirdpartyRequests transactions request',
+    ['success']
+  ]),
+  UpdateThirdPartyTransactionRequests: wrapWithHistogram(ThirdpartyTransactions.put, [
+    'thirdpartyRequests_transactions_put',
+    'Put thirdpartyRequests transactions request',
+    ['success']
+  ]),
+  NotifyThirdpartyTransactionRequests: wrapWithHistogram(ThirdpartyTransactions.patch, [
+    'thirdpartyRequests_transactions_patch',
+    'Patch thirdpartyRequests transactions request',
+    ['success']
+  ]),
+  ThirdpartyTransactionRequestsError: wrapWithHistogram(ThirdpartyTransactions.putError, [
+    'thirdpartyRequests_transactions_error_put',
+    'Put thirdpartyRequests transactions error request',
+    ['success']
+  ]),
+  PostThirdpartyRequestsAuthorizations: wrapWithHistogram(ThirdpartyRequestsAuthorizations.post, [
+    'thirdpartyRequests_authorizations_post',
+    'Post thirdpartyRequests authorizations request',
+    ['success']
+  ]),
+  PutThirdpartyRequestsAuthorizationsById: wrapWithHistogram(ThirdpartyRequestsAuthorizations.put, [
+    'thirdpartyRequests_authorizations_put',
+    'Put thirdpartyRequests authorizations request',
+    ['success']
+  ]),
   PutThirdpartyRequestsAuthorizationsByIdAndError: wrapWithHistogram(
     ThirdpartyRequestsAuthorizations.putError,
     [
@@ -115,22 +94,16 @@ export default {
       ['success']
     ]
   ),
-  PostThirdpartyRequestsVerifications: wrapWithHistogram(
-    ThirdpartyRequestsVerifications.post,
-    [
-      'thirdpartyRequests_verifications_post',
-      'Post thirdpartyRequests verifications request',
-      ['success']
-    ]
-  ),
-  PutThirdpartyRequestsVerificationsById: wrapWithHistogram(
-    ThirdpartyRequestsVerifications.put,
-    [
-      'thirdpartyRequests_verifications_put',
-      'Put thirdpartyRequests verifications request',
-      ['success']
-    ]
-  ),
+  PostThirdpartyRequestsVerifications: wrapWithHistogram(ThirdpartyRequestsVerifications.post, [
+    'thirdpartyRequests_verifications_post',
+    'Post thirdpartyRequests verifications request',
+    ['success']
+  ]),
+  PutThirdpartyRequestsVerificationsById: wrapWithHistogram(ThirdpartyRequestsVerifications.put, [
+    'thirdpartyRequests_verifications_put',
+    'Put thirdpartyRequests verifications request',
+    ['success']
+  ]),
   PutThirdpartyRequestsVerificationsByIdAndError: wrapWithHistogram(
     ThirdpartyRequestsVerifications.putError,
     [
@@ -139,118 +112,76 @@ export default {
       ['success']
     ]
   ),
-  CreateConsentRequest: wrapWithHistogram(
-    ConsentRequests.post,
-    [
-      'consentRequests_post',
-      'Post consentRequests request',
-      ['success']
-    ]
-  ),
-  UpdateConsentRequest: wrapWithHistogram(
-    ConsentRequestsId.put,
-    [
-      'consentRequestsId_put',
-      'Put consentRequestsId request',
-      ['success']
-    ]
-  ),
-  PatchConsentRequest: wrapWithHistogram(
-    ConsentRequestsId.patch,
-    [
-      'consentRequestsId_patch',
-      'Patch consentRequestsId request',
-      ['success']
-    ]
-  ),
-  PostConsents: wrapWithHistogram(
-    Consents.post,
-    [
-      'consents_post',
-      'Post consents request',
-      ['success']
-    ]
-  ),
-  PutConsentByID: wrapWithHistogram(
-    ConsentsId.put,
-    [
-      'consentsId_put',
-      'Put consentsId request',
-      ['success']
-    ]
-  ),
-  PatchConsentByID: wrapWithHistogram(
-    ConsentsId.patch,
-    [
-      'consentsId_patch',
-      'Patch consentsId request',
-      ['success']
-    ]
-  ),
-  NotifyErrorConsents: wrapWithHistogram(
-    ConsentsByIdError.put,
-    [
-      'consentsId_error_put',
-      'Put consentsId error request',
-      ['success']
-    ]
-  ),
-  GetAccountsByUserId: wrapWithHistogram(
-    Accounts.get,
-    [
-      'accounts_by_userid_get',
-      'Get Accounts by userId request',
-      ['success']
-    ]
-  ),
-  UpdateAccountsByUserId: wrapWithHistogram(
-    Accounts.put,
-    [
-      'accounts_by_userid_put',
-      'Put accountsByUserId request',
-      ['success']
-    ]
-  ),
-  UpdateAccountsByUserIdError: wrapWithHistogram(
-    AccountsByUserIdError.put,
-    [
-      'accounts_by_userid_error_put',
-      'Put accountsByUserIdError request',
-      ['success']
-    ]
-  ),
-  NotifyErrorConsentRequests: wrapWithHistogram(
-    ConsentRequestsByIdError.put,
-    [
-      'consentRequestsId_error_put',
-      'Put consentRequestsId error request',
-      ['success']
-    ]
-  ),
-  GetServicesByServiceType: wrapWithHistogram(
-    Services.get,
-    [
-      'servicesServiceType_get',
-      'Put servicesServiceType request',
-      ['success']
-    ]
-  ),
-  PutServicesByServiceType: wrapWithHistogram(
-    Services.put,
-    [
-      'servicesServiceType_put',
-      'Put servicesServiceType request',
-      ['success']
-    ]
-  ),
-  PutServicesByServiceTypeAndError: wrapWithHistogram(
-    ServicesByServiceTypeError.put,
-    [
-      'servicesServiceType_error_put',
-      'Put servicesServiceType error request',
-      ['success']
-    ]
-  ),
+  CreateConsentRequest: wrapWithHistogram(ConsentRequests.post, [
+    'consentRequests_post',
+    'Post consentRequests request',
+    ['success']
+  ]),
+  UpdateConsentRequest: wrapWithHistogram(ConsentRequestsId.put, [
+    'consentRequestsId_put',
+    'Put consentRequestsId request',
+    ['success']
+  ]),
+  PatchConsentRequest: wrapWithHistogram(ConsentRequestsId.patch, [
+    'consentRequestsId_patch',
+    'Patch consentRequestsId request',
+    ['success']
+  ]),
+  PostConsents: wrapWithHistogram(Consents.post, [
+    'consents_post',
+    'Post consents request',
+    ['success']
+  ]),
+  PutConsentByID: wrapWithHistogram(ConsentsId.put, [
+    'consentsId_put',
+    'Put consentsId request',
+    ['success']
+  ]),
+  PatchConsentByID: wrapWithHistogram(ConsentsId.patch, [
+    'consentsId_patch',
+    'Patch consentsId request',
+    ['success']
+  ]),
+  NotifyErrorConsents: wrapWithHistogram(ConsentsByIdError.put, [
+    'consentsId_error_put',
+    'Put consentsId error request',
+    ['success']
+  ]),
+  GetAccountsByUserId: wrapWithHistogram(Accounts.get, [
+    'accounts_by_userid_get',
+    'Get Accounts by userId request',
+    ['success']
+  ]),
+  UpdateAccountsByUserId: wrapWithHistogram(Accounts.put, [
+    'accounts_by_userid_put',
+    'Put accountsByUserId request',
+    ['success']
+  ]),
+  UpdateAccountsByUserIdError: wrapWithHistogram(AccountsByUserIdError.put, [
+    'accounts_by_userid_error_put',
+    'Put accountsByUserIdError request',
+    ['success']
+  ]),
+  NotifyErrorConsentRequests: wrapWithHistogram(ConsentRequestsByIdError.put, [
+    'consentRequestsId_error_put',
+    'Put consentRequestsId error request',
+    ['success']
+  ]),
+  GetServicesByServiceType: wrapWithHistogram(Services.get, [
+    'servicesServiceType_get',
+    'Put servicesServiceType request',
+    ['success']
+  ]),
+  PutServicesByServiceType: wrapWithHistogram(Services.put, [
+    'servicesServiceType_put',
+    'Put servicesServiceType request',
+    ['success']
+  ]),
+  PutServicesByServiceTypeAndError: wrapWithHistogram(ServicesByServiceTypeError.put, [
+    'servicesServiceType_error_put',
+    'Put servicesServiceType error request',
+    ['success']
+  ]),
   validationFail: OpenapiBackend.validationFail,
   notFound: OpenapiBackend.notFound,
   methodNotAllowed: OpenapiBackend.methodNotAllowed

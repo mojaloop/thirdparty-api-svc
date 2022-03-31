@@ -24,80 +24,85 @@ Contributors Contributors
  - Kevin Leyow <kevin.leyow@modusbox.com>
  --------------
  ******/
- 'use strict'
- import { Request } from '@hapi/hapi'
- import Logger from '@mojaloop/central-services-logger'
- import ConsentsIdErrorHandler from '~/server/handlers/consents/{ID}/error'
- import * as Consents from '~/domain/consents'
- import * as TestData from 'test/unit/data/mockData'
- import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
+'use strict'
+import { Request } from '@hapi/hapi'
+import Logger from '@mojaloop/central-services-logger'
+import ConsentsIdErrorHandler from '~/server/handlers/consents/{ID}/error'
+import * as Consents from '~/domain/consents'
+import * as TestData from 'test/unit/data/mockData'
+import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
- const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
- const mockLoggerPush = jest.spyOn(Logger, 'push')
- const mockLoggerError = jest.spyOn(Logger, 'error')
- const MockData = JSON.parse(JSON.stringify(TestData))
+const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
+const mockLoggerPush = jest.spyOn(Logger, 'push')
+const mockLoggerError = jest.spyOn(Logger, 'error')
+const MockData = JSON.parse(JSON.stringify(TestData))
 
- const request: Request = MockData.genericThirdpartyError
+const request: Request = MockData.genericThirdpartyError
 
- describe('consent error handler', (): void => {
-   describe('PUT /consents/{ID}/error', (): void => {
-     beforeAll((): void => {
-       mockLoggerPush.mockReturnValue(null)
-       mockLoggerError.mockReturnValue(null)
-     })
+describe('consent error handler', (): void => {
+  describe('PUT /consents/{ID}/error', (): void => {
+    beforeAll((): void => {
+      mockLoggerPush.mockReturnValue(null)
+      mockLoggerError.mockReturnValue(null)
+    })
 
-     beforeEach((): void => {
-       jest.clearAllMocks()
-     })
+    beforeEach((): void => {
+      jest.clearAllMocks()
+    })
 
-     const expected = [
-       '/consents/{{ID}}/error',
-       request.params.ID,
-       expect.objectContaining(request.headers),
-       request.payload,
-       undefined
-     ]
+    const expected = [
+      '/consents/{{ID}}/error',
+      request.params.ID,
+      expect.objectContaining(request.headers),
+      request.payload,
+      undefined
+    ]
 
-     it('handles a successful request', async (): Promise<void> => {
-       mockForwardConsentsIdRequestError.mockResolvedValueOnce()
+    it('handles a successful request', async (): Promise<void> => {
+      mockForwardConsentsIdRequestError.mockResolvedValueOnce()
 
-       // Act
-       const response = await ConsentsIdErrorHandler.put(null, request, mockResponseToolkit)
+      // Act
+      const response = await ConsentsIdErrorHandler.put(null, request, mockResponseToolkit)
 
-       // Assert
-       expect(response.statusCode).toBe(200)
-       expect(mockForwardConsentsIdRequestError).toHaveBeenCalledTimes(1)
-       expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
-     })
+      // Assert
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardConsentsIdRequestError).toHaveBeenCalledTimes(1)
+      expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
+    })
 
-     it('handles errors asynchronously', async () => {
-       // Arrange
-       mockForwardConsentsIdRequestError.mockRejectedValueOnce(new Error('Test Error'))
-       // Act
-       const response = await ConsentsIdErrorHandler.put(null, request, mockResponseToolkit)
+    it('handles errors asynchronously', async () => {
+      // Arrange
+      mockForwardConsentsIdRequestError.mockRejectedValueOnce(new Error('Test Error'))
+      // Act
+      const response = await ConsentsIdErrorHandler.put(null, request, mockResponseToolkit)
 
-       // Assert
-       expect(response.statusCode).toBe(200)
-       // wait once more for the event loop - since we can't await `runAllImmediates`
-       // this helps make sure the tests don't become flaky
-       await new Promise(resolve => setImmediate(resolve))
-       // The main test here is that there is no unhandledPromiseRejection!
-       expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
-     })
+      // Assert
+      expect(response.statusCode).toBe(200)
+      // wait once more for the event loop - since we can't await `runAllImmediates`
+      // this helps make sure the tests don't become flaky
+      await new Promise((resolve) => setImmediate(resolve))
+      // The main test here is that there is no unhandledPromiseRejection!
+      expect(mockForwardConsentsIdRequestError).toHaveBeenCalledWith(...expected)
+    })
 
-     it('handles validation errors synchronously', async (): Promise<void> => {
-       // Arrange
-       const badSpanRequest = {
-         ...request,
-         // Setting to empty span dict will cause a validation error
-         span: {}
-       }
+    it('handles validation errors synchronously', async (): Promise<void> => {
+      // Arrange
+      const badSpanRequest = {
+        ...request,
+        // Setting to empty span dict will cause a validation error
+        span: {}
+      }
 
-       // Act
-       const action = async () => await ConsentsIdErrorHandler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      // Act
+      const action = async () =>
+        await ConsentsIdErrorHandler.put(
+          null,
+          badSpanRequest as unknown as Request,
+          mockResponseToolkit
+        )
 
-       // Assert
-       await expect(action).rejects.toThrowError('span.setTags is not a function')
-     })
-   })
- })
+      // Assert
+      await expect(action).rejects.toThrowError('span.setTags is not a function')
+    })
+  })
+})

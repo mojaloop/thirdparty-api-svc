@@ -46,15 +46,19 @@ import { getSpanTags } from '~/shared/util'
 import { RequestSpanExtended } from '~/interface/types'
 
 /**
-  * summary: GetServicesByServiceType
-  * description: The HTTP request GET /services/{ServiceType} is used by a FSP to retrieve the list of potential participants
-  * that support a service from a Provider micro-service.
-  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
-  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
-  * produces: application/json
-  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+ * summary: GetServicesByServiceType
+ * description: The HTTP request GET /services/{ServiceType} is used by a FSP to retrieve the list of potential participants
+ * that support a service from a Provider micro-service.
+ * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const get = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const serviceType: string = request.params.ServiceType
   try {
@@ -62,13 +66,17 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.SERVICE,
       Enum.Events.Event.Action.GET,
-      { serviceType })
+      { serviceType }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // If PARTICIPANT_LIST_LOCAL is set, then we should use the local config to
     // respond to this request instead of forwarding it to another service
@@ -96,12 +104,13 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
         serviceType,
         payload,
         span
-      )
-        .catch(err => {
-          // Do nothing with the error - forwardGetServicesServiceTypeRequestFromProviderService takes care of async errors
-          Logger.error('Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error')
-          Logger.error(ReformatFSPIOPError(err))
-        })
+      ).catch((err) => {
+        // Do nothing with the error - forwardGetServicesServiceTypeRequestFromProviderService takes care of async errors
+        Logger.error(
+          'Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error'
+        )
+        Logger.error(ReformatFSPIOPError(err))
+      })
     } else {
       // Note: calling async function without `await`
       forwardGetServicesServiceTypeRequestToProviderService(
@@ -110,12 +119,13 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
         Enum.Http.RestMethods.GET,
         serviceType,
         span
-      )
-        .catch(err => {
+      ).catch((err) => {
         // Do nothing with the error - forwardServicesServiceTypeRequest takes care of async errors
-          Logger.error('Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error')
-          Logger.error(ReformatFSPIOPError(err))
-        })
+        Logger.error(
+          'Services::get - forwardGetServicesServiceTypeRequestToProviderService async handler threw an unhandled error'
+        )
+        Logger.error(ReformatFSPIOPError(err))
+      })
     }
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
@@ -127,15 +137,19 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
 }
 
 /**
-  * summary: PutServicesByServiceType
-  * description: The HTTP request PUT /services/{ServiceType} is used to forward the list of potential participants
-  * that support a service from a Provider micro-service to a FSP.
-  * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
-  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
-  * produces: application/json
-  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+ * summary: PutServicesByServiceType
+ * description: The HTTP request PUT /services/{ServiceType} is used to forward the list of potential participants
+ * that support a service from a Provider micro-service to a FSP.
+ * parameters: body, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ServicesServiceTypePutResponse
   const span = request.span
   const serviceType: string = request.params.ServiceType
@@ -145,13 +159,17 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.SERVICE,
       Enum.Events.Event.Action.PUT,
-      { serviceType })
+      { serviceType }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardGetServicesServiceTypeRequestFromProviderService(
@@ -162,12 +180,13 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       serviceType,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardGetServicesServiceTypeRequestFromProviderService takes care of async errors
-        Logger.error('Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardGetServicesServiceTypeRequestFromProviderService takes care of async errors
+      Logger.error(
+        'Services::put - forwardGetServicesServiceTypeRequestFromProviderService async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {

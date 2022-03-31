@@ -36,13 +36,13 @@ import Handlers from '../handlers'
 const OpenapiBackend = Util.OpenapiBackend
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function initialize (): Promise<ServerRegisterPluginObject<any>> {
+async function initialize(): Promise<ServerRegisterPluginObject<any>> {
   return {
     plugin: {
       name: 'openapi',
       version: '1.0.0',
       multiple: true,
-      register: function (server: Server, options: {[index: string]: string | object}): void {
+      register: function (server: Server, options: { [index: string]: string | object }): void {
         server.expose('openapi', options.openapi)
       }
     },

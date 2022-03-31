@@ -107,7 +107,10 @@ describe('consumer', () => {
 
     it('resolves `true` when connected', async () => {
       // Arrange
-      const mockGetMetadata = (_config: unknown, cb: (err: unknown, value: GetMetadataResult) => void) => {
+      const mockGetMetadata = (
+        _config: unknown,
+        cb: (err: unknown, value: GetMetadataResult) => void
+      ) => {
         return cb(null, { topics: [{ name: 'hello_topic' }] })
       }
       mockRdKafkaConsumer.getMetadata.mockImplementationOnce(mockGetMetadata)
@@ -122,7 +125,10 @@ describe('consumer', () => {
 
     it('throws an error if not connected to the topic', async () => {
       // Arrange
-      const mockGetMetadata = (_config: unknown, cb: (err: unknown, value: GetMetadataResult) => void) => {
+      const mockGetMetadata = (
+        _config: unknown,
+        cb: (err: unknown, value: GetMetadataResult) => void
+      ) => {
         return cb(null, { topics: [{ name: 'not_this_topic' }] })
       }
       mockRdKafkaConsumer.getMetadata.mockImplementationOnce(mockGetMetadata)
@@ -137,8 +143,13 @@ describe('consumer', () => {
 
     it('throws an error if getMetadata fails', async () => {
       // Arrange
-      const mockGetMetadata = (_config: unknown, cb: (err: unknown, value: GetMetadataResult) => void) => {
-        return cb(new Error('Test Error'), { topics: [{ name: 'not_this_topic' }] })
+      const mockGetMetadata = (
+        _config: unknown,
+        cb: (err: unknown, value: GetMetadataResult) => void
+      ) => {
+        return cb(new Error('Test Error'), {
+          topics: [{ name: 'not_this_topic' }]
+        })
       }
       mockRdKafkaConsumer.getMetadata.mockImplementationOnce(mockGetMetadata)
       await consumer.start()

@@ -590,7 +590,7 @@ paths:
         revocation of a previously agreed consent.
 
         For tracing and auditing purposes, the switch should be sure not to
-        delete the consent physically;
+        delete the consent physically
 
         instead, information relating to the consent should be marked as deleted
         and requests relating to the
@@ -3016,7 +3016,7 @@ components:
         restricted by a regular expression for interoperability reasons. This
         pattern does not allow any trailing zeroes at all, but allows an amount
         without a minor currency unit. It also only allows four digits in the
-        minor currency unit; a negative value is not allowed. Using more than 18
+        minor currency unit a negative value is not allowed. Using more than 18
         digits in the major currency unit is not allowed.
       example: '123.45'
     Money:

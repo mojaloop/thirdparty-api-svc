@@ -77,7 +77,12 @@ describe('domain/accounts/{ID}', () => {
     it('forwards GET/PUT /accounts request', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/accounts/username1234')
-      mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+      mockSendRequest.mockResolvedValue({
+        ok: true,
+        status: 202,
+        statusText: 'Accepted',
+        payload: null
+      })
       await Accounts.forwardAccountsIdRequest(
         '/accounts/{{ID}}',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
@@ -85,9 +90,13 @@ describe('domain/accounts/{ID}', () => {
         Enum.Http.RestMethods.PUT,
         'username1234',
         request.payload,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestAccountsRequestsIdExpected)
     })
 
@@ -97,19 +106,26 @@ describe('domain/accounts/{ID}', () => {
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispa-sdk/accounts/username1234/error')
 
-      const action = async () => await Accounts.forwardAccountsIdRequest(
-        '/accounts/{{ID}}',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-        request.headers,
-        Enum.Http.RestMethods.PUT,
-        'username1234',
-        request.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequest(
+          '/accounts/{{ID}}',
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
+          request.headers,
+          Enum.Http.RestMethods.PUT,
+          'username1234',
+          request.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
+      )
       // Children's children in `forwardAccountsIdRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -124,19 +140,26 @@ describe('domain/accounts/{ID}', () => {
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
-      const action = async () => await Accounts.forwardAccountsIdRequest(
-        '/accounts/{{ID}}',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-        request.headers,
-        Enum.Http.RestMethods.PUT,
-        'username1234',
-        request.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequest(
+          '/accounts/{{ID}}',
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
+          request.headers,
+          Enum.Http.RestMethods.PUT,
+          'username1234',
+          request.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
+      )
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
   })
@@ -202,10 +225,10 @@ describe('domain/accounts/{ID}', () => {
         '/accounts/{{ID}}/error',
         { ID: 'username1234' }
       ]
-      mockGetEndpointAndRender
-        .mockRejectedValueOnce(new Error('Cannot find endpoint'))
+      mockGetEndpointAndRender.mockRejectedValueOnce(new Error('Cannot find endpoint'))
 
-      const action = async () => await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)

@@ -2,7 +2,8 @@ module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   plugins: [
     'cucumber',
-    '@typescript-eslint'
+    '@typescript-eslint',
+    'prettier'
   ],
   extends: [
     'eslint:recommended',

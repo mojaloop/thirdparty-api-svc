@@ -67,7 +67,8 @@ export async function forwardConsentRequestsIdRequestError (
   consentRequestsRequestId: string,
   headers: HapiUtil.Dictionary<string>,
   error: APIErrorObject,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -79,8 +80,11 @@ export async function forwardConsentRequestsIdRequestError (
       destinationDfspId,
       endpointType,
       path,
-      { ID: consentRequestsRequestId })
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`)
+      { ID: consentRequestsRequestId }
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -93,12 +97,18 @@ export async function forwardConsentRequestsIdRequestError (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest error callback: from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest error to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest error to endpoint: ${inspect(
+        err
+      )}`
+    )
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -126,7 +136,8 @@ export async function forwardConsentRequestsRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentRequestsPostRequest,
-  span?: Span): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -136,8 +147,11 @@ export async function forwardConsentRequestsRequest (
       destinationDfspId,
       endpointType,
       path,
-      {})
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`)
+      {}
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -150,12 +164,18 @@ export async function forwardConsentRequestsRequest (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest: from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -166,7 +186,10 @@ export async function forwardConsentRequestsRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
       payload.consentRequestId,
       errorHeaders,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 
@@ -197,10 +220,12 @@ export async function forwardConsentRequestsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
-  tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
-  tpAPI.Schemas.ConsentRequestsIDPatchRequest,
-  span?: Span): Promise<void> {
+  payload:
+  | tpAPI.Schemas.ConsentRequestsIDPutResponseOTP
+  | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
+  | tpAPI.Schemas.ConsentRequestsIDPatchRequest,
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsIDRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -211,8 +236,11 @@ export async function forwardConsentRequestsIdRequest (
       destinationDfspId,
       endpointType,
       path,
-      { ID: consentRequestsRequestId })
-    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`)
+      { ID: consentRequestsRequestId }
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -225,12 +253,18 @@ export async function forwardConsentRequestsIdRequest (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarded consentRequest: ${consentRequestsRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsIdRequest - Forwarded consentRequest: ${consentRequestsRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -241,7 +275,10 @@ export async function forwardConsentRequestsIdRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
       consentRequestsRequestId,
       errorHeaders,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 

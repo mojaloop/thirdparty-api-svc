@@ -4,9 +4,9 @@ import logger from '@mojaloop/central-services-logger'
 import { promisify } from 'util'
 
 export interface ConsumerConfig {
-  eventAction: EventActionEnum;
-  eventType: EventTypeEnum;
-  internalConfig: RdKafkaConsumerConfig;
+  eventAction: EventActionEnum
+  eventType: EventTypeEnum
+  internalConfig: RdKafkaConsumerConfig
 }
 
 /**
@@ -14,12 +14,20 @@ export interface ConsumerConfig {
  * @description A utility class that wraps around the `@mojaloop/central-services-stream` Kafka Consumer
  */
 export default class Consumer<Payload> {
-  private topicName: string;
-  private rdKafkaConsumer: Kafka.Consumer;
-  private handlerFunc: ConsumeCallback<Payload>;
+  private topicName: string
+  private rdKafkaConsumer: Kafka.Consumer
+  private handlerFunc: ConsumeCallback<Payload>
 
-  public constructor (config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<Payload>) {
-    const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
+  public constructor (
+    config: ConsumerConfig,
+    topicTemplate: string,
+    handlerFunc: ConsumeCallback<Payload>
+  ) {
+    const topicConfig = Util.Kafka.createGeneralTopicConf(
+      topicTemplate,
+      config.eventType,
+      config.eventAction
+    )
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
 
@@ -48,8 +56,9 @@ export default class Consumer<Payload> {
    * @throws {Error} - if we can't find the topic name, or the consumer is not connected
    */
   public async isConnected (): Promise<true> {
-    const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata)
-      .bind(this.rdKafkaConsumer)
+    const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata).bind(
+      this.rdKafkaConsumer
+    )
     const getMetadataConfig = {
       topic: this.topicName,
       timeout: 3000
@@ -57,7 +66,7 @@ export default class Consumer<Payload> {
 
     const metadata = await getMetadataPromise(getMetadataConfig)
 
-    const foundTopics = metadata.topics.map(topic => topic.name)
+    const foundTopics = metadata.topics.map((topic) => topic.name)
     if (foundTopics.indexOf(this.topicName) === -1) {
       throw new Error(`Connected to consumer, but ${this.topicName} not found.`)
     }
@@ -72,8 +81,7 @@ export default class Consumer<Payload> {
    * @throws {Error} - if there is a failure in rdkafka's disconnect
    */
   public async disconnect (): Promise<void> {
-    const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect)
-      .bind(this.rdKafkaConsumer)
+    const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect).bind(this.rdKafkaConsumer)
     return disconnectPromise()
   }
 }

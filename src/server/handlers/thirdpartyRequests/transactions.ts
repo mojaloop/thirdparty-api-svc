@@ -49,7 +49,11 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const post = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const post = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
 
   try {
@@ -58,13 +62,17 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST,
-      { transactionRequestId: payload.transactionRequestId })
+      { transactionRequestId: payload.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -75,12 +83,13 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
       request.params,
       payload,
       span
-    )
-      .catch(err => {
+    ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+      Logger.error(
+        'Transactions::post - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -100,7 +109,11 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const get = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
 
   try {
@@ -108,13 +121,17 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.GET,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -125,12 +142,13 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request.params,
       undefined,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::get - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::get - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -149,7 +167,11 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
   const span = request.span
   try {
@@ -157,13 +179,17 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -174,12 +200,13 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request.params,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::put - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::put - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -198,7 +225,11 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const patch = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const patch = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse
   const span = request.span
   try {
@@ -206,13 +237,17 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PATCH,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -223,12 +258,13 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
       request.params,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::patch - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::patch - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -247,7 +283,11 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const putError = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const putError = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const transactionRequestId: string = request.params.ID
   const payload = request.payload as APIErrorObject
@@ -257,13 +297,17 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequestError(
@@ -273,12 +317,13 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
       transactionRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequestError takes care of async errors
-        Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequestError takes care of async errors
+      Logger.error(
+        'Transactions::put - forwardTransactionRequestError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -288,10 +333,4 @@ const putError = async (_context: unknown, request: RequestSpanExtended, h: Resp
   }
 }
 
-export {
-  post,
-  get,
-  put,
-  patch,
-  putError
-}
+export { post, get, put, patch, putError }

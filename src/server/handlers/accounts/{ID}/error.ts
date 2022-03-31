@@ -47,7 +47,11 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const userId: string = request.params.ID
   const payload = request.payload as APIErrorObject
@@ -57,13 +61,17 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.ACCOUNT,
       Enum.Events.Event.Action.PUT,
-      { userId })
+      { userId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardAccountsIdRequestError(
@@ -72,12 +80,13 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       userId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardAccountsIdRequestError takes care of async errors
-        Logger.error('Accounts::put:error - forwardAccountsIdRequestError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardAccountsIdRequestError takes care of async errors
+      Logger.error(
+        'Accounts::put:error - forwardAccountsIdRequestError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {

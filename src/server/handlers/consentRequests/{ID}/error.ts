@@ -39,15 +39,19 @@ import { getSpanTags } from '~/shared/util'
 import { RequestSpanExtended } from '~/interface/types'
 
 /**
-  * summary: NotifyErrorConsentRequests
-  * description: The HTTP request PUT /consentRequests/{ID}/error is used to inform the client
-  * about accounts error.
-  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
-  * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
-  * produces: application/json
-  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
+ * summary: NotifyErrorConsentRequests
+ * description: The HTTP request PUT /consentRequests/{ID}/error is used to inform the client
+ * about accounts error.
+ * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
+ * fspiop-destination, fspiop-encryption,fspiop-signature, fspiop-uri fspiop-http-method
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const span = request.span
   const consentRequestsId: string = request.params.ID
   const payload = request.payload as APIErrorObject
@@ -57,13 +61,17 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.CONSENT_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { consentRequestsId })
+      { consentRequestsId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardConsentRequestsIdRequestError(
@@ -72,12 +80,13 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request.headers,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardConsentRequestsIdRequestError takes care of async errors
-        Logger.error('ConsentRequests::put:error - forwardConsentRequestsIdRequestError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardConsentRequestsIdRequestError takes care of async errors
+      Logger.error(
+        'ConsentRequests::put:error - forwardConsentRequestsIdRequestError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {

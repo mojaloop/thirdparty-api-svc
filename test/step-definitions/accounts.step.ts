@@ -27,8 +27,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.accountsRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+      accept: 'application/vnd.interoperability.thirdparty+jsonversion=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
     }
     const request = {
       method: 'GET',
@@ -40,13 +40,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'GetAccounts\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'GetAccounts' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/accounts/{{ID}}',
         'TP_CB_URL_ACCOUNTS_GET',
@@ -68,8 +68,8 @@ defineFeature(feature, (test): void => {
       method: 'PUT',
       url: '/accounts/username1234',
       headers: {
-        'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-        date: (new Date()).toISOString(),
+        'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0',
+        date: new Date().toISOString(),
         ...mockData.accountsRequest.headers
       },
       payload: {
@@ -82,13 +82,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'UpdateAccounts\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'UpdateAccounts' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/accounts/{{ID}}',
         'TP_CB_URL_ACCOUNTS_PUT',
@@ -109,7 +109,7 @@ defineFeature(feature, (test): void => {
     const acctRequestError = mockData.accountsRequestError
     const reqHeaders = Object.assign(acctRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
     })
     const request = {
       method: 'PUT',
@@ -123,13 +123,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'UpdateAccountsError\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'UpdateAccountsError' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequestError.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/accounts/{{ID}}/error',
         expect.objectContaining(request.headers),

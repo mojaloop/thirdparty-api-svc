@@ -32,12 +32,12 @@ import inspect from './inspect'
 import { Request, ResponseObject } from '@hapi/hapi'
 
 interface ResponseLogged extends ResponseObject {
-  source: string;
-  statusCode: number;
+  source: string
+  statusCode: number
 }
 
 interface RequestLogged extends Request {
-  response: ResponseLogged;
+  response: ResponseLogged
 }
 
 function logResponse (request: RequestLogged): void {
@@ -51,13 +51,11 @@ function logResponse (request: RequestLogged): void {
     if (!response) {
       logger.info(`thirdparty-api-svc-Trace - Response: ${request.response}`)
     } else {
-      logger.info(`thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`)
+      logger.info(
+        `thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`
+      )
     }
   }
 }
 
-export {
-  logResponse,
-  RequestLogged,
-  ResponseLogged
-}
+export { logResponse, RequestLogged, ResponseLogged }

@@ -25,8 +25,8 @@ import { Server } from '@hapi/hapi'
 
 import defaultMockConfig from '../data/defaultMockConfig'
 
-let mockInitializeCache: any;
-let mockSetupMetrics: any;
+let mockInitializeCache: any
+let mockSetupMetrics: any
 
 describe('start', () => {
   beforeEach(async () => {
@@ -102,5 +102,4 @@ describe('start', () => {
     expect(mockServer.start).toHaveBeenCalledTimes(1)
     expect(result).toStrictEqual(mockServer)
   })
-
 })
