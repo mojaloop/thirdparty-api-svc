@@ -50,13 +50,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when("I send a 'CreateConsentRequest' request", async (): Promise<ServerInjectResponse> => {
+    when('I send a \'CreateConsentRequest\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardConsentRequestsRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/consentRequests',
         'TP_CB_URL_CONSENT_REQUEST_POST',
@@ -90,7 +90,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'UpdateConsentRequestType' ConsentRequestsIDPutResponseWeb request",
+      'I send a \'UpdateConsentRequestType\' ConsentRequestsIDPutResponseWeb request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -98,7 +98,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
@@ -133,7 +133,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'UpdateConsentRequestType' ConsentRequestsIDPutResponseOTP request",
+      'I send a \'UpdateConsentRequestType\' ConsentRequestsIDPutResponseOTP request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -141,7 +141,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
@@ -175,13 +175,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when("I send a 'PatchConsentRequest' request", async (): Promise<ServerInjectResponse> => {
+    when('I send a \'PatchConsentRequest\' request', async (): Promise<ServerInjectResponse> => {
       mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         'b82348b9-81f6-42ea-b5c4-80667d5740fe',
         '/consentRequests/{{ID}}',
@@ -217,7 +217,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'NotifyErrorConsentRequests' request",
+      'I send a \'NotifyErrorConsentRequests\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardConsentRequestsIdErrorRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -225,7 +225,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '200'", (): void => {
+    then('I get a response with a status code of \'200\'', (): void => {
       const expected = [
         '/consentRequests/{{ID}}/error',
         'b82348b9-81f6-42ea-b5c4-80667d5740fe',

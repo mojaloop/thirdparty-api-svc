@@ -162,8 +162,8 @@ describe('domain/verifications', () => {
           id,
           validPostPayload,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - Figure out how to properly mock spans
-        mockSpan
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
         )
 
       // Assert
@@ -283,8 +283,8 @@ describe('domain/verifications', () => {
           id,
           validPostPayload,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - Figure out how to properly mock spans
-        mockSpan
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
         )
 
       // Assert

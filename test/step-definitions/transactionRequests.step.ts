@@ -31,8 +31,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/vnd.interoperability.thirdparty+jsonversion=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'POST',
@@ -46,7 +46,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'CreateThirdpartyTransactionRequests' request",
+      'I send a \'CreateThirdpartyTransactionRequests\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -54,7 +54,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions',
         'TP_CB_URL_TRANSACTION_REQUEST_POST',
@@ -75,8 +75,8 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      accept: 'application/vnd.interoperability.thirdparty+jsonversion=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'GET',
@@ -89,7 +89,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'GetThirdpartyTransactionRequests' request",
+      'I send a \'GetThirdpartyTransactionRequests\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -97,7 +97,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_GET',
@@ -118,7 +118,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.updateTransactionRequest.headers,
       date: new Date().toISOString(),
-      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'PUT',
@@ -132,7 +132,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'UpdateThirdPartyTransactionRequests' request",
+      'I send a \'UpdateThirdPartyTransactionRequests\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -140,7 +140,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '200'", (): void => {
+    then('I get a response with a status code of \'200\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
@@ -161,7 +161,7 @@ defineFeature(feature, (test): void => {
     const reqHeaders = {
       ...mockData.transactionRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
-      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'PUT',
@@ -188,7 +188,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'ThirdpartyTransactionRequestsError' request",
+      'I send a \'ThirdpartyTransactionRequestsError\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardTransactionRequestError.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -196,7 +196,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '200'", (): void => {
+    then('I get a response with a status code of \'200\'', (): void => {
       const expected = [
         expect.objectContaining(request.headers),
         '/thirdpartyRequests/transactions/{{ID}}/error',
@@ -216,8 +216,8 @@ defineFeature(feature, (test): void => {
     const patchTPTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
     const reqHeaders = Object.assign(patchTPTransactionIdRequest.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      accept: 'application/vnd.interoperability.thirdparty+jsonversion=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+jsonversion=1.0'
+      accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     })
     const request = {
       method: 'PATCH',
@@ -232,7 +232,7 @@ defineFeature(feature, (test): void => {
     })
 
     when(
-      "I send a 'NotifyThirdpartyTransactionRequests' request",
+      'I send a \'NotifyThirdpartyTransactionRequests\' request',
       async (): Promise<ServerInjectResponse> => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
         response = await server.inject(request)
@@ -240,7 +240,7 @@ defineFeature(feature, (test): void => {
       }
     )
 
-    then("I get a response with a status code of '202'", (): void => {
+    then('I get a response with a status code of \'202\'', (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_PATCH',

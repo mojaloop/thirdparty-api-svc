@@ -63,15 +63,15 @@ import { Span } from '@mojaloop/event-sdk'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequest(
+export async function forwardAuthorizationRequest (
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   authorizationRequestId: string,
   payload:
-    | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
-    | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
+  | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
+  | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequest')
@@ -149,7 +149,7 @@ export async function forwardAuthorizationRequest(
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequestError(
+export async function forwardAuthorizationRequestError (
   path: string,
   headers: HapiUtil.Dictionary<string>,
   authorizationRequestId: string,

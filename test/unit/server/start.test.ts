@@ -31,7 +31,7 @@ let mockSetupMetrics: any
 describe('start', () => {
   beforeEach(async () => {
     jest.resetAllMocks()
-    //Make sure the Config gets re-imported
+    // Make sure the Config gets re-imported
     jest.resetModules()
 
     // Since we need to reset modules between every test

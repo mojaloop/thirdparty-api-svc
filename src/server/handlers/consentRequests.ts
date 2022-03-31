@@ -47,7 +47,7 @@ import { RequestSpanExtended } from '../../interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post(
+async function post (
   _context: unknown,
   request: RequestSpanExtended,
   h: ResponseToolkit

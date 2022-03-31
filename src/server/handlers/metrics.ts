@@ -31,7 +31,7 @@
 import Metrics from '@mojaloop/central-services-metrics'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-async function get(
+async function get (
   _context: unknown,
   _request: Request,
   h: ResponseToolkit

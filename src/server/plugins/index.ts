@@ -32,7 +32,7 @@ import { Util } from '@mojaloop/central-services-shared'
 import Good from './good'
 import OpenAPI from './openAPI'
 
-async function register(server: Server): Promise<Server> {
+async function register (server: Server): Promise<Server> {
   const openapiBackend = await OpenAPI.initialize()
   const plugins = [
     Util.Hapi.OpenapiBackendValidator,
