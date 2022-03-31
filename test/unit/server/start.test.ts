@@ -25,13 +25,13 @@ import { Server } from '@hapi/hapi'
 
 import defaultMockConfig from '../data/defaultMockConfig'
 
-let mockInitializeCache: any;
-let mockSetupMetrics: any;
+let mockInitializeCache: any
+let mockSetupMetrics: any
 
 describe('start', () => {
   beforeEach(async () => {
     jest.resetAllMocks()
-    //Make sure the Config gets re-imported
+    // Make sure the Config gets re-imported
     jest.resetModules()
 
     // Since we need to reset modules between every test
@@ -102,5 +102,4 @@ describe('start', () => {
     expect(mockServer.start).toHaveBeenCalledTimes(1)
     expect(result).toStrictEqual(mockServer)
   })
-
 })

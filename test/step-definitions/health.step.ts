@@ -34,10 +34,10 @@ defineFeature(feature, (test): void => {
 
     then('The status should be \'OK\'', (): void => {
       interface HealthResponse {
-        status: string;
-        uptime: number;
-        startTime: string;
-        versionNumber: string;
+        status: string
+        uptime: number
+        startTime: string
+        versionNumber: string
       }
       const healthResponse = response.result as HealthResponse
       expect(response.statusCode).toBe(200)

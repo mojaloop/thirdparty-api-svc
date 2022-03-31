@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -32,34 +37,43 @@ import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 import { getSpanTags } from '~/shared/util'
 import { forwardConsentsIdRequest } from '~/domain/consents'
+import { RequestSpanExtended } from '~/interface/types'
 
 /**
-  * summary: UpdateConsent
-  * description: The method PUT /consents/ID is called by both a PISP and DFSP
-  * parameters: body, content-length
-  * produces: application/json
-  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+ * summary: UpdateConsent
+ * description: The method PUT /consents/ID is called by both a PISP and DFSP
+ * parameters: body, content-length
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+async function put (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
   const payload = request.payload as
-    tpAPI.Schemas.ConsentsIDPutResponseVerified |
-    tpAPI.Schemas.ConsentsIDPutResponseSigned
+    | tpAPI.Schemas.ConsentsIDPutResponseVerified
+    | tpAPI.Schemas.ConsentsIDPutResponseSigned
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.CONSENT,
       Enum.Events.Event.Action.PUT,
-      { consentsRequestId })
+      { consentsRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardConsentsIdRequest(
@@ -70,12 +84,13 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       Enum.Http.RestMethods.PUT,
       payload,
       span
-    )
-    .catch(err => {
-        // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
-        Logger.error('Consents::put - forwardConsentsIdRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
+      Logger.error(
+        'Consents::put - forwardConsentsIdRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -86,32 +101,40 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
 }
 
 /**
-  * summary: PatchConsentByID
-  * description: The method PATCH /consents/ID is called by DFSP or Auth Service
-  * parameters: body, content-length
-  * produces: application/json
-  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
-  */
- async function patch(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+ * summary: PatchConsentByID
+ * description: The method PATCH /consents/ID is called by DFSP or Auth Service
+ * parameters: body, content-length
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+async function patch (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
   const payload = request.payload as
-    tpAPI.Schemas.ConsentsIDPatchResponseVerified |
-    tpAPI.Schemas.ConsentsIDPatchResponseRevoked
+    | tpAPI.Schemas.ConsentsIDPatchResponseVerified
+    | tpAPI.Schemas.ConsentsIDPatchResponseRevoked
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.CONSENT,
       Enum.Events.Event.Action.PATCH,
-      { consentsRequestId })
+      { consentsRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     forwardConsentsIdRequest(
@@ -122,12 +145,13 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       Enum.Http.RestMethods.PATCH,
       payload,
       span
-    )
-    .catch(err => {
-        // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
-        Logger.error('Consents::patch - forwardConsentsIdRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
+      Logger.error(
+        'Consents::patch - forwardConsentsIdRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -141,4 +165,3 @@ export default {
   put,
   patch
 }
-

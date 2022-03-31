@@ -26,20 +26,25 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import Config from '~/shared/config'
 
-jest.mock('~/shared/config', () => ({
-  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
-  PARTICIPANT_LIST_LOCAL: undefined
-}));
-
-
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
+
+jest.mock('~/shared/config', () => ({
+  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
+  PARTICIPANT_LIST_LOCAL: undefined
+}))
 const mockData = JSON.parse(JSON.stringify(TestData))
 
-const forwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
-const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
+const forwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestToProviderService'
+)
+const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const getServicesByServiceTypeRequest = mockData.getServicesByServiceTypeRequest
@@ -83,12 +88,16 @@ describe('ServicesServiceType handler', () => {
 
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(forwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...mockForwardGetServicesServiceTypeRequestExpected)
+      expect(forwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
+        ...mockForwardGetServicesServiceTypeRequestExpected
+      )
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      forwardGetServicesServiceTypeRequestToProviderService.mockRejectedValueOnce(new Error('Test Error'))
+      forwardGetServicesServiceTypeRequestToProviderService.mockRejectedValueOnce(
+        new Error('Test Error')
+      )
       // Act
       const response = await ServicesServiceTypeHandler.get(
         null,
@@ -99,26 +108,31 @@ describe('ServicesServiceType handler', () => {
       expect(response.statusCode).toBe(202)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(forwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...mockForwardGetServicesServiceTypeRequestExpected)
+      expect(forwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
+        ...mockForwardGetServicesServiceTypeRequestExpected
+      )
     })
 
     it('handles validation errors synchronously', async () => {
       // Arrange
       const invalReq = {
         ...getServicesByServiceTypeRequest,
-        span: {
-        }
+        span: {}
       }
       // Act
-      const action = async () => await ServicesServiceTypeHandler.get(null, invalReq as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await ServicesServiceTypeHandler.get(
+          null,
+          invalReq as unknown as Request,
+          mockResponseToolkit
+        )
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 
   describe('PUT /services/{{ServiceType}}', () => {
     beforeEach((): void => {
@@ -134,27 +148,35 @@ describe('ServicesServiceType handler', () => {
       const response = await ServicesServiceTypeHandler.put(
         null,
         putServicesByServiceTypeRequest as unknown as Request,
-        mockResponseToolkit)
+        mockResponseToolkit
+      )
       // Assert
       expect(response.statusCode).toBe(200)
-      expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...mockForwardPutServicesServiceTypeRequestExpected)
+      expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+        ...mockForwardPutServicesServiceTypeRequestExpected
+      )
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      forwardGetServicesServiceTypeRequestFromProviderService.mockRejectedValueOnce(new Error('Test Error'))
+      forwardGetServicesServiceTypeRequestFromProviderService.mockRejectedValueOnce(
+        new Error('Test Error')
+      )
       // Act
       const response = await ServicesServiceTypeHandler.put(
         null,
         putServicesByServiceTypeRequest as unknown as Request,
-        mockResponseToolkit)
+        mockResponseToolkit
+      )
       // Assert
       expect(response.statusCode).toBe(200)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...mockForwardPutServicesServiceTypeRequestExpected)
+      expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+        ...mockForwardPutServicesServiceTypeRequestExpected
+      )
     })
 
     it('handles validation errors synchronously', async () => {
@@ -162,11 +184,15 @@ describe('ServicesServiceType handler', () => {
       const invalReq = {
         ...putServicesByServiceTypeRequest,
         // Will setting the span to null do stuff?
-        span: {
-        }
+        span: {}
       }
       // Act
-      const action = async () => await ServicesServiceTypeHandler.put(null, invalReq as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await ServicesServiceTypeHandler.put(
+          null,
+          invalReq as unknown as Request,
+          mockResponseToolkit
+        )
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

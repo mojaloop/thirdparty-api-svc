@@ -1,20 +1,25 @@
 /*****
  License
  --------------
- Copyright © 2020 Mojaloop Foundation The Mojaloop files are made available by the Mojaloop Foundation
- under the Apache License, Version 2.0 (the 'License') and you may not
- use these files except in compliance with the License. You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
- writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
- OF ANY KIND, either express or implied. See the License for the specific language governing
- permissions and limitations under the License. Contributors
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
+ Contributors
  --------------
- This is the official list of the Mojaloop project contributors for this file. Names of the original
- copyright holders (individuals or organizations) should be listed with a '*' in the first column.
- People who have contributed from an organization can be listed under the organization that actually
- holds the copyright for their contributions (see the Gates Foundation organization for an example).
- Those individuals should have their names indented and be marked with a '-'. Email address can be
- added optionally within square brackets <email>.
+ This is the official list of the Mojaloop project contributors for this file.
+ Names of the original copyright holders (individuals or organizations)
+ should be listed with a '*' in the first column. People who have
+ contributed from an organization can be listed under the organization
+ that actually holds the copyright for their contributions (see the
+ Gates Foundation organization for an example). Those individuals should have
+ their names indented and be marked with a '-'. Email address can be added
+ optionally within square brackets <email>.
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
@@ -36,6 +41,7 @@ import {
   RestMethodsEnum,
   Util
 } from '@mojaloop/central-services-shared'
+import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
 // eslint is complaining about these imports. not sure why.
@@ -61,8 +67,8 @@ export async function forwardConsentRequestsIdRequestError (
   consentRequestsRequestId: string,
   headers: HapiUtil.Dictionary<string>,
   error: APIErrorObject,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  span?: any): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -74,8 +80,11 @@ export async function forwardConsentRequestsIdRequestError (
       destinationDfspId,
       endpointType,
       path,
-      { ID: consentRequestsRequestId })
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`)
+      { ID: consentRequestsRequestId }
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest error callback to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -88,12 +97,18 @@ export async function forwardConsentRequestsIdRequestError (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest error callback: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest error callback: from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest error to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest error to endpoint: ${inspect(
+        err
+      )}`
+    )
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -121,8 +136,8 @@ export async function forwardConsentRequestsRequest (
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload: tpAPI.Schemas.ConsentRequestsPostRequest,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  span?: any): Promise<void> {
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -132,8 +147,11 @@ export async function forwardConsentRequestsRequest (
       destinationDfspId,
       endpointType,
       path,
-      {})
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`)
+      {}
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -146,12 +164,18 @@ export async function forwardConsentRequestsRequest (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsRequest - Forwarded consentRequest: from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -162,7 +186,10 @@ export async function forwardConsentRequestsRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
       payload.consentRequestId,
       errorHeaders,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 
@@ -193,11 +220,12 @@ export async function forwardConsentRequestsIdRequest (
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
-  payload: tpAPI.Schemas.ConsentRequestsIDPutResponseOTP |
-  tpAPI.Schemas.ConsentRequestsIDPutResponseWeb |
-  tpAPI.Schemas.ConsentRequestsIDPatchRequest,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  span?: any): Promise<void> {
+  payload:
+  | tpAPI.Schemas.ConsentRequestsIDPutResponseOTP
+  | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
+  | tpAPI.Schemas.ConsentRequestsIDPatchRequest,
+  span?: Span
+): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsIDRequest')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
@@ -208,8 +236,11 @@ export async function forwardConsentRequestsIdRequest (
       destinationDfspId,
       endpointType,
       path,
-      { ID: consentRequestsRequestId })
-    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`)
+      { ID: consentRequestsRequestId }
+    )
+    Logger.info(
+      `consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`
+    )
 
     await Util.Request.sendRequest(
       url,
@@ -222,12 +253,18 @@ export async function forwardConsentRequestsIdRequest (
       childSpan
     )
 
-    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarded consentRequest: ${consentRequestsRequestId} from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(
+      `consentRequest::forwardConsentRequestsIdRequest - Forwarded consentRequest: ${consentRequestsRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+    )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(`consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`)
+    Logger.error(
+      `consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(
+        err
+      )}`
+    )
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -238,7 +275,10 @@ export async function forwardConsentRequestsIdRequest (
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT_ERROR,
       consentRequestsRequestId,
       errorHeaders,
-      fspiopError.toApiErrorObject(Config.ERROR_HANDLING.includeCauseExtension, Config.ERROR_HANDLING.truncateExtensions),
+      fspiopError.toApiErrorObject(
+        Config.ERROR_HANDLING.includeCauseExtension,
+        Config.ERROR_HANDLING.truncateExtensions
+      ),
       childSpan
     )
 

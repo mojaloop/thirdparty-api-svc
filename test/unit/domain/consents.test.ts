@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -25,7 +28,7 @@
 
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 import * as Consents from '~/domain/consents'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
@@ -132,17 +135,28 @@ describe('domain/consents', () => {
     it('forwards POST /consents request', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents')
-      mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+      mockSendRequest.mockResolvedValue({
+        ok: true,
+        status: 202,
+        statusText: 'Accepted',
+        payload: null
+      })
       await Consents.forwardConsentsRequest(
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
         mockConsentsPostRequestPISP.headers,
         Enum.Http.RestMethods.POST,
         mockConsentsPostRequestPISP.payload,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpected
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
     })
 
@@ -152,18 +166,25 @@ describe('domain/consents', () => {
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispa-sdk')
 
-      const action = async () => await Consents.forwardConsentsRequest(
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
-        mockConsentsPostRequestPISP.headers,
-        Enum.Http.RestMethods.POST,
-        mockConsentsPostRequestPISP.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsRequest(
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
+          mockConsentsPostRequestPISP.headers,
+          Enum.Http.RestMethods.POST,
+          mockConsentsPostRequestPISP.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpectedSecond
+      )
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -177,24 +198,30 @@ describe('domain/consents', () => {
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
-      const action = async () => await Consents.forwardConsentsRequest(
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
-        mockConsentsPostRequestPISP.headers,
-        Enum.Http.RestMethods.POST,
-        mockConsentsPostRequestPISP.payload
-      )
+      const action = async () =>
+        await Consents.forwardConsentsRequest(
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
+          mockConsentsPostRequestPISP.headers,
+          Enum.Http.RestMethods.POST,
+          mockConsentsPostRequestPISP.payload
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpectedSecond
+      )
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
 
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload =
-        ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(
+        new Error('Failed to send HTTP request')
+      ).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
         'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error',
         expectedForwardConsentsRequestErrorHeaders,
@@ -208,22 +235,36 @@ describe('domain/consents', () => {
 
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
-        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error')
+        .mockResolvedValue(
+          'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error'
+        )
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
-        .mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+        .mockResolvedValue({
+          ok: true,
+          status: 202,
+          statusText: 'Accepted',
+          payload: null
+        })
 
-      const action = async () => await Consents.forwardConsentsRequest(
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
-        mockConsentsPostRequestPISP.headers,
-        Enum.Http.RestMethods.POST,
-        mockConsentsPostRequestPISP.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsRequest(
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
+          mockConsentsPostRequestPISP.headers,
+          Enum.Http.RestMethods.POST,
+          mockConsentsPostRequestPISP.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
       await expect(action).rejects.toThrow('Failed to send HTTP request')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpectedSecond
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
@@ -236,8 +277,9 @@ describe('domain/consents', () => {
 
     it('handles `sendRequest` failure twice', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload =
-        ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(
+        new Error('Failed to send HTTP request first time')
+      ).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
         'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error',
         expectedForwardConsentsRequestErrorHeaders,
@@ -250,23 +292,32 @@ describe('domain/consents', () => {
       ]
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
-        .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error')
+        .mockResolvedValue(
+          'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error'
+        )
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
 
-      const action = async () => await Consents.forwardConsentsRequest(
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
-        mockConsentsPostRequestPISP.headers,
-        Enum.Http.RestMethods.POST,
-        mockConsentsPostRequestPISP.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsRequest(
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
+          mockConsentsPostRequestPISP.headers,
+          Enum.Http.RestMethods.POST,
+          mockConsentsPostRequestPISP.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointForwardConsentsRequestExpectedSecond
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
     })
@@ -283,8 +334,15 @@ describe('domain/consents/{ID}', () => {
 
     it('forwards PUT /consents/{ID} request', async (): Promise<void> => {
       const mockSpan = new Span()
-      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
-      mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+      mockGetEndpointAndRender.mockResolvedValue(
+        'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/'
+      )
+      mockSendRequest.mockResolvedValue({
+        ok: true,
+        status: 202,
+        statusText: 'Accepted',
+        payload: null
+      })
       await Consents.forwardConsentsIdRequest(
         '09595320-51e5-4c4e-a910-c56917e4cdc4',
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
@@ -292,17 +350,28 @@ describe('domain/consents/{ID}', () => {
         mockConsentsIdPutRequest.headers,
         Enum.Http.RestMethods.PUT,
         mockConsentsIdPutRequest.payload,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpected
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
     })
 
     it('forwards PATCH /consents/{ID} request', async (): Promise<void> => {
       const mockSpan = new Span()
-      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
-      mockSendRequest.mockResolvedValue({ ok: true, status: 200, statusText: 'Accepted', payload: null })
+      mockGetEndpointAndRender.mockResolvedValue(
+        'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/'
+      )
+      mockSendRequest.mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'Accepted',
+        payload: null
+      })
       await Consents.forwardConsentsIdRequest(
         '09595320-51e5-4c4e-a910-c56917e4cdc4',
         Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PATCH,
@@ -310,32 +379,47 @@ describe('domain/consents/{ID}', () => {
         mockConsentIdPatchRequestVerified.headers,
         Enum.Http.RestMethods.PATCH,
         mockConsentIdPatchRequestVerified.payload,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedPatchRequest)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpectedPatchRequest)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpectedPatchRequest
+      )
+      expect(mockSendRequest).toHaveBeenCalledWith(
+        ...sendRequestforwardConsentsIdRequestExpectedPatchRequest
+      )
     })
 
     it('handles `getEndpoint` failure', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
-        .mockResolvedValueOnce('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error')
+        .mockResolvedValueOnce(
+          'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error'
+        )
 
-      const action = async () => await Consents.forwardConsentsIdRequest(
-        '09595320-51e5-4c4e-a910-c56917e4cdc4',
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
-        mockConsentsIdPutRequest.headers,
-        Enum.Http.RestMethods.PUT,
-        mockConsentsIdPutRequest.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsIdRequest(
+          '09595320-51e5-4c4e-a910-c56917e4cdc4',
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
+          mockConsentsIdPutRequest.headers,
+          Enum.Http.RestMethods.PUT,
+          mockConsentsIdPutRequest.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpectedSecond
+      )
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -349,25 +433,31 @@ describe('domain/consents/{ID}', () => {
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
-      const action = async () => await Consents.forwardConsentsIdRequest(
-        '09595320-51e5-4c4e-a910-c56917e4cdc4',
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
-        mockConsentsIdPutRequest.headers,
-        Enum.Http.RestMethods.PUT,
-        mockConsentsIdPutRequest.payload
-      )
+      const action = async () =>
+        await Consents.forwardConsentsIdRequest(
+          '09595320-51e5-4c4e-a910-c56917e4cdc4',
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
+          mockConsentsIdPutRequest.headers,
+          Enum.Http.RestMethods.PUT,
+          mockConsentsIdPutRequest.payload
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpectedSecond
+      )
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
 
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload =
-        ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(
+        new Error('Failed to send HTTP request')
+      ).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
         'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error',
         expectedforwardConsentsIdRequestErrorHeaders,
@@ -384,20 +474,32 @@ describe('domain/consents/{ID}', () => {
         .mockResolvedValue('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
-        .mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+        .mockResolvedValue({
+          ok: true,
+          status: 202,
+          statusText: 'Accepted',
+          payload: null
+        })
 
-      const action = async () => await Consents.forwardConsentsIdRequest(
-        '09595320-51e5-4c4e-a910-c56917e4cdc4',
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
-        mockConsentsIdPutRequest.headers,
-        Enum.Http.RestMethods.PUT,
-        mockConsentsIdPutRequest.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsIdRequest(
+          '09595320-51e5-4c4e-a910-c56917e4cdc4',
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
+          mockConsentsIdPutRequest.headers,
+          Enum.Http.RestMethods.PUT,
+          mockConsentsIdPutRequest.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
       await expect(action).rejects.toThrow('Failed to send HTTP request')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpectedSecond
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
@@ -410,8 +512,9 @@ describe('domain/consents/{ID}', () => {
 
     it('handles `sendRequest` failure twice', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload =
-        ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(
+        new Error('Failed to send HTTP request first time')
+      ).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
         'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error',
         expectedforwardConsentsIdRequestErrorHeaders,
@@ -429,19 +532,26 @@ describe('domain/consents/{ID}', () => {
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
 
-      const action = async () => await Consents.forwardConsentsIdRequest(
-        '09595320-51e5-4c4e-a910-c56917e4cdc4',
-        Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
-        mockConsentsIdPutRequest.headers,
-        Enum.Http.RestMethods.PUT,
-        mockConsentsIdPutRequest.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Consents.forwardConsentsIdRequest(
+          '09595320-51e5-4c4e-a910-c56917e4cdc4',
+          Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_PUT,
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT,
+          mockConsentsIdPutRequest.headers,
+          Enum.Http.RestMethods.PUT,
+          mockConsentsIdPutRequest.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointforwardConsentsIdRequestExpectedSecond
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
     })
@@ -460,7 +570,9 @@ describe('domain/consents/{ID}/error', () => {
 
     it('forwards the PUT /consents/{ID} error', async () => {
       // Arrange
-      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error')
+      mockGetEndpointAndRender.mockResolvedValue(
+        'http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error'
+      )
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'switch',
@@ -488,9 +600,7 @@ describe('domain/consents/{ID}/error', () => {
       ]
 
       // Act
-      await Consents.forwardConsentsIdRequestError(
-        path, id, headers, payload
-      )
+      await Consents.forwardConsentsIdRequestError(path, id, headers, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointErrorExpected)

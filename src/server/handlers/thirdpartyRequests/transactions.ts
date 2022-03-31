@@ -1,20 +1,25 @@
 /*****
  License
  --------------
- Copyright © 2020 Mojaloop Foundation The Mojaloop files are made available by the Mojaloop Foundation
- under the Apache License, Version 2.0 (the 'License') and you may not
- use these files except in compliance with the License. You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
- writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
- OF ANY KIND, either express or implied. See the License for the specific language governing
- permissions and limitations under the License. Contributors
+ Copyright © 2020 Mojaloop Foundation
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
+ Contributors
  --------------
- This is the official list of the Mojaloop project contributors for this file. Names of the original
- copyright holders (individuals or organizations) should be listed with a '*' in the first column.
- People who have contributed from an organization can be listed under the organization that actually
- holds the copyright for their contributions (see the Gates Foundation organization for an example).
- Those individuals should have their names indented and be marked with a '-'. Email address can be
- added optionally within square brackets <email>.
+ This is the official list of the Mojaloop project contributors for this file.
+ Names of the original copyright holders (individuals or organizations)
+ should be listed with a '*' in the first column. People who have
+ contributed from an organization can be listed under the organization
+ that actually holds the copyright for their contributions (see the
+ Gates Foundation organization for an example). Those individuals should have
+ their names indented and be marked with a '-'. Email address can be added
+ optionally within square brackets <email>.
  * Gates Foundation
  - Name Surname <name.surname@gatesfoundation.com>
 
@@ -24,7 +29,7 @@
  ******/
 'use strict'
 
-import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
@@ -32,10 +37,11 @@ import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
 
 import { Transactions } from '~/domain/thirdpartyRequests'
+import { RequestSpanExtended } from '~/interface/types'
 import { getSpanTags } from '~/shared/util'
 
 /**
- * summary: CreateThirdpartyTransactionRequests
+ * summary: ThirdpartyRequestsTransactionsPost
  * description: The HTTP request POST /thirdpartyRequests/transactions is used to creation of a transaction request
  * for the provided financial transaction in the server.
  * parameters: body, accept, content-length, content-type, date, x-forwarded-for, fspiop-source,
@@ -43,8 +49,12 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const post = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const post = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
+  const span = request.span
 
   try {
     const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
@@ -52,13 +62,17 @@ const post = async (_context: unknown, request: Request, h: ResponseToolkit): Pr
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.POST,
-      { transactionRequestId: payload.transactionRequestId })
+      { transactionRequestId: payload.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -69,15 +83,17 @@ const post = async (_context: unknown, request: Request, h: ResponseToolkit): Pr
       request.params,
       payload,
       span
-    )
-    .catch(err => {
+    ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
+      Logger.error(
+        'Transactions::post - forwardTransactionRequest async handler threw an unhandled error'
+      )
       Logger.error(ReformatFSPIOPError(err))
     })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
+    console.log(err)
     const fspiopError = ReformatFSPIOPError(err)
     Logger.error(fspiopError)
     throw fspiopError
@@ -93,21 +109,29 @@ const post = async (_context: unknown, request: Request, h: ResponseToolkit): Pr
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const get = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
+  const span = request.span
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.GET,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -118,12 +142,13 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
       request.params,
       undefined,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::get - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::get - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -142,21 +167,29 @@ const get = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const put = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
-  const span = (request as any).span
+  const span = request.span
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -167,12 +200,13 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
       request.params,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::put - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::put - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -191,21 +225,29 @@ const put = async (_context: unknown, request: Request, h: ResponseToolkit): Pro
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const patch = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const patch = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse
-  const span = (request as any).span
+  const span = request.span
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PATCH,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequest(
@@ -216,12 +258,13 @@ const patch = async (_context: unknown, request: Request, h: ResponseToolkit): P
       request.params,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequest takes care of async errors
-        Logger.error('Transactions::patch - forwardTransactionRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequest takes care of async errors
+      Logger.error(
+        'Transactions::patch - forwardTransactionRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -240,8 +283,12 @@ const patch = async (_context: unknown, request: Request, h: ResponseToolkit): P
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const putError = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const putError = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
+  const span = request.span
   const transactionRequestId: string = request.params.ID
   const payload = request.payload as APIErrorObject
 
@@ -250,13 +297,17 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId })
+      { transactionRequestId: request.params.transactionRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequestError(
@@ -266,12 +317,13 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
       transactionRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardTransactionRequestError takes care of async errors
-        Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardTransactionRequestError takes care of async errors
+      Logger.error(
+        'Transactions::put - forwardTransactionRequestError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -281,10 +333,4 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
   }
 }
 
-export {
-  post,
-  get,
-  put,
-  patch,
-  putError
-}
+export { post, get, put, patch, putError }

@@ -5,7 +5,7 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import * as Accounts from '~/domain/accounts'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/accounts.feature')
 const feature = loadFeature(featurePath)
@@ -28,12 +28,12 @@ defineFeature(feature, (test): void => {
       ...mockData.accountsRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     }
     const request = {
       method: 'GET',
       url: '/accounts/username1234',
-      headers: reqHeaders,
+      headers: reqHeaders
     }
     given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -69,7 +69,7 @@ defineFeature(feature, (test): void => {
       url: '/accounts/username1234',
       headers: {
         'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-        date: (new Date()).toISOString(),
+        date: new Date().toISOString(),
         ...mockData.accountsRequest.headers
       },
       payload: {
@@ -106,11 +106,10 @@ defineFeature(feature, (test): void => {
   })
 
   test('UpdateAccountsError', ({ given, when, then }): void => {
-
     const acctRequestError = mockData.accountsRequestError
     const reqHeaders = Object.assign(acctRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
     })
     const request = {
       method: 'PUT',

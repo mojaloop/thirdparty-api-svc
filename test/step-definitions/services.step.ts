@@ -5,14 +5,23 @@ import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
 import * as Services from '~/domain/services'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/services.feature')
 const feature = loadFeature(featurePath)
 
-const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
-const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
-const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
+const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestToProviderService'
+)
+const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
+const mockForwardServicesServiceTypeRequestError = jest.spyOn(
+  Services,
+  'forwardServicesServiceTypeRequestError'
+)
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -29,12 +38,12 @@ defineFeature(feature, (test): void => {
       ...mockData.getServicesByServiceTypeRequest.headers,
       date: 'Thu, 23 Jan 2020 10:22:12 GMT',
       accept: 'application/vnd.interoperability.services+json;version=1.0',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
     }
     const request = {
       method: 'GET',
       url: '/services/THIRD_PARTY_DFSP',
-      headers: reqHeaders,
+      headers: reqHeaders
     }
     given('thirdparty-api-svc server', async (): Promise<Server> => {
       server = await ThirdPartyAPIAdapterService.run(Config)
@@ -58,7 +67,9 @@ defineFeature(feature, (test): void => {
 
       expect(response.statusCode).toBe(202)
       expect(response.result).toBeNull()
-      expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...expected)
+      expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
+        ...expected
+      )
     })
   })
 
@@ -68,7 +79,7 @@ defineFeature(feature, (test): void => {
       url: '/services/THIRD_PARTY_DFSP',
       headers: {
         'content-type': 'application/vnd.interoperability.service+json;version=1.0',
-        date: (new Date()).toISOString(),
+        date: new Date().toISOString(),
         ...mockData.putServicesByServiceTypeRequest.headers
       },
       payload: mockData.putServicesByServiceTypeRequest.payload
@@ -98,16 +109,17 @@ defineFeature(feature, (test): void => {
 
       expect(response.statusCode).toBe(200)
       expect(response.result).toBeNull()
-      expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+      expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+        ...expected
+      )
     })
   })
 
   test('PutServicesByIdAndError', ({ given, when, then }): void => {
-
     const servicesRequestError = mockData.putServicesByServiceTypeRequestError
     const reqHeaders = Object.assign(servicesRequestError.headers, {
       date: 'Tue, 02 Mar 2021 10:10:10 GMT',
-      'content-type': 'application/vnd.interoperability.service+json;version=1.0',
+      'content-type': 'application/vnd.interoperability.service+json;version=1.0'
     })
     const request = {
       method: 'PUT',

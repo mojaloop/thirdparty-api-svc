@@ -37,7 +37,7 @@ import logger from '@mojaloop/central-services-logger'
 // setup & start @hapi server
 const startApiServer = async () => ServiceServer.run(Config)
 
-async function startServices (...services: Array<Promise<any>>) {
+async function startServices(...services: Array<Promise<any>>) {
   try {
     await Promise.all(services)
   } catch (error) {
@@ -59,12 +59,13 @@ Config.PORT = program.port
 Config.HOST = program.host
 
 // Start the API Server only
-program.command('api')
+program
+  .command('api')
   .description('start the api server only')
   .action(() => startServices(startApiServer()))
 
-
-program.command('all')
+program
+  .command('all')
   .description('start all services')
   .action(() => startServices(startApiServer()))
 

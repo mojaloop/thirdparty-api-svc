@@ -28,17 +28,10 @@
 'use strict'
 
 import { Request } from '@hapi/hapi'
-import {
-  finishChildSpan,
-  getStackOrInspect,
-  getSpanTags,
-} from '~/shared/util'
+import { finishChildSpan, getStackOrInspect, getSpanTags } from '~/shared/util'
 import * as types from '~/interface/types'
 import { FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
-import { Enum } from '@mojaloop/central-services-shared'
-
-const mockData = require('../data/mockData.json')
 
 const headers = {
   'fspiop-source': 'pispA',
@@ -46,15 +39,13 @@ const headers = {
 }
 
 describe('util', (): void => {
- 
-
   describe('finishChildSpan', (): void => {
     it('calls error and finish', async (): Promise<void> => {
       // Arrange
       const error: FSPIOPError = ReformatFSPIOPError(new Error('Test Error'))
       const mockSpan = {
         error: jest.fn(),
-        finish: jest.fn(),
+        finish: jest.fn()
       }
       const expectedState = new EventStateMetadata(
         EventStatusType.failed,
@@ -63,6 +54,8 @@ describe('util', (): void => {
       )
 
       // Act
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - Figure out how to properly mock spans
       await finishChildSpan(error, mockSpan)
 
       // Assert
@@ -83,6 +76,7 @@ describe('util', (): void => {
   })
   describe('getSpanTags', (): void => {
     it('create correct span tags', (): void => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const request: Request = {
         headers: headers,
@@ -97,11 +91,15 @@ describe('util', (): void => {
         transactionId: '1234',
         transactionId2: 'transactionId2'
       }
-      const output = getSpanTags(request, 'transaction-request', 'POST', { transactionId: '1234', transactionId2: 'transactionId2' })
+      const output = getSpanTags(request, 'transaction-request', 'POST', {
+        transactionId: '1234',
+        transactionId2: 'transactionId2'
+      })
       expect(output).toStrictEqual(expected)
     })
 
     it('create correct span tags when headers and customTags are not set', (): void => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const request: Request = {
         headers: {},

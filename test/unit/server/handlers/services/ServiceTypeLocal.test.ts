@@ -25,21 +25,23 @@ optionally within square brackets <email>.
 import { Request } from '@hapi/hapi'
 import '~/shared/config'
 
-jest.mock('~/shared/config', () => ({
-  PARTICIPANT_LIST_SERVICE_URL: undefined,
-  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb']
-}));
-
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
+
+jest.mock('~/shared/config', () => ({
+  PARTICIPANT_LIST_SERVICE_URL: undefined,
+  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb']
+}))
 const mockData = JSON.parse(JSON.stringify(TestData))
 
-const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
+const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
 const getServicesByServiceTypeRequest = mockData.getServicesByServiceTypeRequest
 const putServicesByServiceTypeRequest = mockData.putServicesByServiceTypeRequest
-
 
 describe.only('GET /services/{{ServiceType}} with PARTICIPANT_LIST_LOCAL', () => {
   it('handles a successful request', async () => {
@@ -64,6 +66,8 @@ describe.only('GET /services/{{ServiceType}} with PARTICIPANT_LIST_LOCAL', () =>
 
     // Assert
     expect(response.statusCode).toBe(202)
-    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+      ...expected
+    )
   })
 })

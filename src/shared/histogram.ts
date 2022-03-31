@@ -1,8 +1,11 @@
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import Metrics from '@mojaloop/central-services-metrics'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type THandlerFunc = (_context: unknown, request: Request, h: ResponseToolkit) => Promise<ResponseObject>
+export type THandlerFunc = (
+  _context: unknown,
+  request: Request,
+  h: ResponseToolkit
+) => Promise<ResponseObject>
 
 /**
  * @function wrapWithHistogram
@@ -10,8 +13,10 @@ export type THandlerFunc = (_context: unknown, request: Request, h: ResponseTool
  * @param {THandlerFunc} handler The handler function to be wrapped
  * @param {[string, string, Array<string>]} histogramParams The params of the histogram
  */
-function wrapWithHistogram (handler: THandlerFunc, histogramParams: [string, string, string[]]): THandlerFunc {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+function wrapWithHistogram (
+  handler: THandlerFunc,
+  histogramParams: [string, string, string[]]
+): THandlerFunc {
   return async (_context: unknown, request: Request, h: ResponseToolkit) => {
     let histTimerEnd
     try {
@@ -29,6 +34,4 @@ function wrapWithHistogram (handler: THandlerFunc, histogramParams: [string, str
   }
 }
 
-export {
-  wrapWithHistogram
-}
+export { wrapWithHistogram }

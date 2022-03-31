@@ -1,4 +1,3 @@
-
 import { Server } from '@hapi/hapi'
 import onPreHandler from './handlers/onPreHandler'
 

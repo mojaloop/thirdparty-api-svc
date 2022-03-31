@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -27,7 +30,7 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import AccountsIdHandler from '~/server/handlers/accounts/{ID}/error'
 import * as Accounts from '~/domain/accounts'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardAccountsRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
@@ -78,7 +81,7 @@ describe('accounts error handler', (): void => {
       expect(response.statusCode).toBe(200)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardAccountsRequestError).toHaveBeenCalledWith(...expected)
     })
@@ -92,7 +95,12 @@ describe('accounts error handler', (): void => {
       }
 
       // Act
-      const action = async () => await AccountsIdHandler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await AccountsIdHandler.put(
+          null,
+          badSpanRequest as unknown as Request,
+          mockResponseToolkit
+        )
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

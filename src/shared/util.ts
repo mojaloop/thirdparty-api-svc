@@ -1,11 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /*****
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -31,7 +35,7 @@
 import { Request } from '@hapi/hapi'
 import util from 'util'
 import { Enum } from '@mojaloop/central-services-shared'
-import { EventStateMetadata, EventStatusType } from '@mojaloop/event-sdk'
+import { EventStateMetadata, EventStatusType, Span } from '@mojaloop/event-sdk'
 import { FSPIOPError } from '@mojaloop/central-services-error-handling'
 
 /**
@@ -41,11 +45,12 @@ import { FSPIOPError } from '@mojaloop/central-services-error-handling'
  * @param {any} span request span
  * @returns {Promise<void>}
  */
-async function finishChildSpan (fspiopError: FSPIOPError, childSpan: any): Promise<void> {
+async function finishChildSpan (fspiopError: FSPIOPError, childSpan: Span): Promise<void> {
   const state = new EventStateMetadata(
     EventStatusType.failed,
     fspiopError.apiErrorCode.code,
-    fspiopError.apiErrorCode.message)
+    fspiopError.apiErrorCode.message
+  )
   await childSpan.error(fspiopError, state)
   await childSpan.finish(fspiopError.message, state)
 }
@@ -67,7 +72,12 @@ function getStackOrInspect (err: Error): string {
  * @param {string} eventAction
  * @returns {Object}
  */
-function getSpanTags (request: Request, eventType: string, eventAction: string, customTags: { [id: string]: string } = {}): { [id: string]: string } {
+function getSpanTags (
+  request: Request,
+  eventType: string,
+  eventAction: string,
+  customTags: { [id: string]: string } = {}
+): { [id: string]: string } {
   const tags: { [id: string]: string } = {
     eventType,
     eventAction,
@@ -78,8 +88,4 @@ function getSpanTags (request: Request, eventType: string, eventAction: string, 
   return tags
 }
 
-export {
-  finishChildSpan,
-  getStackOrInspect,
-  getSpanTags
-}
+export { finishChildSpan, getStackOrInspect, getSpanTags }

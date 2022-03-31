@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -23,11 +28,11 @@
  --------------
  ******/
 
-import Shared from '@mojaloop/central-services-shared'
+import { HealthCheck } from '@mojaloop/central-services-shared'
 import Config from '../../shared/config'
 import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
 
-const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
+const healthCheck = new HealthCheck.HealthCheck(Config.PACKAGE, [])
 /**
  * Operations on /health
  */
@@ -39,7 +44,11 @@ const healthCheck = new Shared.HealthCheck.HealthCheck(Config.PACKAGE, [])
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (_context: unknown, _request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
+const get = async (
+  _context: unknown,
+  _request: Request,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
   return h.response(await healthCheck.getHealth()).code(200)
 }
 

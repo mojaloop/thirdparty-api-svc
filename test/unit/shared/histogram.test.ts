@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -29,7 +32,7 @@ import Metrics from '@mojaloop/central-services-metrics'
 
 import * as Handler from '~/server/handlers/thirdpartyRequests/transactions'
 import { Transactions } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { wrapWithHistogram } from '~/shared/histogram'
 import { mockResponseToolkit } from '../__mocks__/responseToolkit'
 
@@ -40,7 +43,6 @@ const mockMetrics = jest.spyOn(Metrics, 'getHistogram')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = MockData.transactionRequest
-
 
 describe('histogram', (): void => {
   describe('wrapWithHistogram', () => {
@@ -56,19 +58,18 @@ describe('histogram', (): void => {
     it('does not call the histogram twice if an error occours', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      //@ts-ignore
+      // @ts-ignore
       mockMetrics.mockReturnValue({
         startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
       })
-      mockForwardTransactionRequest.mockRejectedValueOnce(() => { throw new Error('Test Error') })
-      const wrappedHandler = wrapWithHistogram(
-        Handler.post,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      mockForwardTransactionRequest.mockRejectedValueOnce(() => {
+        throw new Error('Test Error')
+      })
+      const wrappedHandler = wrapWithHistogram(Handler.post, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const response = await wrappedHandler(null, request, mockResponseToolkit)
@@ -80,26 +81,23 @@ describe('histogram', (): void => {
       expect(mockHistTimerEnd).toHaveBeenCalledWith({ success: 'true' })
 
       // wait once more for the event loop - since we can't await `forwardTransactionRequest`
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
     })
 
     it('handles a handler error', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      //@ts-ignore
+      // @ts-ignore
       mockMetrics.mockReturnValue({
         startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
       })
       const mockHandler = jest.fn().mockRejectedValueOnce(new Error('Test Error'))
 
-      const wrappedHandler = wrapWithHistogram(
-        mockHandler,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      const wrappedHandler = wrapWithHistogram(mockHandler, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const action = async () => await wrappedHandler(null, request, mockResponseToolkit)
@@ -113,16 +111,15 @@ describe('histogram', (): void => {
 
     it('throws original `Metrics.getHistogram()` error', async (): Promise<void> => {
       // Arrange
-      mockMetrics.mockImplementationOnce(() => { throw new Error('Test Error') })
+      mockMetrics.mockImplementationOnce(() => {
+        throw new Error('Test Error')
+      })
       const mockHandler = jest.fn()
-      const wrappedHandler = wrapWithHistogram(
-        mockHandler,
-        [
-          'thirdpartyRequests_transactions_authorizations_post',
-          'Post thirdpartyRequests transactions authorizations request',
-          ['success']
-        ]
-      )
+      const wrappedHandler = wrapWithHistogram(mockHandler, [
+        'thirdpartyRequests_transactions_authorizations_post',
+        'Post thirdpartyRequests transactions authorizations request',
+        ['success']
+      ])
 
       // Act
       const action = async () => await wrappedHandler(null, request, mockResponseToolkit)

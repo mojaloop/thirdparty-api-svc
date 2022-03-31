@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -27,7 +30,7 @@ import * as Accounts from '~/domain/accounts'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
@@ -41,16 +44,16 @@ const getEndpointAndRenderAccountsRequestsIdExpected = [
   'http://central-ledger.local:3001',
   'dfspA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-  "/accounts/{{ID}}",
-  { "ID": "username1234" }
+  '/accounts/{{ID}}',
+  { ID: 'username1234' }
 ]
 
 const getEndpointAndRenderAccountRequestsIdExpectedSecond = [
   'http://central-ledger.local:3001',
   'pispA',
   Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-  "/accounts/{{ID}}/error",
-  { "ID": "username1234" }
+  '/accounts/{{ID}}/error',
+  { ID: 'username1234' }
 ]
 
 const sendRequestAccountsRequestsIdExpected = [
@@ -72,9 +75,14 @@ describe('domain/accounts/{ID}', () => {
     })
 
     it('forwards GET/PUT /accounts request', async (): Promise<void> => {
-      const mockSpan = new Span
+      const mockSpan = new Span()
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/accounts/username1234')
-      mockSendRequest.mockResolvedValue({ ok: true, status: 202, statusText: 'Accepted', payload: null })
+      mockSendRequest.mockResolvedValue({
+        ok: true,
+        status: 202,
+        statusText: 'Accepted',
+        payload: null
+      })
       await Accounts.forwardAccountsIdRequest(
         '/accounts/{{ID}}',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
@@ -82,9 +90,13 @@ describe('domain/accounts/{ID}', () => {
         Enum.Http.RestMethods.PUT,
         'username1234',
         request.payload,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestAccountsRequestsIdExpected)
     })
 
@@ -94,19 +106,26 @@ describe('domain/accounts/{ID}', () => {
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
         .mockResolvedValueOnce('http://pispa-sdk/accounts/username1234/error')
 
-      const action = async () => await Accounts.forwardAccountsIdRequest(
-        '/accounts/{{ID}}',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-        request.headers,
-        Enum.Http.RestMethods.PUT,
-        'username1234',
-        request.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequest(
+          '/accounts/{{ID}}',
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
+          request.headers,
+          Enum.Http.RestMethods.PUT,
+          'username1234',
+          request.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
+      )
       // Children's children in `forwardAccountsIdRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -121,19 +140,26 @@ describe('domain/accounts/{ID}', () => {
         .mockRejectedValue(new Error('Cannot find endpoint first time'))
         .mockRejectedValue(new Error('Cannot find endpoint second time'))
 
-      const action = async () => await Accounts.forwardAccountsIdRequest(
-        '/accounts/{{ID}}',
-        Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-        request.headers,
-        Enum.Http.RestMethods.PUT,
-        'username1234',
-        request.payload,
-        mockSpan
-      )
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequest(
+          '/accounts/{{ID}}',
+          Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
+          request.headers,
+          Enum.Http.RestMethods.PUT,
+          'username1234',
+          request.payload,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - Figure out how to properly mock spans
+          mockSpan
+        )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountsRequestsIdExpected
+      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
+        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
+      )
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
   })
@@ -162,8 +188,8 @@ describe('domain/accounts/{ID}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-        "/accounts/{{ID}}/error",
-        { "ID": "username1234" }
+        '/accounts/{{ID}}/error',
+        { ID: 'username1234' }
       ]
       const sendRequestErrorExpected = [
         'http://pispa-sdk/accounts/username1234/error',
@@ -196,13 +222,13 @@ describe('domain/accounts/{ID}', () => {
         'http://central-ledger.local:3001',
         'pispA',
         Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR,
-        "/accounts/{{ID}}/error",
-        { "ID": "username1234" }
+        '/accounts/{{ID}}/error',
+        { ID: 'username1234' }
       ]
-      mockGetEndpointAndRender
-        .mockRejectedValueOnce(new Error('Cannot find endpoint'))
+      mockGetEndpointAndRender.mockRejectedValueOnce(new Error('Cannot find endpoint'))
 
-      const action = async () => await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
+      const action = async () =>
+        await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)

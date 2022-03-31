@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -27,19 +30,22 @@ import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
 import * as Handler from '~/server/handlers/thirdpartyRequests/verifications'
 import { Verifications } from '~/domain/thirdpartyRequests'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardVerificationRequest = jest.spyOn(Verifications, 'forwardVerificationRequest')
-const mockForwardVerificationRequestError = jest.spyOn(Verifications, 'forwardVerificationRequestError')
+const mockForwardVerificationRequestError = jest.spyOn(
+  Verifications,
+  'forwardVerificationRequestError'
+)
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
 
 const request: Request = {
   headers: {
-    'fspiop-source': "dfspA",
-    'fspiop-destination': "pispA"
+    'fspiop-source': 'dfspA',
+    'fspiop-destination': 'pispA'
   },
   params: {},
   payload: {
@@ -49,11 +55,14 @@ const request: Request = {
     signedPayloadType: 'FIDO',
     signedPayload: {
       id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-      rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+      rawId:
+        '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
       response: {
         authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-        clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-        signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
+        clientDataJSON:
+          'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+        signature:
+          'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
       },
       type: 'public-key'
     }
@@ -99,7 +108,9 @@ describe('verifications handler', (): void => {
       const MockData = JSON.parse(JSON.stringify(TestData))
       const request: Request = MockData.transactionRequest
       mockForwardVerificationRequest.mockResolvedValueOnce()
-      mockForwardVerificationRequest.mockRejectedValueOnce(new Error('verifications forward Error'))
+      mockForwardVerificationRequest.mockRejectedValueOnce(
+        new Error('verifications forward Error')
+      )
       const expected = [
         '/thirdpartyRequests/verifications',
         'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST',
@@ -129,13 +140,13 @@ describe('verifications handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 
   describe('PUT /thirdpartyRequests/verifications/{ID}', (): void => {
     const request: Request = MockData.updateTransactionRequest
@@ -156,7 +167,7 @@ describe('verifications handler', (): void => {
         'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT',
         request.headers,
         'PUT',
-        "b37605f7-bcd9-408b-9291-6c554aa4c802",
+        'b37605f7-bcd9-408b-9291-6c554aa4c802',
         request.payload,
         undefined
       ]
@@ -173,7 +184,9 @@ describe('verifications handler', (): void => {
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
       mockForwardVerificationRequest.mockResolvedValueOnce()
-      mockForwardVerificationRequest.mockRejectedValueOnce(new Error('verifications forward Error'))
+      mockForwardVerificationRequest.mockRejectedValueOnce(
+        new Error('verifications forward Error')
+      )
       const expected = [
         '/thirdpartyRequests/verifications/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT',
@@ -181,7 +194,8 @@ describe('verifications handler', (): void => {
         'PUT',
         'b37605f7-bcd9-408b-9291-6c554aa4c802',
         request.payload,
-        undefined]
+        undefined
+      ]
 
       // Act
       const response = await Handler.put(null, request, mockResponseToolkit)
@@ -202,7 +216,8 @@ describe('verifications handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -248,11 +263,11 @@ describe('verifications handler', (): void => {
       }
 
       // Act
-      const action = async () => await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
     })
   })
-
 })

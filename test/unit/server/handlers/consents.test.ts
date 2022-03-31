@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -30,7 +33,6 @@ import ConsentsHandler from '~/server/handlers/consents'
 import * as Consents from '~/domain/consents'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
@@ -45,7 +47,7 @@ const postConsentsRequest = {
     scopes: [
       {
         accountId: 'dfspa.username.1234',
-        actions: [ 'accounts.transfer', 'accounts.getBalance' ]
+        actions: ['accounts.transfer', 'accounts.getBalance']
       }
     ]
   }
@@ -59,7 +61,6 @@ const postConsentsRequestExpected = [
   postConsentsRequest.payload,
   undefined
 ]
-
 
 describe('consents handler', () => {
   describe('POST /consents', () => {
@@ -76,7 +77,11 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -90,13 +95,17 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardConsentsRequest).toHaveBeenCalledWith(...expected)
     })
@@ -106,12 +115,12 @@ describe('consents handler', () => {
       const request = {
         ...postConsentsRequest,
         // Will setting the span to null do stuff?
-        span: {
-        }
+        span: {}
       }
 
       // Act
-      const action = async () => await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

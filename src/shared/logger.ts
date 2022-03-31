@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the "License") and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -27,12 +32,12 @@ import inspect from './inspect'
 import { Request, ResponseObject } from '@hapi/hapi'
 
 interface ResponseLogged extends ResponseObject {
-  source: string;
-  statusCode: number;
+  source: string
+  statusCode: number
 }
 
 interface RequestLogged extends Request {
-  response: ResponseLogged;
+  response: ResponseLogged
 }
 
 function logResponse (request: RequestLogged): void {
@@ -46,13 +51,11 @@ function logResponse (request: RequestLogged): void {
     if (!response) {
       logger.info(`thirdparty-api-svc-Trace - Response: ${request.response}`)
     } else {
-      logger.info(`thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`)
+      logger.info(
+        `thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`
+      )
     }
   }
 }
 
-export {
-  logResponse,
-  RequestLogged,
-  ResponseLogged
-}
+export { logResponse, RequestLogged, ResponseLogged }

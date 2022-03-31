@@ -2,9 +2,14 @@
  License
  --------------
  Copyright © 2020 Mojaloop Foundation
- The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
+ The Mojaloop files are made available by the Mojaloop Foundation under the
+ Apache License, Version 2.0 (the "License") and you may not use these files
+ except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ Unless required by applicable law or agreed to in writing, the Mojaloop files
+ are distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the specific language
+ governing permissions and limitations under the License.
  Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
@@ -23,29 +28,31 @@
  --------------
  ******/
 
-import { Request, ResponseObject, ResponseToolkit } from '@hapi/hapi'
+import { ResponseObject, ResponseToolkit } from '@hapi/hapi'
 import { APIErrorObject, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum } from '@mojaloop/central-services-shared'
 import { AuditEventAction } from '@mojaloop/event-sdk'
-import {
-  thirdparty as tpAPI
-} from '@mojaloop/api-snippets'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 import { Authorizations } from '~/domain/thirdpartyRequests'
 import { getSpanTags } from '~/shared/util'
-
+import { RequestSpanExtended } from '~/interface/types'
 
 /**
-  * summary: VerifyThirdPartyAuthorization
-  * description: The method POST /thirdpartyRequests/authorizations/{ID} is used
-  *   by the DFSP to ask the PISP to authorize a transaction before continuing
-  * parameters: body, content-length
-  * produces: application/json
-  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-async function post(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+ * summary: VerifyThirdPartyAuthorization
+ * description: The method POST /thirdpartyRequests/authorizations/{ID} is used
+ *   by the DFSP to ask the PISP to authorize a transaction before continuing
+ * parameters: body, content-length
+ * produces: application/json
+ * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+async function post (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
+  const span = request.span
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
   const authorizationRequestId = payload.authorizationRequestId
   try {
@@ -53,13 +60,17 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       request,
       Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.POST,
-      { authorizationRequestId })
+      { authorizationRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequest(
@@ -70,12 +81,13 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
       authorizationRequestId,
       payload,
       span
-    )
-    .catch(err => {
-        // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
-        Logger.error('Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
+      Logger.error(
+        'Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.ACCEPTED.CODE)
   } catch (err) {
@@ -86,16 +98,20 @@ async function post(_context: unknown, request: Request, h: ResponseToolkit): Pr
 }
 
 /**
-  * summary: UpdateThirdpartyAuthorization
-  * description: The method PUT /thirdpartyRequests/authorizations/{ID}
-  * is called by the PISP to include the authorization result from their user.
-  * 
-  * parameters: body, content-length
-  * produces: application/json
-  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
-  */
-async function put(_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> {
-  const span = (request as any).span
+ * summary: UpdateThirdpartyAuthorization
+ * description: The method PUT /thirdpartyRequests/authorizations/{ID}
+ * is called by the PISP to include the authorization result from their user.
+ *
+ * parameters: body, content-length
+ * produces: application/json
+ * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
+ */
+async function put (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> {
+  const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const authorizationRequestId: string = request.params.ID
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse
@@ -104,13 +120,17 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       request,
       Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.PUT,
-      { authorizationRequestId })
+      { authorizationRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     // TODO: double check this!
@@ -122,12 +142,13 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
       authorizationRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
-        Logger.error('Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
+      Logger.error(
+        'Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -146,8 +167,12 @@ async function put(_context: unknown, request: Request, h: ResponseToolkit): Pro
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const putError = async (_context: unknown, request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
-  const span = (request as any).span
+const putError = async (
+  _context: unknown,
+  request: RequestSpanExtended,
+  h: ResponseToolkit
+): Promise<ResponseObject> => {
+  const span = request.span
   const authorizationRequestId: string = request.params.ID
   const payload = request.payload as APIErrorObject
 
@@ -156,13 +181,17 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
       request,
       Enum.Events.Event.Type.AUTHORIZATION,
       Enum.Events.Event.Action.PUT,
-      { authorizationRequestId })
+      { authorizationRequestId }
+    )
 
     span?.setTags(tags)
-    await span?.audit({
-      headers: request.headers,
-      payload: request.payload
-    }, AuditEventAction.start)
+    await span?.audit(
+      {
+        headers: request.headers,
+        payload: request.payload
+      },
+      AuditEventAction.start
+    )
 
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequestError(
@@ -171,12 +200,13 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
       authorizationRequestId,
       payload,
       span
-    )
-      .catch(err => {
-        // Do nothing with the error - forwardAuthorizationRequestError takes care of async errors
-        Logger.error('ThirdpartyRequestsAuthorizations::put - forwardThirdpartyRequestsAuthorizationsError async handler threw an unhandled error')
-        Logger.error(ReformatFSPIOPError(err))
-      })
+    ).catch((err) => {
+      // Do nothing with the error - forwardAuthorizationRequestError takes care of async errors
+      Logger.error(
+        'ThirdpartyRequestsAuthorizations::put - forwardThirdpartyRequestsAuthorizationsError async handler threw an unhandled error'
+      )
+      Logger.error(ReformatFSPIOPError(err))
+    })
 
     return h.response().code(Enum.Http.ReturnCodes.OK.CODE)
   } catch (err) {
@@ -186,9 +216,4 @@ const putError = async (_context: unknown, request: Request, h: ResponseToolkit)
   }
 }
 
-
-export {
-  post,
-  put,
-  putError
-}
+export { post, put, putError }

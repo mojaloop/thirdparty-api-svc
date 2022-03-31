@@ -18,6 +18,4 @@ const mockResponseToolkit = {
   }
 } as unknown as ResponseToolkit
 
-export {
-  mockResponseToolkit
-}
+export { mockResponseToolkit }

@@ -1,6 +1,7 @@
 /**
  * Mock Span
  */
+
 class Span {
   public child: Span | undefined
   public isFinished: boolean

@@ -4,8 +4,11 @@
  Copyright © 2020 Mojaloop Foundation
  The Mojaloop files are made available by the Mojaloop Foundation under the Apache License, Version 2.0 (the 'License') and you may not use these files except in compliance with the License. You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- Contributors
+Unless required by applicable law or agreed to in
+ writing, the Mojaloop files are distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ OF ANY KIND, either express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+Contributors Contributors
  --------------
  This is the official list of the Mojaloop project contributors for this file.
  Names of the original copyright holders (individuals or organizations)
@@ -30,8 +33,10 @@ import ConsentRequestsHandler from '~/server/handlers/consentRequests'
 import * as ConsentRequests from '~/domain/consentRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-
-const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
+const mockForwardConsentRequestsRequest = jest.spyOn(
+  ConsentRequests,
+  'forwardConsentRequestsRequest'
+)
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const postConsentRequestsRequest = {
@@ -49,7 +54,7 @@ const postConsentRequestsRequest = {
         scope: 'accounts.transfer'
       }
     ],
-    callbackUri:'pisp-app://callback.com'
+    callbackUri: 'pisp-app://callback.com'
   }
 }
 
@@ -61,7 +66,6 @@ const postConsentRequestsRequestExpected = [
   postConsentRequestsRequest.payload,
   undefined
 ]
-
 
 describe('consentRequests handler', () => {
   describe('POST /consentRequests', () => {
@@ -78,7 +82,11 @@ describe('consentRequests handler', () => {
       const expected = postConsentRequestsRequestExpected
 
       // Act
-      const response = await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentRequestsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -92,13 +100,17 @@ describe('consentRequests handler', () => {
       const expected = postConsentRequestsRequestExpected
 
       // Act
-      const response = await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const response = await ConsentRequestsHandler.post(
+        null,
+        request as unknown as Request,
+        mockResponseToolkit
+      )
 
       // Assert
       expect(response.statusCode).toBe(202)
       // wait once more for the event loop - since we can't await `runAllImmediates`
       // this helps make sure the tests don't become flaky
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
       expect(mockForwardConsentRequestsRequest).toHaveBeenCalledWith(...expected)
     })
@@ -108,12 +120,12 @@ describe('consentRequests handler', () => {
       const request = {
         ...postConsentRequestsRequest,
         // Will setting the span to null do stuff?
-        span: {
-        }
+        span: {}
       }
 
       // Act
-      const action = async () => await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () =>
+        await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

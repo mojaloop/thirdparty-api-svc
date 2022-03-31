@@ -30,32 +30,60 @@ import { Server } from '@hapi/hapi'
 
 import { Authorizations, Transactions, Verifications } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
-import TestData from 'test/unit/data/mockData.json'
+import * as TestData from 'test/unit/data/mockData'
 import * as Consents from '~/domain/consents'
 import * as ConsentRequests from '~/domain/consentRequests'
 import * as Accounts from '~/domain/accounts'
 import * as Services from '~/domain/services'
+import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
+const mockForwardTransactionRequestError = jest.spyOn(
+  Transactions,
+  'forwardTransactionRequestError'
+)
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
-const mockForwardAuthorizationRequestError = jest.spyOn(Authorizations, 'forwardAuthorizationRequestError')
+const mockForwardAuthorizationRequestError = jest.spyOn(
+  Authorizations,
+  'forwardAuthorizationRequestError'
+)
 const mockForwardVerificationRequest = jest.spyOn(Verifications, 'forwardVerificationRequest')
-const mockForwardVerificationRequestError = jest.spyOn(Verifications, 'forwardVerificationRequestError')
+const mockForwardVerificationRequestError = jest.spyOn(
+  Verifications,
+  'forwardVerificationRequestError'
+)
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
-const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
-const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
-const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
+const mockForwardConsentRequestsRequest = jest.spyOn(
+  ConsentRequests,
+  'forwardConsentRequestsRequest'
+)
+const mockForwardConsentRequestsIdRequest = jest.spyOn(
+  ConsentRequests,
+  'forwardConsentRequestsIdRequest'
+)
+const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(
+  ConsentRequests,
+  'forwardConsentRequestsIdRequestError'
+)
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
-const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestToProviderService')
-const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(Services, 'forwardGetServicesServiceTypeRequestFromProviderService')
-const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
+const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestToProviderService'
+)
+const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
+  Services,
+  'forwardGetServicesServiceTypeRequestFromProviderService'
+)
+const mockForwardServicesServiceTypeRequestError = jest.spyOn(
+  Services,
+  'forwardServicesServiceTypeRequestError'
+)
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
-const mockData = JSON.parse(JSON.stringify(TestData))
+const mockData = TestData
 const trxnRequest = mockData.transactionRequest
 const trxnRequestError = mockData.genericThirdpartyError
 const consentRequestsRequestError = mockData.consentRequestsThirdpartyError
@@ -80,7 +108,6 @@ describe('index', (): void => {
       server.events.on('stop', done)
       server.stop()
     })
-    
 
     describe('/thirdpartyRequests/transactions', (): void => {
       beforeAll((): void => {
@@ -116,7 +143,6 @@ describe('index', (): void => {
           expect.any(Object)
         ]
         const response = await server.inject(request)
-
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
         expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
@@ -152,7 +178,9 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, { transactionRequestId: undefined })
+        const errPayload = Object.assign(trxnRequest.payload, {
+          transactionRequestId: undefined
+        })
         const request = {
           method: 'POST',
           url: '/thirdpartyRequests/transactions',
@@ -162,7 +190,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'transactionRequestId\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'transactionRequestId\''
           }
         }
         const response = await server.inject(request)
@@ -231,23 +260,31 @@ describe('index', (): void => {
         expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
       })
 
-
       it('PATCH mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequest.payload, {})
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        const errPayload = JSON.parse(
+          JSON.stringify(TestData.patchThirdpartyTransactionIdRequest.payload)
+        )
+        delete errPayload.transactionRequestState
+        const reqHeaders = Object.assign(TestData.patchThirdpartyTransactionIdRequest.headers, {
+          date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+          accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
+          'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+        })
         const request = {
           method: 'PATCH',
           url: '/thirdpartyRequests/transactions/b37605f7-bcd9-408b-9291-6c554aa4c802',
-          headers: trxnRequest.headers,
+          headers: reqHeaders,
           payload: errPayload
         }
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'transactionId\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'transactionRequestState\''
           }
         }
         const response = await server.inject(request)
-
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
         expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
@@ -286,14 +323,15 @@ describe('index', (): void => {
           expect.any(Object)
         ]
         const response = await server.inject(request)
-
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(trxnRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/transactions/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
@@ -303,7 +341,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -335,7 +374,7 @@ describe('index', (): void => {
           partyIdInfo: {
             partyIdType: 'MSISDN',
             partyIdentifier: '+4412345678',
-            fspId: 'dfspb',
+            fspId: 'dfspb'
           }
         },
         payer: {
@@ -368,7 +407,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'dspa',
             'fspiop-destination': 'pispa'
           },
@@ -394,6 +433,7 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const invalidPayload = JSON.parse(JSON.stringify(authorizationPostRequestPayload))
         delete invalidPayload.challenge
         const request = {
@@ -402,7 +442,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
@@ -411,7 +451,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'challenge\''
           }
         }
 
@@ -426,19 +467,26 @@ describe('index', (): void => {
     })
 
     describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
-      const authorizationPutRequestPayload = {
-        signedPayloadType: 'FIDO',
-        signedPayload: {
-          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-          response: {
-            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-          },
-          type: 'public-key'
+      const authorizationPutRequestPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO =
+        {
+          responseType: 'ACCEPTED',
+          signedPayload: {
+            signedPayloadType: 'FIDO',
+            fidoSignedPayload: {
+              id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+              rawId:
+                '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+              response: {
+                authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+                clientDataJSON:
+                  'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+                signature:
+                  'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+              },
+              type: 'public-key'
+            }
+          }
         }
-      }
 
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -456,7 +504,7 @@ describe('index', (): void => {
           url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'dfspA',
             'fspiop-destination': 'dfspA'
           },
@@ -474,9 +522,6 @@ describe('index', (): void => {
 
         // Act
         const response = await server.inject(request)
-
-        console.log('response', response)
-
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
@@ -484,14 +529,15 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardAuthorizationRequest.mockResolvedValueOnce()
         const invalidPayload = JSON.parse(JSON.stringify(authorizationPutRequestPayload))
-        delete invalidPayload.signedPayloadType
+        delete invalidPayload.responseType
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/authorizations/7d34f91d-d078-4077-8263-2c047876fcf6',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
@@ -500,13 +546,14 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'signedPayloadType\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'responseType\''
           }
         }
 
         // Act
         const response = await server.inject(request)
-
+        console.log(response)
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -518,7 +565,7 @@ describe('index', (): void => {
       const errorPayload = {
         errorInformation: {
           errorCode: '6000',
-          errorDescription: 'Generic third party error',
+          errorDescription: 'Generic third party error'
         }
       }
       beforeAll((): void => {
@@ -551,15 +598,15 @@ describe('index', (): void => {
           expect.any(Object)
         ]
         const response = await server.inject(request)
-        console.log('PUT /thirdpartyRequests/authorizations/{ID}/error response', response)
-
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
         expect(mockForwardAuthorizationRequestError).toHaveBeenCalledWith(...expected)
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(trxnRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/authorizations/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
@@ -569,7 +616,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -581,22 +629,26 @@ describe('index', (): void => {
     })
 
     describe('POST /thirdpartyRequests/verifications', (): void => {
-      const verificationPostRequestBody = {
-        verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
-        challenge: '<base64 encoded binary - the encoded challenge>',
-        consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
-        signedPayloadType: 'FIDO',
-        signedPayload: {
-          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-          response: {
-            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-            clientDataJSON: 'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-            signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8=',
-          },
-          type: 'public-key'
+      const verificationPostRequestBody: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest =
+        {
+          verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+          challenge: '<base64 encoded binary - the encoded challenge>',
+          consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
+          signedPayloadType: 'FIDO',
+          fidoSignedPayload: {
+            id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+            rawId:
+              '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+            response: {
+              authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+              clientDataJSON:
+                'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+              signature:
+                'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+            },
+            type: 'public-key'
+          }
         }
-      }
 
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -607,7 +659,6 @@ describe('index', (): void => {
         jest.clearAllMocks()
       })
 
-
       it('POST', async (): Promise<void> => {
         mockForwardVerificationRequest.mockResolvedValueOnce()
         const request = {
@@ -616,7 +667,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'dspa',
             'fspiop-destination': 'pispa'
           },
@@ -650,7 +701,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
@@ -659,7 +710,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'challenge\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'challenge\''
           }
         }
 
@@ -691,11 +743,11 @@ describe('index', (): void => {
         mockForwardVerificationRequest.mockResolvedValueOnce()
         const request = {
           method: 'PUT',
-          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'centralauth',
             'fspiop-destination': 'dfspa'
           },
@@ -724,11 +776,11 @@ describe('index', (): void => {
         const invalidPayload = {}
         const request = {
           method: 'PUT',
-          url: `/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df`,
+          url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             'fspiop-source': 'pispA',
             'fspiop-destination': 'dfspA'
           },
@@ -737,7 +789,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'authenticationResponse\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'authenticationResponse\''
           }
         }
 
@@ -755,7 +808,7 @@ describe('index', (): void => {
       const errorPayload = {
         errorInformation: {
           errorCode: '6000',
-          errorDescription: 'Generic third party error',
+          errorDescription: 'Generic third party error'
         }
       }
 
@@ -796,7 +849,9 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(trxnRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(trxnRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/thirdpartyRequests/verifications/5f8ee7f9-290f-4e03-ae1c-1e81ecf398df/error',
@@ -806,7 +861,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -835,7 +891,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentsPostRequestPISP.headers
           },
           payload: {
@@ -861,25 +917,25 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentsPostRequestPISP.payload))
+        delete payload.consentId
         const request = {
           method: 'POST',
           url: '/consents',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentsPostRequestPISP.headers
           },
-          payload: {
-            ...mockData.consentsPostRequestPISP.payload
-          }
+          payload
         }
-        delete request.payload.consentId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentId\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'consentId\''
           }
         }
 
@@ -911,7 +967,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPostRequest.headers
           },
           payload: {
@@ -937,25 +993,25 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPostRequest.payload))
+        delete payload.consentRequestId
         const request = {
           method: 'POST',
           url: '/consentRequests',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPostRequest.headers
           },
-          payload: {
-            ...mockData.consentRequestsPostRequest.payload
-          }
+          payload
         }
-        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
           }
         }
 
@@ -986,7 +1042,7 @@ describe('index', (): void => {
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPutRequestWeb.headers
           },
           payload: {
@@ -1019,7 +1075,7 @@ describe('index', (): void => {
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPutRequestOTP.headers
           },
           payload: {
@@ -1038,7 +1094,7 @@ describe('index', (): void => {
 
         // Act
         const response = await server.inject(request)
-
+        console.log(response)
         // Assert
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
@@ -1046,30 +1102,30 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardConsentRequestsIdRequest.mockResolvedValueOnce()
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPutRequestWeb.payload))
+        delete payload.scopes
         const request = {
           method: 'PUT',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPutRequestWeb.headers
           },
-          payload: {
-            ...mockData.consentRequestsPutRequestWeb.payload
-          }
+          payload
         }
-        delete request.payload.consentRequestId
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'scopes\''
           }
         }
 
         // Act
         const response = await server.inject(request)
-
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -1115,7 +1171,9 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(consentRequestsRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(consentRequestsRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/consentRequests/a5bbfd51-d9fc-4084-961a-c2c2221a31e0/error',
@@ -1125,7 +1183,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -1154,7 +1213,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPatch.headers
           },
           payload: {
@@ -1181,25 +1240,25 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(mockData.consentRequestsPatch.payload))
+        delete payload.authToken
         const request = {
           method: 'PATCH',
           url: '/consentRequests/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentRequestsPatch.headers
           },
-          payload: {
-            ...mockData.consentRequestsPatch.payload
-          }
+          payload
         }
-        delete request.payload.authToken
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'authToken\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'authToken\''
           }
         }
 
@@ -1212,7 +1271,6 @@ describe('index', (): void => {
         expect(mockForwardConsentRequestsIdRequest).not.toHaveBeenCalled()
       })
     })
-
 
     describe('PUT /consents/{{ID}}', (): void => {
       beforeAll((): void => {
@@ -1231,7 +1289,7 @@ describe('index', (): void => {
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentsIdPutRequestVerified.headers
           },
           payload: {
@@ -1259,30 +1317,30 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        mockForwardConsentsIdRequest.mockResolvedValueOnce()
+        const payload = JSON.parse(JSON.stringify(mockData.consentsIdPutRequestVerified.payload))
+        delete payload.credential
         const request = {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.consentsIdPutRequestVerified.headers
           },
-          payload: {
-            ...mockData.consentsIdPutRequestVerified.payload
-          }
+          payload
         }
-        delete request.payload.credential
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'credential\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'credential\''
           }
         }
 
         // Act
         const response = await server.inject(request)
-
         // Assert
         expect(response.statusCode).toBe(400)
         expect(response.result).toStrictEqual(expected)
@@ -1307,7 +1365,7 @@ describe('index', (): void => {
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...consentsRequestError.headers
           },
           payload: {
@@ -1333,24 +1391,24 @@ describe('index', (): void => {
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
+        const payload = JSON.parse(JSON.stringify(consentsRequestError.payload))
+        delete payload.errorInformation
         const request = {
           method: 'PUT',
           url: '/consents/cd9c9b3a-fa64-4aab-8240-760fafa7f9b1/error',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...consentsRequestError.headers
           },
-          payload: {
-            ...consentsRequestError.payload
-          }
+          payload
         }
-        delete request.payload.errorInformation
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -1380,7 +1438,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.thirdparty+json;version=1.0',
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.accountsRequest.headers
           }
         }
@@ -1419,7 +1477,7 @@ describe('index', (): void => {
           url: '/accounts/username1234',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.accountsRequest.headers
           },
           payload: {
@@ -1452,14 +1510,14 @@ describe('index', (): void => {
           url: '/accounts/username1234',
           headers: {
             'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.accountsRequest.headers
           },
           payload: {
             accounts: [
               {
-                'accountNickname': 'dfspa.user.nickname',
-                'id': 'dfspa.username.1234'
+                accountNickname: 'dfspa.user.nickname',
+                address: 'dfspa.username.1234'
               }
             ]
           }
@@ -1468,7 +1526,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody/accounts/0 must have required property \'currency\''
+            errorDescription:
+              'Missing mandatory element - /requestBody/accounts/0 must have required property \'currency\''
           }
         }
 
@@ -1524,7 +1583,9 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(acctRequestError.payload, { errorInformation: undefined })
+        const errPayload = Object.assign(acctRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/accounts/username1234/error',
@@ -1534,7 +1595,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -1544,7 +1606,6 @@ describe('index', (): void => {
         expect(mockForwardAccountsIdRequestError).not.toHaveBeenCalled()
       })
     })
-
 
     describe('GET /services/{{ServiceType}}', (): void => {
       beforeAll((): void => {
@@ -1564,7 +1625,7 @@ describe('index', (): void => {
           headers: {
             accept: 'application/vnd.interoperability.services+json;version=1.0',
             'content-type': 'application/vnd.interoperability.service+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.getServicesByServiceTypeRequest.headers
           }
         }
@@ -1580,7 +1641,9 @@ describe('index', (): void => {
 
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
-        expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...expected)
+        expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
+          ...expected
+        )
       })
     })
 
@@ -1601,7 +1664,7 @@ describe('index', (): void => {
           url: '/services/THIRD_PARTY_DFSP',
           headers: {
             'content-type': 'application/vnd.interoperability.services+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.putServicesByServiceTypeRequest.headers
           },
           payload: {
@@ -1625,7 +1688,9 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
-        expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
+        expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
+          ...expected
+        )
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
@@ -1634,17 +1699,17 @@ describe('index', (): void => {
           url: '/services/THIRD_PARTY_DFSP',
           headers: {
             'content-type': 'application/vnd.interoperability.services+json;version=1.0',
-            date: (new Date()).toISOString(),
+            date: new Date().toISOString(),
             ...mockData.putServicesByServiceTypeRequest.headers
           },
-          payload: {
-          }
+          payload: {}
         }
 
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'providers\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'providers\''
           }
         }
 
@@ -1698,10 +1763,9 @@ describe('index', (): void => {
       })
 
       it('mandatory fields validation', async (): Promise<void> => {
-        const errPayload = Object.assign(
-          mockData.putServicesByServiceTypeRequestError.payload,
-          { errorInformation: undefined }
-        )
+        const errPayload = Object.assign(mockData.putServicesByServiceTypeRequestError.payload, {
+          errorInformation: undefined
+        })
         const request = {
           method: 'PUT',
           url: '/services/{{ServiceType}}/error',
@@ -1711,7 +1775,8 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription: 'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription:
+              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
           }
         }
         const response = await server.inject(request)
@@ -1725,10 +1790,10 @@ describe('index', (): void => {
     describe('/health', (): void => {
       it('GET', async (): Promise<void> => {
         interface HealthResponse {
-          status: string;
-          uptime: number;
-          startTime: string;
-          versionNumber: string;
+          status: string
+          uptime: number
+          startTime: string
+          versionNumber: string
         }
 
         const request = {
