@@ -1,4 +1,14 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [12.0.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v12.0.0...v12.0.1) (2022-03-31)
+
+
+### Maintenance
+
+* bump packages with ncu -u -t minor ([#76](https://github.com/mojaloop/thirdparty-api-svc/issues/76)) ([49f786d](https://github.com/mojaloop/thirdparty-api-svc/commit/49f786de5c2bec0a226ae34e67c5ef9f5b884b9c))
+* **deps-dev:** bump @redocly/openapi-cli ([#72](https://github.com/mojaloop/thirdparty-api-svc/issues/72)) ([f8a06d8](https://github.com/mojaloop/thirdparty-api-svc/commit/f8a06d8266c2bb28016aae9fcc13627291838f01))
+* **deps:** bump tmpl from 1.0.4 to 1.0.5 ([#73](https://github.com/mojaloop/thirdparty-api-svc/issues/73)) ([0fb3827](https://github.com/mojaloop/thirdparty-api-svc/commit/0fb38279b97a98a06d79a8f18be54e2e6261f135))
+* regen api interface and address vulnerabilities ([#79](https://github.com/mojaloop/thirdparty-api-svc/issues/79)) ([711e009](https://github.com/mojaloop/thirdparty-api-svc/commit/711e00942154e95cfecfce66ee021cc4c31bcdee))
+
 ## [12.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v11.23.0...v12.0.0) (2022-03-10)
 
 
