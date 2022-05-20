@@ -1,4 +1,15 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [13.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v12.0.1...v13.0.0) (2022-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* update nodejs to lts (#82)
+
+### Features
+
+* update nodejs to lts ([#82](https://github.com/mojaloop/thirdparty-api-svc/issues/82)) ([959896e](https://github.com/mojaloop/thirdparty-api-svc/commit/959896e21564f933f5d40ac9684e241404c7d8e0))
+
 ### [12.0.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v12.0.0...v12.0.1) (2022-03-31)
 
 
