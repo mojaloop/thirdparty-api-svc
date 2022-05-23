@@ -47,11 +47,7 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
   const serviceType: string = request.params.ServiceType
   const payload = request.payload as APIErrorObject

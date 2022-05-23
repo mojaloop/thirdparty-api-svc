@@ -40,7 +40,7 @@ interface RequestLogged extends Request {
   response: ResponseLogged
 }
 
-function logResponse (request: RequestLogged): void {
+function logResponse(request: RequestLogged): void {
   if (request && request.response) {
     let response
     try {
@@ -51,9 +51,7 @@ function logResponse (request: RequestLogged): void {
     if (!response) {
       logger.info(`thirdparty-api-svc-Trace - Response: ${request.response}`)
     } else {
-      logger.info(
-        `thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`
-      )
+      logger.info(`thirdparty-api-svc-Trace - Response: ${response} Status: ${request.response.statusCode}`)
     }
   }
 }

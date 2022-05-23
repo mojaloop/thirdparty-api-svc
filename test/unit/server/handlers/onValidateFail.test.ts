@@ -21,6 +21,7 @@
 
  --------------
  ******/
+// eslint-disable-next-line import/no-named-as-default
 import Boom from '@hapi/boom'
 import { Request, ResponseToolkit } from '@hapi/hapi'
 

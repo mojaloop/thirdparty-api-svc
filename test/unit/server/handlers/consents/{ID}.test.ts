@@ -140,11 +140,7 @@ describe('consentsId handler', () => {
       const expected = mockForwardConsentsIdRequestExpected
 
       // Act
-      const response = await ConsentsIdHandler.put(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -158,11 +154,7 @@ describe('consentsId handler', () => {
       const expected = mockForwardConsentsIdRequestExpected
 
       // Act
-      const response = await ConsentsIdHandler.put(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -182,8 +174,7 @@ describe('consentsId handler', () => {
       }
 
       // Act
-      const action = async () =>
-        await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () => await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -205,11 +196,7 @@ describe('consentsId handler', () => {
         const expected = mockForwardConsentsIdRequestExpectedPatchRequestVerified
 
         // Act
-        const response = await ConsentsIdHandler.patch(
-          null,
-          request as unknown as Request,
-          mockResponseToolkit
-        )
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
         expect(response.statusCode).toBe(200)
@@ -223,11 +210,7 @@ describe('consentsId handler', () => {
         const expected = mockForwardConsentsIdRequestExpectedPatchRequestVerified
 
         // Act
-        const response = await ConsentsIdHandler.patch(
-          null,
-          request as unknown as Request,
-          mockResponseToolkit
-        )
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
         expect(response.statusCode).toBe(200)
@@ -263,11 +246,7 @@ describe('consentsId handler', () => {
         const expected = mockForwardConsentsIdRequestExpectedPatchRequestRevoked
 
         // Act
-        const response = await ConsentsIdHandler.patch(
-          null,
-          request as unknown as Request,
-          mockResponseToolkit
-        )
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
         expect(response.statusCode).toBe(200)
@@ -281,11 +260,7 @@ describe('consentsId handler', () => {
         const expected = mockForwardConsentsIdRequestExpectedPatchRequestRevoked
 
         // Act
-        const response = await ConsentsIdHandler.patch(
-          null,
-          request as unknown as Request,
-          mockResponseToolkit
-        )
+        const response = await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
         expect(response.statusCode).toBe(200)

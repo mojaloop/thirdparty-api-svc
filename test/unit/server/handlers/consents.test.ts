@@ -77,11 +77,7 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -95,11 +91,7 @@ describe('consents handler', () => {
       const expected = postConsentsRequestExpected
 
       // Act
-      const response = await ConsentsHandler.post(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -119,8 +111,7 @@ describe('consents handler', () => {
       }
 
       // Act
-      const action = async () =>
-        await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
+      const action = async () => await ConsentsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

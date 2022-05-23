@@ -24,7 +24,6 @@ optionally within square brackets <email>.
 ******/
 import { Request } from '@hapi/hapi'
 import Logger from '@mojaloop/central-services-logger'
-import Config from '~/shared/config'
 
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
@@ -95,9 +94,7 @@ describe('ServicesServiceType handler', () => {
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      forwardGetServicesServiceTypeRequestToProviderService.mockRejectedValueOnce(
-        new Error('Test Error')
-      )
+      forwardGetServicesServiceTypeRequestToProviderService.mockRejectedValueOnce(new Error('Test Error'))
       // Act
       const response = await ServicesServiceTypeHandler.get(
         null,
@@ -123,11 +120,7 @@ describe('ServicesServiceType handler', () => {
       }
       // Act
       const action = async () =>
-        await ServicesServiceTypeHandler.get(
-          null,
-          invalReq as unknown as Request,
-          mockResponseToolkit
-        )
+        await ServicesServiceTypeHandler.get(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -159,9 +152,7 @@ describe('ServicesServiceType handler', () => {
 
     it('handles errors asynchronously', async () => {
       // Arrange
-      forwardGetServicesServiceTypeRequestFromProviderService.mockRejectedValueOnce(
-        new Error('Test Error')
-      )
+      forwardGetServicesServiceTypeRequestFromProviderService.mockRejectedValueOnce(new Error('Test Error'))
       // Act
       const response = await ServicesServiceTypeHandler.put(
         null,
@@ -188,11 +179,7 @@ describe('ServicesServiceType handler', () => {
       }
       // Act
       const action = async () =>
-        await ServicesServiceTypeHandler.put(
-          null,
-          invalReq as unknown as Request,
-          mockResponseToolkit
-        )
+        await ServicesServiceTypeHandler.put(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

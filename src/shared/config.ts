@@ -92,12 +92,8 @@ if (RC.PARTICIPANT_LIST_LOCAL && RC.PARTICIPANT_LIST_SERVICE_URL) {
 }
 
 if (!RC.PARTICIPANT_LIST_LOCAL && !RC.PARTICIPANT_LIST_SERVICE_URL) {
-  logger.error(
-    'Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs'
-  )
-  throw new Error(
-    'Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs'
-  )
+  logger.error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
+  throw new Error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
 }
 
 export default {

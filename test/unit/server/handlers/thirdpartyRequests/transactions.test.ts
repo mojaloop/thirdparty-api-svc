@@ -34,10 +34,7 @@ import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mockForwardTransactionRequestError = jest.spyOn(
-  Transactions,
-  'forwardTransactionRequestError'
-)
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
@@ -113,8 +110,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -187,8 +183,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.get(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.get(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -261,8 +256,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -335,8 +329,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.patch(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.patch(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -383,8 +376,7 @@ describe('transactions handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

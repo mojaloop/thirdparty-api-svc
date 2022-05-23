@@ -45,11 +45,7 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function put (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
@@ -85,9 +81,7 @@ async function put (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardConsentRequestsIdRequest takes care of async errors
-      Logger.error(
-        'ConsentRequests::put - forwardConsentRequestsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('ConsentRequests::put - forwardConsentRequestsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -106,11 +100,7 @@ async function put (
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function patch (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function patch(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentRequestsRequestId: string = request.params.ID
@@ -143,9 +133,7 @@ async function patch (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardConsentRequestsIdRequest takes care of async errors
-      Logger.error(
-        'ConsentRequests::put - forwardConsentRequestsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('ConsentRequests::put - forwardConsentRequestsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 

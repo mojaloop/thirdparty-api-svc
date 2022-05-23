@@ -29,18 +29,9 @@
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
@@ -62,7 +53,7 @@ import { finishChildSpan } from '~/shared/util'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentRequestsIdRequestError (
+export async function forwardConsentRequestsIdRequestError(
   path: string,
   consentRequestsRequestId: string,
   headers: HapiUtil.Dictionary<string>,
@@ -130,7 +121,7 @@ export async function forwardConsentRequestsIdRequestError (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentRequestsRequest (
+export async function forwardConsentRequestsRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
@@ -149,9 +140,7 @@ export async function forwardConsentRequestsRequest (
       path,
       {}
     )
-    Logger.info(
-      `consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`
-    )
+    Logger.info(`consentRequest::forwardConsentRequestsRequest - Forwarding consentRequest to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -172,9 +161,7 @@ export async function forwardConsentRequestsRequest (
     }
   } catch (err) {
     Logger.error(
-      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(
-        err
-      )}`
+      `consentRequest::forwardConsentRequestsRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`
     )
     const errorHeaders = {
       ...headers,
@@ -214,16 +201,16 @@ export async function forwardConsentRequestsRequest (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentRequestsIdRequest (
+export async function forwardConsentRequestsIdRequest(
   consentRequestsRequestId: string,
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload:
-  | tpAPI.Schemas.ConsentRequestsIDPutResponseOTP
-  | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
-  | tpAPI.Schemas.ConsentRequestsIDPatchRequest,
+    | tpAPI.Schemas.ConsentRequestsIDPutResponseOTP
+    | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
+    | tpAPI.Schemas.ConsentRequestsIDPatchRequest,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardConsentRequestsIDRequest')
@@ -238,9 +225,7 @@ export async function forwardConsentRequestsIdRequest (
       path,
       { ID: consentRequestsRequestId }
     )
-    Logger.info(
-      `consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`
-    )
+    Logger.info(`consentRequest::forwardConsentRequestsIdRequest - Forwarding consentRequest to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -261,9 +246,7 @@ export async function forwardConsentRequestsIdRequest (
     }
   } catch (err) {
     Logger.error(
-      `consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(
-        err
-      )}`
+      `consentRequest::forwardConsentRequestsIdRequest - Error forwarding consentRequest to endpoint: ${inspect(err)}`
     )
     const errorHeaders = {
       ...headers,

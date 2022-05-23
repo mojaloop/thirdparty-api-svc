@@ -45,7 +45,7 @@ import { FSPIOPError } from '@mojaloop/central-services-error-handling'
  * @param {any} span request span
  * @returns {Promise<void>}
  */
-async function finishChildSpan (fspiopError: FSPIOPError, childSpan: Span): Promise<void> {
+async function finishChildSpan(fspiopError: FSPIOPError, childSpan: Span): Promise<void> {
   const state = new EventStateMetadata(
     EventStatusType.failed,
     fspiopError.apiErrorCode.code,
@@ -60,7 +60,7 @@ async function finishChildSpan (fspiopError: FSPIOPError, childSpan: Span): Prom
  * @description Gets the error stack, or uses util.inspect to inspect the error
  * @param {*} err - An error object
  */
-function getStackOrInspect (err: Error): string {
+function getStackOrInspect(err: Error): string {
   return err.stack || util.inspect(err)
 }
 
@@ -72,7 +72,7 @@ function getStackOrInspect (err: Error): string {
  * @param {string} eventAction
  * @returns {Object}
  */
-function getSpanTags (
+function getSpanTags(
   request: Request,
   eventType: string,
   eventAction: string,

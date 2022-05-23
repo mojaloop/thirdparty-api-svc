@@ -34,10 +34,7 @@ import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
-const mockForwardAuthorizationRequestError = jest.spyOn(
-  Authorizations,
-  'forwardAuthorizationRequestError'
-)
+const mockForwardAuthorizationRequestError = jest.spyOn(Authorizations, 'forwardAuthorizationRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
@@ -124,9 +121,7 @@ describe('authorizations handler', (): void => {
       const MockData = JSON.parse(JSON.stringify(TestData))
       const request: Request = MockData.transactionRequest
       mockForwardAuthorizationRequest.mockResolvedValueOnce()
-      mockForwardAuthorizationRequest.mockRejectedValueOnce(
-        new Error('authorizations forward Error')
-      )
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('authorizations forward Error'))
       const expected = [
         '/thirdpartyRequests/authorizations',
         'TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST',
@@ -156,8 +151,7 @@ describe('authorizations handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.post(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -200,9 +194,7 @@ describe('authorizations handler', (): void => {
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
       mockForwardAuthorizationRequest.mockResolvedValueOnce()
-      mockForwardAuthorizationRequest.mockRejectedValueOnce(
-        new Error('authorizations forward Error')
-      )
+      mockForwardAuthorizationRequest.mockRejectedValueOnce(new Error('authorizations forward Error'))
       const expected = [
         '/thirdpartyRequests/authorizations/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT',
@@ -232,8 +224,7 @@ describe('authorizations handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -279,8 +270,7 @@ describe('authorizations handler', (): void => {
       }
 
       // Act
-      const action = async () =>
-        await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
+      const action = async () => await Handler.putError(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

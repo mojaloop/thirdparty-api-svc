@@ -62,22 +62,16 @@ describe('shared/logger', (): void => {
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalled()
     expect(logger.info).toBeCalledWith(
-      `thirdparty-api-svc-Trace - Response: ${inspect(request.response.source)} Status: ${
-        request.response.statusCode
-      }`
+      `thirdparty-api-svc-Trace - Response: ${inspect(request.response.source)} Status: ${request.response.statusCode}`
     )
   })
 
   it('should log if there is no request.response', (): void => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const spyStringify = jest
-      .spyOn(JSON, 'stringify')
-      .mockImplementationOnce(() => null as unknown as string)
+    const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => null as unknown as string)
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
     expect(spyStringify).toBeCalled()
-    expect(logger.info).toBeCalledWith(
-      `thirdparty-api-svc-Trace - Response: ${request.response.toString()}`
-    )
+    expect(logger.info).toBeCalledWith(`thirdparty-api-svc-Trace - Response: ${request.response.toString()}`)
   })
 })

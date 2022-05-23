@@ -33,10 +33,7 @@ import ConsentRequestsHandler from '~/server/handlers/consentRequests'
 import * as ConsentRequests from '~/domain/consentRequests'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-const mockForwardConsentRequestsRequest = jest.spyOn(
-  ConsentRequests,
-  'forwardConsentRequestsRequest'
-)
+const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const postConsentRequestsRequest = {
@@ -82,11 +79,7 @@ describe('consentRequests handler', () => {
       const expected = postConsentRequestsRequestExpected
 
       // Act
-      const response = await ConsentRequestsHandler.post(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -100,11 +93,7 @@ describe('consentRequests handler', () => {
       const expected = postConsentRequestsRequestExpected
 
       // Act
-      const response = await ConsentRequestsHandler.post(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await ConsentRequestsHandler.post(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)

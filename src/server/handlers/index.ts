@@ -86,14 +86,11 @@ export default {
     'Put thirdpartyRequests authorizations request',
     ['success']
   ]),
-  PutThirdpartyRequestsAuthorizationsByIdAndError: wrapWithHistogram(
-    ThirdpartyRequestsAuthorizations.putError,
-    [
-      'thirdpartyRequests_authorizations_error_put',
-      'Put thirdpartyRequests authorizations request error',
-      ['success']
-    ]
-  ),
+  PutThirdpartyRequestsAuthorizationsByIdAndError: wrapWithHistogram(ThirdpartyRequestsAuthorizations.putError, [
+    'thirdpartyRequests_authorizations_error_put',
+    'Put thirdpartyRequests authorizations request error',
+    ['success']
+  ]),
   PostThirdpartyRequestsVerifications: wrapWithHistogram(ThirdpartyRequestsVerifications.post, [
     'thirdpartyRequests_verifications_post',
     'Post thirdpartyRequests verifications request',
@@ -104,14 +101,11 @@ export default {
     'Put thirdpartyRequests verifications request',
     ['success']
   ]),
-  PutThirdpartyRequestsVerificationsByIdAndError: wrapWithHistogram(
-    ThirdpartyRequestsVerifications.putError,
-    [
-      'thirdpartyRequests_verifications_error_put',
-      'Put thirdpartyRequests verifications request error',
-      ['success']
-    ]
-  ),
+  PutThirdpartyRequestsVerificationsByIdAndError: wrapWithHistogram(ThirdpartyRequestsVerifications.putError, [
+    'thirdpartyRequests_verifications_error_put',
+    'Put thirdpartyRequests verifications request error',
+    ['success']
+  ]),
   CreateConsentRequest: wrapWithHistogram(ConsentRequests.post, [
     'consentRequests_post',
     'Post consentRequests request',
@@ -127,21 +121,9 @@ export default {
     'Patch consentRequestsId request',
     ['success']
   ]),
-  PostConsents: wrapWithHistogram(Consents.post, [
-    'consents_post',
-    'Post consents request',
-    ['success']
-  ]),
-  PutConsentByID: wrapWithHistogram(ConsentsId.put, [
-    'consentsId_put',
-    'Put consentsId request',
-    ['success']
-  ]),
-  PatchConsentByID: wrapWithHistogram(ConsentsId.patch, [
-    'consentsId_patch',
-    'Patch consentsId request',
-    ['success']
-  ]),
+  PostConsents: wrapWithHistogram(Consents.post, ['consents_post', 'Post consents request', ['success']]),
+  PutConsentByID: wrapWithHistogram(ConsentsId.put, ['consentsId_put', 'Put consentsId request', ['success']]),
+  PatchConsentByID: wrapWithHistogram(ConsentsId.patch, ['consentsId_patch', 'Patch consentsId request', ['success']]),
   NotifyErrorConsents: wrapWithHistogram(ConsentsByIdError.put, [
     'consentsId_error_put',
     'Put consentsId error request',

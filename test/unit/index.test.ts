@@ -38,35 +38,17 @@ import * as Services from '~/domain/services'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mockForwardTransactionRequestError = jest.spyOn(
-  Transactions,
-  'forwardTransactionRequestError'
-)
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
-const mockForwardAuthorizationRequestError = jest.spyOn(
-  Authorizations,
-  'forwardAuthorizationRequestError'
-)
+const mockForwardAuthorizationRequestError = jest.spyOn(Authorizations, 'forwardAuthorizationRequestError')
 const mockForwardVerificationRequest = jest.spyOn(Verifications, 'forwardVerificationRequest')
-const mockForwardVerificationRequestError = jest.spyOn(
-  Verifications,
-  'forwardVerificationRequestError'
-)
+const mockForwardVerificationRequestError = jest.spyOn(Verifications, 'forwardVerificationRequestError')
 const mockForwardConsentsRequest = jest.spyOn(Consents, 'forwardConsentsRequest')
 const mockForwardConsentsIdRequest = jest.spyOn(Consents, 'forwardConsentsIdRequest')
 const mockForwardConsentsIdRequestError = jest.spyOn(Consents, 'forwardConsentsIdRequestError')
-const mockForwardConsentRequestsRequest = jest.spyOn(
-  ConsentRequests,
-  'forwardConsentRequestsRequest'
-)
-const mockForwardConsentRequestsIdRequest = jest.spyOn(
-  ConsentRequests,
-  'forwardConsentRequestsIdRequest'
-)
-const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(
-  ConsentRequests,
-  'forwardConsentRequestsIdRequestError'
-)
+const mockForwardConsentRequestsRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsRequest')
+const mockForwardConsentRequestsIdRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequest')
+const mockForwardConsentRequestsIdErrorRequest = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
 const mockForwardAccountsIdRequest = jest.spyOn(Accounts, 'forwardAccountsIdRequest')
 const mockForwardAccountsIdRequestError = jest.spyOn(Accounts, 'forwardAccountsIdRequestError')
 const mockForwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(
@@ -77,10 +59,7 @@ const mockForwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(
   Services,
   'forwardGetServicesServiceTypeRequestFromProviderService'
 )
-const mockForwardServicesServiceTypeRequestError = jest.spyOn(
-  Services,
-  'forwardServicesServiceTypeRequestError'
-)
+const mockForwardServicesServiceTypeRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = TestData
@@ -191,7 +170,7 @@ describe('index', (): void => {
           errorInformation: {
             errorCode: '3102',
             errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'transactionRequestId\''
+              "Missing mandatory element - /requestBody must have required property 'transactionRequestId'"
           }
         }
         const response = await server.inject(request)
@@ -262,9 +241,7 @@ describe('index', (): void => {
 
       it('PATCH mandatory fields validation', async (): Promise<void> => {
         mockForwardTransactionRequest.mockResolvedValueOnce()
-        const errPayload = JSON.parse(
-          JSON.stringify(TestData.patchThirdpartyTransactionIdRequest.payload)
-        )
+        const errPayload = JSON.parse(JSON.stringify(TestData.patchThirdpartyTransactionIdRequest.payload))
         delete errPayload.transactionRequestState
         const reqHeaders = Object.assign(TestData.patchThirdpartyTransactionIdRequest.headers, {
           date: 'Thu, 23 Jan 2020 10:22:12 GMT',
@@ -281,7 +258,7 @@ describe('index', (): void => {
           errorInformation: {
             errorCode: '3102',
             errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'transactionRequestState\''
+              "Missing mandatory element - /requestBody must have required property 'transactionRequestState'"
           }
         }
         const response = await server.inject(request)
@@ -341,8 +318,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -451,8 +427,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'challenge\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'challenge'"
           }
         }
 
@@ -467,26 +442,24 @@ describe('index', (): void => {
     })
 
     describe('PUT /thirdpartyRequests/authorizations/{ID}', (): void => {
-      const authorizationPutRequestPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO =
-        {
-          responseType: 'ACCEPTED',
-          signedPayload: {
-            signedPayloadType: 'FIDO',
-            fidoSignedPayload: {
-              id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-              rawId:
-                '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-              response: {
-                authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-                clientDataJSON:
-                  'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-                signature:
-                  'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-              },
-              type: 'public-key'
-            }
+      const authorizationPutRequestPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponseFIDO = {
+        responseType: 'ACCEPTED',
+        signedPayload: {
+          signedPayloadType: 'FIDO',
+          fidoSignedPayload: {
+            id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+            rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+            response: {
+              authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+              clientDataJSON:
+                'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+              signature:
+                'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+            },
+            type: 'public-key'
           }
         }
+      }
 
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -546,8 +519,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'responseType\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'responseType'"
           }
         }
 
@@ -616,8 +588,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -629,26 +600,24 @@ describe('index', (): void => {
     })
 
     describe('POST /thirdpartyRequests/verifications', (): void => {
-      const verificationPostRequestBody: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest =
-        {
-          verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
-          challenge: '<base64 encoded binary - the encoded challenge>',
-          consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
-          signedPayloadType: 'FIDO',
-          fidoSignedPayload: {
-            id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-            rawId:
-              '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
-            response: {
-              authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
-              clientDataJSON:
-                'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-              signature:
-                'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
-            },
-            type: 'public-key'
-          }
+      const verificationPostRequestBody: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest = {
+        verificationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
+        challenge: '<base64 encoded binary - the encoded challenge>',
+        consentId: '062430f3-69ce-454a-84e3-2b73e953cb4a',
+        signedPayloadType: 'FIDO',
+        fidoSignedPayload: {
+          id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
+          rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+          response: {
+            authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
+            clientDataJSON:
+              'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
+            signature:
+              'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+          },
+          type: 'public-key'
         }
+      }
 
       beforeAll((): void => {
         mockLoggerPush.mockReturnValue(null)
@@ -710,8 +679,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'challenge\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'challenge'"
           }
         }
 
@@ -790,7 +758,7 @@ describe('index', (): void => {
           errorInformation: {
             errorCode: '3102',
             errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'authenticationResponse\''
+              "Missing mandatory element - /requestBody must have required property 'authenticationResponse'"
           }
         }
 
@@ -861,8 +829,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -934,8 +901,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'consentId\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'consentId'"
           }
         }
 
@@ -1010,8 +976,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'consentRequestId\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'consentRequestId'"
           }
         }
 
@@ -1119,8 +1084,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'scopes\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'scopes'"
           }
         }
 
@@ -1183,8 +1147,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -1257,8 +1220,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'authToken\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'authToken'"
           }
         }
 
@@ -1334,8 +1296,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'credential\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'credential'"
           }
         }
 
@@ -1407,8 +1368,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -1527,7 +1487,7 @@ describe('index', (): void => {
           errorInformation: {
             errorCode: '3102',
             errorDescription:
-              'Missing mandatory element - /requestBody/accounts/0 must have required property \'currency\''
+              "Missing mandatory element - /requestBody/accounts/0 must have required property 'currency'"
           }
         }
 
@@ -1595,8 +1555,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
@@ -1641,9 +1600,7 @@ describe('index', (): void => {
 
         expect(response.statusCode).toBe(202)
         expect(response.result).toBeNull()
-        expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(
-          ...expected
-        )
+        expect(mockForwardGetServicesServiceTypeRequestToProviderService).toHaveBeenCalledWith(...expected)
       })
     })
 
@@ -1688,9 +1645,7 @@ describe('index', (): void => {
         // Assert
         expect(response.statusCode).toBe(200)
         expect(response.result).toBeNull()
-        expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
-          ...expected
-        )
+        expect(mockForwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
       })
 
       it('requires all fields to be set', async (): Promise<void> => {
@@ -1708,8 +1663,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'providers\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'providers'"
           }
         }
 
@@ -1775,8 +1729,7 @@ describe('index', (): void => {
         const expected = {
           errorInformation: {
             errorCode: '3102',
-            errorDescription:
-              'Missing mandatory element - /requestBody must have required property \'errorInformation\''
+            errorDescription: "Missing mandatory element - /requestBody must have required property 'errorInformation'"
           }
         }
         const response = await server.inject(request)
