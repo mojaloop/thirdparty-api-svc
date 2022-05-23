@@ -34,6 +34,16 @@ describe('consumer', () => {
         partition: null,
         opaqueKey: {}
       })
+      const config: ConsumerConfig = {
+        eventAction: Enum.Events.Event.Action.EVENT,
+        eventType: Enum.Events.Event.Type.NOTIFICATION,
+        internalConfig
+      }
+      const topicTemplate = ''
+      const handlerFunc = jest.fn()
+
+      // Act
+      new Consumer(config, topicTemplate, handlerFunc)
 
       // Assert
       expect(mockConstructor).toHaveBeenCalledWith(['hello_topic'], internalConfig)
