@@ -31,7 +31,7 @@ RUN ln -sf /dev/stdout ./logs/combined.log
 RUN adduser -D app-user
 USER app-user
 
-COPY --chown=ml-user --from=builder /opt/app/ .
+COPY --chown=app-user --from=builder /opt/app/ .
 
 RUN npm prune --production
 
