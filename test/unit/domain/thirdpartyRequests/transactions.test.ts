@@ -26,7 +26,6 @@ Contributors Contributors
  --------------
  ******/
 
-import Hapi from '@hapi/hapi'
 import { Transactions } from '~/domain/thirdpartyRequests'
 import Logger from '@mojaloop/central-services-logger'
 import { Util, Enum } from '@mojaloop/central-services-shared'
@@ -39,18 +38,13 @@ const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const postTransactionRequestApiPath = '/thirdpartyRequests/transactions'
-const postTransactionRequestApiEndpointType =
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
+const postTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST
 const getPutPatchTransactionRequestApiPath = '/thirdpartyRequests/transactions/{ID}'
-const getTransactionRequestApiEndpointType =
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET
-const patchTransactionRequestApiEndpointType =
-  Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH
+const getTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET
+const patchTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
 const patchThirdpartyTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
-// TODO: replace this data
-const notificationEventCommit = mockData.notificationEventCommit
 
 const getEndpointAndRenderExpectedPostTransactionRequest = [
   'http://central-ledger.local:3001',
@@ -130,9 +124,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
 
     it('forwards POST /thirdpartyRequests/transactions request', async (): Promise<void> => {
       const mockSpan = new Span()
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://dfspa-sdk/thirdpartyRequests/transactions'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions')
       mockSendRequest.mockResolvedValue({
         ok: true,
         status: 202,
@@ -151,9 +143,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPostTransactionRequest)
     })
 
@@ -180,9 +170,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedGetTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedGetTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedGetTransactionRequest)
     })
 
@@ -209,16 +197,12 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         mockSpan
       )
 
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPatchTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPatchTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPatchTransactionRequest)
     })
 
     it('handles when payload is undefined', async (): Promise<void> => {
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://dfspa-sdk/thirdpartyRequests/transactions'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions')
       mockSendRequest.mockResolvedValue({
         ok: true,
         status: 202,
@@ -243,16 +227,12 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         Enum.Http.ResponseTypes.JSON,
         undefined
       ]
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendReqParamsExpected)
     })
 
     it('handles when payload is undefined', async (): Promise<void> => {
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://dfspa-sdk/thirdpartyRequests/transactions'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/thirdpartyRequests/transactions')
       mockSendRequest.mockResolvedValue({
         ok: true,
         status: 202,
@@ -277,9 +257,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         Enum.Http.ResponseTypes.JSON,
         undefined
       ]
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendReqParamsExpected)
     })
 
@@ -305,12 +283,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedSecondPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecondPostTransactionRequest)
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -335,24 +309,16 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedSecondPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecondPostTransactionRequest)
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
 
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload = ReformatFSPIOPError(
-        new Error('Failed to send HTTP request')
-      ).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
       const sendRequestErrExpected = [
-        'http://pispa-sdk/thirdpartyRequests/transactions/' +
-          request.payload.transactionRequestId +
-          '/error',
+        'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
         expectedErrorHeaders,
         expectedErrorHeaders['fspiop-source'],
         expectedErrorHeaders['fspiop-destination'],
@@ -366,14 +332,12 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         .mockResolvedValueOnce(
           'http://pispa-sdk/thirdpartyRequests/transactions/7d34f91d-d078-4077-8263-2c047876fcf6/error'
         )
-      mockSendRequest
-        .mockRejectedValueOnce(new Error('Failed to send HTTP request'))
-        .mockResolvedValue({
-          ok: true,
-          status: 202,
-          statusText: 'Accepted',
-          payload: null
-        })
+      mockSendRequest.mockRejectedValueOnce(new Error('Failed to send HTTP request')).mockResolvedValue({
+        ok: true,
+        status: 202,
+        statusText: 'Accepted',
+        payload: null
+      })
 
       const action = async () =>
         await Transactions.forwardTransactionRequest(
@@ -389,12 +353,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         )
 
       await expect(action).rejects.toThrow('Failed to send HTTP request')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedSecondPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecondPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
@@ -407,13 +367,12 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
 
     it('handles `sendRequest` failure twice', async (): Promise<void> => {
       const mockSpan = new Span()
-      const errorPayload = ReformatFSPIOPError(
-        new Error('Failed to send HTTP request first time')
-      ).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(
+        true,
+        true
+      )
       const sendRequestErrExpected = [
-        'http://pispa-sdk/thirdpartyRequests/transactions/' +
-          request.payload.transactionRequestId +
-          '/error',
+        'http://pispa-sdk/thirdpartyRequests/transactions/' + request.payload.transactionRequestId + '/error',
         expectedErrorHeaders,
         expectedErrorHeaders['fspiop-source'],
         expectedErrorHeaders['fspiop-destination'],
@@ -445,12 +404,8 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         )
 
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedPostTransactionRequest
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderExpectedSecondPostTransactionRequest
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecondPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedPostTransactionRequest)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
     })

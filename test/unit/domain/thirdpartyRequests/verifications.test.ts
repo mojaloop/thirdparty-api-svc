@@ -45,14 +45,12 @@ const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
   signedPayloadType: 'FIDO',
   fidoSignedPayload: {
     id: '45c-TkfkjQovQeAWmOy-RLBHEJ_e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA',
-    rawId:
-      '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
+    rawId: '45c+TkfkjQovQeAWmOy+RLBHEJ/e4jYzQYgD8VdbkePgM5d98BaAadadNYrknxgH0jQEON8zBydLgh1EqoC9DA==',
     response: {
       authenticatorData: 'SZYN5YgOjGh0NBcPZHZgW4/krrmihjLHmVzzuoMdl2MBAAAACA==',
       clientDataJSON:
         'eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiQUFBQUFBQUFBQUFBQUFBQUFBRUNBdyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIxODEiLCJjcm9zc09yaWdpbiI6ZmFsc2UsIm90aGVyX2tleXNfY2FuX2JlX2FkZGVkX2hlcmUiOiJkbyBub3QgY29tcGFyZSBjbGllbnREYXRhSlNPTiBhZ2FpbnN0IGEgdGVtcGxhdGUuIFNlZSBodHRwczovL2dvby5nbC95YWJQZXgifQ==',
-      signature:
-        'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
+      signature: 'MEUCIDcJRBu5aOLJVc/sPyECmYi23w8xF35n3RNhyUNVwQ2nAiEA+Lnd8dBn06OKkEgAq00BVbmH87ybQHfXlf1Y4RJqwQ8='
     },
     type: 'public-key'
   }
@@ -66,8 +64,7 @@ describe('domain/verifications', () => {
   describe('forwardVerificationRequest', () => {
     const path = Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_VERIFICATIONS_POST
     const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST
-    const errorEndpointType =
-      Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
+    const errorEndpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
     const method = Enum.Http.RestMethods.POST
 
     beforeEach((): void => {
@@ -78,9 +75,7 @@ describe('domain/verifications', () => {
 
     it('forwards the POST `thirdpartyRequests/verifications request', async () => {
       // Arrange
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://auth-service.local/thirdpartyRequests/verifications'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://auth-service.local/thirdpartyRequests/verifications')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'pispA',
@@ -205,14 +200,7 @@ describe('domain/verifications', () => {
 
       // Act
       const action = async () =>
-        await Verifications.forwardVerificationRequest(
-          path,
-          endpointType,
-          headers,
-          method,
-          id,
-          validPostPayload
-        )
+        await Verifications.forwardVerificationRequest(path, endpointType, headers, method, id, validPostPayload)
 
       // Assert
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
@@ -234,9 +222,7 @@ describe('domain/verifications', () => {
       }
       const id = '123456'
       const mockSpan = new Span()
-      const errorPayload = ReformatFSPIOPError(
-        new Error('Failed to send HTTP request')
-      ).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
 
       const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
@@ -314,9 +300,10 @@ describe('domain/verifications', () => {
         'fspiop-destination': 'dfspA'
       }
       const id = '123456'
-      const errorPayload = ReformatFSPIOPError(
-        new Error('Failed to send HTTP request first time')
-      ).toApiErrorObject(true, true)
+      const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request first time')).toApiErrorObject(
+        true,
+        true
+      )
       const getEndpointAndRenderExpectedFirst = [
         'http://central-ledger.local:3001',
         'dfspA',
@@ -354,14 +341,7 @@ describe('domain/verifications', () => {
 
       // Act
       const action = async () =>
-        await Verifications.forwardVerificationRequest(
-          path,
-          endpointType,
-          headers,
-          method,
-          id,
-          validPostPayload
-        )
+        await Verifications.forwardVerificationRequest(path, endpointType, headers, method, id, validPostPayload)
 
       // Assert
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
@@ -383,9 +363,7 @@ describe('domain/verifications', () => {
 
     it('forwards the POST /../authorization error', async () => {
       // Arrange
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://pisp.local/thirdpartyRequests/verifications/123456/error'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://pisp.local/thirdpartyRequests/verifications/123456/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'switch',
@@ -439,9 +417,7 @@ describe('domain/verifications', () => {
       }
       const id = '123456'
       // Arrange
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://auth-service.local/thirdpartyRequests/verifications/123456'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://auth-service.local/thirdpartyRequests/verifications/123456')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
 
       const getEndpointAndRenderExpected = [

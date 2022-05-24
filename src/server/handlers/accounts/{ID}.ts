@@ -49,11 +49,7 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
   const userId: string = request.params.ID
   try {
@@ -84,9 +80,7 @@ const get = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardAccountsIdRequest takes care of async errors
-      Logger.error(
-        'Accounts::get - forwardAccountsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('Accounts::get - forwardAccountsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -107,11 +101,7 @@ const get = async (
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.AccountsIDPutResponse
   const span = request.span
   const userId: string = request.params.ID
@@ -144,9 +134,7 @@ const put = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardAccountsIdRequest takes care of async errors
-      Logger.error(
-        'Accounts::put - forwardAccountsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('Accounts::put - forwardAccountsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 

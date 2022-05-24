@@ -47,11 +47,7 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function post(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
   const authorizationRequestId = payload.authorizationRequestId
@@ -83,9 +79,7 @@ async function post (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
-      Logger.error(
-        'Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error'
-      )
+      Logger.error('Authorizations::post - forwardAuthorizationRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -106,11 +100,7 @@ async function post (
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function put (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const authorizationRequestId: string = request.params.ID
@@ -144,9 +134,7 @@ async function put (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardAuthorizationRequest takes care of async errors
-      Logger.error(
-        'Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error'
-      )
+      Logger.error('Authorizations::put - forwardAuthorizationRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 

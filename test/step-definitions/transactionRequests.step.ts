@@ -4,18 +4,14 @@ import { Server, ServerInjectResponse } from '@hapi/hapi'
 import Config from '~/shared/config'
 
 import ThirdPartyAPIAdapterService from '~/server'
-import { Transactions, Authorizations } from '~/domain/thirdpartyRequests'
+import { Transactions } from '~/domain/thirdpartyRequests'
 import * as TestData from 'test/unit/data/mockData'
 
 const featurePath = path.join(__dirname, '../features/transactionRequests.feature')
 const feature = loadFeature(featurePath)
 
 const mockForwardTransactionRequest = jest.spyOn(Transactions, 'forwardTransactionRequest')
-const mockForwardTransactionRequestError = jest.spyOn(
-  Transactions,
-  'forwardTransactionRequestError'
-)
-const mockForwardAuthorizationRequest = jest.spyOn(Authorizations, 'forwardAuthorizationRequest')
+const mockForwardTransactionRequestError = jest.spyOn(Transactions, 'forwardTransactionRequestError')
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 defineFeature(feature, (test): void => {
@@ -45,16 +41,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when(
-      'I send a \'CreateThirdpartyTransactionRequests\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardTransactionRequest.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      }
-    )
+    when("I send a 'CreateThirdpartyTransactionRequests' request", async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/thirdpartyRequests/transactions',
         'TP_CB_URL_TRANSACTION_REQUEST_POST',
@@ -88,16 +81,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when(
-      'I send a \'GetThirdpartyTransactionRequests\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardTransactionRequest.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      }
-    )
+    when("I send a 'GetThirdpartyTransactionRequests' request", async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_GET',
@@ -131,16 +121,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when(
-      'I send a \'UpdateThirdPartyTransactionRequests\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardTransactionRequest.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      }
-    )
+    when("I send a 'UpdateThirdPartyTransactionRequests' request", async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_PUT',
@@ -187,16 +174,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when(
-      'I send a \'ThirdpartyTransactionRequestsError\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardTransactionRequestError.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      }
-    )
+    when("I send a 'ThirdpartyTransactionRequestsError' request", async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequestError.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         expect.objectContaining(request.headers),
         '/thirdpartyRequests/transactions/{{ID}}/error',
@@ -231,16 +215,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when(
-      'I send a \'NotifyThirdpartyTransactionRequests\' request',
-      async (): Promise<ServerInjectResponse> => {
-        mockForwardTransactionRequest.mockResolvedValueOnce()
-        response = await server.inject(request)
-        return response
-      }
-    )
+    when("I send a 'NotifyThirdpartyTransactionRequests' request", async (): Promise<ServerInjectResponse> => {
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+      response = await server.inject(request)
+      return response
+    })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/thirdpartyRequests/transactions/{{ID}}',
         'TP_CB_URL_TRANSACTION_REQUEST_PATCH',

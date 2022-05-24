@@ -28,18 +28,9 @@
  ******/
 import { Util as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
@@ -61,7 +52,7 @@ import { finishChildSpan } from '~/shared/util'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentsIdRequestError (
+export async function forwardConsentsIdRequestError(
   path: string,
   consentsId: string,
   headers: HapiUtil.Dictionary<string>,
@@ -81,9 +72,7 @@ export async function forwardConsentsIdRequestError (
       path,
       { ID: consentsId }
     )
-    Logger.info(
-      `consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`
-    )
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -103,11 +92,7 @@ export async function forwardConsentsIdRequestError (
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(
-      `consents::forwardConsentsRequestError - Error forwarding consents error to endpoint: ${inspect(
-        err
-      )}`
-    )
+    Logger.error(`consents::forwardConsentsRequestError - Error forwarding consents error to endpoint: ${inspect(err)}`)
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)
@@ -130,17 +115,17 @@ export async function forwardConsentsIdRequestError (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentsIdRequest (
+export async function forwardConsentsIdRequest(
   consentsRequestId: string,
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   payload:
-  | tpAPI.Schemas.ConsentsIDPutResponseVerified
-  | tpAPI.Schemas.ConsentsIDPutResponseSigned
-  | tpAPI.Schemas.ConsentsIDPatchResponseVerified
-  | tpAPI.Schemas.ConsentsIDPatchResponseRevoked,
+    | tpAPI.Schemas.ConsentsIDPutResponseVerified
+    | tpAPI.Schemas.ConsentsIDPutResponseSigned
+    | tpAPI.Schemas.ConsentsIDPatchResponseVerified
+    | tpAPI.Schemas.ConsentsIDPatchResponseRevoked,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
@@ -175,9 +160,7 @@ export async function forwardConsentsIdRequest (
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(
-      `consents::forwardConsentsIdRequest - Error forwarding consents to endpoint: ${inspect(err)}`
-    )
+    Logger.error(`consents::forwardConsentsIdRequest - Error forwarding consents to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
@@ -215,7 +198,7 @@ export async function forwardConsentsIdRequest (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardConsentsRequest (
+export async function forwardConsentsRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
@@ -233,9 +216,7 @@ export async function forwardConsentsRequest (
       endpointType,
       path
     )
-    Logger.info(
-      `consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`
-    )
+    Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -248,16 +229,12 @@ export async function forwardConsentsRequest (
       childSpan
     )
 
-    Logger.info(
-      `consents::forwardConsentsRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspId}`
-    )
+    Logger.info(`consents::forwardConsentsRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspId}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(
-      `consents::forwardConsentsRequest - Error forwarding consents to endpoint: ${inspect(err)}`
-    )
+    Logger.error(`consents::forwardConsentsRequest - Error forwarding consents to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,

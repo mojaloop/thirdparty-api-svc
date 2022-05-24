@@ -48,16 +48,10 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function post (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function post(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const payload = request.payload as
-    | tpAPI.Schemas.ConsentsPostRequestPISP
-    | tpAPI.Schemas.ConsentsPostRequestAUTH
+  const payload = request.payload as tpAPI.Schemas.ConsentsPostRequestPISP | tpAPI.Schemas.ConsentsPostRequestAUTH
   const consentsId: string = payload.consentId
 
   try {
@@ -87,9 +81,7 @@ async function post (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardConsentsRequest takes care of async errors
-      Logger.error(
-        'Consents::post - forwardConsentsRequest async handler threw an unhandled error'
-      )
+      Logger.error('Consents::post - forwardConsentsRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 

@@ -49,11 +49,7 @@ import { getSpanTags } from '~/shared/util'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const post = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const post = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
 
   try {
@@ -85,9 +81,7 @@ const post = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error(
-        'Transactions::post - forwardTransactionRequest async handler threw an unhandled error'
-      )
+      Logger.error('Transactions::post - forwardTransactionRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -109,11 +103,7 @@ const post = async (
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
 
   try {
@@ -144,9 +134,7 @@ const get = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error(
-        'Transactions::get - forwardTransactionRequest async handler threw an unhandled error'
-      )
+      Logger.error('Transactions::get - forwardTransactionRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -167,11 +155,7 @@ const get = async (
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const put = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
   const span = request.span
   try {
@@ -202,9 +186,7 @@ const put = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error(
-        'Transactions::put - forwardTransactionRequest async handler threw an unhandled error'
-      )
+      Logger.error('Transactions::put - forwardTransactionRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -225,11 +207,7 @@ const put = async (
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const patch = async (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const patch = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse
   const span = request.span
   try {
@@ -260,9 +238,7 @@ const patch = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequest takes care of async errors
-      Logger.error(
-        'Transactions::patch - forwardTransactionRequest async handler threw an unhandled error'
-      )
+      Logger.error('Transactions::patch - forwardTransactionRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -319,9 +295,7 @@ const putError = async (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardTransactionRequestError takes care of async errors
-      Logger.error(
-        'Transactions::put - forwardTransactionRequestError async handler threw an unhandled error'
-      )
+      Logger.error('Transactions::put - forwardTransactionRequestError async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 

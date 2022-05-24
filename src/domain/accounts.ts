@@ -30,18 +30,9 @@
 
 import { Util as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
@@ -60,7 +51,7 @@ import { finishChildSpan } from '~/shared/util'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAccountsIdRequestError (
+export async function forwardAccountsIdRequestError(
   path: string,
   headers: HapiUtil.Dictionary<string>,
   userId: string,
@@ -80,9 +71,7 @@ export async function forwardAccountsIdRequestError (
       path,
       { ID: userId }
     )
-    Logger.info(
-      `accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`
-    )
+    Logger.info(`accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -124,7 +113,7 @@ export async function forwardAccountsIdRequestError (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAccountsIdRequest (
+export async function forwardAccountsIdRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
@@ -164,11 +153,7 @@ export async function forwardAccountsIdRequest (
       childSpan.finish()
     }
   } catch (err) {
-    Logger.error(
-      `accounts::forwardAccountsIdRequest - Error forwarding accounts request to endpoint: ${inspect(
-        err
-      )}`
-    )
+    Logger.error(`accounts::forwardAccountsIdRequest - Error forwarding accounts request to endpoint: ${inspect(err)}`)
     const errorHeaders = {
       ...headers,
       'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,

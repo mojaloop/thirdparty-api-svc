@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [13.0.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.0...v13.0.1) (2022-05-24)
+
+
+### Maintenance
+
+* conform linting config to typescript-svc-template ([#83](https://github.com/mojaloop/thirdparty-api-svc/issues/83)) ([af6ffa5](https://github.com/mojaloop/thirdparty-api-svc/commit/af6ffa5fca54554f559c54576ac662fd578d3f34))
+
 ## [13.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v12.0.1...v13.0.0) (2022-05-20)
 
 

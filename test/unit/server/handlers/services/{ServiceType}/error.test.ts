@@ -33,10 +33,7 @@ import * as Services from '~/domain/services'
 import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-const mockForwardServicesRequestError = jest.spyOn(
-  Services,
-  'forwardServicesServiceTypeRequestError'
-)
+const mockForwardServicesRequestError = jest.spyOn(Services, 'forwardServicesServiceTypeRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
@@ -66,11 +63,7 @@ describe('services error handler', (): void => {
       mockForwardServicesRequestError.mockResolvedValueOnce()
 
       // Act
-      const response = await ServicesServiceTypeErrorHandler.put(
-        null,
-        request,
-        mockResponseToolkit
-      )
+      const response = await ServicesServiceTypeErrorHandler.put(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -82,11 +75,7 @@ describe('services error handler', (): void => {
       // Arrange
       mockForwardServicesRequestError.mockRejectedValueOnce(new Error('Test Error'))
       // Act
-      const response = await ServicesServiceTypeErrorHandler.put(
-        null,
-        request,
-        mockResponseToolkit
-      )
+      const response = await ServicesServiceTypeErrorHandler.put(null, request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -107,11 +96,7 @@ describe('services error handler', (): void => {
 
       // Act
       const action = async () =>
-        await ServicesServiceTypeErrorHandler.put(
-          null,
-          badSpanRequest as unknown as Request,
-          mockResponseToolkit
-        )
+        await ServicesServiceTypeErrorHandler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

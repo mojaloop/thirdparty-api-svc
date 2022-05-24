@@ -44,11 +44,7 @@ const healthCheck = new HealthCheck.HealthCheck(Config.PACKAGE, [])
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-const get = async (
-  _context: unknown,
-  _request: Request,
-  h: ResponseToolkit
-): Promise<ResponseObject> => {
+const get = async (_context: unknown, _request: Request, h: ResponseToolkit): Promise<ResponseObject> => {
   return h.response(await healthCheck.getHealth()).code(200)
 }
 

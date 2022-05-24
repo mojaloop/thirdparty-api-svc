@@ -30,18 +30,9 @@
  ******/
 
 import { Util as HapiUtil } from '@hapi/hapi'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 
 import { inspect } from 'util'
 import Config from '~/shared/config'
@@ -63,15 +54,15 @@ import { Span } from '@mojaloop/event-sdk'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequest (
+export async function forwardAuthorizationRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   authorizationRequestId: string,
   payload:
-  | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
-  | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
+    | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest
+    | tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequest')
@@ -85,9 +76,7 @@ export async function forwardAuthorizationRequest (
       path,
       { ID: authorizationRequestId }
     )
-    Logger.info(
-      `authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`
-    )
+    Logger.info(`authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -149,7 +138,7 @@ export async function forwardAuthorizationRequest (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardAuthorizationRequestError (
+export async function forwardAuthorizationRequestError(
   path: string,
   headers: HapiUtil.Dictionary<string>,
   authorizationRequestId: string,

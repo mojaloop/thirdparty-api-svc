@@ -32,10 +32,7 @@ import * as ConsentRequests from '~/domain/consentRequests'
 import * as TestData from 'test/unit/data/mockData'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 
-const mockForwardConsentRequestsIdRequestError = jest.spyOn(
-  ConsentRequests,
-  'forwardConsentRequestsIdRequestError'
-)
+const mockForwardConsentRequestsIdRequestError = jest.spyOn(ConsentRequests, 'forwardConsentRequestsIdRequestError')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 const MockData = JSON.parse(JSON.stringify(TestData))
@@ -98,11 +95,7 @@ describe('consent requests error handler', (): void => {
 
       // Act
       const action = async () =>
-        await ConsentRequestsIdErrorHandler.put(
-          null,
-          badSpanRequest as unknown as Request,
-          mockResponseToolkit
-        )
+        await ConsentRequestsIdErrorHandler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

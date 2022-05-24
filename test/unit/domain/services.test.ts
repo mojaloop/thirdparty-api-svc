@@ -115,9 +115,7 @@ describe('domain/services/{ServiceType}', () => {
         mockSpan
       )
       expect(mockGetEndpointAndRender).toHaveBeenCalledTimes(0)
-      expect(mockSendRequest).toHaveBeenCalledWith(
-        ...sendRequestGetServicesRequestsToProviderExpected
-      )
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestGetServicesRequestsToProviderExpected)
     })
 
     it('forwards PUT /services/{ServiceType} request to FSP', async (): Promise<void> => {
@@ -140,9 +138,7 @@ describe('domain/services/{ServiceType}', () => {
         // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderPutServicesRequestToFSPsExpected
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderPutServicesRequestToFSPsExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestPutServicesRequestsToFSPExpected)
     })
 
@@ -166,14 +162,10 @@ describe('domain/services/{ServiceType}', () => {
         )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderPutServicesRequestToFSPsExpected
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderPutServicesRequestToFSPsExpected)
 
       // should sent an error back to the Provider micro-service
-      expect(mockSendRequest).toHaveBeenCalledWith(
-        ...sendRequestPutServicesRequestsToFSPExpectedProviderError
-      )
+      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestPutServicesRequestsToFSPExpectedProviderError)
 
       // Children in `forwardServicesServiceTypeRequest()`
       expect(mockSpan.child?.finish).toHaveBeenCalledTimes(1)
@@ -192,9 +184,7 @@ describe('domain/services/{ServiceType}', () => {
 
     it('forwards the PUT /services/{ServiceType} error', async () => {
       // Arrange
-      mockGetEndpointAndRender.mockResolvedValue(
-        'http://pispa-sdk/services/THIRD_PARTY_DFSP/error'
-      )
+      mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/services/THIRD_PARTY_DFSP/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
         'fspiop-source': 'switch',

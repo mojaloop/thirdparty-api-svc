@@ -94,9 +94,7 @@ describe('domain/accounts/{ID}', () => {
         // @ts-ignore - Figure out how to properly mock spans
         mockSpan
       )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderAccountsRequestsIdExpected
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
       expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestAccountsRequestsIdExpected)
     })
 
@@ -120,12 +118,8 @@ describe('domain/accounts/{ID}', () => {
         )
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderAccountsRequestsIdExpected
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
       // Children's children in `forwardAccountsIdRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -154,12 +148,8 @@ describe('domain/accounts/{ID}', () => {
         )
 
       await expect(action).rejects.toThrow('Cannot find endpoint second time')
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderAccountsRequestsIdExpected
-      )
-      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(
-        ...getEndpointAndRenderAccountRequestsIdExpectedSecond
-      )
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
+      expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountRequestsIdExpectedSecond)
       expect(mockSendRequest).not.toHaveBeenCalled()
     })
   })
@@ -227,8 +217,7 @@ describe('domain/accounts/{ID}', () => {
       ]
       mockGetEndpointAndRender.mockRejectedValueOnce(new Error('Cannot find endpoint'))
 
-      const action = async () =>
-        await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
+      const action = async () => await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
 
       await expect(action).rejects.toThrow('Cannot find endpoint')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)
