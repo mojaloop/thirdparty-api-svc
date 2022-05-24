@@ -15,6 +15,8 @@
     "audit:check": "SHELL=sh check-audit --production",
     "build": "tsc -p ./tsconfig.build.json && cp ./src/interface/api.yaml ./dist/src/interface/api.yaml",
     "build:openapi": "openapi bundle --output ./src/interface/api.yaml --ext yaml ./src/interface/api-template.yaml",
+    "dep:check": "npx ncu -e 2",
+    "dep:update": "npx ncu -u",
     "dev": "ts-node-dev --no-notify -r tsconfig-paths/register -P ./tsconfig.json ./src/cli.ts all",
     "docker:build": "docker build -t thirdparty-api-svc:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 3008:3008 thirdparty-api-svc:local",
