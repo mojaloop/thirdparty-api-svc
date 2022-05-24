@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/thirdparty-api-svc",
-  "version": "13.0.2-snapshot.1",
+  "version": "13.0.2-snapshot.2",
   "description": "The thirdparty-api-svc service is used to handle HTTP requests from third parties.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
