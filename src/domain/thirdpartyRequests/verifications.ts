@@ -31,33 +31,24 @@
 
 import { Util as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 
 import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
-export async function forwardVerificationRequest (
+export async function forwardVerificationRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
   verificationRequestId: string,
   payload:
-  | tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
-  | tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
+    | tpAPI.Schemas.ThirdpartyRequestsVerificationsPostRequest
+    | tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequest')
@@ -71,9 +62,7 @@ export async function forwardVerificationRequest (
       path,
       { ID: verificationRequestId }
     )
-    Logger.info(
-      `verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`
-    )
+    Logger.info(`verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`)
 
     await Util.Request.sendRequest(
       url,
@@ -122,7 +111,7 @@ export async function forwardVerificationRequest (
   }
 }
 
-export async function forwardVerificationRequestError (
+export async function forwardVerificationRequestError(
   path: string,
   headers: HapiUtil.Dictionary<string>,
   verificationRequestId: string,
@@ -132,8 +121,7 @@ export async function forwardVerificationRequestError (
   const childSpan = span?.getChild('forwardVerificationRequestError')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
-  const endpointType =
-    Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
+  const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(

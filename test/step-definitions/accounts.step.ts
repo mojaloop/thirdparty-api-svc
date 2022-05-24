@@ -40,13 +40,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'GetAccounts\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'GetAccounts' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'202\'', (): void => {
+    then("I get a response with a status code of '202'", (): void => {
       const expected = [
         '/accounts/{{ID}}',
         'TP_CB_URL_ACCOUNTS_GET',
@@ -82,13 +82,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'UpdateAccounts\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'UpdateAccounts' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/accounts/{{ID}}',
         'TP_CB_URL_ACCOUNTS_PUT',
@@ -123,13 +123,13 @@ defineFeature(feature, (test): void => {
       return server
     })
 
-    when('I send a \'UpdateAccountsError\' request', async (): Promise<ServerInjectResponse> => {
+    when("I send a 'UpdateAccountsError' request", async (): Promise<ServerInjectResponse> => {
       mockForwardAccountsIdRequestError.mockResolvedValueOnce()
       response = await server.inject(request)
       return response
     })
 
-    then('I get a response with a status code of \'200\'', (): void => {
+    then("I get a response with a status code of '200'", (): void => {
       const expected = [
         '/accounts/{{ID}}/error',
         expect.objectContaining(request.headers),

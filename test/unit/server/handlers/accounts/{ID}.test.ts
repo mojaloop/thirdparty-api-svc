@@ -71,27 +71,17 @@ describe('accountsId handler', () => {
       // Arrange
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       // Act
-      const response = await AccountsIdHandler.get(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await AccountsIdHandler.get(null, request as unknown as Request, mockResponseToolkit)
       // Assert
       expect(response.statusCode).toBe(202)
-      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(
-        ...mockForwardGetAccountsIdRequestExpected
-      )
+      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...mockForwardGetAccountsIdRequestExpected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
       mockForwardAccountsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
       // Act
-      const response = await AccountsIdHandler.get(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await AccountsIdHandler.get(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(202)
@@ -99,9 +89,7 @@ describe('accountsId handler', () => {
       // this helps make sure the tests don't become flaky
       await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(
-        ...mockForwardGetAccountsIdRequestExpected
-      )
+      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...mockForwardGetAccountsIdRequestExpected)
     })
 
     it('handles validation errors synchronously', async () => {
@@ -112,8 +100,7 @@ describe('accountsId handler', () => {
         span: {}
       }
       // Act
-      const action = async () =>
-        await AccountsIdHandler.get(null, invalReq as unknown as Request, mockResponseToolkit)
+      const action = async () => await AccountsIdHandler.get(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')
@@ -131,27 +118,17 @@ describe('accountsId handler', () => {
       // Arrange
       mockForwardAccountsIdRequest.mockResolvedValueOnce()
       // Act
-      const response = await AccountsIdHandler.put(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await AccountsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
       // Assert
       expect(response.statusCode).toBe(200)
-      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(
-        ...mockForwardPutAccountsIdRequestExpected
-      )
+      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...mockForwardPutAccountsIdRequestExpected)
     })
 
     it('handles errors asynchronously', async () => {
       // Arrange
       mockForwardAccountsIdRequest.mockRejectedValueOnce(new Error('Test Error'))
       // Act
-      const response = await AccountsIdHandler.put(
-        null,
-        request as unknown as Request,
-        mockResponseToolkit
-      )
+      const response = await AccountsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
       expect(response.statusCode).toBe(200)
@@ -159,9 +136,7 @@ describe('accountsId handler', () => {
       // this helps make sure the tests don't become flaky
       await new Promise((resolve) => setImmediate(resolve))
       // The main test here is that there is no unhandledPromiseRejection!
-      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(
-        ...mockForwardPutAccountsIdRequestExpected
-      )
+      expect(mockForwardAccountsIdRequest).toHaveBeenCalledWith(...mockForwardPutAccountsIdRequestExpected)
     })
 
     it('handles validation errors synchronously', async () => {
@@ -172,8 +147,7 @@ describe('accountsId handler', () => {
         span: {}
       }
       // Act
-      const action = async () =>
-        await AccountsIdHandler.put(null, invalReq as unknown as Request, mockResponseToolkit)
+      const action = async () => await AccountsIdHandler.put(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
       await expect(action).rejects.toThrowError('span.setTags is not a function')

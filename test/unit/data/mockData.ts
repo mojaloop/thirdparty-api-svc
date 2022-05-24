@@ -63,11 +63,10 @@ export const updateTransactionRequest = {
   payload: updateTransactionRequestPayload
 }
 
-const patchThirdpartyTransactionIdRequestPayload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse =
-  {
-    transactionRequestState: 'ACCEPTED',
-    transactionState: 'COMPLETED'
-  }
+const patchThirdpartyTransactionIdRequestPayload: tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse = {
+  transactionRequestState: 'ACCEPTED',
+  transactionState: 'COMPLETED'
+}
 
 export const patchThirdpartyTransactionIdRequest = {
   headers: {
@@ -146,8 +145,7 @@ export const notificationEventCommit = {
         spanId: '0b142ddb9e695312',
         parentSpanId: 'e933005ac5ade0c6',
         tags: {
-          tracestate:
-            'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
+          tracestate: 'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
           transactionType: 'transfer',
           transactionAction: 'fulfil',
           transactionId: 'bc1a9c36-4429-4205-8553-11f92de1919e',
@@ -210,8 +208,7 @@ export const notificationEventTransactionCommit = {
         spanId: '0b142ddb9e695312',
         parentSpanId: 'e933005ac5ade0c6',
         tags: {
-          tracestate:
-            'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
+          tracestate: 'acmevendor=eyJzcGFuSWQiOiIwYjE0MmRkYjllNjk1MzEyIiwidGltZUFwaUZ1bGZpbCI6IjE1OTk2MjM5MTY4NTcifQ==',
           transactionType: 'transfer',
           transactionAction: 'fulfil',
           transactionId: 'bc1a9c36-4429-4205-8553-11f92de1919e',

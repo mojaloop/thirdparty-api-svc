@@ -31,18 +31,9 @@
 
 import Hapi from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 
 import Config from '~/shared/config'
@@ -63,24 +54,23 @@ import { finishChildSpan, getStackOrInspect } from '~/shared/util'
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequest (
+async function forwardTransactionRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: Hapi.Util.Dictionary<string>,
   method: RestMethodsEnum,
   params: Hapi.Util.Dictionary<string>,
   payload?:
-  | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
-  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
-  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
+    | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
+    | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+    | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPatchResponse,
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequest')
   const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
-  const transactionRequestId: string =
-    payload && isCreateRequest(payload) ? payload.transactionRequestId : params.ID
+  const transactionRequestId: string = payload && isCreateRequest(payload) ? payload.transactionRequestId : params.ID
   try {
     const fullUrl = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
@@ -89,9 +79,7 @@ async function forwardTransactionRequest (
       path,
       params || {}
     )
-    Logger.info(
-      `transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`
-    )
+    Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
     await Util.Request.sendRequest(
       fullUrl,
       headers,
@@ -112,9 +100,7 @@ async function forwardTransactionRequest (
     }
   } catch (err) {
     Logger.error(
-      `transactions::forwardTransactionRequest - Error forwarding transaction request to endpoint : ${inspect(
-        err
-      )}`
+      `transactions::forwardTransactionRequest - Error forwarding transaction request to endpoint : ${inspect(err)}`
     )
     const errorHeaders = {
       ...headers,
@@ -153,7 +139,7 @@ async function forwardTransactionRequest (
  * error or if there are network errors or if there is a bad response.
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequestError (
+async function forwardTransactionRequestError(
   headers: Hapi.Util.Dictionary<string>,
   path: string,
   method: RestMethodsEnum,
@@ -221,7 +207,7 @@ async function forwardTransactionRequestError (
  * found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-async function forwardTransactionRequestNotification (
+async function forwardTransactionRequestNotification(
   headers: Hapi.Util.Dictionary<string>,
   transactionRequestId: string,
   payload: string,
@@ -268,7 +254,7 @@ async function forwardTransactionRequestNotification (
 type CreateOrUpdateReq =
   | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
   | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
-function isCreateRequest (
+function isCreateRequest(
   request: CreateOrUpdateReq
 ): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
   if ((request as tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest).transactionRequestId) {

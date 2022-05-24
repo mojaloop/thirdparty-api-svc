@@ -58,9 +58,13 @@ describe('histogram', (): void => {
     it('does not call the histogram twice if an error occours', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      // @ts-ignore
       mockMetrics.mockReturnValue({
-        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
+        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd),
+        observe: jest.fn(),
+        reset: jest.fn(),
+        zero: jest.fn(),
+        labels: jest.fn(),
+        remove: jest.fn()
       })
       mockForwardTransactionRequest.mockRejectedValueOnce(() => {
         throw new Error('Test Error')
@@ -87,9 +91,13 @@ describe('histogram', (): void => {
     it('handles a handler error', async (): Promise<void> => {
       // Arrange
       const mockHistTimerEnd = jest.fn()
-      // @ts-ignore
       mockMetrics.mockReturnValue({
-        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd)
+        startTimer: jest.fn().mockReturnValue(mockHistTimerEnd),
+        observe: jest.fn(),
+        reset: jest.fn(),
+        zero: jest.fn(),
+        labels: jest.fn(),
+        remove: jest.fn()
       })
       const mockHandler = jest.fn().mockRejectedValueOnce(new Error('Test Error'))
 

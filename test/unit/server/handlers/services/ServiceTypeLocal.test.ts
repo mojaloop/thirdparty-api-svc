@@ -66,8 +66,6 @@ describe.only('GET /services/{{ServiceType}} with PARTICIPANT_LIST_LOCAL', () =>
 
     // Assert
     expect(response.statusCode).toBe(202)
-    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(
-      ...expected
-    )
+    expect(forwardGetServicesServiceTypeRequestFromProviderService).toHaveBeenCalledWith(...expected)
   })
 })

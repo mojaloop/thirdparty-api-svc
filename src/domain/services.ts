@@ -29,18 +29,9 @@
 
 import { Util as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
-import {
-  APIErrorObject,
-  FSPIOPError,
-  ReformatFSPIOPError
-} from '@mojaloop/central-services-error-handling'
+import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
-import {
-  Enum,
-  FspEndpointTypesEnum,
-  RestMethodsEnum,
-  Util
-} from '@mojaloop/central-services-shared'
+import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'
 import { Span } from '@mojaloop/event-sdk'
 import Mustache from 'mustache'
 
@@ -60,7 +51,7 @@ import { finishChildSpan } from '~/shared/util'
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardServicesServiceTypeRequestError (
+export async function forwardServicesServiceTypeRequestError(
   path: string,
   headers: HapiUtil.Dictionary<string>,
   serviceType: string,
@@ -123,7 +114,7 @@ export async function forwardServicesServiceTypeRequestError (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardGetServicesServiceTypeRequestToProviderService (
+export async function forwardGetServicesServiceTypeRequestToProviderService(
   path: string,
   headers: HapiUtil.Dictionary<string>,
   method: RestMethodsEnum,
@@ -203,7 +194,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService (
  *  found, if there are network errors or if there is a bad response
  * @returns {Promise<void>}
  */
-export async function forwardGetServicesServiceTypeRequestFromProviderService (
+export async function forwardGetServicesServiceTypeRequestFromProviderService(
   path: string,
   endpointType: FspEndpointTypesEnum,
   headers: HapiUtil.Dictionary<string>,
@@ -252,9 +243,7 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService (
     )
 
     // render provider service url and path
-    const urlPath =
-      Config.PARTICIPANT_LIST_SERVICE_URL +
-      Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT_ERROR
+    const urlPath = Config.PARTICIPANT_LIST_SERVICE_URL + Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT_ERROR
     const url = Mustache.render(urlPath, { ServiceType: serviceType })
 
     const errorHeaders = {

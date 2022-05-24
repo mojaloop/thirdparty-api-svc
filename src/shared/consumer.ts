@@ -18,16 +18,8 @@ export default class Consumer<Payload> {
   private rdKafkaConsumer: Kafka.Consumer
   private handlerFunc: ConsumeCallback<Payload>
 
-  public constructor (
-    config: ConsumerConfig,
-    topicTemplate: string,
-    handlerFunc: ConsumeCallback<Payload>
-  ) {
-    const topicConfig = Util.Kafka.createGeneralTopicConf(
-      topicTemplate,
-      config.eventType,
-      config.eventAction
-    )
+  public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<Payload>) {
+    const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
 
@@ -41,7 +33,7 @@ export default class Consumer<Payload> {
    * @function start
    * @description Start the consumer listening for kafka events
    */
-  public async start (): Promise<void> {
+  public async start(): Promise<void> {
     await this.rdKafkaConsumer.connect()
     this.rdKafkaConsumer.consume(this.handlerFunc)
     logger.info(`consumer::start() - connected to topic '${this.topicName}'`)
@@ -55,10 +47,8 @@ export default class Consumer<Payload> {
    * @returns {true} - if connected
    * @throws {Error} - if we can't find the topic name, or the consumer is not connected
    */
-  public async isConnected (): Promise<true> {
-    const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata).bind(
-      this.rdKafkaConsumer
-    )
+  public async isConnected(): Promise<true> {
+    const getMetadataPromise = promisify(this.rdKafkaConsumer.getMetadata).bind(this.rdKafkaConsumer)
     const getMetadataConfig = {
       topic: this.topicName,
       timeout: 3000
@@ -80,7 +70,7 @@ export default class Consumer<Payload> {
    * @returns {Promise<void>} - Passes on the Promise from Consumer.disconnect()
    * @throws {Error} - if there is a failure in rdkafka's disconnect
    */
-  public async disconnect (): Promise<void> {
+  public async disconnect(): Promise<void> {
     const disconnectPromise = promisify(this.rdKafkaConsumer.disconnect).bind(this.rdKafkaConsumer)
     return disconnectPromise()
   }

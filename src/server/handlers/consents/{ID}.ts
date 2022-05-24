@@ -28,7 +28,7 @@
  --------------
  ******/
 
-import { Request, ResponseToolkit, ResponseObject } from '@hapi/hapi'
+import { ResponseToolkit, ResponseObject } from '@hapi/hapi'
 import { Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
@@ -46,11 +46,7 @@ import { RequestSpanExtended } from '~/interface/types'
  * produces: application/json
  * responses: 202, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function put (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
@@ -86,9 +82,7 @@ async function put (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
-      Logger.error(
-        'Consents::put - forwardConsentsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('Consents::put - forwardConsentsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
@@ -107,11 +101,7 @@ async function put (
  * produces: application/json
  * responses: 200, 400, 401, 403, 404, 405, 406, 501, 503
  */
-async function patch (
-  _context: unknown,
-  request: RequestSpanExtended,
-  h: ResponseToolkit
-): Promise<ResponseObject> {
+async function patch(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
   const consentsRequestId: string = request.params.ID
@@ -147,9 +137,7 @@ async function patch (
       span
     ).catch((err) => {
       // Do nothing with the error - forwardConsentsIdRequest takes care of async errors
-      Logger.error(
-        'Consents::patch - forwardConsentsIdRequest async handler threw an unhandled error'
-      )
+      Logger.error('Consents::patch - forwardConsentsIdRequest async handler threw an unhandled error')
       Logger.error(ReformatFSPIOPError(err))
     })
 
