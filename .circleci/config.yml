@@ -11,7 +11,6 @@ orbs:
   pr-tools: mojaloop/pr-tools@0.1.10 # Ref: https://github.com/mojaloop/ci-config/
   gh: circleci/github-cli@2.1.0
   anchore: anchore/anchore-engine@1.9.0
-  deploy-kube: mojaloop/deployment@0.1.6
 
 ##
 # defaults
@@ -102,6 +101,21 @@ jobs:
           paths:
             - node_modules
 
+  test-dependencies:
+    executor: default-docker
+    steps:
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - checkout
+      - run:
+          <<: *defaults_configure_nvm
+      - restore_cache:
+          key: dependency-cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Execute dependency tests
+          command: npm run dep:check
+
   test-lint:
     executor: default-docker
     steps:
@@ -137,6 +151,30 @@ jobs:
       - store_artifacts:
           path: ./test/results
           prefix: test
+      - store_test_results:
+          path: ./test/results
+
+  test-bdd:
+    executor: default-docker
+    steps:
+      - run:
+          name: Install general dependencies
+          command: *defaults_Dependencies
+      - checkout
+      - run:
+          <<: *defaults_configure_nvm
+      - restore_cache:
+          key: dependency-cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Execute unit tests
+          command: npm run test:bdd
+      - run:
+          name: prepare test/results
+          command: |
+            mkdir -p test/results
+            mv junit.xml test/results
+      - store_artifacts:
+          path: ./test/results
       - store_test_results:
           path: ./test/results
 
@@ -430,16 +468,6 @@ jobs:
           command: |
             docker load -i /tmp/docker-image.tar
       - run:
-          name: Set Image Digest
-          command: |
-            IMAGE_DIGEST=$(docker images --no-trunc --quiet $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG)
-            echo "IMAGE_DIGEST=${IMAGE_DIGEST}"
-            echo "export IMAGE_DIGEST=${IMAGE_DIGEST}" >> $BASH_ENV
-      - run:
-          name: Update Slack config
-          command: |
-            echo "export SLACK_RELEASE_URL='https://hub.docker.com/layers/${CIRCLE_PROJECT_REPONAME}/${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}/v${CIRCLE_TAG:1}/images/${IMAGE_DIGEST}?context=explore'" | sed -r 's/sha256:/sha256-/g' >> $BASH_ENV
-      - run:
           name: Login to Docker Hub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
@@ -453,6 +481,16 @@ jobs:
             docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
             echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG"
             docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
+      - run:
+          name: Set Image Digest
+          command: |
+            IMAGE_DIGEST=$(docker inspect $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:v${CIRCLE_TAG:1} | jq '.[0].RepoDigests | .[]')
+            echo "IMAGE_DIGEST=${IMAGE_DIGEST}"
+            echo "export IMAGE_DIGEST=${IMAGE_DIGEST}" >> $BASH_ENV
+      - run:
+          name: Update Slack config
+          command: |
+            echo "export SLACK_RELEASE_URL='https://hub.docker.com/layers/${CIRCLE_PROJECT_REPONAME}/${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}/v${CIRCLE_TAG:1}/images/${IMAGE_DIGEST}?context=explore'" | sed -r "s/${DOCKER_ORG}\/${CIRCLE_PROJECT_REPONAME}@sha256:/sha256-/g" >> $BASH_ENV
       - slack/notify:
           event: pass
           template: SLACK_TEMP_RELEASE_SUCCESS
@@ -488,16 +526,6 @@ jobs:
           command: |
             docker load -i /tmp/docker-image.tar
       - run:
-          name: Set Image Digest
-          command: |
-            IMAGE_DIGEST=$(docker images --no-trunc --quiet $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG)
-            echo "IMAGE_DIGEST=${IMAGE_DIGEST}"
-            echo "export IMAGE_DIGEST=${IMAGE_DIGEST}" >> $BASH_ENV
-      - run:
-          name: Update Slack config
-          command: |
-            echo "export SLACK_RELEASE_URL='https://hub.docker.com/layers/${CIRCLE_PROJECT_REPONAME}/${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}/v${CIRCLE_TAG:1}/images/${IMAGE_DIGEST}?context=explore'" | sed -r 's/sha256:/sha256-/g' >> $BASH_ENV
-      - run:
           name: Login to Docker Hub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
@@ -511,6 +539,16 @@ jobs:
             docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
             echo "Publishing $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG"
             docker push $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$RELEASE_TAG
+      - run:
+          name: Set Image Digest
+          command: |
+            IMAGE_DIGEST=$(docker inspect $DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:v${CIRCLE_TAG:1} | jq '.[0].RepoDigests | .[]')
+            echo "IMAGE_DIGEST=${IMAGE_DIGEST}"
+            echo "export IMAGE_DIGEST=${IMAGE_DIGEST}" >> $BASH_ENV
+      - run:
+          name: Update Slack config
+          command: |
+            echo "export SLACK_RELEASE_URL='https://hub.docker.com/layers/${CIRCLE_PROJECT_REPONAME}/${DOCKER_ORG}/${CIRCLE_PROJECT_REPONAME}/v${CIRCLE_TAG:1}/images/${IMAGE_DIGEST}?context=explore'" | sed -r "s/${DOCKER_ORG}\/${CIRCLE_PROJECT_REPONAME}@sha256:/sha256-/g" >> $BASH_ENV
       - slack/notify:
           event: pass
           template: SLACK_TEMP_RELEASE_SUCCESS
@@ -538,6 +576,17 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
+      - test-dependencies:
+          context: org-global
+          requires:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
       - test-lint:
           context: org-global
           requires:
@@ -550,6 +599,17 @@ workflows:
                 - /feature*/
                 - /bugfix*/
       - test-unit:
+          context: org-global
+          requires:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+      - test-bdd:
           context: org-global
           requires:
             - setup
@@ -608,8 +668,10 @@ workflows:
           context: org-global
           requires:
             - setup
+            - test-dependencies
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
@@ -645,8 +707,10 @@ workflows:
           context: org-global
           requires:
             - pr-tools/pr-title-check
+            - test-dependencies
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
@@ -671,8 +735,10 @@ workflows:
           context: org-global
           requires:
             - pr-tools/pr-title-check
+            - test-dependencies
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
@@ -690,8 +756,10 @@ workflows:
           context: org-global
           requires:
             - pr-tools/pr-title-check
+            - test-dependencies
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
