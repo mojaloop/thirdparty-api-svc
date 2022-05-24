@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [13.0.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.1...v13.0.2) (2022-05-24)
+
+
+### Maintenance
+
+* port publish job and update packages ([#84](https://github.com/mojaloop/thirdparty-api-svc/issues/84)) ([06e670d](https://github.com/mojaloop/thirdparty-api-svc/commit/06e670d1a35e74cab9357c71ecc95cc69c283541))
+
 ### [13.0.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.0...v13.0.1) (2022-05-24)
 
 
