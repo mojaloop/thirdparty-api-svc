@@ -27,7 +27,7 @@
 
  --------------
  ******/
-import { Util as HapiUtil } from '@hapi/hapi'
+import { Utils as HapiUtil } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'

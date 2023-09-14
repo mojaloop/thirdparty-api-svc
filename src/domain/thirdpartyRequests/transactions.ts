@@ -29,7 +29,7 @@
  ******/
 'use strict'
 
-import Hapi from '@hapi/hapi'
+import { Utils as HapiUtils } from '@hapi/hapi'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
@@ -45,7 +45,7 @@ import { finishChildSpan, getStackOrInspect } from '~/shared/util'
  * @description Forwards a POST /thirdpartyRequests/transactions and
  * GET/PUT/PATCH /thirdpartyRequests/transactions/{ID} to destination FSP for processing
  * @param {string} path Callback endpoint path
- * @param {HapiUtil.Dictionary<string>} headers Headers object of the request
+ * @param {Hapi.Util.Dictionary<string>} headers Headers object of the request
  * @param {RestMethodsEnum} method The http method POST
  * @param {object} params Params object of the request
  * @param {ThirdPartyTransactionRequest} payload Body of the POST request
@@ -57,9 +57,9 @@ import { finishChildSpan, getStackOrInspect } from '~/shared/util'
 async function forwardTransactionRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
-  headers: Hapi.Util.Dictionary<string>,
+  headers: HapiUtils.Dictionary<string>,
   method: RestMethodsEnum,
-  params: Hapi.Util.Dictionary<string>,
+  params: HapiUtils.Dictionary<string>,
   payload?:
     | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
     | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
@@ -140,7 +140,7 @@ async function forwardTransactionRequest(
  * @returns {Promise<void>}
  */
 async function forwardTransactionRequestError(
-  headers: Hapi.Util.Dictionary<string>,
+  headers: HapiUtils.Dictionary<string>,
   path: string,
   method: RestMethodsEnum,
   transactionRequestId: string,
@@ -208,7 +208,7 @@ async function forwardTransactionRequestError(
  * @returns {Promise<void>}
  */
 async function forwardTransactionRequestNotification(
-  headers: Hapi.Util.Dictionary<string>,
+  headers: HapiUtils.Dictionary<string>,
   transactionRequestId: string,
   payload: string,
   path: string,
