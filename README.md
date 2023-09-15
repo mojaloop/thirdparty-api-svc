@@ -1,5 +1,5 @@
 # thirdparty-api-svc
-[![Git Commit](https://img.shields.io/github/last-commit/mojaloop/thirdparty-api-svc.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-svc/commits/master)
+[![Git Commit](https://img.shields.io/github/last-commit/mojaloop/thirdparty-api-svc.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-svc/commits/main)
 [![Git Releases](https://img.shields.io/github/release/mojaloop/thirdparty-api-svc.svg?style=flat)](https://github.com/mojaloop/thirdparty-api-svc/releases)
 [![CircleCI](https://circleci.com/gh/mojaloop/thirdparty-api-svc.svg?style=svg)](https://circleci.com/gh/mojaloop/thirdparty-api-svc)
 
