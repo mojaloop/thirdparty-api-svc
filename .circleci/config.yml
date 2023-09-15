@@ -801,7 +801,7 @@ workflows:
       - test-integration:
           context: org-global
           requires:
-            - setup
+            - build-local
           filters:
             tags:
               only: /.*/
