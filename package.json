@@ -18,7 +18,7 @@
     "dep:check": "npx ncu -e 2",
     "dep:update": "npx ncu -u",
     "dev": "ts-node-dev --no-notify -r tsconfig-paths/register -P ./tsconfig.json ./src/cli.ts all",
-    "docker:build": "docker build --build-arg NODE_VERSION=\"$(cat .nvmrc)-alpine\" -t thirdparty-api-svc:local -f ./Dockerfile ./",
+    "docker:build": "docker build --build-arg NODE_VERSION=\"$(cat .nvmrc)-alpine\" -t mojaloop/thirdparty-api-svc:local -f ./Dockerfile ./",
     "docker:run": "docker run -p 3008:3008 thirdparty-api-svc:local",
     "docker:up": "docker-compose -f docker-compose.yml up",
     "docker:stop": "docker-compose -f docker-compose.yml stop",
