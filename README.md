@@ -52,3 +52,21 @@ npm run docker:run
 
 To check the thirdparty-api-svc health visit [http://thirdparty-api-svc.local:3008/health](http://thirdparty-api-svc.local:3008/health)
 
+## Auditing Dependencies
+
+We use `audit-ci` along with `npm audit` to check dependencies for node vulnerabilities, and keep track of resolved dependencies with an `audit-ci.jsonc` file.
+
+To start a new resolution process, run:
+
+```bash
+npm run audit:fix
+```
+
+You can then check to see if the CI will pass based on the current dependencies with:
+
+```bash
+npm run audit:check
+```
+
+The [audit-ci.jsonc](./audit-ci.jsonc) contains any audit-exceptions that cannot be fixed to ensure that CircleCI will build correctly.
+
