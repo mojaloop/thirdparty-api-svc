@@ -884,6 +884,7 @@ workflows:
             - audit-licenses
             - license-scan
             - image-scan
+            - build-local
           filters:
             branches:
               only:
@@ -912,6 +913,7 @@ workflows:
             - test-integration
             - license-scan
             - image-scan
+            - build-local
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
@@ -932,6 +934,7 @@ workflows:
             - test-integration
             - license-scan
             - image-scan
+            - build-local
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*\-snapshot+((\.[0-9]+)?)/
