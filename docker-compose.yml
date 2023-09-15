@@ -5,7 +5,7 @@ networks:
     name: mojaloop-net
 
 services:
-  thirdparty-api-avc:
+  thirdparty-api-svc:
     container_name: thirdparty-api-svc
     image: mojaloop/thirdparty-api-svc:local
     build:

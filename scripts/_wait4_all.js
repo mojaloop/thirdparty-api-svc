@@ -8,7 +8,7 @@ const { execSync } = require('child_process')
  */
 
 // Define the docker-compose containers you want to monitor here
-const expectedContainers = ['thirdparty-api-avc']
+const expectedContainers = ['thirdparty-api-svc']
 
 let retries = 40
 const waitTimeMs = 60000
