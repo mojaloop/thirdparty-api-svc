@@ -817,18 +817,6 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
-      - test-functional:
-          context: org-global
-          requires:
-            - setup
-            - build-local
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
       - vulnerability-check:
           context: org-global
           requires:
@@ -881,7 +869,6 @@ workflows:
             - test-unit
             - test-coverage
             - test-integration
-            - test-functional
             - vulnerability-check
             - audit-licenses
             - license-scan
@@ -900,7 +887,7 @@ workflows:
               only:
                 - main
                 - /release\/v.*/
-      - publish:
+      - publish-docker:
           context: org-global
           requires:
             - build-local
@@ -909,7 +896,6 @@ workflows:
             - test-unit
             - test-coverage
             - test-integration
-            - test-functional
             - vulnerability-check
             - audit-licenses
             - test-integration
@@ -921,7 +907,7 @@ workflows:
             branches:
               ignore:
                 - /.*/
-      - publish-snapshot:
+      - publish-docker-snapshot:
           context: org-global
           requires:
             - build-local
@@ -930,7 +916,6 @@ workflows:
             - test-unit
             - test-coverage
             - test-integration
-            - test-functional
             - vulnerability-check
             - audit-licenses
             - test-integration
