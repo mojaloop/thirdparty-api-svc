@@ -76,7 +76,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
-    "@redocly/cli": "^1.1.0",
+    "@redocly/cli": "^1.2.0",
     "@types/jest": "^29.5.5",
     "@types/mustache": "^4.2.2",
     "@types/node": "^20.6.2",
@@ -117,7 +117,7 @@
     "@hapi/inert": "^7.1.0",
     "@hapi/vision": "^7.0.3",
     "@mojaloop/api-snippets": "^17.2.4",
-    "@mojaloop/central-services-shared": "^18.1.2-snapshot.2",
+    "@mojaloop/central-services-shared": "^18.1.2",
     "@mojaloop/central-services-stream": "11.1.1",
     "blipp": "^4.0.2",
     "canonical-json": "0.0.4",
