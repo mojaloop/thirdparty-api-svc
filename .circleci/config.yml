@@ -783,7 +783,7 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
-      - test-bdd:
+      - test-coverage:
           context: org-global
           requires:
             - setup
@@ -794,7 +794,7 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
-      - test-coverage:
+      - build-local:
           context: org-global
           requires:
             - setup
@@ -808,6 +808,19 @@ workflows:
       - test-integration:
           context: org-global
           requires:
+            - setup
+            - build-local
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
+      - test-functional:
+          context: org-global
+          requires:
+            - setup
             - build-local
           filters:
             tags:
@@ -828,17 +841,6 @@ workflows:
                 - /feature*/
                 - /bugfix*/
       - audit-licenses:
-          context: org-global
-          requires:
-            - setup
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore:
-                - /feature*/
-                - /bugfix*/
-      - build-local:
           context: org-global
           requires:
             - setup
@@ -873,17 +875,17 @@ workflows:
       - release:
           context: org-global
           requires:
+            - build-local
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
-            - test-bdd
             - test-coverage
             - test-integration
+            - test-functional
             - vulnerability-check
             - audit-licenses
             - license-scan
             - image-scan
-            - build-local
           filters:
             branches:
               only:
@@ -898,42 +900,42 @@ workflows:
               only:
                 - main
                 - /release\/v.*/
-      - publish-docker:
+      - publish:
           context: org-global
           requires:
+            - build-local
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
-            - test-bdd
             - test-coverage
             - test-integration
+            - test-functional
             - vulnerability-check
             - audit-licenses
             - test-integration
             - license-scan
             - image-scan
-            - build-local
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               ignore:
                 - /.*/
-      - publish-docker-snapshot:
+      - publish-snapshot:
           context: org-global
           requires:
+            - build-local
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
-            - test-bdd
             - test-coverage
             - test-integration
+            - test-functional
             - vulnerability-check
             - audit-licenses
             - test-integration
             - license-scan
             - image-scan
-            - build-local
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*\-snapshot+((\.[0-9]+)?)/
