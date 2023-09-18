@@ -304,8 +304,6 @@ jobs:
       - store_artifacts:
           path: coverage
           destination: test
-      - store_test_results:
-          path: coverage
 
   test-integration:
     executor: default-machine
