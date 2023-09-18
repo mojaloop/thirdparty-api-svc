@@ -783,6 +783,17 @@ workflows:
               ignore:
                 - /feature*/
                 - /bugfix*/
+      - test-bdd:
+          context: org-global
+          requires:
+            - setup
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /feature*/
+                - /bugfix*/
       - test-coverage:
           context: org-global
           requires:
@@ -867,6 +878,7 @@ workflows:
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
@@ -894,6 +906,7 @@ workflows:
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
@@ -914,6 +927,7 @@ workflows:
             - pr-tools/pr-title-check
             - test-lint
             - test-unit
+            - test-bdd
             - test-coverage
             - test-integration
             - vulnerability-check
