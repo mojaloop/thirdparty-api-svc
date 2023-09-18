@@ -565,6 +565,7 @@ jobs:
 
   github-release:
     executor: default-machine
+    shell: "/bin/bash -eo pipefail"
     environment:
       <<: *defaults_environment
     steps:
