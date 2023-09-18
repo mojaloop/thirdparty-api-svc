@@ -55,8 +55,9 @@ program
   .option('-H, --host <string>', 'listen on host', Config.HOST)
 
 // overload Config with script parameters
-Config.PORT = program.port
-Config.HOST = program.host
+const options = program.opts()
+Config.PORT = options.port
+Config.HOST = options.host
 
 // Start the API Server only
 program
