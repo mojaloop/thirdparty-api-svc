@@ -4,12 +4,12 @@
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "moderate": true,
   "allowlist": [
-   "GHSA-v88g-cgmw-v5xw",
-   "GHSA-phwq-j96m-2c2q",
-   "GHSA-282f-qqgm-c34q",
-   "GHSA-6vfc-qv3f-vr6c",
-   "GHSA-mjxr-4v3x-q3m4",
-   "GHSA-rjqq-98f6-6j3r",
-   "GHSA-p9pc-299p-vxgp"
+   "GHSA-v88g-cgmw-v5xw", // https://github.com/advisories/GHSA-v88g-cgmw-v5xw 
+   "GHSA-phwq-j96m-2c2q", // https://github.com/advisories/GHSA-phwq-j96m-2c2q
+   "GHSA-282f-qqgm-c34q", // https://github.com/advisories/GHSA-282f-qqgm-c34q
+   "GHSA-6vfc-qv3f-vr6c", // https://github.com/advisories/GHSA-6vfc-qv3f-vr6c
+   "GHSA-mjxr-4v3x-q3m4", // https://github.com/advisories/GHSA-mjxr-4v3x-q3m4
+   "GHSA-rjqq-98f6-6j3r", // https://github.com/advisories/GHSA-rjqq-98f6-6j3r
+   "GHSA-p9pc-299p-vxgp"  // https://github.com/advisories/GHSA-p9pc-299p-vxgp
   ]
 }
