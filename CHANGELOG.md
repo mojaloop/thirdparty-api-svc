@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [13.0.3](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.2...v13.0.3) (2023-09-20)
+
+
+### Chore
+
+* **mojaloop/#3521:** nodejs upgrade ([#91](https://github.com/mojaloop/thirdparty-api-svc/issues/91)) ([0e7c958](https://github.com/mojaloop/thirdparty-api-svc/commit/0e7c958e7018c230675bfaaea4db5388831b1ae1)), closes [mojaloop/#3521](https://github.com/mojaloop/thirdparty-api-svc/issues/3521) [mojaloop/#3521](https://github.com/mojaloop/thirdparty-api-svc/issues/3521)
+
 ### [13.0.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.1...v13.0.2) (2022-05-24)
 
 
