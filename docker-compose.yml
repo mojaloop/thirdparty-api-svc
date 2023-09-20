@@ -5,7 +5,7 @@ networks:
     name: mojaloop-net
 
 services:
-  thirdparty-api-avc:
+  thirdparty-api-svc:
     container_name: thirdparty-api-svc
     image: mojaloop/thirdparty-api-svc:local
     build:
@@ -21,8 +21,8 @@ services:
     environment:
       - LOG_LEVEL=debug
     healthcheck:
-      test: wget -q http://localhost:3008/health -O /dev/null || exit 1
+      test: ["CMD", "sh", "-c" ,"apk --no-cache add curl", ";", "curl", "http://localhost:3008/health"]
       timeout: 20s
-      retries: 30
-      interval: 15s
+      retries: 10
+      interval: 30s
     user: root

@@ -64,7 +64,8 @@ describe('histogram', (): void => {
         reset: jest.fn(),
         zero: jest.fn(),
         labels: jest.fn(),
-        remove: jest.fn()
+        remove: jest.fn(),
+        get: jest.fn()
       })
       mockForwardTransactionRequest.mockRejectedValueOnce(() => {
         throw new Error('Test Error')
@@ -97,7 +98,8 @@ describe('histogram', (): void => {
         reset: jest.fn(),
         zero: jest.fn(),
         labels: jest.fn(),
-        remove: jest.fn()
+        remove: jest.fn(),
+        get: jest.fn()
       })
       const mockHandler = jest.fn().mockRejectedValueOnce(new Error('Test Error'))
 

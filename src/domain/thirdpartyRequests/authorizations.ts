@@ -29,7 +29,7 @@
  --------------
  ******/
 
-import { Util as HapiUtil } from '@hapi/hapi'
+import { Utils as HapiUtil } from '@hapi/hapi'
 import { APIErrorObject, FSPIOPError, ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import Logger from '@mojaloop/central-services-logger'
 import { Enum, FspEndpointTypesEnum, RestMethodsEnum, Util } from '@mojaloop/central-services-shared'

@@ -19,7 +19,15 @@ export default class Consumer<Payload> {
   private handlerFunc: ConsumeCallback<Payload>
 
   public constructor(config: ConsumerConfig, topicTemplate: string, handlerFunc: ConsumeCallback<Payload>) {
-    const topicConfig = Util.Kafka.createGeneralTopicConf(topicTemplate, config.eventType, config.eventAction)
+    const topicConfig = Util.Kafka.createGeneralTopicConf(
+      topicTemplate,
+      config.eventType,
+      config.eventAction,
+      undefined,
+      undefined,
+      undefined,
+      ''
+    )
     this.topicName = topicConfig.topicName
     config.internalConfig.rdkafkaConf['client.id'] = this.topicName
 
