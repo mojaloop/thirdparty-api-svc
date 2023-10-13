@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [13.0.4](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.3...v13.0.4) (2023-10-13)
+
+
+### Chore
+
+* **mojaloop/#3533:** update dependencies ([#92](https://github.com/mojaloop/thirdparty-api-svc/issues/92)) ([2d47d58](https://github.com/mojaloop/thirdparty-api-svc/commit/2d47d58735bab4c30face7954e5408c9f57708aa)), closes [mojaloop/#3533](https://github.com/mojaloop/thirdparty-api-svc/issues/3533)
+
 ### [13.0.3](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.2...v13.0.3) (2023-09-20)
 
 
