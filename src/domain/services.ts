@@ -123,7 +123,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService(
 ): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestToProviderService')
   const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = Enum.Http.Headers.FSPIOP.SWITCH.value
+  const destinationDfspId = Config.HUB_PARTICIPANT.NAME
 
   try {
     // render provider service url and path
@@ -159,7 +159,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService(
     )
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
       'fspiop-destination': sourceDfspId
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
@@ -248,16 +248,16 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService(
 
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
-      'fspiop-destination': Enum.Http.Headers.FSPIOP.SWITCH.value
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
+      'fspiop-destination': Config.HUB_PARTICIPANT.NAME
     }
 
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await Util.Request.sendRequest(
       url,
       errorHeaders,
-      Enum.Http.Headers.FSPIOP.SWITCH.value,
-      Enum.Http.Headers.FSPIOP.SWITCH.value,
+      Config.HUB_PARTICIPANT.NAME,
+      Config.HUB_PARTICIPANT.NAME,
       Enum.Http.RestMethods.PUT,
       fspiopError.toApiErrorObject(
         Config.ERROR_HANDLING.includeCauseExtension,

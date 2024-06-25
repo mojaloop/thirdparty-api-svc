@@ -104,7 +104,7 @@ async function forwardTransactionRequest(
     )
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
       'fspiop-destination': fspiopSource
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)

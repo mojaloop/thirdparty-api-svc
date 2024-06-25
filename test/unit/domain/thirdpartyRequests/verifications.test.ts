@@ -32,6 +32,7 @@ import Logger from '@mojaloop/central-services-logger'
 import { Enum, Util } from '@mojaloop/central-services-shared'
 import Span from 'test/unit/__mocks__/span'
 import { Verifications } from '~/domain/thirdpartyRequests'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -250,8 +251,8 @@ describe('domain/verifications', () => {
       ]
       const sendRequestExpectedSecond = [
         'http://pispA.local/thirdpartyRequests/verifications/123456/error',
-        { 'fspiop-source': 'switch', 'fspiop-destination': 'pispA' },
-        'switch',
+        { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
+        Config.HUB_PARTICIPANT.NAME,
         'pispA',
         Enum.Http.RestMethods.PUT,
         errorPayload,
@@ -330,8 +331,8 @@ describe('domain/verifications', () => {
       ]
       const sendRequestExpectedSecond = [
         'http://pispA.local/thirdpartyRequests/verifications/123456/error',
-        { 'fspiop-source': 'switch', 'fspiop-destination': 'pispA' },
-        'switch',
+        { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
+        Config.HUB_PARTICIPANT.NAME,
         'pispA',
         Enum.Http.RestMethods.PUT,
         errorPayload,
@@ -366,7 +367,7 @@ describe('domain/verifications', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://pisp.local/thirdpartyRequests/verifications/123456/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const id = '123456'
@@ -382,7 +383,7 @@ describe('domain/verifications', () => {
       const sendRequestExpected = [
         'http://pisp.local/thirdpartyRequests/verifications/123456/error',
         headers,
-        'switch',
+        Config.HUB_PARTICIPANT.NAME,
         'pispA',
         Enum.Http.RestMethods.PUT,
         payload,

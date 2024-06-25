@@ -32,6 +32,7 @@ import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 import * as ConsentRequests from '~/domain/consentRequests'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -58,7 +59,7 @@ const getEndpointAndRenderConsentRequestsExpectedSecond = [
 ]
 
 const expectedConsentRequestErrorHeaders = {
-  'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+  'fspiop-source': Config.HUB_PARTICIPANT.NAME,
   'fspiop-destination': consentRequestsPostRequest.headers['fspiop-source']
 }
 
@@ -354,7 +355,7 @@ describe('domain/consentRequests/{ID}', () => {
       )
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'dfspA'
       }
       const id = 'b82348b9-81f6-42ea-b5c4-80667d5740fe'
@@ -370,7 +371,7 @@ describe('domain/consentRequests/{ID}', () => {
       const sendRequestErrorExpected = [
         'http://dfspa-sdk/consentRequests/b82348b9-81f6-42ea-b5c4-80667d5740fe/error',
         headers,
-        'switch',
+        Config.HUB_PARTICIPANT.NAME,
         'dfspA',
         Enum.Http.RestMethods.PUT,
         payload,

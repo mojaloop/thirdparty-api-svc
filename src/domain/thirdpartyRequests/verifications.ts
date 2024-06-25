@@ -89,7 +89,7 @@ export async function forwardVerificationRequest(
     )
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
       'fspiop-destination': sourceDfspId
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)

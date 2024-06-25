@@ -32,6 +32,7 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -168,7 +169,7 @@ describe('domain/accounts/{ID}', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/accounts/username1234/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const id = 'username1234'
@@ -184,7 +185,7 @@ describe('domain/accounts/{ID}', () => {
       const sendRequestErrorExpected = [
         'http://pispa-sdk/accounts/username1234/error',
         headers,
-        'switch',
+        Config.HUB_PARTICIPANT.NAME,
         'pispA',
         Enum.Http.RestMethods.PUT,
         payload,
@@ -202,7 +203,7 @@ describe('domain/accounts/{ID}', () => {
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const id = 'username1234'

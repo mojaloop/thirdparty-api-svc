@@ -34,6 +34,7 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -47,7 +48,7 @@ const sendRequestGetServicesRequestsToProviderExpected = [
   'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP',
   getServicesByServiceTypeRequest.headers,
   'pispA',
-  'switch',
+  Config.HUB_PARTICIPANT.NAME,
   Enum.Http.RestMethods.GET,
   undefined,
   Enum.Http.ResponseTypes.JSON,
@@ -65,7 +66,7 @@ const getEndpointAndRenderPutServicesRequestToFSPsExpected = [
 const sendRequestPutServicesRequestsToFSPExpected = [
   'http://pisp-sdk/services/THIRD_PARTY_DFSP',
   putServicesByServiceTypeRequest.headers,
-  'switch',
+  Config.HUB_PARTICIPANT.NAME,
   'pispA',
   Enum.Http.RestMethods.PUT,
   putServicesByServiceTypeRequest.payload,
@@ -76,11 +77,11 @@ const sendRequestPutServicesRequestsToFSPExpected = [
 const sendRequestPutServicesRequestsToFSPExpectedProviderError = [
   'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP/error',
   {
-    'fspiop-destination': 'switch',
-    'fspiop-source': 'switch'
+    'fspiop-destination': Config.HUB_PARTICIPANT.NAME,
+    'fspiop-source': Config.HUB_PARTICIPANT.NAME
   },
-  'switch',
-  'switch',
+  Config.HUB_PARTICIPANT.NAME,
+  Config.HUB_PARTICIPANT.NAME,
   Enum.Http.RestMethods.PUT,
   expect.objectContaining({
     errorInformation: expect.any(Object)
@@ -187,7 +188,7 @@ describe('domain/services/{ServiceType}', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/services/THIRD_PARTY_DFSP/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const serviceType = 'THIRD_PARTY_DFSP'
@@ -203,7 +204,7 @@ describe('domain/services/{ServiceType}', () => {
       const sendRequestErrorExpected = [
         'http://pispa-sdk/services/THIRD_PARTY_DFSP/error',
         headers,
-        'switch',
+        Config.HUB_PARTICIPANT.NAME,
         'pispA',
         Enum.Http.RestMethods.PUT,
         payload,
@@ -221,7 +222,7 @@ describe('domain/services/{ServiceType}', () => {
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const serviceType = 'THIRD_PARTY_DFSP'

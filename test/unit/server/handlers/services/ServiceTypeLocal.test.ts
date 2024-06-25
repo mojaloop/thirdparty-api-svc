@@ -28,12 +28,20 @@ import '~/shared/config'
 import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}'
+import * as mockConfig from '~/shared/config'
 import * as TestData from 'test/unit/data/mockData'
+
+// eslint-disable-next-line no-var
+var mockHubName = mockConfig.default.HUB_PARTICIPANT.NAME // jest.mock hoisting limitation
 
 jest.mock('~/shared/config', () => ({
   PARTICIPANT_LIST_SERVICE_URL: undefined,
-  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb']
+  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb'],
+  HUB_PARTICIPANT: {
+    NAME: mockHubName
+  }
 }))
+
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(

@@ -32,6 +32,7 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -110,7 +111,7 @@ const sendRequestExpectedPatchTransactionRequest = [
 ]
 
 const expectedErrorHeaders = {
-  'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+  'fspiop-source': Config.HUB_PARTICIPANT.NAME,
   'fspiop-destination': request.headers['fspiop-source']
 }
 

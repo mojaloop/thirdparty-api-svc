@@ -34,6 +34,11 @@ import Package from '../../package.json'
 import logger from '@mojaloop/central-services-logger'
 
 export interface ServiceConfig {
+  HUB_PARTICIPANT: {
+    ID: number
+    NAME: string
+  }
+
   // package.json
   PACKAGE: Record<string, unknown>
 
@@ -95,6 +100,8 @@ if (!RC.PARTICIPANT_LIST_LOCAL && !RC.PARTICIPANT_LIST_SERVICE_URL) {
   logger.error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
   throw new Error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
 }
+
+console.log(RC)
 
 export default {
   ...RC,

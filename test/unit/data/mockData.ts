@@ -1,4 +1,5 @@
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
+import Config from '~/shared/config'
 
 const transactionRequestPayload: tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest = {
   transactionRequestId: '7d34f91d-d078-4077-8263-2c047876fcf6',
@@ -586,7 +587,7 @@ const putServicesByServiceTypeRequestPayload: tpAPI.Schemas.ServicesServiceTypeP
 
 export const putServicesByServiceTypeRequest = {
   headers: {
-    'fspiop-source': 'switch',
+    'fspiop-source': Config.HUB_PARTICIPANT.NAME,
     'fspiop-destination': 'pispA'
   },
   params: {
@@ -597,7 +598,7 @@ export const putServicesByServiceTypeRequest = {
 
 export const putServicesByServiceTypeRequestError = {
   headers: {
-    'fspiop-source': 'switch',
+    'fspiop-source': Config.HUB_PARTICIPANT.NAME,
     'fspiop-destination': 'pispA'
   },
   params: {
