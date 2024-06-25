@@ -101,8 +101,6 @@ if (!RC.PARTICIPANT_LIST_LOCAL && !RC.PARTICIPANT_LIST_SERVICE_URL) {
   throw new Error('Either `PARTICIPANT_LIST_LOCAL` or `PARTICIPANT_LIST_SERVICE_URL` are required configs')
 }
 
-console.log(RC)
-
 export default {
   ...RC,
   PACKAGE: Package
