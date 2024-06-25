@@ -39,6 +39,9 @@ import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 /**
  * @function forwardServicesServiceTypeRequestError
  * @description Generic function to handle sending `PUT .../services/{ServiceType}/error` back to the FSPIOP-Source
@@ -59,14 +62,14 @@ export async function forwardServicesServiceTypeRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardServicesServiceTypeRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ServiceType: serviceType }
@@ -75,19 +78,20 @@ export async function forwardServicesServiceTypeRequestError(
       `services::forwardServicesServiceTypeRequestError - Forwarding services error callback to endpoint: ${url}`
     )
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      source,
+      destination,
+      method: Enum.Http.RestMethods.PUT,
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(`services::forwardServicesServiceTypeRequest - Forwarded services error callback: ${serviceType}
-    from ${sourceDfspId} to ${destinationDfspId}`)
+    from ${source} to ${destination}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
@@ -122,8 +126,8 @@ export async function forwardGetServicesServiceTypeRequestToProviderService(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestToProviderService')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = Config.HUB_PARTICIPANT.NAME
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = Config.HUB_PARTICIPANT.NAME
 
   try {
     // render provider service url and path
@@ -134,19 +138,20 @@ export async function forwardGetServicesServiceTypeRequestToProviderService(
       `services::forwardGetServicesServiceTypeRequestToProviderService - Forwarding services to endpoint: ${url}`
     )
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
-      undefined,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      payload: undefined,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `services::forwardGetServicesServiceTypeRequestToProviderService - Forwarded services request : ${serviceType} from ${sourceDfspId}`
+      `services::forwardGetServicesServiceTypeRequestToProviderService - Forwarded services request : ${serviceType} from ${source}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -160,7 +165,7 @@ export async function forwardGetServicesServiceTypeRequestToProviderService(
     const errorHeaders = {
       ...headers,
       'fspiop-source': Config.HUB_PARTICIPANT.NAME,
-      'fspiop-destination': sourceDfspId
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardServicesServiceTypeRequestError(
@@ -204,12 +209,12 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardGetServicesServiceTypeRequestFromProviderService')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ServiceType: serviceType }
@@ -218,19 +223,20 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService(
       `services::forwardGetServicesServiceTypeRequestFromProviderService - Forwarding services to endpoint: ${url}`
     )
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `services::forwardGetServicesServiceTypeRequestFromProviderService - Forwarded services request : ${serviceType} from ${sourceDfspId} to ${destinationDfspId}`
+      `services::forwardGetServicesServiceTypeRequestFromProviderService - Forwarded services request : ${serviceType} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -253,19 +259,20 @@ export async function forwardGetServicesServiceTypeRequestFromProviderService(
     }
 
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
-      errorHeaders,
-      Config.HUB_PARTICIPANT.NAME,
-      Config.HUB_PARTICIPANT.NAME,
-      Enum.Http.RestMethods.PUT,
-      fspiopError.toApiErrorObject(
+      headers: errorHeaders,
+      source: Config.HUB_PARTICIPANT.NAME,
+      destination: Config.HUB_PARTICIPANT.NAME,
+      method: Enum.Http.RestMethods.PUT,
+      payload: fspiopError.toApiErrorObject(
         Config.ERROR_HANDLING.includeCauseExtension,
         Config.ERROR_HANDLING.truncateExtensions
       ),
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     if (childSpan && !childSpan.isFinished) {
       await finishChildSpan(fspiopError, childSpan)

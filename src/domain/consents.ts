@@ -40,6 +40,9 @@ import Config from '~/shared/config'
 // eslint-disable-next-line import/no-unresolved
 import { finishChildSpan } from '~/shared/util'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 /**
  * @function forwardConsentsIdRequestError
  * @description Generic function to handle sending `PUT .../consents/error` back to the FSPIOP-Source
@@ -60,33 +63,34 @@ export async function forwardConsentsIdRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: consentsId }
     )
     Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      source,
+      destination,
+      method: Enum.Http.RestMethods.PUT,
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `consents::forwardConsentsRequestError - Forwarded consents error callback: from ${sourceDfspId} to ${destinationDfspId}`
+      `consents::forwardConsentsRequestError - Forwarded consents error callback: from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -129,32 +133,33 @@ export async function forwardConsentsIdRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsIdRequest')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: consentsRequestId }
     )
     Logger.info(`consents::forwardConsentsIdRequest - Forwarding consents to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `consents::forwardConsentsIdRequest - Forwarded consents: ${consentsRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+      `consents::forwardConsentsIdRequest - Forwarded consents: ${consentsRequestId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -164,7 +169,7 @@ export async function forwardConsentsIdRequest(
     const errorHeaders = {
       ...headers,
       'fspiop-source': Config.HUB_PARTICIPANT.NAME,
-      'fspiop-destination': sourceDfspId
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardConsentsIdRequestError(
@@ -207,29 +212,30 @@ export async function forwardConsentsRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardConsentsRequest')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path
     )
     Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
-    Logger.info(`consents::forwardConsentsRequest - Forwarded consents: from ${sourceDfspId} to ${destinationDfspId}`)
+    Logger.info(`consents::forwardConsentsRequest - Forwarded consents: from ${source} to ${destination}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
@@ -238,7 +244,7 @@ export async function forwardConsentsRequest(
     const errorHeaders = {
       ...headers,
       'fspiop-source': Config.HUB_PARTICIPANT.NAME,
-      'fspiop-destination': sourceDfspId
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardConsentsIdRequestError(

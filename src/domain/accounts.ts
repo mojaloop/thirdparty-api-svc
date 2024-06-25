@@ -39,6 +39,9 @@ import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 /**
  * @function forwardAccountsIdRequestError
  * @description Generic function to handle sending `PUT .../accounts/{ID}/error` back to the FSPIOP-Source
@@ -59,33 +62,34 @@ export async function forwardAccountsIdRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: userId }
     )
     Logger.info(`accounts::forwardAccountsIdRequestError - Forwarding accounts error callback to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      source,
+      destination,
+      method: Enum.Http.RestMethods.PUT,
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+   })
 
     Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId}
-    from ${sourceDfspId} to ${destinationDfspId}`)
+    from ${source} to ${destination}`)
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
     }
@@ -123,31 +127,32 @@ export async function forwardAccountsIdRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAccountsIdRequest')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: userId }
     )
     Logger.info(`accounts::forwardAccountsIdRequest - Forwarding accounts to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `accounts::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${sourceDfspId} to ${destinationDfspId}`
+      `accounts::forwardAccountsIdRequest - Forwarded accounts request : ${userId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -157,7 +162,7 @@ export async function forwardAccountsIdRequest(
     const errorHeaders = {
       ...headers,
       'fspiop-source': Config.HUB_PARTICIPANT.NAME,
-      'fspiop-destination': sourceDfspId
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardAccountsIdRequestError(

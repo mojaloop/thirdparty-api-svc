@@ -40,6 +40,9 @@ import { finishChildSpan } from '~/shared/util'
 import { thirdparty as tpAPI } from '@mojaloop/api-snippets'
 import { Span } from '@mojaloop/event-sdk'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 /**
  * @function forwardAuthorizationRequest
  * @description Forwards a POST /thirdpartyRequests/authorizations or
@@ -66,31 +69,32 @@ export async function forwardAuthorizationRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequest')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: authorizationRequestId }
     )
     Logger.info(`authorizations::forwardAuthorizationRequest - Forwarding authorization to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization: ${authorizationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+      `authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization: ${authorizationRequestId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -104,7 +108,7 @@ export async function forwardAuthorizationRequest(
     const errorHeaders = {
       ...headers,
       'fspiop-source': Config.HUB_PARTICIPANT.NAME,
-      'fspiop-destination': sourceDfspId
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardAuthorizationRequestError(
@@ -146,14 +150,14 @@ export async function forwardAuthorizationRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardAuthorizationRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: authorizationRequestId }
@@ -161,19 +165,20 @@ export async function forwardAuthorizationRequestError(
     Logger.info(`authorizations::forwardAuthorizationRequestError -
       Forwarding thirdpartyTransaction authorization error callback to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      source,
+      destination,
+      method: Enum.Http.RestMethods.PUT,
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization error callback: ${authorizationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+      `authorizations::forwardAuthorizationRequest - Forwarded thirdpartyTransaction authorization error callback: ${authorizationRequestId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
