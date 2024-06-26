@@ -86,7 +86,7 @@ export async function forwardAccountsIdRequestError(
       responseType,
       span: childSpan,
       hubNameRegex
-   })
+    })
 
     Logger.info(`accounts::forwardAccountsIdRequest - Forwarded accounts error callback: ${userId}
     from ${source} to ${destination}`)

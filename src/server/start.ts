@@ -38,7 +38,10 @@ const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPAN
 
 export default async function start(server: Server): Promise<Server> {
   Logger.info(`thirdparty-api-svc is running @ ${server.info.uri}`)
-  await Util.Endpoints.initializeCache(Config.ENDPOINT_CACHE_CONFIG, { hubName: Config.HUB_PARTICIPANT.NAME, hubNameRegex })
+  await Util.Endpoints.initializeCache(Config.ENDPOINT_CACHE_CONFIG, {
+    hubName: Config.HUB_PARTICIPANT.NAME,
+    hubNameRegex
+  })
   if (!Config.INSTRUMENTATION.METRICS.DISABLED) {
     Metrics.setup(Config.INSTRUMENTATION.METRICS.config)
   }

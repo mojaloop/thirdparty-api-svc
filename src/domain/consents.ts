@@ -215,12 +215,7 @@ export async function forwardConsentsRequest(
   const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
   const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
-    const url = await Util.Endpoints.getEndpointAndRender(
-      Config.ENDPOINT_SERVICE_URL,
-      destination,
-      endpointType,
-      path
-    )
+    const url = await Util.Endpoints.getEndpointAndRender(Config.ENDPOINT_SERVICE_URL, destination, endpointType, path)
     Logger.info(`consents::forwardConsentsRequestError - Forwarding consents error callback to endpoint: ${url}`)
 
     await Util.Request.sendRequest({
