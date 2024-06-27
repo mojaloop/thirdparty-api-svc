@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [15.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v14.0.0...v15.0.0) (2024-06-27)
+
+
+### Features
+
+* **mojaloop/#3984:** parameterize switch id ([#94](https://github.com/mojaloop/thirdparty-api-svc/issues/94)) ([67520f3](https://github.com/mojaloop/thirdparty-api-svc/commit/67520f301b7c316c54e4f5f3e2960b28c8426623)), closes [mojaloop/#3984](https://github.com/mojaloop/thirdparty-api-svc/issues/3984)
+
 ## [14.0.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v13.0.4...v14.0.0) (2023-11-06)
 
 
