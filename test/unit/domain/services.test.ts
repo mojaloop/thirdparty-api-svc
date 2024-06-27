@@ -43,11 +43,12 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const getServicesByServiceTypeRequest = mockData.getServicesByServiceTypeRequest
 const putServicesByServiceTypeRequest = mockData.putServicesByServiceTypeRequest
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
 const sendRequestGetServicesRequestsToProviderExpected = {
   destination: Config.HUB_PARTICIPANT.NAME,
   headers: getServicesByServiceTypeRequest.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.GET,
   payload: undefined,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -67,7 +68,7 @@ const getEndpointAndRenderPutServicesRequestToFSPsExpected = [
 const sendRequestPutServicesRequestsToFSPExpected = {
   destination: 'pispA',
   headers: putServicesByServiceTypeRequest.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.PUT,
   payload: putServicesByServiceTypeRequest.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -82,7 +83,7 @@ const sendRequestPutServicesRequestsToFSPExpectedProviderError = {
     'fspiop-destination': Config.HUB_PARTICIPANT.NAME,
     'fspiop-source': Config.HUB_PARTICIPANT.NAME
   },
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.PUT,
   payload: expect.objectContaining({
     errorInformation: expect.any(Object)
@@ -206,8 +207,8 @@ describe('domain/services/{ServiceType}', () => {
       ]
       const sendRequestErrorExpected = {
         destination: 'pispA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: payload,
         responseType: Enum.Http.ResponseTypes.JSON,

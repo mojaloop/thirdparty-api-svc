@@ -79,7 +79,7 @@ describe('util', (): void => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const request: Request = {
-        headers: headers,
+        headers,
         params: {},
         payload: { transactionRequestId: '1234' }
       }

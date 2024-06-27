@@ -57,10 +57,12 @@ const getEndpointAndRenderAccountRequestsIdExpectedSecond = [
   { ID: 'username1234' }
 ]
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+
 const sendRequestAccountsRequestsIdExpected = {
   destination: 'dfspA',
   headers: request.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.PUT,
   payload: request.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -186,15 +188,15 @@ describe('domain/accounts/{ID}', () => {
       ]
 
       const sendRequestErrorExpected = {
-        destination: 'pispA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
-        method: Enum.Http.RestMethods.PUT,
-        payload: payload,
-        responseType: Enum.Http.ResponseTypes.JSON,
+        url: 'http://pispa-sdk/accounts/username1234/error',
         source: Config.HUB_PARTICIPANT.NAME,
+        destination: 'pispA',
+        headers,
+        method: Enum.Http.RestMethods.PUT,
+        payload,
+        responseType: Enum.Http.ResponseTypes.JSON,
         span: undefined,
-        url: 'http://pispa-sdk/accounts/username1234/error'
+        hubNameRegex
       }
 
       // Act

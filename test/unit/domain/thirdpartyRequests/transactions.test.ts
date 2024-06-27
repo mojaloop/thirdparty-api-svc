@@ -46,6 +46,7 @@ const patchTransactionRequestApiEndpointType = Enum.EndPoints.FspEndpointTypes.T
 const mockData = JSON.parse(JSON.stringify(TestData))
 const request = mockData.transactionRequest
 const patchThirdpartyTransactionIdRequest = mockData.patchThirdpartyTransactionIdRequest
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
 const getEndpointAndRenderExpectedPostTransactionRequest = [
   'http://central-ledger.local:3001',
@@ -70,7 +71,7 @@ const sendRequestExpectedPostTransactionRequest = {
   payload: request.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
   span: expect.objectContaining({ isFinished: false }),
-  hubNameRegex: /^Hub$/i
+  hubNameRegex
 }
 
 const getEndpointAndRenderExpectedGetTransactionRequest = [
@@ -90,7 +91,7 @@ const sendRequestExpectedGetTransactionRequest = {
   payload: undefined,
   responseType: Enum.Http.ResponseTypes.JSON,
   span: expect.objectContaining({ isFinished: false }),
-  hubNameRegex: /^Hub$/i
+  hubNameRegex
 }
 
 const getEndpointAndRenderExpectedPatchTransactionRequest = [
@@ -110,7 +111,7 @@ const sendRequestExpectedPatchTransactionRequest = {
   payload: patchThirdpartyTransactionIdRequest.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
   span: expect.objectContaining({ isFinished: false }),
-  hubNameRegex: /^Hub$/i
+  hubNameRegex
 }
 
 const expectedErrorHeaders = {
@@ -230,7 +231,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         payload: {},
         responseType: Enum.Http.ResponseTypes.JSON,
         span: undefined,
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
@@ -262,7 +263,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         payload: {},
         responseType: Enum.Http.ResponseTypes.JSON,
         span: undefined,
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedPostTransactionRequest)
@@ -334,7 +335,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
         span: expect.objectContaining({ isFinished: false }),
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
 
       mockGetEndpointAndRender
@@ -390,7 +391,7 @@ describe('domain /thirdpartyRequests/transactions', (): void => {
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
         span: expect.objectContaining({ isFinished: false }),
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
 
       mockGetEndpointAndRender

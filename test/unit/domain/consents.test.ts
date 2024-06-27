@@ -42,6 +42,7 @@ const mockData = JSON.parse(JSON.stringify(TestData))
 const mockConsentsPostRequestPISP = mockData.consentsPostRequestPISP
 const mockConsentsIdPutRequest = mockData.consentsIdPutRequestVerified
 const mockConsentIdPatchRequestVerified = mockData.patchConsentsByIdRequestVerified
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
 const getEndpointForwardConsentsRequestExpected = [
   'http://central-ledger.local:3001',
@@ -66,7 +67,7 @@ const expectedForwardConsentsRequestErrorHeaders = {
 const sendRequestForwardConsentsRequestExpected = {
   destination: mockConsentsPostRequestPISP.headers['fspiop-destination'],
   headers: mockConsentsPostRequestPISP.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.POST,
   payload: mockConsentsPostRequestPISP.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -99,7 +100,7 @@ const expectedforwardConsentsIdRequestErrorHeaders = {
 const sendRequestforwardConsentsIdRequestExpected = {
   destination: mockConsentsIdPutRequest.headers['fspiop-destination'],
   headers: mockConsentsIdPutRequest.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.PUT,
   payload: mockConsentsIdPutRequest.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -119,7 +120,7 @@ const getEndpointforwardConsentsIdRequestExpectedPatchRequest = [
 const sendRequestforwardConsentsIdRequestExpectedPatchRequest = {
   destination: mockConsentIdPatchRequestVerified.headers['fspiop-destination'],
   headers: mockConsentIdPatchRequestVerified.headers,
-  hubNameRegex: /^Hub$/i,
+  hubNameRegex,
   method: Enum.Http.RestMethods.PATCH,
   payload: mockConsentIdPatchRequestVerified.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
@@ -218,7 +219,7 @@ describe('domain/consents', () => {
       const sendRequestErrExpected = {
         destination: expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
         headers: expectedForwardConsentsRequestErrorHeaders,
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -271,7 +272,7 @@ describe('domain/consents', () => {
       const sendRequestErrExpected = {
         destination: expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
         headers: expectedForwardConsentsRequestErrorHeaders,
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -423,7 +424,7 @@ describe('domain/consents/{ID}', () => {
       const sendRequestErrExpected = {
         destination: expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
         headers: expectedforwardConsentsIdRequestErrorHeaders,
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -477,7 +478,7 @@ describe('domain/consents/{ID}', () => {
       const sendRequestErrExpected = {
         destination: expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
         headers: expectedforwardConsentsIdRequestErrorHeaders,
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -546,8 +547,8 @@ describe('domain/consents/{ID}/error', () => {
 
       const sendRequestErrorExpected = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: payload,
         responseType: Enum.Http.ResponseTypes.JSON,

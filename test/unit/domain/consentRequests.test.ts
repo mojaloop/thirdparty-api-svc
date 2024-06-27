@@ -41,6 +41,7 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const consentRequestsPostRequest = mockData.consentRequestsPostRequest
 const consentRequestsIdPutRequest = mockData.consentRequestsPutRequestWeb
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
 const getEndpointAndRenderConsentRequestsExpected = [
   'http://central-ledger.local:3001',
@@ -72,7 +73,7 @@ const sendRequestConsentRequestsExpected = {
   payload: consentRequestsPostRequest.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
   span: expect.objectContaining({ isFinished: false }),
-  hubNameRegex: /^Hub$/i
+  hubNameRegex
 }
 
 describe('domain/consentRequests', () => {
@@ -168,7 +169,7 @@ describe('domain/consentRequests', () => {
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
         span: expect.objectContaining({ isFinished: false }),
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
 
       mockGetEndpointAndRender
@@ -220,7 +221,7 @@ describe('domain/consentRequests', () => {
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
         span: expect.objectContaining({ isFinished: false }),
-        hubNameRegex: /^Hub$/i
+        hubNameRegex
       }
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consentRequests')
@@ -275,7 +276,7 @@ const sendRequestConsentRequestsIdExpected = {
   payload: consentRequestsIdPutRequest.payload,
   responseType: Enum.Http.ResponseTypes.JSON,
   span: expect.objectContaining({ isFinished: false }),
-  hubNameRegex: /^Hub$/i
+  hubNameRegex
 }
 
 describe('domain/consentRequests/{ID}', () => {
@@ -375,8 +376,8 @@ describe('domain/consentRequests/{ID}', () => {
       ]
       const sendRequestErrorExpected = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: payload,
         responseType: Enum.Http.ResponseTypes.JSON,

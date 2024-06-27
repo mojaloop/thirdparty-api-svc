@@ -39,6 +39,8 @@ const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
 const mockLoggerPush = jest.spyOn(Logger, 'push')
 const mockLoggerError = jest.spyOn(Logger, 'error')
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+
 const validPostPayload: tpAPI.Schemas.ThirdpartyRequestsAuthorizationsPostRequest = {
   authorizationRequestId: '5f8ee7f9-290f-4e03-ae1c-1e81ecf398df',
   transactionRequestId: '2cf08eed-3540-489e-85fa-b2477838a8c5',
@@ -125,8 +127,8 @@ describe('domain/authorizations', () => {
       ]
       const sendRequestExpected = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.POST,
         payload: validPostPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -274,8 +276,8 @@ describe('domain/authorizations', () => {
       ]
       const sendRequestExpectedFirst = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.POST,
         payload: validPostPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -286,7 +288,7 @@ describe('domain/authorizations', () => {
       const sendRequestExpectedSecond = {
         destination: 'pispA',
         headers: { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -356,8 +358,8 @@ describe('domain/authorizations', () => {
       ]
       const sendRequestExpectedFirst = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.POST,
         payload: validPostPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -368,7 +370,7 @@ describe('domain/authorizations', () => {
       const sendRequestExpectedSecond = {
         destination: 'pispA',
         headers: { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
-        hubNameRegex: /^Hub$/i,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: errorPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -419,8 +421,8 @@ describe('domain/authorizations', () => {
       ]
       const sendRequestExpected = {
         destination: 'pispA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: payload,
         responseType: Enum.Http.ResponseTypes.JSON,
@@ -468,8 +470,8 @@ describe('domain/authorizations', () => {
       ]
       const sendRequestExpected = {
         destination: 'dfspA',
-        headers: headers,
-        hubNameRegex: /^Hub$/i,
+        headers,
+        hubNameRegex,
         method: Enum.Http.RestMethods.PUT,
         payload: validPutPayload,
         responseType: Enum.Http.ResponseTypes.JSON,
