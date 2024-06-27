@@ -29,16 +29,12 @@ import * as Services from '~/domain/services'
 import { mockResponseToolkit } from 'test/unit/__mocks__/responseToolkit'
 import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}'
 import * as TestData from 'test/unit/data/mockData'
-import * as mockConfig from '~/shared/config'
-
-// eslint-disable-next-line no-var
-var mockHubName = mockConfig.default.HUB_PARTICIPANT.NAME // jest.mock hoisting limitation
 
 jest.mock('~/shared/config', () => ({
-  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
+  PARTICIPANT_LIST_SERVICE_URL: undefined,
   PARTICIPANT_LIST_LOCAL: undefined,
   HUB_PARTICIPANT: {
-    NAME: mockHubName
+    NAME: 'mockHubName'
   }
 }))
 

@@ -91,16 +91,18 @@ describe('domain/verifications', () => {
         '/thirdpartyRequests/verifications',
         { ID: '123456' }
       ]
-      const sendRequestExpected = [
-        'http://auth-service.local/thirdpartyRequests/verifications',
-        headers,
-        'pispA',
-        'dfspA',
-        Enum.Http.RestMethods.POST,
-        validPostPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+      const sendRequestExpected = {
+        destination: 'dfspA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.POST,
+        payload: validPostPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: 'pispA',
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://auth-service.local/thirdpartyRequests/verifications'
+      }
+
       const mockSpan = new Span()
 
       // Act
@@ -118,7 +120,7 @@ describe('domain/verifications', () => {
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async () => {
@@ -239,26 +241,29 @@ describe('domain/verifications', () => {
         '/thirdpartyRequests/verifications/{{ID}}/error',
         { ID: '123456' }
       ]
-      const sendRequestExpectedFirst = [
-        'http://auth-service.local/thirdpartyRequests/verifications',
-        headers,
-        'pispA',
-        'dfspA',
-        Enum.Http.RestMethods.POST,
-        validPostPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
-      const sendRequestExpectedSecond = [
-        'http://pispA.local/thirdpartyRequests/verifications/123456/error',
-        { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
-        Config.HUB_PARTICIPANT.NAME,
-        'pispA',
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+
+      const sendRequestExpectedFirst = {
+        destination: 'dfspA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.POST,
+        payload: validPostPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: 'pispA',
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://auth-service.local/thirdpartyRequests/verifications'
+      }
+      const sendRequestExpectedSecond = {
+        destination: 'pispA',
+        headers: { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://pispA.local/thirdpartyRequests/verifications/123456/error'
+      }
 
       // Act
       const action = async () =>
@@ -278,8 +283,8 @@ describe('domain/verifications', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedFirst)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedSecond)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpectedFirst)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpectedSecond)
       // Children's children in `forwardAuthorizationRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -319,26 +324,29 @@ describe('domain/verifications', () => {
         '/thirdpartyRequests/verifications/{{ID}}/error',
         { ID: '123456' }
       ]
-      const sendRequestExpectedFirst = [
-        'http://auth-service.local/thirdpartyRequests/verifications',
-        headers,
-        'pispA',
-        'dfspA',
-        Enum.Http.RestMethods.POST,
-        validPostPayload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
-      const sendRequestExpectedSecond = [
-        'http://pispA.local/thirdpartyRequests/verifications/123456/error',
-        { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
-        Config.HUB_PARTICIPANT.NAME,
-        'pispA',
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+      const sendRequestExpectedFirst = {
+        destination: 'dfspA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.POST,
+        payload: validPostPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: 'pispA',
+        span: undefined,
+        url: 'http://auth-service.local/thirdpartyRequests/verifications'
+      }
+
+      const sendRequestExpectedSecond = {
+        destination: 'pispA',
+        headers: { 'fspiop-source': Config.HUB_PARTICIPANT.NAME, 'fspiop-destination': 'pispA' },
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: undefined,
+        url: 'http://pispA.local/thirdpartyRequests/verifications/123456/error'
+      }
 
       // Act
       const action = async () =>
@@ -348,8 +356,8 @@ describe('domain/verifications', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedFirst)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedFirst)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpectedSecond)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpectedFirst)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpectedSecond)
     })
   })
 
@@ -380,23 +388,24 @@ describe('domain/verifications', () => {
         '/thirdpartyRequests/verifications/{{ID}}/error',
         { ID: '123456' }
       ]
-      const sendRequestExpected = [
-        'http://pisp.local/thirdpartyRequests/verifications/123456/error',
-        headers,
-        Config.HUB_PARTICIPANT.NAME,
-        'pispA',
-        Enum.Http.RestMethods.PUT,
-        payload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+      const sendRequestExpected = {
+        destination: 'pispA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.PUT,
+        payload: payload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: undefined,
+        url: 'http://pisp.local/thirdpartyRequests/verifications/123456/error'
+      }
 
       // Act
       await Verifications.forwardVerificationRequestError(path, headers, id, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpected)
     })
   })
 
@@ -428,16 +437,18 @@ describe('domain/verifications', () => {
         '/thirdpartyRequests/verifications/{{ID}}',
         { ID: '123456' }
       ]
-      const sendRequestExpected = [
-        'http://auth-service.local/thirdpartyRequests/verifications/123456',
-        headers,
-        'pispA',
-        'dfspA',
-        Enum.Http.RestMethods.PUT,
-        validPutPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+      const sendRequestExpected = {
+        destination: 'dfspA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.PUT,
+        payload: validPutPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: 'pispA',
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://auth-service.local/thirdpartyRequests/verifications/123456'
+      }
+
       const mockSpan = new Span()
 
       // Act
@@ -455,7 +466,7 @@ describe('domain/verifications', () => {
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestExpected)
     })
   })
 })

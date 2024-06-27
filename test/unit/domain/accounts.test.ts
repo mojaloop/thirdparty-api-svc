@@ -57,16 +57,18 @@ const getEndpointAndRenderAccountRequestsIdExpectedSecond = [
   { ID: 'username1234' }
 ]
 
-const sendRequestAccountsRequestsIdExpected = [
-  'http://dfspa-sdk/accounts/username1234',
-  request.headers,
-  'pispA',
-  'dfspA',
-  Enum.Http.RestMethods.PUT,
-  request.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestAccountsRequestsIdExpected = {
+  destination: 'dfspA',
+  headers: request.headers,
+  hubNameRegex: /^Hub$/i,
+  method: Enum.Http.RestMethods.PUT,
+  payload: request.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: 'pispA',
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://dfspa-sdk/accounts/username1234'
+}
+
 describe('domain/accounts/{ID}', () => {
   describe('forwardAccountsIdRequest', () => {
     beforeEach((): void => {
@@ -96,7 +98,7 @@ describe('domain/accounts/{ID}', () => {
         mockSpan
       )
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestAccountsRequestsIdExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestAccountsRequestsIdExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
@@ -182,23 +184,25 @@ describe('domain/accounts/{ID}', () => {
         '/accounts/{{ID}}/error',
         { ID: 'username1234' }
       ]
-      const sendRequestErrorExpected = [
-        'http://pispa-sdk/accounts/username1234/error',
-        headers,
-        Config.HUB_PARTICIPANT.NAME,
-        'pispA',
-        Enum.Http.RestMethods.PUT,
-        payload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+
+      const sendRequestErrorExpected = {
+        destination: 'pispA',
+        headers: headers,
+        hubNameRegex: /^Hub$/i,
+        method: Enum.Http.RestMethods.PUT,
+        payload: payload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: undefined,
+        url: 'http://pispa-sdk/accounts/username1234/error'
+      }
 
       // Act
       await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrorExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
