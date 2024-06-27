@@ -32,6 +32,7 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -56,16 +57,20 @@ const getEndpointAndRenderAccountRequestsIdExpectedSecond = [
   { ID: 'username1234' }
 ]
 
-const sendRequestAccountsRequestsIdExpected = [
-  'http://dfspa-sdk/accounts/username1234',
-  request.headers,
-  'pispA',
-  'dfspA',
-  Enum.Http.RestMethods.PUT,
-  request.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+
+const sendRequestAccountsRequestsIdExpected = {
+  destination: 'dfspA',
+  headers: request.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.PUT,
+  payload: request.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: 'pispA',
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://dfspa-sdk/accounts/username1234'
+}
+
 describe('domain/accounts/{ID}', () => {
   describe('forwardAccountsIdRequest', () => {
     beforeEach((): void => {
@@ -95,7 +100,7 @@ describe('domain/accounts/{ID}', () => {
         mockSpan
       )
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderAccountsRequestsIdExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestAccountsRequestsIdExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestAccountsRequestsIdExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
@@ -168,7 +173,7 @@ describe('domain/accounts/{ID}', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/accounts/username1234/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const id = 'username1234'
@@ -181,28 +186,30 @@ describe('domain/accounts/{ID}', () => {
         '/accounts/{{ID}}/error',
         { ID: 'username1234' }
       ]
-      const sendRequestErrorExpected = [
-        'http://pispa-sdk/accounts/username1234/error',
+
+      const sendRequestErrorExpected = {
+        url: 'http://pispa-sdk/accounts/username1234/error',
+        source: Config.HUB_PARTICIPANT.NAME,
+        destination: 'pispA',
         headers,
-        'switch',
-        'pispA',
-        Enum.Http.RestMethods.PUT,
+        method: Enum.Http.RestMethods.PUT,
         payload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+        responseType: Enum.Http.ResponseTypes.JSON,
+        span: undefined,
+        hubNameRegex
+      }
 
       // Act
       await Accounts.forwardAccountsIdRequestError(path, headers, id, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrorExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const id = 'username1234'

@@ -40,6 +40,9 @@ import Config from '~/shared/config'
 import inspect from '~/shared/inspect'
 import { finishChildSpan, getStackOrInspect } from '~/shared/util'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 /**
  * @function forwardTransactionRequest
  * @description Forwards a POST /thirdpartyRequests/transactions and
@@ -67,32 +70,33 @@ async function forwardTransactionRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequest')
-  const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const fspiopDest: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const payloadLocal = payload || { transactionRequestId: params.ID }
   const transactionRequestId: string = payload && isCreateRequest(payload) ? payload.transactionRequestId : params.ID
   try {
-    const fullUrl = await Util.Endpoints.getEndpointAndRender(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      fspiopDest,
+      destination,
       endpointType,
       path,
       params || {}
     )
-    Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${fullUrl}`)
-    await Util.Request.sendRequest(
-      fullUrl,
+    Logger.info(`transactions::forwardTransactionRequest -  Forwarding transaction request to endpoint: ${url}`)
+    await Util.Request.sendRequest({
+      url,
       headers,
-      fspiopSource,
-      fspiopDest,
+      source,
+      destination,
       method,
-      method.trim().toUpperCase() !== Enum.Http.RestMethods.GET ? payloadLocal : undefined,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      payload: method.trim().toUpperCase() !== Enum.Http.RestMethods.GET ? payloadLocal : undefined,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `transactions::forwardTransactionRequest - Forwarded transaction request ${transactionRequestId} from ${fspiopSource} to ${fspiopDest}`
+      `transactions::forwardTransactionRequest - Forwarded transaction request ${transactionRequestId} from ${source} to ${destination}`
     )
 
     if (childSpan && !childSpan.isFinished) {
@@ -104,8 +108,8 @@ async function forwardTransactionRequest(
     )
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
-      'fspiop-destination': fspiopSource
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardTransactionRequestError(
@@ -148,35 +152,36 @@ async function forwardTransactionRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardTransactionRequestError')
-  const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT_ERROR
 
   try {
-    const fullUrl = await Util.Endpoints.getEndpointAndRender(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      fspiopDestination,
+      destination,
       endpointType,
       path,
       { ID: transactionRequestId }
     )
     Logger.info(
-      `transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${fullUrl}`
+      `transactions::forwardTransactionRequestError - Forwarding transaction request error to endpoint: ${url}`
     )
 
-    await Util.Request.sendRequest(
-      fullUrl,
+    await Util.Request.sendRequest({
+      url,
       headers,
-      fspiopSource,
-      fspiopDestination,
+      source,
+      destination,
       method,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `transactions::forwardTransactionRequestError - Forwarding transaction request error for ${transactionRequestId} from ${fspiopSource} to ${fspiopDestination}`
+      `transactions::forwardTransactionRequestError - Forwarding transaction request error for ${transactionRequestId} from ${source} to ${destination}`
     )
 
     if (childSpan && !childSpan.isFinished) {
@@ -215,30 +220,30 @@ async function forwardTransactionRequestNotification(
   endpointType: FspEndpointTypesEnum,
   method: RestMethodsEnum
 ): Promise<void> {
-  const fspiopSource: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const fspiopDestination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source: string = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination: string = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
 
   try {
-    const fullUrl = await Util.Endpoints.getEndpointAndRender(
+    const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      fspiopDestination,
+      destination,
       endpointType,
       path,
       { ID: transactionRequestId }
     )
     Logger.info(`transactions::forwardTransactionRequestNotification -
-      Forwarding transaction request to endpoint: ${fullUrl}`)
+      Forwarding transaction request to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
-      fullUrl,
+    await Util.Request.sendRequest({
+      url,
       headers,
-      fspiopSource,
-      fspiopDestination,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      null
-    )
+      responseType,
+      hubNameRegex
+    })
   } catch (err) {
     // todo: send a PUT /thirdpartyRequests/transactions/{id}/error to PISP
     Logger.error(

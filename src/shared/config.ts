@@ -34,6 +34,11 @@ import Package from '../../package.json'
 import logger from '@mojaloop/central-services-logger'
 
 export interface ServiceConfig {
+  HUB_PARTICIPANT: {
+    ID: number
+    NAME: string
+  }
+
   // package.json
   PACKAGE: Record<string, unknown>
 

@@ -31,9 +31,13 @@ import ServicesServiceTypeHandler from '~/server/handlers/services/{ServiceType}
 import * as TestData from 'test/unit/data/mockData'
 
 jest.mock('~/shared/config', () => ({
-  PARTICIPANT_LIST_SERVICE_URL: 'http://ml-testing-toolkit:5000',
-  PARTICIPANT_LIST_LOCAL: undefined
+  PARTICIPANT_LIST_SERVICE_URL: undefined,
+  PARTICIPANT_LIST_LOCAL: undefined,
+  HUB_PARTICIPANT: {
+    NAME: 'mockHubName'
+  }
 }))
+
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 const forwardGetServicesServiceTypeRequestToProviderService = jest.spyOn(

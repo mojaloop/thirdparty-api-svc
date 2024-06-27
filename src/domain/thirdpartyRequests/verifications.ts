@@ -40,6 +40,9 @@ import { inspect } from 'util'
 import Config from '~/shared/config'
 import { finishChildSpan } from '~/shared/util'
 
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
+const responseType = Enum.Http.ResponseTypes.JSON
+
 export async function forwardVerificationRequest(
   path: string,
   endpointType: FspEndpointTypesEnum,
@@ -52,31 +55,32 @@ export async function forwardVerificationRequest(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequest')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: verificationRequestId }
     )
     Logger.info(`verifications::forwardVerificationRequest - Forwarding verification to endpoint: ${url}`)
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
+      source,
+      destination,
       method,
       payload,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `verifications::forwardVerificationRequest - Forwarded thirdpartyTransaction verification: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+      `verifications::forwardVerificationRequest - Forwarded thirdpartyTransaction verification: ${verificationRequestId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()
@@ -89,8 +93,8 @@ export async function forwardVerificationRequest(
     )
     const errorHeaders = {
       ...headers,
-      'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
-      'fspiop-destination': sourceDfspId
+      'fspiop-source': Config.HUB_PARTICIPANT.NAME,
+      'fspiop-destination': source
     }
     const fspiopError: FSPIOPError = ReformatFSPIOPError(err)
     await forwardVerificationRequestError(
@@ -119,14 +123,14 @@ export async function forwardVerificationRequestError(
   span?: Span
 ): Promise<void> {
   const childSpan = span?.getChild('forwardVerificationRequestError')
-  const sourceDfspId = headers[Enum.Http.Headers.FSPIOP.SOURCE]
-  const destinationDfspId = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
+  const source = headers[Enum.Http.Headers.FSPIOP.SOURCE]
+  const destination = headers[Enum.Http.Headers.FSPIOP.DESTINATION]
   const endpointType = Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT_ERROR
 
   try {
     const url = await Util.Endpoints.getEndpointAndRender(
       Config.ENDPOINT_SERVICE_URL,
-      destinationDfspId,
+      destination,
       endpointType,
       path,
       { ID: verificationRequestId }
@@ -135,19 +139,20 @@ export async function forwardVerificationRequestError(
       `verifications::forwardVerificationRequestError - Forwarding thirdpartyTransaction verification error callback to endpoint: ${url}`
     )
 
-    await Util.Request.sendRequest(
+    await Util.Request.sendRequest({
       url,
       headers,
-      sourceDfspId,
-      destinationDfspId,
-      Enum.Http.RestMethods.PUT,
-      error,
-      Enum.Http.ResponseTypes.JSON,
-      childSpan
-    )
+      source,
+      destination,
+      method: Enum.Http.RestMethods.PUT,
+      payload: error,
+      responseType,
+      span: childSpan,
+      hubNameRegex
+    })
 
     Logger.info(
-      `verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction verification error callback: ${verificationRequestId} from ${sourceDfspId} to ${destinationDfspId}`
+      `verifications::forwardVerificationRequestError - Forwarded thirdpartyTransaction verification error callback: ${verificationRequestId} from ${source} to ${destination}`
     )
     if (childSpan && !childSpan.isFinished) {
       childSpan.finish()

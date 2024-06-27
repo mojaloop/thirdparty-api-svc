@@ -25,6 +25,10 @@
 import { ServiceConfig } from '~/shared/config'
 
 const defaultMockConfig: ServiceConfig = {
+  HUB_PARTICIPANT: {
+    ID: 1,
+    NAME: 'Hub'
+  },
   PACKAGE: {
     version: '11.0.0'
   },

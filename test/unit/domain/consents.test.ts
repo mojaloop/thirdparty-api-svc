@@ -32,6 +32,7 @@ import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
 import * as Consents from '~/domain/consents'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -41,6 +42,7 @@ const mockData = JSON.parse(JSON.stringify(TestData))
 const mockConsentsPostRequestPISP = mockData.consentsPostRequestPISP
 const mockConsentsIdPutRequest = mockData.consentsIdPutRequestVerified
 const mockConsentIdPatchRequestVerified = mockData.patchConsentsByIdRequestVerified
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
 const getEndpointForwardConsentsRequestExpected = [
   'http://central-ledger.local:3001',
@@ -58,20 +60,21 @@ const getEndpointForwardConsentsRequestExpectedSecond = [
 ]
 
 const expectedForwardConsentsRequestErrorHeaders = {
-  'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+  'fspiop-source': Config.HUB_PARTICIPANT.NAME,
   'fspiop-destination': mockConsentsPostRequestPISP.headers['fspiop-source']
 }
 
-const sendRequestForwardConsentsRequestExpected = [
-  'http://dfspa-sdk/consents',
-  mockConsentsPostRequestPISP.headers,
-  mockConsentsPostRequestPISP.headers['fspiop-source'],
-  mockConsentsPostRequestPISP.headers['fspiop-destination'],
-  Enum.Http.RestMethods.POST,
-  mockConsentsPostRequestPISP.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestForwardConsentsRequestExpected = {
+  destination: mockConsentsPostRequestPISP.headers['fspiop-destination'],
+  headers: mockConsentsPostRequestPISP.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.POST,
+  payload: mockConsentsPostRequestPISP.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: mockConsentsPostRequestPISP.headers['fspiop-source'],
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://dfspa-sdk/consents'
+}
 
 const getEndpointforwardConsentsIdRequestExpected = [
   'http://central-ledger.local:3001',
@@ -90,20 +93,21 @@ const getEndpointforwardConsentsIdRequestExpectedSecond = [
 ]
 
 const expectedforwardConsentsIdRequestErrorHeaders = {
-  'fspiop-source': Enum.Http.Headers.FSPIOP.SWITCH.value,
+  'fspiop-source': Config.HUB_PARTICIPANT.NAME,
   'fspiop-destination': mockConsentsIdPutRequest.headers['fspiop-source']
 }
 
-const sendRequestforwardConsentsIdRequestExpected = [
-  'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/',
-  mockConsentsIdPutRequest.headers,
-  mockConsentsIdPutRequest.headers['fspiop-source'],
-  mockConsentsIdPutRequest.headers['fspiop-destination'],
-  Enum.Http.RestMethods.PUT,
-  mockConsentsIdPutRequest.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestforwardConsentsIdRequestExpected = {
+  destination: mockConsentsIdPutRequest.headers['fspiop-destination'],
+  headers: mockConsentsIdPutRequest.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.PUT,
+  payload: mockConsentsIdPutRequest.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: mockConsentsIdPutRequest.headers['fspiop-source'],
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/'
+}
 
 const getEndpointforwardConsentsIdRequestExpectedPatchRequest = [
   'http://central-ledger.local:3001',
@@ -113,16 +117,17 @@ const getEndpointforwardConsentsIdRequestExpectedPatchRequest = [
   { ID: '09595320-51e5-4c4e-a910-c56917e4cdc4' }
 ]
 
-const sendRequestforwardConsentsIdRequestExpectedPatchRequest = [
-  'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/',
-  mockConsentIdPatchRequestVerified.headers,
-  mockConsentIdPatchRequestVerified.headers['fspiop-source'],
-  mockConsentIdPatchRequestVerified.headers['fspiop-destination'],
-  Enum.Http.RestMethods.PATCH,
-  mockConsentIdPatchRequestVerified.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestforwardConsentsIdRequestExpectedPatchRequest = {
+  destination: mockConsentIdPatchRequestVerified.headers['fspiop-destination'],
+  headers: mockConsentIdPatchRequestVerified.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.PATCH,
+  payload: mockConsentIdPatchRequestVerified.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: mockConsentIdPatchRequestVerified.headers['fspiop-source'],
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/'
+}
 
 describe('domain/consents', () => {
   describe('forwardConsentsRequest', () => {
@@ -155,7 +160,7 @@ describe('domain/consents', () => {
       )
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestForwardConsentsRequestExpected)
     })
 
     it('handles `getEndpoint` failure', async (): Promise<void> => {
@@ -210,16 +215,18 @@ describe('domain/consents', () => {
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
       const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
-      const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error',
-        expectedForwardConsentsRequestErrorHeaders,
-        expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
-        expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+
+      const sendRequestErrExpected = {
+        destination: expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
+        headers: expectedForwardConsentsRequestErrorHeaders,
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error'
+      }
 
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
@@ -245,8 +252,8 @@ describe('domain/consents', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestForwardConsentsRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -261,16 +268,19 @@ describe('domain/consents', () => {
         true,
         true
       )
-      const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error',
-        expectedForwardConsentsRequestErrorHeaders,
-        expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
-        expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+
+      const sendRequestErrExpected = {
+        destination: expectedForwardConsentsRequestErrorHeaders['fspiop-destination'],
+        headers: expectedForwardConsentsRequestErrorHeaders,
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: expectedForwardConsentsRequestErrorHeaders['fspiop-source'],
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error'
+      }
+
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents')
         .mockResolvedValue('http://pispa-sdk/consents/' + mockConsentsPostRequestPISP.payload.consentId + '/error')
@@ -293,8 +303,8 @@ describe('domain/consents', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpected)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointForwardConsentsRequestExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestForwardConsentsRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestForwardConsentsRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrExpected)
     })
   })
 })
@@ -329,7 +339,7 @@ describe('domain/consents/{ID}', () => {
       )
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestforwardConsentsIdRequestExpected)
     })
 
     it('forwards PATCH /consents/{ID} request', async (): Promise<void> => {
@@ -354,14 +364,14 @@ describe('domain/consents/{ID}', () => {
       )
 
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedPatchRequest)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpectedPatchRequest)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestforwardConsentsIdRequestExpectedPatchRequest)
     })
 
     it('handles `getEndpoint` failure', async (): Promise<void> => {
       const mockSpan = new Span()
       mockGetEndpointAndRender
         .mockRejectedValueOnce(new Error('Cannot find endpoint'))
-        .mockResolvedValueOnce('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error')
+        .mockResolvedValueOnce('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/error')
 
       const action = async () =>
         await Consents.forwardConsentsIdRequest(
@@ -411,20 +421,21 @@ describe('domain/consents/{ID}', () => {
     it('handles `sendRequest` failure', async (): Promise<void> => {
       const mockSpan = new Span()
       const errorPayload = ReformatFSPIOPError(new Error('Failed to send HTTP request')).toApiErrorObject(true, true)
-      const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error',
-        expectedforwardConsentsIdRequestErrorHeaders,
-        expectedforwardConsentsIdRequestErrorHeaders['fspiop-source'],
-        expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+      const sendRequestErrExpected = {
+        destination: expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
+        headers: expectedforwardConsentsIdRequestErrorHeaders,
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: expectedforwardConsentsIdRequestErrorHeaders['fspiop-source'],
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/error'
+      }
 
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
-        .mockResolvedValue('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error')
+        .mockResolvedValue('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/error')
       mockSendRequest.mockRejectedValueOnce(new Error('Failed to send HTTP request')).mockResolvedValue({
         ok: true,
         status: 202,
@@ -447,8 +458,8 @@ describe('domain/consents/{ID}', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestforwardConsentsIdRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrExpected)
       // Children's children in `forwardTransactionRequestError()`
       expect(mockSpan.child?.child?.finish).toHaveBeenCalledTimes(1)
       expect(mockSpan.child?.child?.error).toHaveBeenCalledTimes(0)
@@ -463,19 +474,22 @@ describe('domain/consents/{ID}', () => {
         true,
         true
       )
-      const sendRequestErrExpected = [
-        'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error',
-        expectedforwardConsentsIdRequestErrorHeaders,
-        expectedforwardConsentsIdRequestErrorHeaders['fspiop-source'],
-        expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
-        Enum.Http.RestMethods.PUT,
-        errorPayload,
-        Enum.Http.ResponseTypes.JSON,
-        expect.objectContaining({ isFinished: false })
-      ]
+
+      const sendRequestErrExpected = {
+        destination: expectedforwardConsentsIdRequestErrorHeaders['fspiop-destination'],
+        headers: expectedforwardConsentsIdRequestErrorHeaders,
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: errorPayload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: expectedforwardConsentsIdRequestErrorHeaders['fspiop-source'],
+        span: expect.objectContaining({ isFinished: false }),
+        url: 'http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/error'
+      }
+
       mockGetEndpointAndRender
         .mockResolvedValueOnce('http://dfspa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/')
-        .mockResolvedValue('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4//error')
+        .mockResolvedValue('http://pispa-sdk/consents/09595320-51e5-4c4e-a910-c56917e4cdc4/error')
       mockSendRequest
         .mockRejectedValueOnce(new Error('Failed to send HTTP request first time'))
         .mockRejectedValueOnce(new Error('Failed to send HTTP request second time'))
@@ -496,8 +510,8 @@ describe('domain/consents/{ID}', () => {
       await expect(action).rejects.toThrow('Failed to send HTTP request second time')
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpected)
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointforwardConsentsIdRequestExpectedSecond)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestforwardConsentsIdRequestExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestforwardConsentsIdRequestExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrExpected)
     })
   })
 })
@@ -517,7 +531,7 @@ describe('domain/consents/{ID}/error', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'dfspA'
       }
       const id = '7b24ea42-6fdd-45f5-999e-0a6981c4198b'
@@ -530,23 +544,25 @@ describe('domain/consents/{ID}/error', () => {
         '/consents/{{ID}}/error',
         { ID: '7b24ea42-6fdd-45f5-999e-0a6981c4198b' }
       ]
-      const sendRequestErrorExpected = [
-        'http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error',
+
+      const sendRequestErrorExpected = {
+        destination: 'dfspA',
         headers,
-        'switch',
-        'dfspA',
-        Enum.Http.RestMethods.PUT,
-        payload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: payload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: undefined,
+        url: 'http://dfspa-sdk/consents/7b24ea42-6fdd-45f5-999e-0a6981c4198b/error'
+      }
 
       // Act
       await Consents.forwardConsentsIdRequestError(path, id, headers, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointErrorExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrorExpected)
     })
   })
 })

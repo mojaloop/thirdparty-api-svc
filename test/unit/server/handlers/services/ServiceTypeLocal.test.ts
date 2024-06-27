@@ -32,8 +32,12 @@ import * as TestData from 'test/unit/data/mockData'
 
 jest.mock('~/shared/config', () => ({
   PARTICIPANT_LIST_SERVICE_URL: undefined,
-  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb']
+  PARTICIPANT_LIST_LOCAL: ['dfspa', 'dfspb'],
+  HUB_PARTICIPANT: {
+    NAME: 'mockHubName'
+  }
 }))
+
 const mockData = JSON.parse(JSON.stringify(TestData))
 
 const forwardGetServicesServiceTypeRequestFromProviderService = jest.spyOn(

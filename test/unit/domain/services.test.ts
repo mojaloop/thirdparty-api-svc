@@ -34,6 +34,7 @@ import { Util, Enum } from '@mojaloop/central-services-shared'
 import { ReformatFSPIOPError } from '@mojaloop/central-services-error-handling'
 import * as TestData from 'test/unit/data/mockData'
 import Span from 'test/unit/__mocks__/span'
+import Config from '~/shared/config'
 
 const mockGetEndpointAndRender = jest.spyOn(Util.Endpoints, 'getEndpointAndRender')
 const mockSendRequest = jest.spyOn(Util.Request, 'sendRequest')
@@ -42,17 +43,19 @@ const mockLoggerError = jest.spyOn(Logger, 'error')
 const mockData = JSON.parse(JSON.stringify(TestData))
 const getServicesByServiceTypeRequest = mockData.getServicesByServiceTypeRequest
 const putServicesByServiceTypeRequest = mockData.putServicesByServiceTypeRequest
+const hubNameRegex = Util.HeaderValidation.getHubNameRegex(Config.HUB_PARTICIPANT.NAME)
 
-const sendRequestGetServicesRequestsToProviderExpected = [
-  'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP',
-  getServicesByServiceTypeRequest.headers,
-  'pispA',
-  'switch',
-  Enum.Http.RestMethods.GET,
-  undefined,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestGetServicesRequestsToProviderExpected = {
+  destination: Config.HUB_PARTICIPANT.NAME,
+  headers: getServicesByServiceTypeRequest.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.GET,
+  payload: undefined,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: 'pispA',
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP'
+}
 
 const getEndpointAndRenderPutServicesRequestToFSPsExpected = [
   'http://central-ledger.local:3001',
@@ -62,32 +65,34 @@ const getEndpointAndRenderPutServicesRequestToFSPsExpected = [
   { ServiceType: 'THIRD_PARTY_DFSP' }
 ]
 
-const sendRequestPutServicesRequestsToFSPExpected = [
-  'http://pisp-sdk/services/THIRD_PARTY_DFSP',
-  putServicesByServiceTypeRequest.headers,
-  'switch',
-  'pispA',
-  Enum.Http.RestMethods.PUT,
-  putServicesByServiceTypeRequest.payload,
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+const sendRequestPutServicesRequestsToFSPExpected = {
+  destination: 'pispA',
+  headers: putServicesByServiceTypeRequest.headers,
+  hubNameRegex,
+  method: Enum.Http.RestMethods.PUT,
+  payload: putServicesByServiceTypeRequest.payload,
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: Config.HUB_PARTICIPANT.NAME,
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://pisp-sdk/services/THIRD_PARTY_DFSP'
+}
 
-const sendRequestPutServicesRequestsToFSPExpectedProviderError = [
-  'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP/error',
-  {
-    'fspiop-destination': 'switch',
-    'fspiop-source': 'switch'
+const sendRequestPutServicesRequestsToFSPExpectedProviderError = {
+  destination: Config.HUB_PARTICIPANT.NAME,
+  headers: {
+    'fspiop-destination': Config.HUB_PARTICIPANT.NAME,
+    'fspiop-source': Config.HUB_PARTICIPANT.NAME
   },
-  'switch',
-  'switch',
-  Enum.Http.RestMethods.PUT,
-  expect.objectContaining({
+  hubNameRegex,
+  method: Enum.Http.RestMethods.PUT,
+  payload: expect.objectContaining({
     errorInformation: expect.any(Object)
   }),
-  Enum.Http.ResponseTypes.JSON,
-  expect.objectContaining({ isFinished: false })
-]
+  responseType: Enum.Http.ResponseTypes.JSON,
+  source: Config.HUB_PARTICIPANT.NAME,
+  span: expect.objectContaining({ isFinished: false }),
+  url: 'http://ml-testing-toolkit:5000/services/THIRD_PARTY_DFSP/error'
+}
 
 describe('domain/services/{ServiceType}', () => {
   describe('forwardServicesServiceTypeRequest', () => {
@@ -115,7 +120,7 @@ describe('domain/services/{ServiceType}', () => {
         mockSpan
       )
       expect(mockGetEndpointAndRender).toHaveBeenCalledTimes(0)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestGetServicesRequestsToProviderExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestGetServicesRequestsToProviderExpected)
     })
 
     it('forwards PUT /services/{ServiceType} request to FSP', async (): Promise<void> => {
@@ -139,7 +144,7 @@ describe('domain/services/{ServiceType}', () => {
         mockSpan
       )
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderPutServicesRequestToFSPsExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestPutServicesRequestsToFSPExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestPutServicesRequestsToFSPExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
@@ -165,7 +170,7 @@ describe('domain/services/{ServiceType}', () => {
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderPutServicesRequestToFSPsExpected)
 
       // should sent an error back to the Provider micro-service
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestPutServicesRequestsToFSPExpectedProviderError)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestPutServicesRequestsToFSPExpectedProviderError)
 
       // Children in `forwardServicesServiceTypeRequest()`
       expect(mockSpan.child?.finish).toHaveBeenCalledTimes(1)
@@ -187,7 +192,7 @@ describe('domain/services/{ServiceType}', () => {
       mockGetEndpointAndRender.mockResolvedValue('http://pispa-sdk/services/THIRD_PARTY_DFSP/error')
       mockSendRequest.mockResolvedValue({ status: 202, payload: null })
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const serviceType = 'THIRD_PARTY_DFSP'
@@ -200,28 +205,29 @@ describe('domain/services/{ServiceType}', () => {
         '/services/{{ServiceType}}/error',
         { ServiceType: 'THIRD_PARTY_DFSP' }
       ]
-      const sendRequestErrorExpected = [
-        'http://pispa-sdk/services/THIRD_PARTY_DFSP/error',
+      const sendRequestErrorExpected = {
+        destination: 'pispA',
         headers,
-        'switch',
-        'pispA',
-        Enum.Http.RestMethods.PUT,
-        payload,
-        Enum.Http.ResponseTypes.JSON,
-        undefined
-      ]
+        hubNameRegex,
+        method: Enum.Http.RestMethods.PUT,
+        payload: payload,
+        responseType: Enum.Http.ResponseTypes.JSON,
+        source: Config.HUB_PARTICIPANT.NAME,
+        span: undefined,
+        url: 'http://pispa-sdk/services/THIRD_PARTY_DFSP/error'
+      }
 
       // Act
       await Services.forwardServicesServiceTypeRequestError(path, headers, serviceType, payload)
 
       // Assert
       expect(mockGetEndpointAndRender).toHaveBeenCalledWith(...getEndpointAndRenderErrorExpected)
-      expect(mockSendRequest).toHaveBeenCalledWith(...sendRequestErrorExpected)
+      expect(mockSendRequest).toHaveBeenCalledWith(sendRequestErrorExpected)
     })
 
     it('handles `getEndpointAndRender` failure', async (): Promise<void> => {
       const headers = {
-        'fspiop-source': 'switch',
+        'fspiop-source': Config.HUB_PARTICIPANT.NAME,
         'fspiop-destination': 'pispA'
       }
       const serviceType = 'THIRD_PARTY_DFSP'

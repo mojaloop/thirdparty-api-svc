@@ -88,7 +88,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       const headers = {
         ...request.headers
       }
-      headers[Enum.Http.Headers.FSPIOP.SOURCE] = Enum.Http.Headers.FSPIOP.SWITCH.value
+      headers[Enum.Http.Headers.FSPIOP.SOURCE] = Config.HUB_PARTICIPANT.NAME
       headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationDfspId
 
       // Note: calling async function without `await`
