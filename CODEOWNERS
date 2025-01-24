@@ -1,6 +1,3 @@
-*   @kleyow @elnyry-sam-k @lewisdaly @vijayg10 @mdebarros
-docs/*  @lewisdaly @MichaelJBRichards
-
 # This is a comment.
 # Each line is a file pattern followed by one or more owners.
 
@@ -9,6 +6,7 @@ docs/*  @lewisdaly @MichaelJBRichards
 ## @global-owner1 and @global-owner2 will be requested for
 ## review when someone opens a pull request.
 #*       @global-owner1 @global-owner2
+*   @elnyry-sam-k @bushjames @shashi165 @gibaros
 
 ## Order is important; the last matching pattern takes the most
 ## precedence. When someone opens a pull request that only
@@ -30,6 +28,7 @@ docs/*  @lewisdaly @MichaelJBRichards
 ## `docs/getting-started.md` but not further nested files like
 ## `docs/build-app/troubleshooting.md`.
 # docs/*  docs@example.com
+docs/*  @MichaelJBRichards
 
 ## In this example, @octocat owns any file in an apps directory
 ## anywhere in your repository.
