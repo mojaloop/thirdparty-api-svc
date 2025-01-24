@@ -45,7 +45,7 @@ function logResponse(request: RequestLogged): void {
     let response
     try {
       response = JSON.stringify(request.response.source)
-    } catch (e) {
+    } catch {
       response = inspect(request.response.source)
     }
     if (!response) {

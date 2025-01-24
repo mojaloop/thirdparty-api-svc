@@ -108,7 +108,7 @@
     "@hapi/inert": "^7.1.0",
     "@hapi/vision": "^7.0.3",
     "@mojaloop/api-snippets": "^17.7.9",
-    "@mojaloop/central-services-shared": "18.15.2",
+    "@mojaloop/central-services-shared": "18.16.0",
     "@mojaloop/central-services-stream": "11.4.2",
     "blipp": "^4.0.2",
     "commander": "13.1.0",
