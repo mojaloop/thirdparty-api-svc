@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.0.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.0.1...v15.0.2) (2025-02-26)
+
+
+### Chore
+
+* maintenance updates ([#97](https://github.com/mojaloop/thirdparty-api-svc/issues/97)) ([c9702de](https://github.com/mojaloop/thirdparty-api-svc/commit/c9702dee973660f97b587423a9190ac67c08544e))
+
 ### [15.0.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.0.0...v15.0.1) (2025-01-28)
 
 
