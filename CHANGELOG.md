@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+## [15.1.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.0.2...v15.1.0) (2025-06-01)
+
+
+### Features
+
+* node version upgrade to v22.15.1 ([#100](https://github.com/mojaloop/thirdparty-api-svc/issues/100)) ([bcbf7d4](https://github.com/mojaloop/thirdparty-api-svc/commit/bcbf7d49fc0cb35191cc4c70ed8b56028cbc0c27))
+
 ### [15.0.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.0.1...v15.0.2) (2025-02-26)
 
 
