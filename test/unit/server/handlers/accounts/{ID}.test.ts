@@ -104,7 +104,7 @@ describe('accountsId handler', () => {
       const action = async () => await AccountsIdHandler.get(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
-      await expect(action).rejects.toThrowError('span.setTags is not a function')
+      await expect(action).rejects.toThrow('span.setTags is not a function')
     })
   })
 
@@ -151,7 +151,7 @@ describe('accountsId handler', () => {
       const action = async () => await AccountsIdHandler.put(null, invalReq as unknown as Request, mockResponseToolkit)
 
       // Assert
-      await expect(action).rejects.toThrowError('span.setTags is not a function')
+      await expect(action).rejects.toThrow('span.setTags is not a function')
     })
   })
 })
