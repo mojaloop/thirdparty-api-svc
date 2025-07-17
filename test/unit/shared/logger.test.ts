@@ -75,7 +75,7 @@ describe('shared/logger', (): void => {
     const spyStringify = jest.spyOn(JSON, 'stringify').mockImplementationOnce(() => null as unknown as string)
     const request = { response: { source: 'abc', statusCode: 200 } }
     logResponse(request as RequestLogged)
-    expect(spyStringify).toHaveBenCalled()
+    expect(spyStringify).toHaveBeenCalled()
     expect(logger.info).toHaveBeenCalledWith(`thirdparty-api-svc-Trace - Response: ${request.response.toString()}`)
   })
 })
