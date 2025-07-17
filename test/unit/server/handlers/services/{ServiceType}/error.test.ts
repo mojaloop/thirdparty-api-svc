@@ -100,7 +100,7 @@ describe('services error handler', (): void => {
         await ServicesServiceTypeErrorHandler.put(null, badSpanRequest as unknown as Request, mockResponseToolkit)
 
       // Assert
-      await expect(action).rejects.toThrowError('span.setTags is not a function')
+      await expect(action).rejects.toThrow('span.setTags is not a function')
     })
   })
 })

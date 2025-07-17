@@ -178,7 +178,7 @@ describe('consentsId handler', () => {
       const action = async () => await ConsentsIdHandler.put(null, request as unknown as Request, mockResponseToolkit)
 
       // Assert
-      await expect(action).rejects.toThrowError('span.setTags is not a function')
+      await expect(action).rejects.toThrow('span.setTags is not a function')
     })
   })
 
@@ -235,7 +235,7 @@ describe('consentsId handler', () => {
           await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
-        await expect(action).rejects.toThrowError('span.setTags is not a function')
+        await expect(action).rejects.toThrow('span.setTags is not a function')
       })
     })
 
@@ -285,7 +285,7 @@ describe('consentsId handler', () => {
           await ConsentsIdHandler.patch(null, request as unknown as Request, mockResponseToolkit)
 
         // Assert
-        await expect(action).rejects.toThrowError('span.setTags is not a function')
+        await expect(action).rejects.toThrow('span.setTags is not a function')
       })
     })
   })

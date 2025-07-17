@@ -132,7 +132,7 @@ describe('consumer', () => {
       const action = async () => await consumer.isConnected()
 
       // Assert
-      await expect(action).rejects.toThrowError('Connected to consumer, but')
+      await expect(action).rejects.toThrow('Connected to consumer, but')
     })
 
     it('throws an error if getMetadata fails', async () => {
@@ -149,7 +149,7 @@ describe('consumer', () => {
       const action = async () => await consumer.isConnected()
 
       // Assert
-      await expect(action).rejects.toThrowError('Test Error')
+      await expect(action).rejects.toThrow('Test Error')
     })
   })
 
@@ -202,7 +202,7 @@ describe('consumer', () => {
       const action = async () => await consumer.disconnect()
 
       // Assert
-      await expect(action).rejects.toThrowError('Test Error')
+      await expect(action).rejects.toThrow('Test Error')
     })
   })
 })
