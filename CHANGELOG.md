@@ -1,4 +1,11 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.0...v15.1.1) (2025-07-17)
+
+
+### Chore
+
+* add initial sbom ([#102](https://github.com/mojaloop/thirdparty-api-svc/issues/102)) ([8932c79](https://github.com/mojaloop/thirdparty-api-svc/commit/8932c798f1011b76020bdc7f076301ff405a8fa7))
+
 ## [15.1.0](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.0.2...v15.1.0) (2025-06-01)
 
 
