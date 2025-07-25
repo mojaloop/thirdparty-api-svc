@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.1...v15.1.2) (2025-07-25)
+
+
+### Chore
+
+* fix vuls and update deps ([#105](https://github.com/mojaloop/thirdparty-api-svc/issues/105)) ([a21a8cc](https://github.com/mojaloop/thirdparty-api-svc/commit/a21a8ccce6a5902c127449d9e46e2cba8caaa361))
+* **sbom:** update sbom [skip ci] ([eb00cf4](https://github.com/mojaloop/thirdparty-api-svc/commit/eb00cf43d6e067a77defa14cbbf3257fcec244aa))
+
 ### [15.1.1](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.0...v15.1.1) (2025-07-17)
 
 
