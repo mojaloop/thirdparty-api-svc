@@ -12,7 +12,7 @@ export default [
         ecmaVersion: 2018,
         sourceType: 'module',
         project: './tsconfig.json',
-        tsconfigRootDir: './',
+        tsconfigRootDir: __dirname,
       },
     },
     plugins: {
