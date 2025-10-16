@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.3](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.2...v15.1.3) (2025-10-16)
+
+
+### Chore
+
+* axios vul pi28 ([#108](https://github.com/mojaloop/thirdparty-api-svc/issues/108)) ([ae41582](https://github.com/mojaloop/thirdparty-api-svc/commit/ae41582c4209e0da63bf62b09a3a66a28f487e8a))
+* **sbom:** update sbom [skip ci] ([55037cd](https://github.com/mojaloop/thirdparty-api-svc/commit/55037cd40b9be5e9f1784ac992142f73cbe78476))
+
 ### [15.1.2](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.1...v15.1.2) (2025-07-25)
 
 
