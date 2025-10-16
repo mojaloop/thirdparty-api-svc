@@ -8,7 +8,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=22.x"
+    "node": "22.x"
   },
   "scripts": {
     "audit:fix": "npm audit fix",
