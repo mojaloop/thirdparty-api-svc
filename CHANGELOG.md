@@ -1,4 +1,13 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.4](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.3...v15.1.4) (2026-01-15)
+
+
+### Chore
+
+* Add vulnerability CVE-2026-22184 to .grype.yaml ([#113](https://github.com/mojaloop/thirdparty-api-svc/issues/113)) ([a57d700](https://github.com/mojaloop/thirdparty-api-svc/commit/a57d7009d033b0b2e8c28fa612d9dcaa39032ad5))
+* **ci:** update CircleCI orb to 1.1.10 ([#112](https://github.com/mojaloop/thirdparty-api-svc/issues/112)) ([b41a652](https://github.com/mojaloop/thirdparty-api-svc/commit/b41a6529ea58f1966fdef5c46a3b370f67d6f3c0))
+* **sbom:** update sbom [skip ci] ([268d63f](https://github.com/mojaloop/thirdparty-api-svc/commit/268d63f5be4003425047610d076b5f987381077d))
+
 ### [15.1.3](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.2...v15.1.3) (2025-10-16)
 
 
