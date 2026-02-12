@@ -25,6 +25,12 @@ ignore:
     reason: >-
       Base image npm package: tar - bundled in Node.js base image, not fixable via application dependencies as of
       2026-02-12 (high severity)
+  - vulnerability: GHSA-p9pc-299p-vxgp
+    include-aliases: true
+    reason: "yargs-parser 11.1.1 transitive via widdershins in @mojaloop/central-services-shared — no upgrade path available"
+  - vulnerability: GHSA-xxjr-mmjv-4gpg
+    include-aliases: true
+    reason: "lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets — no upgrade path available"
 output:
   - table
   - json
