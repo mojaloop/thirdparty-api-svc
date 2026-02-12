@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.5](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.4...v15.1.5) (2026-02-12)
+
+
+### Chore
+
+* **docker:** update base image to 22.22.0-alpine3.23 ([#115](https://github.com/mojaloop/thirdparty-api-svc/issues/115)) ([279cc11](https://github.com/mojaloop/thirdparty-api-svc/commit/279cc111c7868daffc09102a3295e1da78251de2))
+* **sbom:** update sbom [skip ci] ([4d44e5c](https://github.com/mojaloop/thirdparty-api-svc/commit/4d44e5c153a22f0a05ec1370200a12f4e72a90a8))
+
 ### [15.1.4](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.3...v15.1.4) (2026-01-15)
 
 
