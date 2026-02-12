@@ -1,19 +1,40 @@
 ignore:
   - vulnerability: GHSA-5j98-mcp5-4vw2
-    reason: "No fixes to glob npm available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23"
+    reason: No fixes to glob npm available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23
   - vulnerability: CVE-2025-60876
-    reason: "No fixes to busybox apk available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23"
+    reason: No fixes to busybox apk available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23
   - vulnerability: CVE-2026-22184
-    reason: "No fixes to zlib apk available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23"
-
-
-# Set output format defaults
+    reason: No fixes to zlib apk available as of 2026-01-14 on Dockerfile base image 22.21.1-alpine3.23
+  - vulnerability: GHSA-34x7-hfp2-rc4v
+    include-aliases: true
+    reason: >-
+      Base image npm package: tar - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-12 (high severity)
+  - vulnerability: GHSA-73rr-hh4g-fpgx
+    include-aliases: true
+    reason: >-
+      Base image npm package: diff - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-12 (low severity)
+  - vulnerability: GHSA-r6q2-hw4h-h46w
+    include-aliases: true
+    reason: >-
+      Base image npm package: tar - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-12 (high severity)
+  - vulnerability: GHSA-8qq5-rm4j-mr97
+    include-aliases: true
+    reason: >-
+      Base image npm package: tar - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-12 (high severity)
+  - vulnerability: GHSA-p9pc-299p-vxgp
+    include-aliases: true
+    reason: "yargs-parser 11.1.1 transitive via widdershins in @mojaloop/central-services-shared — no upgrade path available"
+  - vulnerability: GHSA-xxjr-mmjv-4gpg
+    include-aliases: true
+    reason: "lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets — no upgrade path available"
 output:
-  - "table"
-  - "json"
-
-# Modify your CircleCI job to check critical count
+  - table
+  - json
 search:
-  scope: "squashed"
+  scope: squashed
 quiet: false
 check-for-app-update: false
