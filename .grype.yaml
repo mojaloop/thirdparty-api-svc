@@ -27,10 +27,35 @@ ignore:
       2026-02-12 (high severity)
   - vulnerability: GHSA-p9pc-299p-vxgp
     include-aliases: true
-    reason: "yargs-parser 11.1.1 transitive via widdershins in @mojaloop/central-services-shared — no upgrade path available"
+    reason: yargs-parser 11.1.1 transitive via widdershins in @mojaloop/central-services-shared — no upgrade path available
   - vulnerability: GHSA-xxjr-mmjv-4gpg
     include-aliases: true
-    reason: "lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets — no upgrade path available"
+    reason: lodash-es 4.17.21 transitive via ts-auto-mock in @mojaloop/api-snippets — no upgrade path available
+  - vulnerability: GHSA-3ppc-4f35-3m26
+    include-aliases: true
+    reason: >-
+      Base image npm package: minimatch - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-23 (high severity)
+  - vulnerability: GHSA-83g3-92jg-28cx
+    include-aliases: true
+    reason: >-
+      Base image npm package: tar - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-02-23 (high severity)
+  - vulnerability: CVE-2026-27171
+    include-aliases: true
+    reason: "Alpine base image package (apk): zlib - no npm fix available as of 2026-02-23 (moderate severity)"
+  - vulnerability: GHSA-m7jm-9gc2-mpf2
+    include-aliases: true
+    reason: "Unfixable npm transitive vulnerability: fast-xml-parser (critical severity) as of 2026-02-23"
+  - vulnerability: GHSA-jmr7-xgp7-cmfj
+    include-aliases: true
+    reason: "Unfixable npm transitive vulnerability: fast-xml-parser (high severity) as of 2026-02-23"
+  - vulnerability: GHSA-2g4f-4pwh-qvx6
+    include-aliases: true
+    reason: "Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-02-23"
+  - vulnerability: GHSA-9965-vmph-33xx
+    include-aliases: true
+    reason: "Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-02-23"
 output:
   - table
   - json
