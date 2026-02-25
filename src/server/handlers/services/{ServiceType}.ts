@@ -84,7 +84,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       // destination header should be Switch
       const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE] as string
       const headers: Record<string, string> = {
-        ...request.headers as Record<string, string>
+        ...(request.headers as Record<string, string>)
       }
       headers[Enum.Http.Headers.FSPIOP.SOURCE] = Config.HUB_PARTICIPANT.NAME
       headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationDfspId
