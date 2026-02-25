@@ -62,7 +62,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -72,7 +72,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     forwardAccountsIdRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_ACCOUNTS_GET,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_GET,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.GET,
       userId,
       undefined,
@@ -116,7 +116,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -126,7 +126,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     forwardAccountsIdRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_ACCOUNTS_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_ACCOUNTS_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       userId,
       payload,

@@ -66,7 +66,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -82,9 +82,9 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
 
       // this is a reply: Source header must become Destination
       // destination header should be Switch
-      const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE]
-      const headers = {
-        ...request.headers
+      const destinationDfspId = request.headers[Enum.Http.Headers.FSPIOP.SOURCE] as string
+      const headers: Record<string, string> = {
+        ...request.headers as Record<string, string>
       }
       headers[Enum.Http.Headers.FSPIOP.SOURCE] = Config.HUB_PARTICIPANT.NAME
       headers[Enum.Http.Headers.FSPIOP.DESTINATION] = destinationDfspId
@@ -109,7 +109,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       // Note: calling async function without `await`
       forwardGetServicesServiceTypeRequestToProviderService(
         Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_GET,
-        request.headers,
+        request.headers as Record<string, string>,
         Enum.Http.RestMethods.GET,
         serviceType,
         span
@@ -155,7 +155,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -165,7 +165,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     forwardGetServicesServiceTypeRequestFromProviderService(
       Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_SERVICES_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       serviceType,
       payload,

@@ -62,7 +62,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -71,7 +71,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     // Note: calling async function without `await`
     forwardServicesServiceTypeRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_SERVICES_PUT_ERROR,
-      request.headers,
+      request.headers as Record<string, string>,
       serviceType,
       payload,
       span

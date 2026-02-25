@@ -61,7 +61,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -71,7 +71,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_POST,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.POST,
       authorizationRequestId,
       payload,
@@ -115,7 +115,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -126,7 +126,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
     Authorizations.forwardAuthorizationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_AUTH_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       authorizationRequestId,
       payload,
@@ -174,7 +174,7 @@ const putError = async (
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -183,7 +183,7 @@ const putError = async (
     // Note: calling async function without `await`
     Authorizations.forwardAuthorizationRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_AUTHORIZATIONS_PUT_ERROR,
-      request.headers,
+      request.headers as Record<string, string>,
       authorizationRequestId,
       payload,
       span

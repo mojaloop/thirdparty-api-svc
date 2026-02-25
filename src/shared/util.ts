@@ -81,8 +81,8 @@ function getSpanTags(
   const tags: { [id: string]: string } = {
     eventType,
     eventAction,
-    source: request.headers && request.headers[Enum.Http.Headers.FSPIOP.SOURCE],
-    destination: request.headers && request.headers[Enum.Http.Headers.FSPIOP.DESTINATION],
+    source: request.headers && request.headers[Enum.Http.Headers.FSPIOP.SOURCE] as string,
+    destination: request.headers && request.headers[Enum.Http.Headers.FSPIOP.DESTINATION] as string,
     ...customTags
   }
   return tags
