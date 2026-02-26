@@ -71,7 +71,7 @@
   "author": "lewisdaly",
   "contributors": [
     "Lewis Daly <lewis@vesselstech.com>",
-    "Paweł Marzec <pawel.marzec@modusbox.com>",
+    "Pawe\u0142 Marzec <pawel.marzec@modusbox.com>",
     "Sridhar Voruganti <sridhar.voruganti@modusbox.com>"
   ],
   "license": "Apache-2.0",
@@ -160,7 +160,11 @@
     "fast-xml-parser": "5.3.6",
     "lodash": "4.17.23",
     "diff": "4.0.4",
-    "lodash-es": "4.17.23"
+    "lodash-es": "4.17.23",
+    "minimatch@3.0.5": "3.1.5",
+    "minimatch@3.1.2": "3.1.5",
+    "minimatch@5.1.6": "5.1.9",
+    "minimatch@7.4.6": "7.4.9"
   },
   "peerDependencies": {
     "@mojaloop/central-services-error-handling": ">=12.x.x",
