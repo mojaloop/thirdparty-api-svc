@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/thirdparty-api-svc",
-  "version": "15.1.5",
+  "version": "15.1.6",
   "description": "The thirdparty-api-svc service is used to handle HTTP requests from third parties.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -71,7 +71,7 @@
   "author": "lewisdaly",
   "contributors": [
     "Lewis Daly <lewis@vesselstech.com>",
-    "Pawe\u0142 Marzec <pawel.marzec@modusbox.com>",
+    "Paweł Marzec <pawel.marzec@modusbox.com>",
     "Sridhar Voruganti <sridhar.voruganti@modusbox.com>"
   ],
   "license": "Apache-2.0",
