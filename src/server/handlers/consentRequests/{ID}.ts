@@ -63,7 +63,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -74,7 +74,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
       consentRequestsRequestId,
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       payload,
       span
@@ -115,7 +115,7 @@ async function patch(_context: unknown, request: RequestSpanExtended, h: Respons
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -126,7 +126,7 @@ async function patch(_context: unknown, request: RequestSpanExtended, h: Respons
       consentRequestsRequestId,
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_REQUEST_PATCH,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_REQUEST_PATCH,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PATCH,
       payload,
       span

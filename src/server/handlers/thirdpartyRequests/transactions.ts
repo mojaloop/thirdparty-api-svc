@@ -63,7 +63,7 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -73,7 +73,7 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.POST,
       request.params,
       payload,
@@ -116,7 +116,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -126,7 +126,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_GET,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.GET,
       request.params,
       undefined,
@@ -168,7 +168,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -178,7 +178,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       request.params,
       payload,
@@ -220,7 +220,7 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -230,7 +230,7 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
     Transactions.forwardTransactionRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PATCH,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PATCH,
       request.params,
       payload,
@@ -278,7 +278,7 @@ const putError = async (
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -286,7 +286,7 @@ const putError = async (
 
     // Note: calling async function without `await`
     Transactions.forwardTransactionRequestError(
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.EndPoints.FspEndpointTemplates.TP_TRANSACTION_REQUEST_PUT_ERROR,
       Enum.Http.RestMethods.PUT,
       transactionRequestId,

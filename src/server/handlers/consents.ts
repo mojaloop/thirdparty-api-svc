@@ -64,7 +64,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -74,7 +74,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     forwardConsentsRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_CONSENT_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_CONSENT_POST,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.POST,
       payload,
       span

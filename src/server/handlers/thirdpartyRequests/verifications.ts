@@ -62,7 +62,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -72,7 +72,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
     Verifications.forwardVerificationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_VERIFICATIONS_POST,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_POST,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.POST,
       verificationRequestId,
       payload,
@@ -108,7 +108,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -118,7 +118,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
     Verifications.forwardVerificationRequest(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_VERIFICATIONS_PUT,
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_VERIFY_PUT,
-      request.headers,
+      request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
       verificationRequestId,
       payload,
@@ -166,7 +166,7 @@ const putError = async (
     span?.setTags(tags)
     await span?.audit(
       {
-        headers: request.headers,
+        headers: request.headers as Record<string, string>,
         payload: request.payload
       },
       AuditEventAction.start
@@ -175,7 +175,7 @@ const putError = async (
     // Note: calling async function without `await`
     Verifications.forwardVerificationRequestError(
       Enum.EndPoints.FspEndpointTemplates.TP_REQUESTS_VERIFICATIONS_PUT_ERROR,
-      request.headers,
+      request.headers as Record<string, string>,
       verificationRequestId,
       payload,
       span
