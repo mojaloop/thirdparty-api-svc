@@ -1,4 +1,12 @@
 # Changelog: [mojaloop/thirdparty-api-svc](https://github.com/mojaloop/thirdparty-api-svc)
+### [15.1.7](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.6...v15.1.7) (2026-03-24)
+
+
+### Chore
+
+* add private:true to prevent npm publish ([#4384](https://github.com/mojaloop/thirdparty-api-svc/issues/4384)) ([#117](https://github.com/mojaloop/thirdparty-api-svc/issues/117)) ([6962fb6](https://github.com/mojaloop/thirdparty-api-svc/commit/6962fb60c9ef5320ebfdf3e7d719f11f83d8deea))
+* **sbom:** update sbom [skip ci] ([6a13a80](https://github.com/mojaloop/thirdparty-api-svc/commit/6a13a80e0708e3762b041db68b763e44d13c72fc))
+
 ### [15.1.6](https://github.com/mojaloop/thirdparty-api-svc/compare/v15.1.5...v15.1.6) (2026-02-26)
 
 
