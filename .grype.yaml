@@ -52,6 +52,9 @@ ignore:
   - vulnerability: GHSA-9965-vmph-33xx
     include-aliases: true
     reason: "Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-02-23"
+  - vulnerability: GHSA-v88g-cgmw-v5xw
+    include-aliases: true
+    reason: "ajv 5.5.2 transitive via widdershins in @mojaloop/central-services-shared — no upgrade path available (moderate severity)"
 output:
   - table
   - json
