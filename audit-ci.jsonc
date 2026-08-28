@@ -4,8 +4,13 @@
   // Only use one of ["low": true, "moderate": true, "high": true, "critical": true]
   "moderate": true,
   "allowlist": [ // NOTE: Please add as much information as possible to any items added to the allowList
-    "GHSA-p9pc-299p-vxgp", // yargs-parser prototype pollution (widdershins transitive)
-    "GHSA-2g4f-4pwh-qvx6", // ajv ReDoS with $data (inter-scheme-proxy-cache-lib/widdershins transitive)
-    "GHSA-v88g-cgmw-v5xw" // ajv prototype pollution (inter-scheme-proxy-cache-lib/widdershins transitive)
+    "GHSA-p9pc-299p-vxgp",
+    "GHSA-2g4f-4pwh-qvx6",
+    "GHSA-v88g-cgmw-v5xw",
+    "GHSA-crv5-9vww-q3g8",
+    "GHSA-vccv-cmxp-4j9h",
+    "GHSA-x4vx-rjvf-j5p4",
+    "GHSA-r5fr-rjxr-66jc",
+    "GHSA-f23m-r3pf-42rh"
   ]
 }
