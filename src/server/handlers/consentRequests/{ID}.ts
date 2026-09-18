@@ -47,10 +47,9 @@ import { getSpanTags } from '~/shared/util'
 async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const consentRequestsRequestId: string = request.params.ID
+  const consentRequestsRequestId: string = request.params.ID as string
   const payload = request.payload as
-    | tpAPI.Schemas.ConsentRequestsIDPutResponseOTP
-    | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
+    tpAPI.Schemas.ConsentRequestsIDPutResponseOTP | tpAPI.Schemas.ConsentRequestsIDPutResponseWeb
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -102,7 +101,7 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
 async function patch(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const consentRequestsRequestId: string = request.params.ID
+  const consentRequestsRequestId: string = request.params.ID as string
   const payload = request.payload as tpAPI.Schemas.ConsentRequestsIDPatchRequest
   try {
     const tags: { [id: string]: string } = getSpanTags(

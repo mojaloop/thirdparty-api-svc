@@ -50,7 +50,7 @@ import { RequestSpanExtended } from '~/interface/types'
  */
 const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
-  const userId: string = request.params.ID
+  const userId: string = request.params.ID as string
   try {
     const tags: { [id: string]: string } = getSpanTags(
       request,
@@ -103,7 +103,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
 const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const payload = request.payload as tpAPI.Schemas.AccountsIDPutResponse
   const span = request.span
-  const userId: string = request.params.ID
+  const userId: string = request.params.ID as string
 
   try {
     const tags: { [id: string]: string } = getSpanTags(

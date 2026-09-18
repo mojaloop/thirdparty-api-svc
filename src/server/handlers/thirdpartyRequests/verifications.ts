@@ -94,7 +94,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
 async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const verificationRequestId: string = request.params.ID
+  const verificationRequestId: string = request.params.ID as string
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsVerificationsIDPutResponse
 
   try {
@@ -152,7 +152,7 @@ const putError = async (
   h: ResponseToolkit
 ): Promise<ResponseObject> => {
   const span = request.span
-  const verificationRequestId: string = request.params.ID
+  const verificationRequestId: string = request.params.ID as string
   const payload = request.payload as APIErrorObject
 
   try {
@@ -160,7 +160,7 @@ const putError = async (
       request,
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId }
+      { transactionRequestId: request.params.transactionRequestId as string }
     )
 
     span?.setTags(tags)
