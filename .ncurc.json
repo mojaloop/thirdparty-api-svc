@@ -1,9 +1,7 @@
 {
   "reject": [
-    "eslint",
-    "why-eslint: beyond v8.57.0 the ts parser and plugin declare an incompatible peer range (carried over from the js config)",
     "typescript",
-    "why-typescript: 7.x ships Go-built tsgo binaries that trip the Grype source scan and the ts parser peer range tops out below 6.1 (carried over from the js config)",
+    "why-typescript: 7.0.2 still fails npm install with ERESOLVE because the ts lint parser 8.72 declares a peer range of typescript <6.1.0, and its Go-built tsgo binaries trip the Grype source scan; re-tested 2026-10-20",
     "@types/node",
     "why-types-node: its major must match the Node runtime major in .nvmrc (24); a higher major only weakens type checking (tsc accepts newer-Node-only APIs that crash at runtime); bump together with the runtime"
   ]
