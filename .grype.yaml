@@ -185,6 +185,75 @@ ignore:
     reason: >-
       braces 3.0.3 stack-exhaustion ReDoS - dev-only transitive via @mojaloop/api-snippets > ts-auto-mock > micromatch;
       no patched release of braces 3.x exists as of 2026-10-16; also allowlisted in audit-ci.jsonc
+  - vulnerability: GHSA-p8wg-vrv2-v86f
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: handlebars (critical severity) as of 2026-10-21'
+  - vulnerability: GHSA-crv5-9vww-q3g8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: dompurify (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-g8qq-57p8-ggw5
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: sanitize-html (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-vccv-cmxp-4j9h
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: sanitize-html (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-4mjr-xmp4-gh2g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: qs (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-rcvq-m9j9-6f4g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: @hapi/inert (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-p9pc-299p-vxgp
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: yargs-parser (moderate severity) as of 2026-10-21'
+  - vulnerability: GHSA-gg4h-3hg2-grpc
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: joi (low severity) as of 2026-10-21'
+  - vulnerability: GHSA-x4vx-rjvf-j5p4
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: dompurify (low severity) as of 2026-10-21'
+  - vulnerability: GHSA-vh66-26gq-q6x8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-9fr6-4gfg-395g
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-c29m-xwm3-cm6r
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-mghh-pgcx-3jjj
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-x97p-jq2g-jp4f
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-3pq3-5fj3-cg6v
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-542g-h47m-68v8
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-j8rh-479h-cp32
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-4hqw-qxg8-jxx2
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-m8m8-qj5v-23w3
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-44g4-m2mj-wpvx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-r4gj-5m52-g5wh
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-hrr3-gc8f-f4qj
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
+  - vulnerability: GHSA-x5fp-wj9c-mxmx
+    include-aliases: true
+    reason: 'Unfixable npm transitive vulnerability: unknown (unknown severity) as of 2026-10-21'
 output:
   - table
   - json
