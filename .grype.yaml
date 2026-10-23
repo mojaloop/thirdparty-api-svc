@@ -183,12 +183,17 @@ ignore:
   - vulnerability: GHSA-vfj7-8cjw-p6xm
     include-aliases: true
     reason: >-
-      braces 3.0.3 stack-exhaustion ReDoS (CVE-2026-93687) - GitHub withdrew this advisory on 2026-10-23 and npm audit no
-      longer reports it; grype's database still carries it, so this entry stays until the database catches up. Dev-only
-      transitive via @mojaloop/api-snippets > ts-auto-mock > micromatch
+      braces 3.0.3 stack-exhaustion ReDoS (CVE-2026-93687) - GitHub withdrew this advisory on 2026-10-23 and npm audit
+      no longer reports it; grype's database still carries it, so this entry stays until the database catches up.
+      Dev-only transitive via @mojaloop/api-snippets > ts-auto-mock > micromatch
   - vulnerability: CVE-2026-107891
     include-aliases: true
     reason: 'Alpine base image package (apk): musl - no npm fix available as of 2026-10-22 (info severity)'
+  - vulnerability: GHSA-rxp7-6hxx-x8q5
+    include-aliases: true
+    reason: >-
+      Base image npm package: ip-address - bundled in Node.js base image, not fixable via application dependencies as of
+      2026-10-23 (moderate severity)
 output:
   - table
   - json
