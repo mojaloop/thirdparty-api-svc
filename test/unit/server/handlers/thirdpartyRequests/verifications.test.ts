@@ -244,6 +244,22 @@ describe('verifications handler', (): void => {
       expect(mockForwardVerificationRequestError).toHaveBeenCalledWith(...expected)
     })
 
+    it('tags the span with the verificationRequestId from the route', async (): Promise<void> => {
+      // Arrange
+      const span = { setTags: jest.fn(), audit: jest.fn().mockResolvedValue(undefined) }
+      const spanRequest = { ...errorRequest, span } as unknown as Request
+      mockForwardVerificationRequestError.mockResolvedValueOnce()
+
+      // Act
+      await Handler.putError(null, spanRequest, mockResponseToolkit)
+
+      // Assert
+      expect(span.setTags).toHaveBeenCalledTimes(1)
+      expect(span.setTags).toHaveBeenCalledWith(
+        expect.objectContaining({ verificationRequestId: 'a5bbfd51-d9fc-4084-961a-c2c2221a31e0' })
+      )
+    })
+
     it('handles validation errors synchronously', async (): Promise<void> => {
       // Arrange
       const badSpanRequest = {

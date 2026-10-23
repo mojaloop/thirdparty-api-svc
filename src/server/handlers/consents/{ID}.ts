@@ -48,10 +48,9 @@ import { RequestSpanExtended } from '~/interface/types'
 async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const consentsRequestId: string = request.params.ID
+  const consentsRequestId: string = request.params.ID as string
   const payload = request.payload as
-    | tpAPI.Schemas.ConsentsIDPutResponseVerified
-    | tpAPI.Schemas.ConsentsIDPutResponseSigned
+    tpAPI.Schemas.ConsentsIDPutResponseVerified | tpAPI.Schemas.ConsentsIDPutResponseSigned
 
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -103,10 +102,9 @@ async function put(_context: unknown, request: RequestSpanExtended, h: ResponseT
 async function patch(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const consentsRequestId: string = request.params.ID
+  const consentsRequestId: string = request.params.ID as string
   const payload = request.payload as
-    | tpAPI.Schemas.ConsentsIDPatchResponseVerified
-    | tpAPI.Schemas.ConsentsIDPatchResponseRevoked
+    tpAPI.Schemas.ConsentsIDPatchResponseVerified | tpAPI.Schemas.ConsentsIDPatchResponseRevoked
 
   try {
     const tags: { [id: string]: string } = getSpanTags(

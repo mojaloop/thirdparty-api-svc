@@ -102,7 +102,7 @@ async function post(_context: unknown, request: RequestSpanExtended, h: Response
 async function put(_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> {
   const span = request.span
   // Trust that hapi parsed the ID and Payload for us
-  const authorizationRequestId: string = request.params.ID
+  const authorizationRequestId: string = request.params.ID as string
   const payload = request.payload as tpAPI.Schemas.ThirdpartyRequestsAuthorizationsIDPutResponse
   try {
     const tags: { [id: string]: string } = getSpanTags(
@@ -160,7 +160,7 @@ const putError = async (
   h: ResponseToolkit
 ): Promise<ResponseObject> => {
   const span = request.span
-  const authorizationRequestId: string = request.params.ID
+  const authorizationRequestId: string = request.params.ID as string
   const payload = request.payload as APIErrorObject
 
   try {

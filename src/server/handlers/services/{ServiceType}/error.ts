@@ -48,7 +48,7 @@ import { RequestSpanExtended } from '~/interface/types'
  */
 const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseToolkit): Promise<ResponseObject> => {
   const span = request.span
-  const serviceType: string = request.params.ServiceType
+  const serviceType: string = request.params.ServiceType as string
   const payload = request.payload as APIErrorObject
 
   try {

@@ -256,8 +256,7 @@ async function forwardTransactionRequestNotification(
 }
 
 type CreateOrUpdateReq =
-  | tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest
-  | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
+  tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest | tpAPI.Schemas.ThirdpartyRequestsTransactionsIDPutResponse
 function isCreateRequest(
   request: CreateOrUpdateReq
 ): request is tpAPI.Schemas.ThirdpartyRequestsTransactionsPostRequest {
