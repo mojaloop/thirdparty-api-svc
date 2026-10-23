@@ -237,4 +237,75 @@ defineFeature(feature, (test): void => {
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
   })
+  // central-services-shared 18.35.7+ (FSPIOPHeaderValidation) requires the Accept header on the
+  // request-initiating methods GET, POST and DELETE, per the FSPIOP API specification. PUT and PATCH
+  // callbacks are unaffected. These two scenarios pin that behaviour.
+  test('CreateThirdpartyTransactionRequestsWithoutAccept', ({ given, when, then }): void => {
+    const request = {
+      method: 'POST',
+      url: '/thirdpartyRequests/transactions',
+      headers: {
+        ...mockData.transactionRequest.headers,
+        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+        'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+      },
+      payload: mockData.transactionRequest.payload
+    }
+
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
+      mockForwardTransactionRequest.mockClear()
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when(
+      "I send a 'CreateThirdpartyTransactionRequests' request without an Accept header",
+      async (): Promise<ServerInjectResponse> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        response = await server.inject(request)
+        return response
+      }
+    )
+
+    then("I get a response with a status code of '400' and error code '3102'", (): void => {
+      expect(response.statusCode).toBe(400)
+      expect(response.result).toMatchObject({
+        errorInformation: { errorCode: '3102' }
+      })
+      expect(mockForwardTransactionRequest).not.toHaveBeenCalled()
+    })
+  })
+
+  test('UpdateThirdPartyTransactionRequestsWithoutAccept', ({ given, when, then }): void => {
+    const request = {
+      method: 'PUT',
+      url: `/thirdpartyRequests/transactions/${mockData.updateTransactionRequest.params.ID}`,
+      headers: {
+        ...mockData.updateTransactionRequest.headers,
+        date: 'Thu, 23 Jan 2020 10:22:12 GMT',
+        'content-type': 'application/vnd.interoperability.thirdparty+json;version=1.0'
+      },
+      payload: mockData.updateTransactionRequest.payload
+    }
+
+    given('thirdparty-api-svc server', async (): Promise<Server> => {
+      mockForwardTransactionRequest.mockClear()
+      server = await ThirdPartyAPIAdapterService.run(Config)
+      return server
+    })
+
+    when(
+      "I send an 'UpdateThirdPartyTransactionRequests' request without an Accept header",
+      async (): Promise<ServerInjectResponse> => {
+        mockForwardTransactionRequest.mockResolvedValueOnce()
+        response = await server.inject(request)
+        return response
+      }
+    )
+
+    then("I get a response with a status code of '200' because callbacks do not require Accept", (): void => {
+      expect(response.statusCode).toBe(200)
+      expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
+    })
+  })
 })

@@ -110,7 +110,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.GET,
-      { transactionRequestId: request.params.transactionRequestId as string }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -162,7 +162,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId as string }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -214,7 +214,7 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PATCH,
-      { transactionRequestId: request.params.transactionRequestId as string }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -272,7 +272,7 @@ const putError = async (
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId as string }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)

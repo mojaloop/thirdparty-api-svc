@@ -160,7 +160,7 @@ const putError = async (
       request,
       Enum.Events.Event.Type.VERIFICATION,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId as string }
+      { verificationRequestId }
     )
 
     span?.setTags(tags)
