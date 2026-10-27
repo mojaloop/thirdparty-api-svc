@@ -151,6 +151,22 @@ describe('transactions handler', (): void => {
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
 
+    it('tags the span with the transactionRequestId from the route', async (): Promise<void> => {
+      // Arrange
+      const span = { setTags: jest.fn(), audit: jest.fn().mockResolvedValue(undefined) }
+      const spanRequest = { ...request, span } as unknown as Request
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      // Act
+      await Handler.get(null, spanRequest, mockResponseToolkit)
+
+      // Assert
+      expect(span.setTags).toHaveBeenCalledTimes(1)
+      expect(span.setTags).toHaveBeenCalledWith(
+        expect.objectContaining({ transactionRequestId: 'b37605f7-bcd9-408b-9291-6c554aa4c802' })
+      )
+    })
+
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
       mockForwardTransactionRequest.mockResolvedValueOnce()
@@ -222,6 +238,22 @@ describe('transactions handler', (): void => {
       expect(response.statusCode).toBe(200)
       expect(mockForwardTransactionRequest).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
+    })
+
+    it('tags the span with the transactionRequestId from the route', async (): Promise<void> => {
+      // Arrange
+      const span = { setTags: jest.fn(), audit: jest.fn().mockResolvedValue(undefined) }
+      const spanRequest = { ...request, span } as unknown as Request
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      // Act
+      await Handler.put(null, spanRequest, mockResponseToolkit)
+
+      // Assert
+      expect(span.setTags).toHaveBeenCalledTimes(1)
+      expect(span.setTags).toHaveBeenCalledWith(
+        expect.objectContaining({ transactionRequestId: 'b37605f7-bcd9-408b-9291-6c554aa4c802' })
+      )
     })
 
     it('handles errors in async manner', async (): Promise<void> => {
@@ -297,6 +329,22 @@ describe('transactions handler', (): void => {
       expect(mockForwardTransactionRequest).toHaveBeenCalledWith(...expected)
     })
 
+    it('tags the span with the transactionRequestId from the route', async (): Promise<void> => {
+      // Arrange
+      const span = { setTags: jest.fn(), audit: jest.fn().mockResolvedValue(undefined) }
+      const spanRequest = { ...request, span } as unknown as Request
+      mockForwardTransactionRequest.mockResolvedValueOnce()
+
+      // Act
+      await Handler.patch(null, spanRequest, mockResponseToolkit)
+
+      // Assert
+      expect(span.setTags).toHaveBeenCalledTimes(1)
+      expect(span.setTags).toHaveBeenCalledWith(
+        expect.objectContaining({ transactionRequestId: 'b37605f7-bcd9-408b-9291-6c554aa4c802' })
+      )
+    })
+
     it('handles errors in async manner', async (): Promise<void> => {
       // Arrange
       mockForwardTransactionRequest.mockResolvedValueOnce()
@@ -366,6 +414,22 @@ describe('transactions handler', (): void => {
       expect(response.statusCode).toBe(200)
       expect(mockForwardTransactionRequestError).toHaveBeenCalledTimes(1)
       expect(mockForwardTransactionRequestError).toHaveBeenCalledWith(...expected)
+    })
+
+    it('tags the span with the transactionRequestId from the route', async (): Promise<void> => {
+      // Arrange
+      const span = { setTags: jest.fn(), audit: jest.fn().mockResolvedValue(undefined) }
+      const spanRequest = { ...errorRequest, span } as unknown as Request
+      mockForwardTransactionRequestError.mockResolvedValueOnce()
+
+      // Act
+      await Handler.putError(null, spanRequest, mockResponseToolkit)
+
+      // Assert
+      expect(span.setTags).toHaveBeenCalledTimes(1)
+      expect(span.setTags).toHaveBeenCalledWith(
+        expect.objectContaining({ transactionRequestId: 'a5bbfd51-d9fc-4084-961a-c2c2221a31e0' })
+      )
     })
 
     it('handles validation errors synchronously', async (): Promise<void> => {

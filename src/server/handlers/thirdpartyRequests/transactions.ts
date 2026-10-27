@@ -75,7 +75,7 @@ const post = async (_context: unknown, request: RequestSpanExtended, h: Response
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_POST,
       request.headers as Record<string, string>,
       Enum.Http.RestMethods.POST,
-      request.params,
+      request.params as Record<string, string>,
       payload,
       span
     ).catch((err) => {
@@ -110,7 +110,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.GET,
-      { transactionRequestId: request.params.transactionRequestId }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -128,7 +128,7 @@ const get = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_GET,
       request.headers as Record<string, string>,
       Enum.Http.RestMethods.GET,
-      request.params,
+      request.params as Record<string, string>,
       undefined,
       span
     ).catch((err) => {
@@ -162,7 +162,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -180,7 +180,7 @@ const put = async (_context: unknown, request: RequestSpanExtended, h: ResponseT
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PUT,
       request.headers as Record<string, string>,
       Enum.Http.RestMethods.PUT,
-      request.params,
+      request.params as Record<string, string>,
       payload,
       span
     ).catch((err) => {
@@ -214,7 +214,7 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PATCH,
-      { transactionRequestId: request.params.transactionRequestId }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)
@@ -232,7 +232,7 @@ const patch = async (_context: unknown, request: RequestSpanExtended, h: Respons
       Enum.EndPoints.FspEndpointTypes.TP_CB_URL_TRANSACTION_REQUEST_PATCH,
       request.headers as Record<string, string>,
       Enum.Http.RestMethods.PATCH,
-      request.params,
+      request.params as Record<string, string>,
       payload,
       span
     ).catch((err) => {
@@ -264,7 +264,7 @@ const putError = async (
   h: ResponseToolkit
 ): Promise<ResponseObject> => {
   const span = request.span
-  const transactionRequestId: string = request.params.ID
+  const transactionRequestId: string = request.params.ID as string
   const payload = request.payload as APIErrorObject
 
   try {
@@ -272,7 +272,7 @@ const putError = async (
       request,
       Enum.Events.Event.Type.TRANSACTION_REQUEST,
       Enum.Events.Event.Action.PUT,
-      { transactionRequestId: request.params.transactionRequestId }
+      { transactionRequestId: request.params.ID as string }
     )
 
     span?.setTags(tags)

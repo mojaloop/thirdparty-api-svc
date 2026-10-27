@@ -1,0 +1,8 @@
+{
+  "exceptions": {
+    "callsite@1.0.0": {
+      "reason": "MIT per the 'License' section of the package Readme (tj/callsite); the published package.json omits the license field, so the scanner reads it as empty. Dev-only transitive via depcheck 1.4.7. Added 2026-09-18.",
+      "expires": "2026-12-31"
+    }
+  }
+}

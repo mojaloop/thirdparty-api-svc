@@ -24,3 +24,13 @@ Scenario: NotifyThirdpartyTransactionRequests
  Given thirdparty-api-svc server
  When I send a 'NotifyThirdpartyTransactionRequests' request
  Then I get a response with a status code of '202'
+
+Scenario: CreateThirdpartyTransactionRequestsWithoutAccept
+  Given thirdparty-api-svc server
+  When I send a 'CreateThirdpartyTransactionRequests' request without an Accept header
+  Then I get a response with a status code of '400' and error code '3102'
+
+Scenario: UpdateThirdPartyTransactionRequestsWithoutAccept
+  Given thirdparty-api-svc server
+  When I send an 'UpdateThirdPartyTransactionRequests' request without an Accept header
+  Then I get a response with a status code of '200' because callbacks do not require Accept
